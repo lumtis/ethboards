@@ -1,0 +1,37 @@
+body,
+.pure-g [class*=pure-u] {
+  font-family: 'Open Sans', sans-serif;
+  /* background:url(/images/bg3.png) repeat; */
+  /* background-color: #D9BA7D; */
+  /*background-color: #bdc3c7;*/
+  height: 100%;
+  width: 100%;
+}
+
+h1, h2 {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  color: #D2D7D3;
+  text-shadow:2px 2px rgba(0, 0, 0, 1);
+}
+
+h3 {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  color: #5C6A79;
+}
+
+.centered {
+  /* Firefox */
+  display: -moz-box;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+
+  /* Safari and Chrome */
+  display: -webkit-box;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+
+  /* W3C */
+  display: box;
+  box-pack: center;
+  box-align: center;
+}
