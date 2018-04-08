@@ -1,17 +1,16 @@
+/* EAA1E8 */
+
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
-  /* background:url(/images/bg3.png) repeat; */
-  /* background-color: #D9BA7D; */
-  /*background-color: #bdc3c7;*/
+  background:url(/images/bg.png) repeat;
   height: 100%;
   width: 100%;
 }
-
 h1, h2 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #D2D7D3;
-  text-shadow:2px 2px rgba(0, 0, 0, 1);
+  color: #26E7BC;
+  text-shadow:2px 2px #9A32D3;
 }
 
 h3 {
@@ -19,19 +18,36 @@ h3 {
   color: #5C6A79;
 }
 
-.centered {
-  /* Firefox */
-  display: -moz-box;
-  -moz-box-pack: center;
-  -moz-box-align: center;
+.welcomeWrapper {
+  background:url(/images/vaporbg.jpg) top right no-repeat fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  width: 100%;
+  height: 100%;
+  backgroundSize: "100% 100%";
+}
 
-  /* Safari and Chrome */
-  display: -webkit-box;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
 
-  /* W3C */
-  display: box;
-  box-pack: center;
-  box-align: center;
+.button {
+    font-size: 30px;
+    font-weight: lighter;
+    width:120px;
+    height:60px;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #E0E0E0;
+    border-radius: 100px;
+    color: #E0E0E0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.button:hover {
+    color: #EAA1E8;
+    border-color: #EAA1E8;
+}
+
+.button:active {
+    color: #BA71B8;
+    border-color: #BA71B8;
 }

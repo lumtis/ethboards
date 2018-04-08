@@ -1,6 +1,9 @@
 import store from '../store'
 import Web3 from 'web3'
 
+var contractJson = require('../NujaBattle.json')
+var contractAddress = '0x8cdaf0cd259887258bc13a92c0a6da92698644c0'
+
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {
   return {
@@ -19,18 +22,18 @@ function getWeb3() {
     web3 = new Web3(web3.currentProvider)
 
     // Get humanity card contract
-    var contract = null
+    var contract = new web3.eth.Contract(contractJson.abi, contractAddress)
 
     results = {
       web3Instance: web3,
       contractInstance: contract
     }
 
-    console.log('Injected web3 detected.');
+    console.log('Metamask.');
 
     store.dispatch(web3Initialized(results))
 
-    return 0
+    return true
   } else {
     // Fallback to localhost if no web3 injection. We've configured this to
     // use the development console's port by default.
@@ -38,19 +41,19 @@ function getWeb3() {
     var provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/KKgWWlE5KNDx1nLnoVtq')
     web3 = new Web3(provider)
 
-    // Get humanity card contract
-    var contract = null
+    // Get contract
+    var contract = new web3.eth.Contract(contractJson.abi, contractAddress)
 
     results = {
       web3Instance: web3,
       contractInstance: contract
     }
 
-    console.log('No web3 instance injected, using Local web3.');
+    console.log('No matamask.');
 
     store.dispatch(web3Initialized(results))
 
-    return 1
+    return false
   }
 }
 
