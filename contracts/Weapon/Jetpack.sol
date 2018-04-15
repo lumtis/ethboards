@@ -10,7 +10,7 @@ contract Jetpack is Weapon {
     }
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmZvuRW7is3uu5kvpHaSrGaqHgsLvadGbP92K93o7XzQy9';
+        return '/ipfs/QmaucMB5ZRNSNGYoPJaPhETD2LGMuDLzyWagE3NrotALvg';
     }
 
     function use(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public fromServer {
