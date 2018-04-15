@@ -1,6 +1,9 @@
 pragma solidity ^0.4.2;
 
 
+import "./Weapon/Weapon.sol";
+import "./CharacterRegistry.sol"
+
 contract NujaBattle {
 
     ///////////////////////////////////////////////////////////////
@@ -14,313 +17,421 @@ contract NujaBattle {
     ///////////////////////////////////////////////////////////////
     /// Structures
 
-    struct Character {
-        string name;
-        uint8 health;
-        bool isPlaying;
-        uint8 number;
-        address owner;
-        uint8 positionX;
-        uint8 positionY;
-        string ipfs;
-    }
-
     struct Field {
         uint8 building;
-        uint8 character;
+        uint8 character; // Warning: offset
     }
 
-    /* struct Server { */
-    uint8 playerNb;
-    uint8 turnPlayer;
-    uint turnGame;
-    mapping (uint => mapping (uint => Field)) fields;
-    mapping (address => uint8) players;
-    /* } */
+    struct Player {
+        uint characterIndex;
+        uint8 health;
+        uint8 number;
+        uint8 positionX;
+        uint8 positionY;
+        uint8[] weapons;
+    }
 
-    ///////////////////////////////////////////////////////////////
-    /// Constants
-
-    string constant NAME = "Nujak token";
-    string constant SYMBOL = "NUJ";
-
-    ///////////////////////////////////////////////////////////////
-    /// Attributes
+    struct Server {
+        string name;
+        address owner;
+        uint8 playerNb;
+        uint8 turnPlayer;
+        uint turnGame;
+        mapping (uint => mapping (uint => Field)) fields;
+        Player[] players;
+        mapping (address => uint8) playerIndex;   // Warning: offset
+        address[] weapons;
+        mapping (address => bool) trusted;
+    }
 
     address owner;
-    uint256 characterNb;
-    Character[] characters;
-    uint256 serverNb;
-    //Server[] servers;
-    uint serverFee;
-    uint characterFee;
+    uint serverNumber;
+    Server[] servers;
+    address characterRegistry;
 
-    ///////////////////////////////////////////////////////////////
-    /// Constructor
 
     function NujaBattle() public {
         owner = msg.sender;
-        characterNb = 0;
-        serverNb = 0;
-        serverFee = 0;
-        characterFee = 0;
+        serverNumber = 0;
+        characterRegistry = address(0);
+    }
 
-        // Test character
-        Character memory character1 = Character('nujak', 100, false, 0, 0x627306090abaB3A6e1400e9345bC60c78a8BEf57, 0, 0, '/ipfs/QmZvuRW7is3uu5kvpHaSrGaqHgsLvadGbP92K93o7XzQy9');
-        characters.push(character1);
-        Character memory character2 = Character('nujaka', 100, false, 1, 0xf17f52151EbEF6C7334FAD080c5704D77216b732, 0, 0, '/ipfs/QmdYwL1FU8WvDXtUaWtmsXUW568RJRS9exGc8cbeaHUXdK');
-        characters.push(character2);
-        characterNb += 2;
+    ///////////////////////////////////////////////////////////////
+    /// Basic functions
 
-        players[0x627306090abaB3A6e1400e9345bC60c78a8BEf57] = 1;
-        players[0xf17f52151EbEF6C7334FAD080c5704D77216b732] = 2;
+    function changeCharacterRegistry(address registry) public onlyOwner {
+        characterRegistry = registry;
+    }
+
+    function addServer(string name) {
+        Server memory newServer;
+        newServer.name = name;
+        newServer.owner = msg.sender;
+        newServer.playerNb = 0;
+        newServer.turnPlayer = 0;
+        newServer.turnGame = 0;
+        Server.push(newServer);
+
+        serverNumber += 1;
+    }
+
+    // Server utilities
+    function addWeaponToServer(uint indexServer, address weapon) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].owner == msg.sender);
+        // We verify weapon is not already added
+        require(servers[indexServer].trusted[weapon] == false);
+
+        servers[indexServer].weapons.push(weapon);
+        servers[indexServer].trusted[weapon] = true;
+    }
+
+    function addBuildingToServer(uint indexServer, uint8 x, uint8 y) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].owner == msg.sender);
+        require(x < 10 && y < 10);
+        require(servers[indexServer].fields[x][y].building == 0);
+
+        servers[indexServer].fields[x][y].building = 2;
+    }
+
+    function addPlayerToServer(uint character, uint server) {
+        require(server < serverNumber);
+        require(servers[server].playerNb < 10);
+
+        // Verify character exists and subcribes it
+        CharacterRegistry reg = CharacterRegistry(characterRegistry);
+        require(character < reg.totalSupply());
+        require(msg.sender == reg.ownerOf(character));
+        reg.setCharacterServer(character, server);
+
+        // Create player
+        uint8 numero = servers[server].playerNb;
+        Player memory newPlayer;
+        newPlayer.characterIndex = character;
+        newPlayer.health = 100;
+        newPlayer.number = numero;
+        newPlayer.positionX = numero;
+        newPlayer.positionY = numero;
+
+        // Player information for server
+        servers[server].players.push(newPlayer);
+        servers[server].fields[numero][numero].character = numero+1;
+        servers[server].playerIndex[msg.sender] = numero+1;
+
+        servers[server].playerNb += 1;
     }
 
 
     ///////////////////////////////////////////////////////////////
-    /// Test zone
-    function moveUpLeft(uint8 p) internal {
-        require(characters[p].positionY > 0);
-        require(characters[p].positionX > 0);
-        require(fields[characters[p].positionX-1][characters[p].positionY-1].character == 0);
+    /// Server functions
 
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY-1;
-        characters[p].positionX = characters[p].positionX-1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveUp(uint8 p) internal {
-        require(characters[p].positionY > 0);
-        require(fields[characters[p].positionX][characters[p].positionY-1].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY-1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveUpRight(uint8 p) internal {
-        require(characters[p].positionY > 0);
-        require(characters[p].positionX < 9);
-        require(fields[characters[p].positionX+1][characters[p].positionY-1].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY-1;
-        characters[p].positionX = characters[p].positionX+1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveRight(uint8 p) internal {
-        require(characters[p].positionX < 9);
-        require(fields[characters[p].positionX+1][characters[p].positionY].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionX = characters[p].positionX+1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveDownRight(uint8 p) internal {
-        require(characters[p].positionY < 9);
-        require(characters[p].positionX < 9);
-        require(fields[characters[p].positionX+1][characters[p].positionY+1].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY+1;
-        characters[p].positionX = characters[p].positionX+1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveDown(uint8 p) internal {
-        require(characters[p].positionY < 9);
-        require(fields[characters[p].positionX][characters[p].positionY+1].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY+1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveDownLeft(uint8 p) internal {
-        require(characters[p].positionY < 9);
-        require(characters[p].positionX > 0);
-        require(fields[characters[p].positionX-1][characters[p].positionY+1].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionY = characters[p].positionY+1;
-        characters[p].positionX = characters[p].positionX-1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
-    }
-    function moveLeft(uint8 p) internal {
-        require(characters[p].positionX > 0);
-        require(fields[characters[p].positionX-1][characters[p].positionY].character == 0);
-
-        fields[characters[p].positionX][characters[p].positionY].character = 0;
-        characters[p].positionX = characters[p].positionX-1;
-        fields[characters[p].positionX][characters[p].positionY].character = p+1;
+    function isTurn(uint indexServer, address addr) public view returns(bool ret) serverExists(indexServer) {
+        require(indexServer < serverNumber);
+        uint8 p = servers[indexServer].playerIndex[addr]
+        require(p > 0);
+        p -= 1;
+        return servers[indexServer].players[p].number == servers[indexServer].turnPlayer;
     }
 
+    // Interface for nuja and weapon
 
-    function attackUpLeft(uint8 p) internal {
-        require(fields[characters[p].positionX-1][characters[p].positionY-1].character > 0);
-    }
-    function attackUp(uint8 p) internal {
-        require(fields[characters[p].positionX][characters[p].positionY-1].character > 0);
-    }
-    function attackUpRight(uint8 p) internal {
-        require(fields[characters[p].positionX+1][characters[p].positionY-1].character > 0);
-    }
-    function attackRight(uint8 p) internal {
-        require(fields[characters[p].positionX+1][characters[p].positionY].character > 0);
-    }
-    function attackDownRight(uint8 p) internal {
-        require(fields[characters[p].positionX+1][characters[p].positionY+1].character > 0);
-    }
-    function attackDown(uint8 p) internal {
-        require(fields[characters[p].positionX][characters[p].positionY+1].character > 0);
-    }
-    function attackDownLeft(uint8 p) internal {
-        require(fields[characters[p].positionX-1][characters[p].positionY+1].character > 0);
-    }
-    function attackLeft(uint8 p) internal {
-        require(fields[characters[p].positionX-1][characters[p].positionY].character > 0);
-    }
-
-
-    function deployServer() public {
-        uint seed = uint(keccak256(block.timestamp));
-
-        // City
-        uint city = 10;
-        while (city > 0) {
-            seed = uint(keccak256(seed));
-            uint x = seed%10;
-            seed = uint(keccak256(seed));
-            uint y = seed%10;
-
-            fields[x][y].building = 1;
-
-            city -= 1;
-        }
-
-        characters[0].positionX = 3;
-        characters[0].positionY = 3;
-        fields[3][3].character = 1;
-
-        characters[1].positionX = 7;
-        characters[1].positionY = 7;
-        fields[7][7].character = 2;
-
-        playerNb = 2;
-        turnPlayer = 0;
-        turnGame = 0;
-    }
-
-    function getField(uint x, uint y) public view returns(uint8 buildingRet, uint8 characterRet) {
+    // views
+    function fieldInformation(uint indexServer, uint x, uint y) public view returns(uint8 buildingRet, uint8 characterRet) {
+        require(indexServer < serverNumber);
         require(x < 10);
         require(y < 10);
 
-        return (fields[x][y].building, fields[x][y].character);
+        return (servers[indexServer].fields[x][y].building, servers[indexServer].fields[x][y].character - 1);
+    }
+    function playerInformation(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex, uint8 health, uint8 positionX, uint8 positionY, uint8 weaponNumber) {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+
+        return (servers[indexServer].players[indexPlayer].characterIndex, servers[indexServer].players[indexPlayer].health, servers[indexServer].players[indexPlayer].positionX, servers[indexServer].players[indexPlayer].positionY, servers[indexServer].players[indexPlayer].weapons.length);
+    }
+    function playerWeapons(uint indexServer, uint8 indexPlayer, uint8 indexWeapon) public view returns(uint8 weapon) {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(indexWeapon < servers[indexServer].players[indexPlayer].weapons.length);
+
+        return (servers[indexServer].players[indexPlayer].weapons[indexWeapon]);
     }
 
-    function getPlayerInfo(uint index) public view returns(string nameRet, uint healthRet, uint numberRet, address ownerRet, uint8 positionXRet, uint8 positionYRet, string ipfsRet) {
-        require(index < 2);
+    // actions
+    function movePlayer(uint indexServer, uint8 indexPlayer, uint8 x, uint8 y) public {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(x < 10 && y < 10);
 
-        Character memory c = characters[index];
+        require(servers[indexServer].fields[x][y].character == 0);
 
-        return (c.name, c.health, c.number, c.owner, c.positionX, c.positionY, c.ipfs);
+        servers[indexServer].fields[servers[indexServer].players[indexPlayer].positionX][servers[indexServer].players[indexPlayer].positionY].character = 0;
+        servers[indexServer].players[indexPlayer].positionY = y;
+        servers[indexServer].players[indexPlayer].positionX = x;
+        servers[indexServer].fields[x][y].character = indexPlayer+1;
+    }
+    function changeHealth(uint indexServer, uint8 indexPlayer, uint newHealth) public {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(newHealth >= 0 && newHealth <= 100);
+
+        servers[indexServer].players[indexPlayer].health = newHealth;
+    }
+    function addWeapon(uint indexServer, uint8 indexPlayer, uint8 weapon) public {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(weapon < servers[indexServer].weapons.length);
+
+        servers[indexServer].players[indexPlayer].weapons.push(weapon);
+    }
+    function removeWeapon(uint indexServer, uint8 indexPlayer, uint8 indexWeapon) public {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+
+        uint8 nbWeapon = servers[indexServer].players[indexPlayer].weapons.length
+        require(indexWeapon < nbWeapon);
+
+        servers[indexServer].players[indexPlayer].weapons[indexWeapon] = servers[indexServer].players[indexPlayer].weapons[nbWeapon-1];
+        delete servers[indexServer].players[indexPlayer].weapons[nbWeapon-1];
+        servers[indexServer].players[indexPlayer].weapons.length--;
     }
 
-    function isTurn(address addr) public view returns(bool ret) {
-        uint8 p = players[addr];
+
+    // Playing your turn
+    // Type:
+    // 0: Simple move
+    // 1: Simple attack
+    // 2: Explore building
+    // 3: Weapon
+    // 4: Nuja power
+    function play(uint indexServer, uint8 type, uint index, uint8 x, uint8 y, uint8 dir) {
+        require(indexServer < serverNumber);
+        require(type < 5);
+
+        uint8 p = servers[indexServer].playerIndex[msg.sender]
         require(p > 0);
         p -= 1;
-        return characters[p].number == turnPlayer;
-    }
+        require(servers[indexServer].players[indexPlayer].number == turnPlayer);
 
-    function play(uint command) public {
-        require(command < 16);
-
-        uint8 p = players[msg.sender];
-        require(p > 0);
-        p -= 1;
-        require(characters[p].number == turnPlayer);
-
-        if (command == 0) {
-            moveUpLeft(p);
+        if (type == 0) {
+            require(index < 8);
+            move(indexServer, p, index);
         }
-        else if (command == 1) {
-            moveUp(p);
+        else if (type == 1) {
+            require(index < 8);
+            attack(indexServer, p, index);
         }
-        else if (command == 2) {
-            moveUpRight(p);
+        else if (type == 2) {
+            exploreBuilding(p);
         }
-        else if (command == 3) {
-            moveRight(p);
-        }
-        else if (command == 4) {
-            moveDownRight(p);
-        }
-        else if (command == 5) {
-            moveDown(p);
-        }
-        else if (command == 6) {
-            moveDownLeft(p);
-        }
-        else if (command == 7) {
-            moveLeft(p);
-        }
-        else if (command == 8) {
-            attackUpLeft(p);
-        }
-        else if (command == 9) {
-            attackUp(p);
-        }
-        else if (command == 10) {
-            attackUpRight(p);
-        }
-        else if (command == 11) {
-            attackRight(p);
-        }
-        else if (command == 12) {
-            attackDownRight(p);
-        }
-        else if (command == 13) {
-            attackDown(p);
-        }
-        else if (command == 14) {
-            attackDownLeft(p);
-        }
-        else if (command == 15) {
-            attackLeft(p);
+        else if (type == 3) {
+            require(index < servers[indexServer].players[indexPlayer].weapons.length);
+            require(x < 10 && y < 10 && dir < 8);
+            Weapon w = Weapon(servers[indexServer].weapons[servers[indexServer].players[indexPlayer].weapons[index]]);
+            w.use(indexServer, dir, x, y, p);
         }
 
         turnPlayer = (turnPlayer+1)%playerNb;
     }
 
-    ///////////////////////////////////////////////////////////////
-    /// Admin
-
-    function changeCharacterFee(uint newFee) public onlyOwner {
-        characterFee = newFee;
+    function move(uint indexServer, uint8 p, uint8 command) internal {
+        if (command == 0) {
+            moveUpLeft(indexServer, p);
+        }
+        else if (command == 1) {
+            moveUp(indexServer, p);
+        }
+        else if (command == 2) {
+            moveUpRight(indexServer, p);
+        }
+        else if (command == 3) {
+            moveRight(indexServer, p);
+        }
+        else if (command == 4) {
+            moveDownRight(indexServer, p);
+        }
+        else if (command == 5) {
+            moveDown(indexServer, p);
+        }
+        else if (command == 6) {
+            moveDownLeft(indexServer, p);
+        }
+        else if (command == 7) {
+            moveLeft(indexServer, p);
+        }
     }
 
-    function changeServerFee(uint newFee) public onlyOwner {
-        serverFee = newFee;
+    function moveUpLeft(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY > 0);
+        require(servers[indexServer].players[p].positionX > 0);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY-1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY-1;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX-1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveUp(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY > 0);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY-1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY-1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveUpRight(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY > 0);
+        require(servers[indexServer].players[p].positionX < 9);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY-1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY-1;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX+1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveRight(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionX < 9);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX+1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveDownRight(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY < 9);
+        require(servers[indexServer].players[p].positionX < 9);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY+1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY+1;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX+1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveDown(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY < 9);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY+1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY+1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveDownLeft(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionY < 9);
+        require(servers[indexServer].players[p].positionX > 0);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY+1].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionY = servers[indexServer].players[p].positionY+1;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX-1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
+    }
+    function moveLeft(uint indexServer, uint8 p) internal {
+        require(servers[indexServer].players[p].positionX > 0);
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY].character == 0);
+
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = 0;
+        servers[indexServer].players[p].positionX = servers[indexServer].players[p].positionX-1;
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].character = p+1;
     }
 
-    ///////////////////////////////////////////////////////////////
-    /// Methods
-
-    function getOwner() public view returns(address ret) {
-        return owner;
+    function attack(uint indexServer, uint8 p, uint8 command) internal {
+        if (command == 0) {
+            attackUpLeft(indexServer, p);
+        }
+        else if (command == 1) {
+            attackUp(indexServer, p);
+        }
+        else if (command == 2) {
+            attackUpRight(indexServer, p);
+        }
+        else if (command == 3) {
+            attackRight(indexServer, p);
+        }
+        else if (command == 4) {
+            attackDownRight(indexServer, p);
+        }
+        else if (command == 5) {
+            attackDown(indexServer, p);
+        }
+        else if (command == 6) {
+            attackDownLeft(indexServer, p);
+        }
+        else if (command == 7) {
+            attackLeft(indexServer, p);
+        }
     }
 
-    function getCharacterNb() public view returns(uint256 ret) {
-        return characterNb;
+    function attackUpLeft(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY-1].character;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackUp(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY-1].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackUpRight(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY-1].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackRight(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackDownRight(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY+1].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackDown(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY+1].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackDownLeft(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY+1].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
+    }
+    function attackLeft(uint indexServer, uint8 p) internal {
+        uint8 opponent = servers[indexServer].[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY].character > 0;
+        require(opponent > 0);
+        opponent -= 1;
+        fistAttack(indexServer, opponent);
     }
 
-    function getServerNb() public view returns(uint256 ret) {
-        return serverNb;
+    function fistAttack(uint indexServer, uint8 p) internal {
+        if(servers[indexServer].players[p].health <= 10) {
+            servers[indexServer].players[p].health = 0;
+        }
+        else {
+            servers[indexServer].players[p].health -= 10;
+        }
     }
 
-    function addCharacter() payable public {
-        require(msg.value == characterFee);
-    }
 
-    function addServer() payable public {
-        require(msg.value == serverFee);
+    function exploreBuilding(uint8 p) internal {
+        require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building == 2);
+
+        // Give object to player
+        servers[indexServer].fields[servers[indexServer].players[p].weapons.push(0);
+
+        // Set building as explored
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1;
     }
 }
