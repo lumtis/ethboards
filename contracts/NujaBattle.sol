@@ -2,7 +2,7 @@ pragma solidity ^0.4.2;
 
 
 import "./Weapon/Weapon.sol";
-import "./CharacterRegistry.sol"
+import "./CharacterRegistry.sol";
 
 contract NujaBattle {
 
@@ -63,20 +63,20 @@ contract NujaBattle {
         characterRegistry = registry;
     }
 
-    function addServer(string name) {
-        Server memory newServer;
+    function addServer(string name) public {
+        Server storage newServer;
         newServer.name = name;
         newServer.owner = msg.sender;
         newServer.playerNb = 0;
         newServer.turnPlayer = 0;
         newServer.turnGame = 0;
-        Server.push(newServer);
+        servers.push(newServer);
 
         serverNumber += 1;
     }
 
     // Server utilities
-    function addWeaponToServer(uint indexServer, address weapon) {
+    function addWeaponToServer(uint indexServer, address weapon) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].owner == msg.sender);
         // We verify weapon is not already added
@@ -86,7 +86,7 @@ contract NujaBattle {
         servers[indexServer].trusted[weapon] = true;
     }
 
-    function addBuildingToServer(uint indexServer, uint8 x, uint8 y) {
+    function addBuildingToServer(uint indexServer, uint8 x, uint8 y) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].owner == msg.sender);
         require(x < 10 && y < 10);
@@ -95,7 +95,7 @@ contract NujaBattle {
         servers[indexServer].fields[x][y].building = 2;
     }
 
-    function addPlayerToServer(uint character, uint server) {
+    function addPlayerToServer(uint character, uint server) public {
         require(server < serverNumber);
         require(servers[server].playerNb < 10);
 
@@ -126,9 +126,9 @@ contract NujaBattle {
     ///////////////////////////////////////////////////////////////
     /// Server functions
 
-    function isTurn(uint indexServer, address addr) public view returns(bool ret) serverExists(indexServer) {
+    function isTurn(uint indexServer, address addr) public view returns(bool ret) {
         require(indexServer < serverNumber);
-        uint8 p = servers[indexServer].playerIndex[addr]
+        uint8 p = servers[indexServer].playerIndex[addr];
         require(p > 0);
         p -= 1;
         return servers[indexServer].players[p].number == servers[indexServer].turnPlayer;
@@ -144,7 +144,7 @@ contract NujaBattle {
 
         return (servers[indexServer].fields[x][y].building, servers[indexServer].fields[x][y].character - 1);
     }
-    function playerInformation(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex, uint8 health, uint8 positionX, uint8 positionY, uint8 weaponNumber) {
+    function playerInformation(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex, uint8 health, uint8 positionX, uint8 positionY, uint weaponNumber) {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
 
@@ -172,7 +172,7 @@ contract NujaBattle {
         servers[indexServer].players[indexPlayer].positionX = x;
         servers[indexServer].fields[x][y].character = indexPlayer+1;
     }
-    function changeHealth(uint indexServer, uint8 indexPlayer, uint newHealth) public {
+    function changeHealth(uint indexServer, uint8 indexPlayer, uint8 newHealth) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
         require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
@@ -193,7 +193,7 @@ contract NujaBattle {
         require(indexPlayer < servers[indexServer].playerNb);
         require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
 
-        uint8 nbWeapon = servers[indexServer].players[indexPlayer].weapons.length
+        uint nbWeapon = servers[indexServer].players[indexPlayer].weapons.length;
         require(indexWeapon < nbWeapon);
 
         servers[indexServer].players[indexPlayer].weapons[indexWeapon] = servers[indexServer].players[indexPlayer].weapons[nbWeapon-1];
@@ -203,40 +203,41 @@ contract NujaBattle {
 
 
     // Playing your turn
-    // Type:
+    // playMove:
     // 0: Simple move
     // 1: Simple attack
     // 2: Explore building
     // 3: Weapon
     // 4: Nuja power
-    function play(uint indexServer, uint8 type, uint index, uint8 x, uint8 y, uint8 dir) {
+    function play(uint indexServer, uint8 playMove, uint index, uint8 x, uint8 y, uint8 dir) public {
         require(indexServer < serverNumber);
-        require(type < 5);
+        require(playMove < 5);
 
-        uint8 p = servers[indexServer].playerIndex[msg.sender]
+        uint8 p = servers[indexServer].playerIndex[msg.sender];
         require(p > 0);
         p -= 1;
-        require(servers[indexServer].players[indexPlayer].number == turnPlayer);
+        require(servers[indexServer].players[p].number == servers[indexServer].turnPlayer);
 
-        if (type == 0) {
+        if (playMove == 0) {
             require(index < 8);
-            move(indexServer, p, index);
+            move(indexServer, p, uint8(index));
         }
-        else if (type == 1) {
+        else if (playMove == 1) {
             require(index < 8);
-            attack(indexServer, p, index);
+            attack(indexServer, p, uint8(index));
         }
-        else if (type == 2) {
-            exploreBuilding(p);
+        else if (playMove == 2) {
+            exploreBuilding(indexServer, p);
         }
-        else if (type == 3) {
-            require(index < servers[indexServer].players[indexPlayer].weapons.length);
+        else if (playMove == 3) {
+            require(index < servers[indexServer].players[p].weapons.length);
             require(x < 10 && y < 10 && dir < 8);
-            Weapon w = Weapon(servers[indexServer].weapons[servers[indexServer].players[indexPlayer].weapons[index]]);
+            Weapon w = Weapon(servers[indexServer].weapons[servers[indexServer].players[p].weapons[index]]);
             w.use(indexServer, dir, x, y, p);
         }
+        // TODO: Implement nuja power
 
-        turnPlayer = (turnPlayer+1)%playerNb;
+        servers[indexServer].turnPlayer = (servers[indexServer].turnPlayer+1)%(servers[indexServer].playerNb);
     }
 
     function move(uint indexServer, uint8 p, uint8 command) internal {
@@ -373,43 +374,43 @@ contract NujaBattle {
         fistAttack(indexServer, opponent);
     }
     function attackUp(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY-1].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY-1].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackUpRight(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY-1].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY-1].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackRight(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackDownRight(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY+1].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX+1][servers[indexServer].players[p].positionY+1].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackDown(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY+1].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY+1].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackDownLeft(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY+1].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY+1].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
     }
     function attackLeft(uint indexServer, uint8 p) internal {
-        uint8 opponent = servers[indexServer].[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY].character > 0;
+        uint8 opponent = servers[indexServer].fields[servers[indexServer].players[p].positionX-1][servers[indexServer].players[p].positionY].character;
         require(opponent > 0);
         opponent -= 1;
         fistAttack(indexServer, opponent);
@@ -425,11 +426,11 @@ contract NujaBattle {
     }
 
 
-    function exploreBuilding(uint8 p) internal {
+    function exploreBuilding(uint indexServer, uint8 p) internal {
         require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building == 2);
 
         // Give object to player
-        servers[indexServer].fields[servers[indexServer].players[p].weapons.push(0);
+        servers[indexServer].players[p].weapons.push(0);
 
         // Set building as explored
         servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1;

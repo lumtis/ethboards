@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./NujaRegistry.sol"
+import "./NujaRegistry.sol";
 import "./ERC721.sol";
 
 contract CharacterRegistry is ERC721 {
@@ -25,6 +25,7 @@ contract CharacterRegistry is ERC721 {
         string nickname;
         address owner;
         uint nuja;
+        uint indexUser;
         uint currentServer; // Beware the offset
     }
 
@@ -59,7 +60,7 @@ contract CharacterRegistry is ERC721 {
     /// Constructor
 
     function CharacterRegistry() public {
-        nujaRegister = address(0);
+        nujaRegistry = address(0);
         serverRegistry = address(0);
         owner = msg.sender;
         characterNumber = 0;
@@ -75,11 +76,12 @@ contract CharacterRegistry is ERC721 {
         serverRegistry = registry;
     }
 
-    function addCharacter(string nickname, address owner, uint nuja) public onlyOwner {
+    function addCharacter(string nickname, address characterOwner, uint nuja) public onlyOwner {
         NujaRegistry reg = NujaRegistry(nujaRegistry);
         require(nuja < reg.getNujaNumber());
 
-        Character memory c = Character(nickname, owner, nuja, 0);
+
+        Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner], 0);
         characterArray.push(c);
     }
 
@@ -118,7 +120,7 @@ contract CharacterRegistry is ERC721 {
 
     function ownerOf(uint256 _tokenId) public view returns (address _owner) {
         require(_tokenId < characterNumber);
-        Character c = characterArray[_tokenId];
+        Character memory c = characterArray[_tokenId];
         return c.owner;
     }
 
@@ -200,7 +202,7 @@ contract CharacterRegistry is ERC721 {
         Transfer(oldOwner, newOwner, _tokenId);
     }
 
-    function tokenOfOwnerByIndex(address _owner, uint256 _index) constant returns (uint tokenId) {
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) public constant returns (uint tokenId) {
         require(_index < characterCount[_owner]);
 
         return indexCharacter[_owner][_index];
@@ -208,12 +210,10 @@ contract CharacterRegistry is ERC721 {
 
 
     // For this case the only metadata is the name of the human
-    function tokenMetadata(uint256 _tokenId) constant returns (string infoUrl) {
+    // TODO: implement this function with 2 byte32 arrays
+    function tokenMetadata(uint256 _tokenId) public constant returns (string infoUrl) {
         require(_tokenId < characterNumber);
-
-        NujaRegistry reg = NujaRegistry(nujaRegistry);
-
-        return reg.tokenMetadata(characterArray[_tokenId].nuja);
+        return "nothing";
     }
 
 

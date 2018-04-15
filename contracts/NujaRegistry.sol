@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./Nuja.sol";
+import "./Nuja/Nuja.sol";
 
 contract NujaRegistry {
 
@@ -16,7 +16,7 @@ contract NujaRegistry {
     /// Attributes
     address owner;
     uint nujaNumber;
-    Address[] nujaArray;
+    address[] nujaArray;
 
     ///////////////////////////////////////////////////////////////
     /// Constructor
@@ -29,17 +29,24 @@ contract NujaRegistry {
     ///////////////////////////////////////////////////////////////
     /// Admin functions
 
-    function addNuja(address contract) public onlyOwner {
-        nujaArray.push(contract);
+    function addNuja(address nujaContract) public onlyOwner {
+        nujaArray.push(nujaContract);
         nujaNumber += 1;
     }
 
-    function tokenMetadata(uint256 index) constant returns (string metadataRet) {
+    function getContract(uint256 index) public constant returns (address contractRet) {
+        require(index < nujaNumber);
+
+        return nujaArray[index];
+    }
+
+    // TODO: implement function to get metadata through 2 byte32 arrays
+    /* function tokenMetadata(uint256 index) public constant returns (string metadataRet) {
         require(index < nujaNumber);
         Nuja n = Nuja(nujaArray[index]);
 
         return n.getMetadata();
-    }
+    } */
 
     // Get functions
     function getOwner() public view returns(address ret) {

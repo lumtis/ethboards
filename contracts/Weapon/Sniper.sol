@@ -1,14 +1,15 @@
 pragma solidity ^0.4.2;
 
 import "./Weapon.sol";
+import "../NujaBattle.sol";
 
 contract Sniper is Weapon {
 
-    function getType() pure returns (uint8 type) {
+    function getType() public pure returns (uint8 weaponType) {
         return 0;
     }
 
-    function getMetadata() pure returns (string metadata) {
+    function getMetadata() public pure returns (string metadata) {
         return '/ipfs/QmZvuRW7is3uu5kvpHaSrGaqHgsLvadGbP92K93o7XzQy9';
     }
 
