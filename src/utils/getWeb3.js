@@ -1,8 +1,12 @@
 import store from '../store'
 import Web3 from 'web3'
 
-var contractJson = require('../NujaBattle.json')
-var contractAddress = '0x8cdaf0cd259887258bc13a92c0a6da92698644c0'
+var nujaBattleJson = require('../../build/contracts/NujaBattle.json')
+var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var nujaRegistryJson = require('../../build/contracts/NujaRegistry.json')
+var nujaRegistryAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
+var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
+var characterRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {
@@ -21,12 +25,16 @@ function getWeb3() {
     // Use Mist/MetaMask's provider.
     web3 = new Web3(web3.currentProvider)
 
-    // Get humanity card contract
-    var contract = new web3.eth.Contract(contractJson.abi, contractAddress)
+    // Get contracts
+    var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+    var nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
+    var characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
 
     results = {
       web3Instance: web3,
-      contractInstance: contract
+      nujaBattleInstance: nujaBattle,
+      nujaRegistryInstance: nujaRegistry,
+      characterRegistryInstance: characterRegistry
     }
 
     console.log('Metamask.');
@@ -41,12 +49,14 @@ function getWeb3() {
     var provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/KKgWWlE5KNDx1nLnoVtq')
     web3 = new Web3(provider)
 
-    // Get contract
+    // Get contracts
     var contract = new web3.eth.Contract(contractJson.abi, contractAddress)
 
     results = {
       web3Instance: web3,
-      contractInstance: contract
+      nujaBattleInstance: nujaBattle,
+      nujaRegistryInstance: nujaRegistry,
+      characterRegistryInstance: characterRegistry
     }
 
     console.log('No matamask.');

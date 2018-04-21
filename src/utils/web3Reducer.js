@@ -8,7 +8,9 @@ const web3Reducer = (state = initialState, action) => {
   {
     return Object.assign({}, state, {
       web3Instance: action.payload.web3Instance,
-      contractInstance: action.payload.contractInstance
+      nujaBattleInstance: action.payload.nujaBattleInstance,
+      nujaRegistryInstance: action.payload.nujaRegistryInstance,
+      characterRegistryInstance: action.payload.characterRegistryInstance
     })
   }
 

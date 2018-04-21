@@ -13,48 +13,43 @@ class PlayerList extends Component {
     super(props)
 
     this.state = {
-      contract: store.getState().web3.contractInstance,
-      nb: 0   // TODO: set player of server list instead
+      nujaBattle: store.getState().web3.nujaBattleInstance,
+      playerArray: [],
     }
 
     store.subscribe(() => {
       this.setState({
-        contract: store.getState().web3.contractInstance,
+        nujaBattle: store.getState().web3.nujaBattleInstance,
       });
     });
   }
 
   static defaultProps = {
+    server: 0
   }
 
   componentWillMount() {
     var self = this
-    if (self.state.contract != null) {
-      self.state.contract.methods.getCharacterNb().call().then(function(ret) {
-        self.setState({nb: ret})
+    if (self.state.nujaBattle != null) {
+      self.state.nujaBattle.methods.getplayerNb().call().then(function(nb) {
+        // For each player, retreive informations
+        for (var i = 0; i < nb; i++) {
+          self.state.nujaBattle.methods.playerInformation(self.props.server, i).call().then(function(infoPlayer) {
+
+            // Pushing in player array the new player
+            var playerArrayTmp = self.state.playerArray
+            playerArrayTmp.push(<div key={i} className="col-md-6"><Player index={infoPlayer.characterIndex}/></div>)
+            self.setState({playerArray: playerArrayTmp})
+          });
+        }
       });
     }
   }
 
-  // componentDidUpdate() {
-  //   var self = this
-  //   if (self.state.contract != null) {
-  //     self.state.contract.methods.getCharacterNb().call().then(function(ret) {
-  //       self.setState({nb: ret})
-  //     });
-  //   }
-  // }
-
   render() {
-    var playerArray = []
-
-    for (var i = 0; i < this.state.nb; i++) {
-        playerArray.push(<div key={i} className="col-md-6"><Player index={i}/></div>)
-    }
-
     return (
         <div className="row">
-          <div>{playerArray}</div>
+          <div>{this.state.playerArray}</div>
         </div>
     );
   }

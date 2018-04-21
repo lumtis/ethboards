@@ -29,14 +29,14 @@ class Actions extends Component {
     this.attackLeft = this.attackLeft.bind(this);
 
     this.state = {
-      contract: store.getState().web3.contractInstance,
+      nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
       myTurn: false
     }
 
     store.subscribe(() => {
       this.setState({
-        contract: store.getState().web3.contractInstance,
+        nujaBattle: store.getState().web3.nujaBattleInstance,
         account: store.getState().account.accountInstance
       });
     });

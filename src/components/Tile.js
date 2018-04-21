@@ -12,17 +12,18 @@ class Tile extends Component {
 
     this.state = {
       building: 0,
-      contract: store.getState().web3.contractInstance
+      nujaBattle: store.getState().web3.nujaBattleInstance,
     }
 
     store.subscribe(() => {
       this.setState({
-        contract: store.getState().web3.contractInstance
+        nujaBattle: store.getState().web3.nujaBattleInstance,
       });
     });
   }
 
   static defaultProps = {
+    server: 0,
     x: 0,
     y: 0
   }
@@ -30,30 +31,12 @@ class Tile extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.contract != null) {
-      self.state.contract.methods.getField(self.props.x, self.props.y).call().then(function(ret) {
+    if (self.state.nujaBattle != null) {
+      self.state.nujaBattle.methods.fieldInformation(self.props.server, self.props.x, self.props.y).call().then(function(ret) {
         self.setState({building: ret.buildingRet})
       });
     }
-    else {
-      self.setState({building: 0})
-    }
   }
-
-  // componentDidUpdate() {
-  //   var self = this
-  //
-  //   console.log('test')
-  //
-  //   if (self.state.contract != null) {
-  //     self.state.contract.methods.getField(self.props.x, self.props.y).call().then(function(ret) {
-  //       self.setState({building: ret.buildingRet})
-  //     });
-  //   }
-  //   else {
-  //     self.setState({building: 0})
-  //   }
-  // }
 
   render() {
     var offsetX = this.props.x*64
