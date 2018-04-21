@@ -134,6 +134,29 @@ contract NujaBattle {
         return servers[indexServer].players[p].number == servers[indexServer].turnPlayer;
     }
 
+    function getServerName(uint indexServer) public view returns(string nameRet) {
+        require(indexServer < serverNumber);
+        return servers[indexServer].name;
+    }
+
+    function getPlayerNb(uint indexServer) public view returns(uint8 playerNbRet) {
+        require(indexServer < serverNumber);
+        return servers[indexServer].playerNb;
+    }
+
+    function getWeaponAddress(uint indexServer, uint8 weapon) public view returns(address addrRet) {
+        require(indexServer < serverNumber);
+        require(weapon < servers[indexServer].weapons.length);
+        return servers[indexServer].weapons[weapon];
+    }
+
+    function getIndexFromAddress(uint indexServer, address owner) public view returns(uint8 indexRet) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].playerIndex[owner] > 0);
+
+        return servers[indexServer].playerIndex[owner]-1;
+    }
+
     // Interface for nuja and weapon
 
     // views

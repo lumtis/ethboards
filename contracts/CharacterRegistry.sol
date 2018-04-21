@@ -295,6 +295,12 @@ contract CharacterRegistry is ERC721 {
         return sellOrderList.length;
     }
 
+    function getCharacterInfo(uint _tokenId) public view returns(string nicknameRet, address ownerRet, uint nujaRet, uint currentServerRet) {
+        require(_tokenId < characterNumber);
+
+        Character memory ret = characterArray[_tokenId];
+        return(ret.nickname, ret.owner, ret.nuja, ret.currentServer);
+    }
 
     // Get functions
     function getOwner() public view returns(address ret) {
