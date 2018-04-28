@@ -6,6 +6,10 @@ import '../css/actions.css'
 
 var noop = function() {};
 
+
+// TODO: Implement weapon and nuja power
+
+
 class Actions extends Component {
   constructor(props) {
     super(props)
@@ -43,6 +47,7 @@ class Actions extends Component {
   }
 
   static defaultProps = {
+    server: 0
   }
 
   componentWillMount() {
@@ -54,99 +59,94 @@ class Actions extends Component {
     }
   }
 
-  // componentDidUpdate() {
-  //   var self = this
-  //
-  //   console.log('toast')
-  //
-  //   if (self.state.contract != null) {
-  //     self.state.contract.methods.isTurn(self.state.account.address).call().then(function(ret) {
-  //       self.setState({myTurn: ret})
-  //     });
-  //   }
-  // }
-
   moveUpLeft(e) {
     e.preventDefault();
-    this.command(0)
+    this.command(0, 0, 0, 0, 0)
   }
   moveUp(e) {
     e.preventDefault();
-    this.command(1)
+    this.command(0, 1, 0, 0, 0)
   }
   moveUpRight(e) {
     e.preventDefault();
-    this.command(2)
+    this.command(0, 2, 0, 0, 0)
   }
   moveRight(e) {
     e.preventDefault();
-    this.command(3)
+    this.command(0, 3, 0, 0, 0)
   }
   moveDownRight(e) {
     e.preventDefault();
-    this.command(4)
+    this.command(0, 4, 0, 0, 0)
   }
   moveDown(e) {
     e.preventDefault();
-    this.command(5)
+    this.command(0, 5, 0, 0, 0)
   }
   moveDownLeft(e) {
     e.preventDefault();
-    this.command(6)
+    this.command(0, 6, 0, 0, 0)
   }
   moveLeft(e) {
     e.preventDefault();
-    this.command(7)
+    this.command(0, 7, 0, 0, 0)
   }
 
 
   attackUpLeft(e) {
     e.preventDefault();
-    this.command(8)
+    this.command(1, 0, 0, 0, 0)
   }
   attackUp(e) {
     e.preventDefault();
-    this.command(9)
+    this.command(1, 1, 0, 0, 0)
   }
   attackUpRight(e) {
     e.preventDefault();
-    this.command(10)
+    this.command(1, 2, 0, 0, 0)
   }
   attackRight(e) {
     e.preventDefault();
-    this.command(11)
+    this.command(1, 3, 0, 0, 0)
   }
   attackDownRight(e) {
     e.preventDefault();
-    this.command(12)
+    this.command(1, 4, 0, 0, 0)
   }
   attackDown(e) {
     e.preventDefault();
-    this.command(13)
+    this.command(1, 5, 0, 0, 0)
   }
   attackDownLeft(e) {
     e.preventDefault();
-    this.command(14)
+    this.command(1, 6, 0, 0, 0)
   }
   attackLeft(e) {
     e.preventDefault();
-    this.command(15)
+    this.command(1, 7, 0, 0, 0)
+  }
+
+  exploreBuilding(e) {
+    e.preventDefault();
+    this.command(2, 0, 0, 0, 0)
   }
 
 
-  command(c) {
-    this.state.contract.methods.play(c).send({
-      from: this.state.account.address,
-      // gas: 500000, TODO: why this is buggy ?
-      gasPrice: 2000000000,
-    })
-    .on('error', function(error){ console.log('ERROR: ' + error)})
-    .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-    .on('receipt', function(receipt){ console.log('receipt')})
-    .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-    .then(function(ret) {
-      alert('Done')
-    });
+  command(playMove, index, x, y, dir) {
+    if (self.state.nujaBattle != null) {
+      this.state.contract.methods.play(this.props.server, playMove, index, x, y, dir).send({
+        from: this.state.account.address,
+        // gas: 500000, TODO: why this is buggy ?
+        gasPrice: 2000000000,
+      })
+      .on('error', function(error){ console.log('ERROR: ' + error)})
+      .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+      .on('receipt', function(receipt){ console.log('receipt')})
+      .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+      .then(function(ret) {
+        alert('Done')
+      });
+    }
   }
 
   render() {
@@ -185,6 +185,7 @@ class Actions extends Component {
           <button onClick={this.attackDown} className="buttonAction"><i className="fa fa-arrow-down"></i></button>
           <button onClick={this.attackDownRight} className="buttonAction"><i className="fa fa-arrow-up downRight"></i></button>
         </div>
+        <button onClick={this.attackDownRight} className="buttonAction">Explore building<i className="fa fa-building"></i></button>
       </div>
     }
     else {

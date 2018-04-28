@@ -16,7 +16,10 @@ class Play extends Component {
   constructor(props) {
     super(props)
 
+    this.changeServer = this.changeServer.bind(this, 'id');
+
     this.state = {
+      server: 0
     }
   }
 
@@ -34,11 +37,18 @@ class Play extends Component {
     })
   }
 
+  changeServer(id, e) {
+    e.preventDefault();
+    var self = this;
+
+    self.setState({server: id})
+  }
+
   render() {
     return (
       <div>
         <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
-          <Sidebar />
+          <Sidebar server={this.state.server} onChangeServer={this.changeServer.bind(this, 'id')} />
         </div>
         <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
 
@@ -46,12 +56,11 @@ class Play extends Component {
             <Bar style={{paddingRight:'10px'}} />
             <div className="row" style={{padding: '30px'}}>
               <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
-                <h1>Map Name</h1>
-                <Map />
+                <Map server={this.state.server} />
               </div>
               <div className="col-md-12" style={{width:'100%', top:'660px'}}>
                 <h1 style={{marginBottom: '40px'}}>Other players :</h1>
-                <PlayerList />
+                <PlayerList server={this.state.server} />
               </div>
             </div>
           </div>

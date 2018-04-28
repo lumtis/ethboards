@@ -71,7 +71,7 @@ class PlayerSprite extends Component {
                 self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
               })
             });
-          }
+          });
         }
       });
     }

@@ -22,7 +22,6 @@ class Info extends Component {
 
   componentWillMount() {
   }
-//        <img src="/images/title.png" style={{width: '100%', backgroundImage:'url(\'/images/vaporbg4.jpg\')'}}></img>
 
   render() {
     return (

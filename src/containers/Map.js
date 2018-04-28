@@ -17,6 +17,7 @@ class Map extends Component {
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       playerArray: [],
+      mapName: 'undefined name'
     }
 
     store.subscribe(() => {
@@ -32,7 +33,7 @@ class Map extends Component {
 
   componentWillMount() {
     var self = this
-    if (self.state.contract != null) {
+    if (self.state.nujaBattle != null) {
       self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
 
         // For each player, retreive informations
@@ -45,6 +46,9 @@ class Map extends Component {
             self.setState({playerArray: playerArrayTmp})
           });
         }
+      });
+      self.state.nujaBattle.methods.getServerName(self.props.server).call().then(function(name) {
+        self.setState({mapName: name})
       });
     }
   }
@@ -59,18 +63,21 @@ class Map extends Component {
     // Pushing grasses
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < columns; j++) {
-          tiles[rows*i+j] = <Tile key={rows*i+j} x={i} y={j} />
+          tiles[rows*i+j] = <Tile key={rows*i+j} server={this.props.server} x={i} y={j} />
       }
     }
 
     return (
-      <div style={{
-        height: '640px',
-        width: '640px',
-        position: 'absolute'
-      }}>
-        <div>{tiles}</div>
-        <div>{this.state.playerArray}</div>
+      <div>
+        <h1>{this.state.mapName}</h1>
+        <div style={{
+          height: '640px',
+          width: '640px',
+          position: 'absolute'
+        }}>
+          <div>{tiles}</div>
+          <div>{this.state.playerArray}</div>
+        </div>
       </div>
     );
   }

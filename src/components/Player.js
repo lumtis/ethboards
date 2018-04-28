@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
+import WeaponList from '../containers/WeaponList'
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
 
@@ -26,7 +27,7 @@ class Player extends Component {
       server: 0,
       health: 0,        // Server info
       number: 0,
-      weapons: [],
+      weaponList: <div></div>,
       imageData: '',    // Nuja info
       name: ''
     }
@@ -70,20 +71,10 @@ class Player extends Component {
                 number: playerIndex,
               })
 
-              // Get all the weapons
-              var weaponsNb = playerInfo.weaponNumber
-              var i;
-              for (i = 0; i < weaponsNb; i++) {
-                self.state.nujaBattle.methods.playerWeapons(ret.currentServerRet, playerIndex, i).call().then(function(weapon) {
-                  self.state.nujaBattle.methods.getWeaponAddress(ret.currentServerRet, weapon).call().then(function(weaponAddr) {
-                    weaponsTmp = self.state.weapons
-                    weaponsTmp.push(weaponAddr)
-                    self.setState({
-                      weapons: weaponsTmp,
-                    })
-                  }
-                }
-              }
+              // Get the weapons
+              self.setState({
+                weaponList: <WeaponList server={ret.currentServerRet} player={playerIndex}/>,
+              })
             });
           });
         }
@@ -116,10 +107,11 @@ class Player extends Component {
             <img src={this.state.imageData} style={{width: '100%'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
-            <p>Name: {this.state.name}</p>
+            <p>{this.state.name}</p>
             <p>Health: {this.state.health}</p>
           </div>
         </div>
+        {this.state.weaponList}
         <p style={{fontSize: '10px'}}>{this.state.owner}</p>
       </div>
     );

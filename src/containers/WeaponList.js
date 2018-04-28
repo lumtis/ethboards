@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import store from '../store'
 
+import WeaponSprite from '../components/WeaponSprite'
 var ipfsAPI = require('ipfs-api')
 
 var noop = function() {};
@@ -11,6 +12,7 @@ class WeaponList extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      weaponArray: [],
     }
 
     store.subscribe(() => {
@@ -18,6 +20,38 @@ class WeaponList extends Component {
         nujaBattle: store.getState().web3.nujaBattleInstance,
       });
     });
+  }
+
+  static defaultProps = {
+    server: 0,
+    player: 0
+  }
+
+  componentWillMount() {
+    var self = this
+    if (self.state.nujaBattle != null) {
+      self.state.nujaBattle.methods.playerInformation(self.props.server, self.props.player).call().then(function(playerInfo) {
+        // For each weapon, retreive id
+        for (var i = 0; i < playerInfo.weaponNumber; i++) {
+          self.state.nujaBattle.methods.playerWeapons(self.props.server, self.props.player, i).call().then(function(weaponId) {
+
+            self.state.nujaBattle.methods.getWeaponAddress(self.props.server, weaponId).call().then(function(weaponAddress) {
+              var weaponArrayTmp = self.state.weaponArray
+              weaponArrayTmp.push(<div key={i} className="col-md-4"><WeaponSprite contractAddress={weaponAddress}/></div>)
+              self.setState({weaponArray: weaponArrayTmp})
+            });
+          });
+        }
+      });
+    }
+  }
+
+  render() {
+    return (
+        <div className="row">
+          <div>{this.state.weaponArray}</div>
+        </div>
+    );
   }
 }
 
