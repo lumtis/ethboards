@@ -83,6 +83,8 @@ contract CharacterRegistry is ERC721 {
 
         Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner], 0);
         characterArray.push(c);
+
+        characterNumber += 1;
     }
 
     function setCharacterServer(uint256 c, uint server) public fromServer {

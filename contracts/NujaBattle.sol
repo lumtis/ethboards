@@ -37,8 +37,11 @@ contract NujaBattle {
         uint8 playerNb;
         uint8 turnPlayer;
         uint turnGame;
-        mapping (uint => mapping (uint => Field)) fields;
-        Player[] players;
+        mapping (uint8 => mapping (uint8 => Field)) fields;
+
+        /* Player[] players; */
+        mapping (uint8 => Player) players;
+
         mapping (address => uint8) playerIndex;   // Warning: offset
         address[] weapons;
         mapping (address => bool) trusted;
@@ -64,7 +67,7 @@ contract NujaBattle {
     }
 
     function addServer(string name) public {
-        Server storage newServer;
+        Server memory newServer;
         newServer.name = name;
         newServer.owner = msg.sender;
         newServer.playerNb = 0;
@@ -115,7 +118,9 @@ contract NujaBattle {
         newPlayer.positionY = numero;
 
         // Player information for server
-        servers[server].players.push(newPlayer);
+        /* servers[server].players.push(newPlayer); */
+        servers[server].players[servers[server].playerNb] = newPlayer;
+
         servers[server].fields[numero][numero].character = numero+1;
         servers[server].playerIndex[msg.sender] = numero+1;
 
@@ -139,6 +144,10 @@ contract NujaBattle {
         return servers[indexServer].name;
     }
 
+    function getServerNb() public view returns(uint nbRet) {
+        return serverNumber;
+    }
+
     function getPlayerNb(uint indexServer) public view returns(uint8 playerNbRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].playerNb;
@@ -150,17 +159,23 @@ contract NujaBattle {
         return servers[indexServer].weapons[weapon];
     }
 
-    function getIndexFromAddress(uint indexServer, address owner) public view returns(uint8 indexRet) {
+    function getIndexFromAddress(uint indexServer, address ownerAddress) public view returns(uint8 indexRet) {
         require(indexServer < serverNumber);
-        require(servers[indexServer].playerIndex[owner] > 0);
+        require(servers[indexServer].playerIndex[ownerAddress] > 0);
 
-        return servers[indexServer].playerIndex[owner]-1;
+        return servers[indexServer].playerIndex[ownerAddress]-1;
+    }
+
+    function isAddressInServer(uint indexServer, address ownerAddress) public view returns(bool isRet) {
+        require(indexServer < serverNumber);
+
+        return (servers[indexServer].playerIndex[ownerAddress] > 0);
     }
 
     // Interface for nuja and weapon
 
     // views
-    function fieldInformation(uint indexServer, uint x, uint y) public view returns(uint8 buildingRet, uint8 characterRet) {
+    function fieldInformation(uint indexServer, uint8 x, uint8 y) public view returns(uint8 buildingRet, uint8 characterRet) {
         require(indexServer < serverNumber);
         require(x < 10);
         require(y < 10);
