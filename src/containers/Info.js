@@ -1,82 +1,7 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import '../App.css'
-import store from '../store'
 import Footer from '../components/Footer'
-
-
-var noop = function() {};
-
-
-class Info extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-    }
-  }
-
-  static defaultProps = {
-  }
-
-  componentWillMount() {
-  }
-
-  render() {
-    return (
-      <div style={{overflowX: 'hidden'}}>
-        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-          <h1>No ICO bullshit</h1>
-          <h1>No collectible bullshit</h1>
-          <h1>Just a fucking awesome game</h1>
-        </div>
-        <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-12" style={{textAlign: 'center'}}>
-            <div style={infoStyle2}>
-              <h1>Cryptos are dead</h1>
-              <p>test</p>
-            </div>
-          </div>
-        </div>
-        <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-6">
-            <img src="/images/nujaks/arm.png" style={imageStyle3}></img>
-          </div>
-          <div className="col-md-6">
-            <div style={infoStyle}>
-              <h1>Epic battles</h1>
-              <p>test</p>
-            </div>
-          </div>
-        </div>
-        <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-6">
-            <div style={infoStyle}>
-              <h1>Get rare nuja</h1>
-              <p>test</p>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <img src="/images/nujaks/cardPrez.png" style={imageStyle}></img>
-          </div>
-        </div>
-        <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-6">
-            <img src="/images/nujaks/weapon.png" style={imageStyle2}></img>
-          </div>
-          <div className="col-md-6">
-            <div style={infoStyle}>
-              <h1>Destructive weapons</h1>
-              <p>test</p>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-}
 
 const infoStyle = {
   padding: '20px',
@@ -121,6 +46,76 @@ const imageStyle3 = {
   borderStyle:'solid',
   borderWidth:'1px',
   backgroundImage:'url(\'/images/vaporbg3.jpg\')'
+}
+
+
+class Info extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+    }
+  }
+
+  static defaultProps = {
+  }
+
+  componentWillMount() {
+  }
+
+  render() {
+    return (
+      <div style={{overflowX: 'hidden'}}>
+        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+          <h1>No ICO bullshit</h1>
+          <h1>No collectible bullshit</h1>
+          <h1>Just a fucking awesome game</h1>
+        </div>
+        <div className="row" style={{padding: '30px'}}>
+          <div className="col-md-12" style={{textAlign: 'center'}}>
+            <div style={infoStyle2}>
+              <h1>Cryptos are dead</h1>
+              <p>test</p>
+            </div>
+          </div>
+        </div>
+        <div className="row" style={{padding: '30px'}}>
+          <div className="col-md-6">
+            <img src="/images/nujaks/arm.png" alt="Nuja" style={imageStyle3}></img>
+          </div>
+          <div className="col-md-6">
+            <div style={infoStyle}>
+              <h1>Epic battles</h1>
+              <p>test</p>
+            </div>
+          </div>
+        </div>
+        <div className="row" style={{padding: '30px'}}>
+          <div className="col-md-6">
+            <div style={infoStyle}>
+              <h1>Get rare nuja</h1>
+              <p>test</p>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <img src="/images/nujaks/cardPrez.png" alt="Nuja" style={imageStyle}></img>
+          </div>
+        </div>
+        <div className="row" style={{padding: '30px'}}>
+          <div className="col-md-6">
+            <img src="/images/nujaks/weapon.png" alt="Nuja" style={imageStyle2}></img>
+          </div>
+          <div className="col-md-6">
+            <div style={infoStyle}>
+              <h1>Destructive weapons</h1>
+              <p>test</p>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 }
 
 

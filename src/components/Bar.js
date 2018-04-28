@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 
 import store from '../store'
 import '../css/bar.css'
 
-var noop = function() {};
 
 class Bar extends Component {
   constructor(props) {
@@ -31,7 +30,7 @@ class Bar extends Component {
       var addr = <p>No metamask</p>
     }
     else {
-      var addr = <p>{this.state.account.address}</p>
+      addr = <p>{this.state.account.address}</p>
     }
 
     return (

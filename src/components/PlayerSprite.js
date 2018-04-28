@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import Player from '../components/Player'
 import store from '../store'
@@ -7,8 +6,6 @@ import imageConverter from '../utils/imageConverter'
 
 var ipfsAPI = require('ipfs-api')
 var nujaJson = require('../../build/contracts/Nuja.json')
-
-var noop = function() {};
 
 class PlayerSprite extends Component {
   constructor(props) {
@@ -51,15 +48,17 @@ class PlayerSprite extends Component {
       self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(ret) {
         // Retrieve server info
         if (self.state.nujaBattle != null) {
-          self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, self.state.account.address).call().then(function(playerIndex) {
-            self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
-              // Update server infos
-              self.setState({
-                positionX: playerInfo.positionX,
-                positionY: playerInfo.positionY,
-              })
+          if (self.state.account != null) {
+            self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, self.state.account.address).call().then(function(playerIndex) {
+              self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
+                // Update server infos
+                self.setState({
+                  positionX: playerInfo.positionX,
+                  positionY: playerInfo.positionY,
+                })
+              });
             });
-          });
+          }
         }
 
         // Retrieve nuja info
@@ -97,7 +96,7 @@ class PlayerSprite extends Component {
 
     return (
       <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-        <img src={this.state.imageData} style={{
+        <img src={this.state.imageData} alt="Nuja" style={{
           width: '32px',
           position: 'absolute',
           top: offsetY+'px',

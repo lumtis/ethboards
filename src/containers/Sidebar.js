@@ -1,13 +1,20 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import Player from '../components/Player'
 import Actions from '../components/Actions'
 
 import store from '../store'
 
-
 var noop = function() {};
+
+var inputStyle = {
+  width: '80%',
+  margin: '0 auto',
+  backgroundColor: 'rgba(236, 236, 236, 0.6)',
+  borderRadius: 0,
+  border: 0
+};
+
 
 class Sidebar extends Component {
   constructor(props) {
@@ -99,13 +106,5 @@ class Sidebar extends Component {
     );
   }
 }
-
-var inputStyle = {
-  width: '80%',
-  margin: '0 auto',
-  backgroundColor: 'rgba(236, 236, 236, 0.6)',
-  borderRadius: 0,
-  border: 0
-};
 
 export default Sidebar

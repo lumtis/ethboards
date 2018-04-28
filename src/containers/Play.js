@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import store from '../store'
 
-import Footer from '../components/Footer'
 import Bar from '../components/Bar'
 import Map from '../containers/Map'
 import Sidebar from '../containers/Sidebar'
 import PlayerList from '../containers/PlayerList'
-
-var noop = function() {};
 
 
 class Play extends Component {

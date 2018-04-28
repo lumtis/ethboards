@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import Player from '../components/Player'
 
 import store from '../store'
-
-
-var noop = function() {};
 
 class PlayerList extends Component {
   constructor(props) {

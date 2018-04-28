@@ -2,9 +2,6 @@ import React, { Component } from 'react'
 import store from '../store'
 
 import WeaponSprite from '../components/WeaponSprite'
-var ipfsAPI = require('ipfs-api')
-
-var noop = function() {};
 
 class WeaponList extends Component {
   constructor(props) {

@@ -8,7 +8,6 @@ var weaponJson = require('../../build/contracts/Weapon.json')
 import WeaponDesc from '../components/WeaponDesc'
 
 import imageConverter from '../utils/imageConverter'
-var noop = function() {};
 
 class WeaponSprite extends Component {
   constructor(props) {
@@ -64,7 +63,7 @@ class WeaponSprite extends Component {
 
     return (
       <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-        <img src={this.state.imageData}></img>
+        <img src={this.state.imageData} alt="Nuja"></img>
         <ReactCursorPosition>
           <div style={{
             top: this.props.position.y-100+'px',

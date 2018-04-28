@@ -5,7 +5,19 @@ var ipfsAPI = require('ipfs-api')
 var weaponJson = require('../../build/contracts/Weapon.json')
 
 import imageConverter from '../utils/imageConverter'
-var noop = function() {};
+
+
+const infoStyle = {
+  position: 'relative',
+  padding: '20px',
+  width: '80%',
+  minHeight: '100px',
+  backgroundColor: 'rgba(240, 240, 240, 0.7)',
+  boxShadow:'5px 5px rgba(0, 0, 0, 1)',
+  marginRight: 'auto',
+  marginLeft: 'auto',
+  marginBottom: '20px'
+};
 
 class WeaponDesc extends Component {
   constructor(props) {
@@ -53,7 +65,7 @@ class WeaponDesc extends Component {
       <div style={infoStyle}>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
-            <img src={this.state.imageData} style={{width: '100%'}}></img>
+            <img src={this.state.imageData} alt="Nuja" style={{width: '100%'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>
@@ -65,16 +77,5 @@ class WeaponDesc extends Component {
   }
 }
 
-const infoStyle = {
-  position: 'relative',
-  padding: '20px',
-  width: '80%',
-  minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.7)',
-  boxShadow:'5px 5px rgba(0, 0, 0, 1)',
-  marginRight: 'auto',
-  marginLeft: 'auto',
-  marginBottom: '20px'
-};
 
 export default WeaponDesc

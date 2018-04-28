@@ -1,12 +1,24 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 import { confirmAlert } from 'react-confirm-alert'
 
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import store from '../store'
-
 
 var noop = function() {};
+
+const footerStyle = {
+  fontSize: '16px',
+  height: '100px',
+  width: '100%',
+  backgroundColor: '#16D7AC',
+  color: 'white',
+  textAlign: 'center',
+  marginTop: '30px',
+};
+
+const linkStyle = {
+  cursor: 'pointer',
+  color: 'white'
+}
 
 class Footer extends Component {
   constructor(props) {
@@ -78,21 +90,6 @@ class Footer extends Component {
       </div>
     );
   }
-}
-
-const footerStyle = {
-  fontSize: '16px',
-  height: '100px',
-  width: '100%',
-  backgroundColor: '#16D7AC',
-  color: 'white',
-  textAlign: 'center',
-  marginTop: '30px',
-};
-
-const linkStyle = {
-  cursor: 'pointer',
-  color: 'white'
 }
 
 export default Footer

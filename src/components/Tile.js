@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
 import store from '../store'
-
-
-var noop = function() {};
 
 class Tile extends Component {
   constructor(props) {
@@ -42,9 +38,9 @@ class Tile extends Component {
     var offsetX = this.props.x*64
     var offsetY = this.props.y*64
 
-    var field = <img></img>
+    var field = <img alt="Nuja"></img>
     if(this.state.building > 0) {
-      field = <img src="/images/tileCity1.png" style={{
+      field = <img src="/images/tileCity1.png" alt="Nuja" style={{
         width: '64px',
         position: 'absolute',
         top: offsetY+'px',
@@ -52,7 +48,7 @@ class Tile extends Component {
       }}></img>
     }
     else {
-      field = <img src="/images/tile.png" style={{
+      field = <img src="/images/tile.png" alt="Nuja" style={{
         width: '64px',
         position: 'absolute',
         top: offsetY+'px',

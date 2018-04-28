@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
-import { Loop, Stage, World, TileMap, Sprite } from 'react-game-kit';
 
 import PlayerSprite from '../components/PlayerSprite'
 import Tile from '../components/Tile'
 
 import store from '../store'
 
-
-var noop = function() {};
 
 class Map extends Component {
   constructor(props) {
@@ -57,7 +53,6 @@ class Map extends Component {
     const rows = 10
     const columns = 10
 
-    var layers = []
     var tiles = []
 
     // Pushing grasses
