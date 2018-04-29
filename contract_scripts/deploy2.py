@@ -3,7 +3,7 @@ import json
 from web3 import Web3, HTTPProvider
 
 
-# Test many player on the server
+# Test one player for object and etc
 
 
 web3 = Web3(HTTPProvider('http://localhost:7545'))
@@ -185,33 +185,11 @@ data = json.loads(jsonData)
 nb = web3.eth.contract(data['abi'], NujaBattleAddress)
 tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000, 'gas': 67219750}).addServer('New York city')
 tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 2, 2)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 7, 7)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 3, 9)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 1, 3)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 8, 2)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 7, 6)
+tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addBuildingToServer(0, 0, 0)
 tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
 tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addWeaponToServer(0, JetpackAddress)
 tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
 
 # Adding character
 tx_hash = nb.transact(transaction={'from': '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', 'gasPrice': 2000000000}).addPlayerToServer(0, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0xf17f52151EbEF6C7334FAD080c5704D77216b732', 'gasPrice': 2000000000}).addPlayerToServer(1, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0xC5fdf4076b8F3A5357c5E395ab970B5B54098Fef', 'gasPrice': 2000000000}).addPlayerToServer(2, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x821aEa9a577a9b44299B9c15c88cf3087F3b5544', 'gasPrice': 2000000000}).addPlayerToServer(3, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', 'gasPrice': 2000000000}).addPlayerToServer(4, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x2932b7A2355D6fecc4b5c0B6BD44cC31df247a2e', 'gasPrice': 2000000000}).addPlayerToServer(5, 0)
-tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
-tx_hash = nb.transact(transaction={'from': '0x2191eF87E392377ec08E7c08Eb105Ef5448eCED5', 'gasPrice': 2000000000}).addPlayerToServer(6, 0)
 tx_receipt = web3.eth.getTransactionReceipt(tx_hash)
