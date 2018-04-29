@@ -8,7 +8,7 @@ import imageConverter from '../utils/imageConverter'
 
 
 const infoStyle = {
-  position: 'relative',
+  position: 'absolute',
   padding: '20px',
   width: '80%',
   minHeight: '100px',
@@ -42,13 +42,14 @@ class WeaponDesc extends Component {
   }
 
   componentWillMount() {
+    var self = this
     var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, this.props.contractAddress)
     var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (weaponContract != null) {
       weaponContract.methods.getMetadata().call().then(function(ret) {
-        ipfs.files.get(ret + '/sprite.gif', function (err, files) {
-          self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+        ipfs.files.get(ret + '/image.png', function (err, files) {
+          self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
         })
         ipfs.files.get(ret + '/name/default', function (err, files) {
           self.setState({name: files[0].content.toString('utf8')})
@@ -65,7 +66,7 @@ class WeaponDesc extends Component {
       <div style={infoStyle}>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
-            <img src={this.state.imageData} alt="Nuja" style={{width: '100%'}}></img>
+            <img src={this.state.imageData} alt="Nuja" style={{width: '100px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>

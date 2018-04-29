@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Particles from 'react-particles-js';
-import Link from 'react-router-dom'
+import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 import Info from '../containers/Info'
 
@@ -33,33 +33,33 @@ class Welcome extends Component {
   render() {
     return (
       <div>
-      <div className="welcomeWrapper" style={{position: 'absolute'}}>
-        <Particles params={{
-      		particles: {
-            number: {
-              value: 120
-            },
-            size: {
-              value: 3
-            },
-            line_linked: {
-              distance: 70
-            },
-            move: {
-              speed: 2
-            }
-      		}
-      	}}
-        style={{position: 'absolute'}}/>
+        <div className="welcomeWrapper" style={{position: 'absolute'}}>
+          <Particles params={{
+        		particles: {
+              number: {
+                value: 120
+              },
+              size: {
+                value: 3
+              },
+              line_linked: {
+                distance: 70
+              },
+              move: {
+                speed: 2
+              }
+        		}
+        	}}
+          style={{position: 'absolute'}}/>
 
-        <img src="/images/title.png" alt="Nuja" style={{width: '100%', bottom: 0, position: 'absolute'}}></img>
-        <div style={{textAlign: 'center'}}>
-          <Link to="/play"><button className="button" style={playButton}>Play</button></Link>
+          <img src="/images/title.png" alt="Nuja" style={{width: '100%', bottom: 0, position: 'absolute'}}></img>
+          <div style={{textAlign: 'center'}}>
+            <Link to="/play"><button className="button" style={playButton}>Play</button></Link>
+          </div>
         </div>
-      </div>
-      <div style={{position:'absolute', marginTop:'100vh'}} >
-        <Info />
-      </div>
+        <div style={{position:'absolute', marginTop:'100vh'}} >
+          <Info />
+        </div>
       </div>
     );
   }

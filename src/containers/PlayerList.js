@@ -34,7 +34,7 @@ class PlayerList extends Component {
 
             // Pushing in player array the new player
             var playerArrayTmp = self.state.playerArray
-            playerArrayTmp.push(<div key={i} className="col-md-6"><Player index={infoPlayer.characterIndex}/></div>)
+            playerArrayTmp.push(<div key={infoPlayer.characterIndex} className="col-md-6"><Player index={infoPlayer.characterIndex}/></div>)
             self.setState({playerArray: playerArrayTmp})
           });
         }

@@ -38,7 +38,7 @@ class Map extends Component {
 
             // Pushing in player array the new player
             var playerArrayTmp = self.state.playerArray
-            playerArrayTmp.push(<PlayerSprite key={i} index={infoPlayer.characterIndex}/>)
+            playerArrayTmp.push(<PlayerSprite key={infoPlayer.characterIndex} index={infoPlayer.characterIndex}/>)
             self.setState({playerArray: playerArrayTmp})
           });
         }

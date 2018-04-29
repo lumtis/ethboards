@@ -49,12 +49,10 @@ class Sidebar extends Component {
     if (self.state.account != null) {
       if (self.state.nujaBattle != null) {
         self.state.nujaBattle.methods.isAddressInServer(self.props.server, self.state.account.address).call().then(function(isRet) {
-          self.setState({inServer: isRet})
-
           // If the user is on the server, we need to retreive the character id
           self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(indexUser) {
             self.state.nujaBattle.methods.playerInformation(self.props.server, indexUser).call().then(function(playerInfo) {
-              self.setState({characterId: playerInfo.characterIndex})
+              self.setState({inServer: isRet, characterId: playerInfo.characterIndex})
             });
           });
         });

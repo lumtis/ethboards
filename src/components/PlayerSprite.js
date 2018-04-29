@@ -48,17 +48,15 @@ class PlayerSprite extends Component {
       self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(ret) {
         // Retrieve server info
         if (self.state.nujaBattle != null) {
-          if (self.state.account != null) {
-            self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, self.state.account.address).call().then(function(playerIndex) {
-              self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
-                // Update server infos
-                self.setState({
-                  positionX: playerInfo.positionX,
-                  positionY: playerInfo.positionY,
-                })
-              });
+          self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, ret.ownerRet).call().then(function(playerIndex) {
+            self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
+              // Update server infos
+              self.setState({
+                positionX: playerInfo.positionX,
+                positionY: playerInfo.positionY,
+              })
             });
-          }
+          });
         }
 
         // Retrieve nuja info

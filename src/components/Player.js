@@ -13,7 +13,7 @@ const infoStyle = {
   width: '80%',
   minHeight: '100px',
   backgroundColor: 'rgba(240, 240, 240, 0.7)',
-  boxShadow:'5px 5px rgba(0, 0, 0, 1)',
+  // boxShadow:'5px 5px rgba(0, 0, 0, 1)',
   marginRight: 'auto',
   marginLeft: 'auto',
   marginBottom: '20px'
@@ -24,7 +24,7 @@ class Player extends Component {
     super(props)
 
     this.state = {
-      account: null,
+      account: store.getState().account.accountInstance,
       web3: store.getState().web3.web3Instance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
@@ -73,7 +73,7 @@ class Player extends Component {
         // Retrieve server info
         if (self.state.nujaBattle != null) {
           if (self.state.account != null) {
-            self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, self.state.account.address).call().then(function(playerIndex) {
+            self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, ret.ownerRet).call().then(function(playerIndex) {
               self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
                 // Update server infos
                 self.setState({
@@ -115,15 +115,15 @@ class Player extends Component {
         <h1>{this.state.number} - {this.state.nickname}</h1>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
-            <img src={this.state.imageData} alt="Nuja" style={{width: '100%'}}></img>
+            <img src={this.state.imageData} alt="Nuja" style={{height: '115px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>
             <p>Health: {this.state.health}</p>
           </div>
         </div>
-        {this.state.weaponList}
         <p style={{fontSize: '10px'}}>{this.state.owner}</p>
+        {this.state.weaponList}
       </div>
     );
   }

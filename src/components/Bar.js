@@ -11,7 +11,7 @@ class Bar extends Component {
     super(props)
 
     this.state = {
-      account: null
+      account: store.getState().account.accountInstance
     }
 
     store.subscribe(() => {

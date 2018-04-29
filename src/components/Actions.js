@@ -28,6 +28,8 @@ class Actions extends Component {
     this.attackDownLeft = this.attackDownLeft.bind(this);
     this.attackLeft = this.attackLeft.bind(this);
 
+    this.exploreBuilding = this.exploreBuilding.bind(this);
+
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
@@ -48,8 +50,8 @@ class Actions extends Component {
 
   componentWillMount() {
     var self = this
-    if (self.state.contract != null) {
-      self.state.contract.methods.isTurn(self.state.account.address).call().then(function(ret) {
+    if (self.state.nujaBattle != null) {
+      self.state.nujaBattle.methods.isTurn(self.props.server, self.state.account.address).call().then(function(ret) {
         self.setState({myTurn: ret})
       });
     }
@@ -129,8 +131,8 @@ class Actions extends Component {
 
 
   command(playMove, index, x, y, dir) {
-    if (self.state.nujaBattle != null) {
-      this.state.contract.methods.play(this.props.server, playMove, index, x, y, dir).send({
+    if (this.state.nujaBattle != null) {
+      this.state.nujaBattle.methods.play(this.props.server, playMove, index, x, y, dir).send({
         from: this.state.account.address,
         // gas: 500000, TODO: why this is buggy ?
         gasPrice: 2000000000,
@@ -181,7 +183,7 @@ class Actions extends Component {
           <button onClick={this.attackDown} className="buttonAction"><i className="fa fa-arrow-down"></i></button>
           <button onClick={this.attackDownRight} className="buttonAction"><i className="fa fa-arrow-up downRight"></i></button>
         </div>
-        <button onClick={this.attackDownRight} className="buttonAction">Explore building<i className="fa fa-building"></i></button>
+        <button onClick={this.exploreBuilding} className="buttonExplore">Explore building <i className="fa fa-building"></i></button>
       </div>
     }
     else {

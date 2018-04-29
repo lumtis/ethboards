@@ -34,7 +34,7 @@ class WeaponList extends Component {
 
             self.state.nujaBattle.methods.getWeaponAddress(self.props.server, weaponId).call().then(function(weaponAddress) {
               var weaponArrayTmp = self.state.weaponArray
-              weaponArrayTmp.push(<div key={i} className="col-md-4"><WeaponSprite contractAddress={weaponAddress}/></div>)
+              weaponArrayTmp.push(<div key={weaponId} className="col-md-3"><WeaponSprite contractAddress={weaponAddress}/></div>)
               self.setState({weaponArray: weaponArrayTmp})
             });
           });

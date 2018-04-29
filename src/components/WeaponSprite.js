@@ -9,6 +9,32 @@ import WeaponDesc from '../components/WeaponDesc'
 
 import imageConverter from '../utils/imageConverter'
 
+
+
+class DescSpawner extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  static defaultProps = {
+    contractAddress: null
+  }
+
+  render() {
+    var desc = <WeaponDesc contractAddress={this.props.contractAddress} />
+
+    return (
+      <div style={{
+        top: this.props.position.y-100+'px',
+        left: this.props.position.x+100+'px',
+        width: '350px',
+        position: 'absolute'
+      }}
+      >{desc}</div>
+    );
+  }
+}
+
 class WeaponSprite extends Component {
   constructor(props) {
     super(props)
@@ -34,13 +60,14 @@ class WeaponSprite extends Component {
   }
 
   componentWillMount() {
+    var self = this
     var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, this.props.contractAddress)
     var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (weaponContract != null) {
       weaponContract.methods.getMetadata().call().then(function(ret) {
-        ipfs.files.get(ret + '/sprite.gif', function (err, files) {
-          self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+        ipfs.files.get(ret + '/image.png', function (err, files) {
+          self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
         })
       });
     }
@@ -55,26 +82,23 @@ class WeaponSprite extends Component {
   }
 
   render() {
-    var desc = <div></div>
-
     if (this.state.isHovering) {
-      desc = <WeaponDesc contractAddress={this.props.contractAddress} />
+      return (
+        <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
+          <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
+          <ReactCursorPosition>
+            <DescSpawner contractAddress={this.props.contractAddress} />
+          </ReactCursorPosition>
+        </div>
+      );
     }
-
-    return (
-      <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-        <img src={this.state.imageData} alt="Nuja"></img>
-        <ReactCursorPosition>
-          <div style={{
-            top: this.props.position.y-100+'px',
-            left: this.props.position.x+'px',
-            width: '350px',
-            position: 'absolute'
-          }}
-          >{desc}</div>
-        </ReactCursorPosition>
-      </div>
-    );
+    else {
+      return (
+        <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
+          <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
+        </div>
+      );
+    }
   }
 }
 
