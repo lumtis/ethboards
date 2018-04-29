@@ -26,7 +26,7 @@ contract CharacterRegistry is ERC721 {
         address owner;
         uint nuja;
         uint indexUser;
-        uint currentServer; // Beware the offset
+        uint currentServer; // Warning the offset
     }
 
     struct SellOrder {
@@ -301,7 +301,7 @@ contract CharacterRegistry is ERC721 {
         require(_tokenId < characterNumber);
 
         Character memory ret = characterArray[_tokenId];
-        return(ret.nickname, ret.owner, ret.nuja, ret.currentServer);
+        return(ret.nickname, ret.owner, ret.nuja, ret.currentServer-1);
     }
 
     // Get functions
