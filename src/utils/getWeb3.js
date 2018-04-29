@@ -50,9 +50,9 @@ function getWeb3() {
     web3 = new Web3(provider)
 
     // Get contracts
-    var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
-    var nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
-    var characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
+    nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+    nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
+    characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
 
     results = {
       web3Instance: web3,
