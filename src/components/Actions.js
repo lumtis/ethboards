@@ -3,34 +3,33 @@ import React, { Component } from 'react'
 import store from '../store'
 import '../css/actions.css'
 
-// TODO: Implement weapon and nuja power
+import WeaponSprite from '../components/WeaponSprite'
 
+var PubSub = require('pubsub-js')
+
+// TODO: Implement weapon and nuja power
 
 class Actions extends Component {
   constructor(props) {
     super(props)
 
-    this.moveUpLeft = this.moveUpLeft.bind(this);
-    this.moveUp = this.moveUp.bind(this);
-    this.moveUpRight = this.moveUpRight.bind(this);
-    this.moveRight = this.moveRight.bind(this);
-    this.moveDownRight = this.moveDownRight.bind(this);
-    this.moveDown = this.moveDown.bind(this);
-    this.moveDownLeft = this.moveDownLeft.bind(this);
-    this.moveLeft = this.moveLeft.bind(this);
+    this.moveButton = this.moveButton.bind(this);
+    this.attackButton = this.attackButton.bind(this);
+    this.exploreBuildingButton = this.exploreBuildingButton.bind(this);
+    this.powerButton = this.powerButton.bind(this);
+    this.weaponButton = this.weaponButton.bind(this);
+    this.idleButton = this.idleButton.bind(this);
 
-    this.attackUpLeft = this.attackUpLeft.bind(this);
-    this.attackUp = this.attackUp.bind(this);
-    this.attackUpRight = this.attackUpRight.bind(this);
-    this.attackRight = this.attackRight.bind(this);
-    this.attackDownRight = this.attackDownRight.bind(this);
-    this.attackDown = this.attackDown.bind(this);
-    this.attackDownLeft = this.attackDownLeft.bind(this);
-    this.attackLeft = this.attackLeft.bind(this);
-
-    this.exploreBuilding = this.exploreBuilding.bind(this);
+    this.getMessage = this.getMessage.bind(this);
+    var token = PubSub.subscribe('CROSSES', this.getMessage);
 
     this.state = {
+      moveSelected: false,
+      attackSelected: false,
+      weaponSelected: false,
+      powerSelected: false,
+      selectedWeapon: 0,
+      weaponArray: [],
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
       myTurn: false
@@ -53,88 +52,164 @@ class Actions extends Component {
     if (self.state.nujaBattle != null) {
       self.state.nujaBattle.methods.isTurn(self.props.server, self.state.account.address).call().then(function(ret) {
         self.setState({myTurn: ret})
+
+        if(ret == true) {
+          // Create button for every player's weapon
+          self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+            self.state.nujaBattle.methods.playerInformation(self.props.server, playerIndex).call().then(function(playerInfo) {
+              // For each weapon, retreive id
+              for (var i = 0; i < playerInfo.weaponNumber; i++) {
+                self.state.nujaBattle.methods.playerWeapons(self.props.server, playerIndex, i).call().then(function(weaponId) {
+                  self.state.nujaBattle.methods.getWeaponAddress(self.props.server, weaponId).call().then(function(weaponAddress) {
+                    var weaponArrayTmp = self.state.weaponArray
+
+                    // Push to weapon array the sprite of the weapon wrapped by the callback button
+                    weaponArrayTmp.push(
+                      <div key={this.userWeaponId} className="col-md-3">
+                        <button onClick={self.weaponButton(this.userWeaponId)} style={{
+                          borderWidth: '0px',
+                          backgroundColor: 'rgba(240, 240, 240, 0.0)',
+                        }}>
+                          <WeaponSprite contractAddress={weaponAddress}/>
+                        </button>
+                      </div>)
+                    self.setState({weaponArray: weaponArrayTmp})
+                  }.bind(this));
+                }.bind({userWeaponId: i}));
+              }
+            });
+          });
+        }
       });
     }
   }
 
-  moveUpLeft(e) {
+  moveButton(e) {
     e.preventDefault();
-    this.command(0, 0, 0, 0, 0)
+
+    if(this.state.moveSelected) {
+      this.setState({moveSelected: false})
+      PubSub.publish('CROSSES', 'remove');
+    }
+    else {
+      this.setState({
+        moveSelected: true,
+        attackSelected: false,
+        weaponSelected: false,
+        powerSelected: false,
+      })
+      PubSub.publish('CROSSES', 'remove');
+
+      // We search for every field which gives more than 0 gas (which means that the transaction will not revert)
+      for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 10; j++) {
+          this.state.nujaBattle.methods.play(this.props.server, 0, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+            // If gas superior than 0 we draw a cross
+            if(error == null) {
+              if(gasAmount > 0) {
+                PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+              }
+            }
+          }.bind({i: i, j: j}));
+        }
+      }
+    }
   }
-  moveUp(e) {
+  attackButton(e) {
     e.preventDefault();
-    this.command(0, 1, 0, 0, 0)
+
+    if(this.state.attackSelected) {
+      this.setState({attackSelected: false})
+      PubSub.publish('CROSSES', 'remove');
+    }
+    else {
+      this.setState({
+        moveSelected: false,
+        attackSelected: true,
+        weaponSelected: false,
+        powerSelected: false,
+      })
+      PubSub.publish('CROSSES', 'remove');
+
+      for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 10; j++) {
+          this.state.nujaBattle.methods.play(this.props.server, 1, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+            // If gas superior than 0 we draw a cross
+            if(error == null) {
+              if(gasAmount > 0) {
+                PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+              }
+            }
+          }.bind({i: i, j: j}));
+        }
+      }
+    }
   }
-  moveUpRight(e) {
+  exploreBuildingButton(e) {
     e.preventDefault();
-    this.command(0, 2, 0, 0, 0)
+    this.command(2, 0, 0)
   }
-  moveRight(e) {
+  powerButton(e) {
     e.preventDefault();
-    this.command(0, 3, 0, 0, 0)
+    if(this.state.powerSelected) {
+      this.setState({powerSelected: false})
+      PubSub.publish('CROSSES', 'remove');
+    }
+    else {
+      this.setState({
+        moveSelected: false,
+        attackSelected: false,
+        weaponSelected: false,
+        powerSelected: true,
+      })
+      PubSub.publish('CROSSES', 'remove');
+    }
   }
-  moveDownRight(e) {
-    e.preventDefault();
-    this.command(0, 4, 0, 0, 0)
+  weaponButton(id) {
+    return function(e) {
+      e.preventDefault();
+      if(this.state.weaponSelected && id == this.state.selectedWeapon) {
+        this.setState({weaponSelected: false})
+        PubSub.publish('CROSSES', 'remove');
+      }
+      else {
+        this.setState({
+          moveSelected: false,
+          attackSelected: false,
+          weaponSelected: true,
+          powerSelected: false,
+          selectedWeapon: id,
+        })
+        PubSub.publish('CROSSES', 'remove');
+
+        for (var i = 0; i < 10; i++) {
+          for (var j = 0; j < 10; j++) {
+            this.state.nujaBattle.methods.play(this.props.server, 3, i, j, id).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+              console.log(error)
+
+              // If gas superior than 0 we draw a cross
+              if(error == null) {
+                if(gasAmount > 0) {
+                  PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+                }
+              }
+            }.bind({i: i, j: j}));
+          }
+        }
+      }
+    }.bind(this)
   }
-  moveDown(e) {
+
+  idleButton(e) {
     e.preventDefault();
-    this.command(0, 5, 0, 0, 0)
-  }
-  moveDownLeft(e) {
-    e.preventDefault();
-    this.command(0, 6, 0, 0, 0)
-  }
-  moveLeft(e) {
-    e.preventDefault();
-    this.command(0, 7, 0, 0, 0)
+    this.command(5, 0, 0)
   }
 
 
-  attackUpLeft(e) {
-    e.preventDefault();
-    this.command(1, 0, 0, 0, 0)
-  }
-  attackUp(e) {
-    e.preventDefault();
-    this.command(1, 1, 0, 0, 0)
-  }
-  attackUpRight(e) {
-    e.preventDefault();
-    this.command(1, 2, 0, 0, 0)
-  }
-  attackRight(e) {
-    e.preventDefault();
-    this.command(1, 3, 0, 0, 0)
-  }
-  attackDownRight(e) {
-    e.preventDefault();
-    this.command(1, 4, 0, 0, 0)
-  }
-  attackDown(e) {
-    e.preventDefault();
-    this.command(1, 5, 0, 0, 0)
-  }
-  attackDownLeft(e) {
-    e.preventDefault();
-    this.command(1, 6, 0, 0, 0)
-  }
-  attackLeft(e) {
-    e.preventDefault();
-    this.command(1, 7, 0, 0, 0)
-  }
-
-  exploreBuilding(e) {
-    e.preventDefault();
-    this.command(2, 0, 0, 0, 0)
-  }
-
-
-  command(playMove, index, x, y, dir) {
+  command(playMove, x, y) {
     if (this.state.nujaBattle != null) {
-      this.state.nujaBattle.methods.play(this.props.server, playMove, index, x, y, dir).send({
+      this.state.nujaBattle.methods.play(this.props.server, playMove, x, y, this.state.selectedWeapon).send({
         from: this.state.account.address,
-        // gas: 500000, TODO: why this is buggy ?
         gasPrice: 2000000000,
       })
       .on('error', function(error){ console.log('ERROR: ' + error)})
@@ -147,43 +222,46 @@ class Actions extends Component {
     }
   }
 
+  // Get message from action component to decide which cross has been pressed
+  getMessage(msg, data) {
+    var dataArray = data.split(' ')
+
+    // Cross pressed
+    if(dataArray[0] == 'pressed') {
+      if(this.state.moveSelected) {
+        this.command(0, parseInt(dataArray[1]), parseInt(dataArray[2]))
+      }
+      else if(this.state.attackSelected) {
+        this.command(1, parseInt(dataArray[1]), parseInt(dataArray[2]))
+      }
+      else if(this.state.weaponSelected) {
+        this.command(3, parseInt(dataArray[1]), parseInt(dataArray[2]))
+      }
+      else if(this.state.powerSelected) {
+        this.command(4, parseInt(dataArray[1]), parseInt(dataArray[2]))
+      }
+    }
+  }
+
+
   render() {
     var content = <div></div>
 
     if(this.state.myTurn) {
       content =
       <div style={{padding: '2px'}}>
-        <h3 style={{}}>Move</h3>
+        <h3>Your turn !</h3>
         <div style={{textAlign: 'center'}}>
-          <button onClick={this.moveUpLeft} className="buttonAction"><i className="fa fa-arrow-up upLeft"></i></button>
-          <button onClick={this.moveUp} className="buttonAction"><i className="fa fa-arrow-up"></i></button>
-          <button onClick={this.moveUpRight} className="buttonAction"><i className="fa fa-arrow-up upRight"></i></button>
+          <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.moveButton} className="buttonExplore">Move <i className="fa fa-arrows-alt"></i></button>
+          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.attackButton} className="buttonExplore">Attack <i className="fa fa-gavel"></i></button>
+          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.exploreBuildingButton} className="buttonExplore">Explore <i className="fa fa-building"></i></button>
+          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.powerButton} className="buttonExplore">Power <i className="fa fa-star"></i></button>
+          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.idleButton} className="buttonExplore">Sleep <i className="fa fa-bed"></i></button>
         </div>
-        <div style={{textAlign: 'center'}}>
-          <button onClick={this.moveLeft} className="buttonAction buttonSide"><i className="fa fa-arrow-left"></i></button>
-          <button onClick={this.moveRight} className="buttonAction buttonSide"><i className="fa fa-arrow-right"></i></button>
+        <h3>Weapons:</h3>
+        <div className="row" style={{marginTop: '20px', marginBottom: '20px'}}>
+          <div>{this.state.weaponArray}</div>
         </div>
-        <div style={{textAlign: 'center'}}>
-          <button onClick={this.moveDownLeft} className="buttonAction"><i className="fa fa-arrow-up downLeft"></i></button>
-          <button onClick={this.moveDown} className="buttonAction"><i className="fa fa-arrow-down"></i></button>
-          <button onClick={this.moveDownRight} className="buttonAction"><i className="fa fa-arrow-up downRight"></i></button>
-        </div>
-        <h3 style={{}}>Attack</h3>
-        <div style={{textAlign: 'center'}}>
-          <button onClick={this.attackUpLeft} className="buttonAction"><i className="fa fa-arrow-up upLeft"></i></button>
-          <button onClick={this.attackUp} className="buttonAction"><i className="fa fa-arrow-up"></i></button>
-          <button onClick={this.attackUpRight} className="buttonAction"><i className="fa fa-arrow-up upRight"></i></button>
-        </div>
-        <div style={{textAlign: 'center'}}>
-          <button onClick={this.attackLeft} className="buttonAction buttonSide"><i className="fa fa-arrow-left"></i></button>
-          <button onClick={this.attackRight} className="buttonAction buttonSide"><i className="fa fa-arrow-right"></i></button>
-        </div>
-        <div style={{textAlign: 'center'}}>
-          <button onClick={this.attackDownLeft} className="buttonAction"><i className="fa fa-arrow-up downLeft"></i></button>
-          <button onClick={this.attackDown} className="buttonAction"><i className="fa fa-arrow-down"></i></button>
-          <button onClick={this.attackDownRight} className="buttonAction"><i className="fa fa-arrow-up downRight"></i></button>
-        </div>
-        <button onClick={this.exploreBuilding} className="buttonExplore">Explore building <i className="fa fa-building"></i></button>
       </div>
     }
     else {

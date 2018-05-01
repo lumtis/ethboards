@@ -4,15 +4,23 @@ import PlayerSprite from '../components/PlayerSprite'
 import Tile from '../components/Tile'
 
 import store from '../store'
+import '../css/map.css'
 
+var PubSub = require('pubsub-js')
 
 class Map extends Component {
   constructor(props) {
     super(props)
 
+    this.crossPressed = this.crossPressed.bind(this);
+    this.getMessage = this.getMessage.bind(this);
+
+    var token = PubSub.subscribe('CROSSES', this.getMessage);
+
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       playerArray: [],
+      crossArray: [],
       mapName: 'undefined name'
     }
 
@@ -49,17 +57,67 @@ class Map extends Component {
     }
   }
 
+  // Add a cross on the map
+  addCross(x, y) {
+    var crossArrayTmp = this.state.crossArray
+    crossArrayTmp.push({x: x, y: y})
+    this.setState({crossArray: crossArrayTmp})
+  }
+
+  // Remove all crosses from map
+  removeAllCrosses() {
+    this.setState({crossArray: []})
+  }
+
+  // Event function when cross is pushed
+  crossPressed(x, y) {
+    return function(e) {
+      PubSub.publish('CROSSES', 'pressed ' + x + ' ' + y);
+    }
+  }
+
+  // Get message from action component
+  getMessage(msg, data) {
+    var dataArray = data.split(' ')
+
+    // Remove message
+    if(dataArray[0] == 'remove') {
+      this.removeAllCrosses()
+    }
+    else if(dataArray[0] == 'add') {
+      this.addCross(parseInt(dataArray[1]), parseInt(dataArray[2]))
+    }
+  }
+
   render() {
     const rows = 10
     const columns = 10
 
     var tiles = []
+    var crosses = []
 
-    // Pushing grasses
+    // Tilemap
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < columns; j++) {
           tiles[rows*i+j] = <Tile key={rows*i+j} server={this.props.server} x={i} y={j} />
       }
+    }
+
+    // crosses
+    for (var i = 0; i < this.state.crossArray.length; i++) {
+      var offsetX = this.state.crossArray[i].x*64
+      var offsetY = this.state.crossArray[i].y*64
+      crosses.push(
+        <button
+          key={i}
+          onClick={this.crossPressed(this.state.crossArray[i].x, this.state.crossArray[i].y)}
+          className="cross" style={{
+            width: '64px',
+            position: 'absolute',
+            top: offsetY+'px',
+            left: offsetX+'px'
+          }}
+        ><i className="fa fa-times"></i></button>)
     }
 
     return (
@@ -72,6 +130,7 @@ class Map extends Component {
         }}>
           <div>{tiles}</div>
           <div>{this.state.playerArray}</div>
+          <div>{crosses}</div>
         </div>
       </div>
     );
