@@ -8,7 +8,7 @@ contract Bulljak is Nuja {
         return '/ipfs/QmY2Pt34b3xvSjDJ8nP91Yd6CVv9YugUDsY5Hv91JCHjBX';
     }
 
-    function power(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public fromServer {
+    function power(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
 
     }
 }

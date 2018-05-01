@@ -13,16 +13,7 @@ contract Jetpack is Weapon {
         return '/ipfs/QmaucMB5ZRNSNGYoPJaPhETD2LGMuDLzyWagE3NrotALvg';
     }
 
-    function use(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public fromServer {
-        /* fieldInformation(serverId, x, y);
-        playerInformation(serverId, player);
-        playerWeapons(serverId, player, indexWeapon);
-
-        movePlayer(serverId, player, x, y);
-        changeHealth(serverId, player, newHealth);
-        addWeapon(serverId, player, weapon);
-        removeWeapon(serverId, player, indexWeapon); */
-
+    function use(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
         NujaBattle nujaContract = NujaBattle(SERVERREGISTRY);
         nujaContract.movePlayer(serverId, player, x, y);
     }

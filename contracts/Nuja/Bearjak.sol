@@ -8,7 +8,7 @@ contract Bearjak is Nuja {
         return '/ipfs/QmUVnyX6JS2izsMsYJNfUbJkpRshkmFC4x3yzYx8WE9D6M';
     }
 
-    function power(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public fromServer {
+    function power(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
 
     }
 }

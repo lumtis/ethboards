@@ -2,7 +2,7 @@ pragma solidity ^0.4.2;
 
 contract Weapon {
     // Server registry
-    address constant SERVERREGISTRY = 0x627306090abaB3A6e1400e9345bC60c78a8BEf57;
+    address constant SERVERREGISTRY = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
 
     modifier fromServer {
         require(msg.sender == SERVERREGISTRY);
@@ -22,5 +22,5 @@ contract Weapon {
 
     // Function called by server to use the Weapon
     // Must be only called from the server repository to get the weapon verified
-    function use(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public;
+    function use(uint serverId, uint8 x, uint8 y, uint8 player) public;
 }

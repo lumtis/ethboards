@@ -8,7 +8,7 @@ contract WhiteNujak is Nuja {
         return '/ipfs/QmYXupJLMK2gSHbnKMinqyFYvrSymLcw1tWWR98ncXhyji';
     }
 
-    function power(uint serverId, uint8 dir, uint8 x, uint8 y, uint8 player) public fromServer {
+    function power(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
 
     }
 }
