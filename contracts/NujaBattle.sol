@@ -1,10 +1,13 @@
 pragma solidity ^0.4.2;
 
-
-import "./Weapon/Weapon.sol";
 import "./CharacterRegistry.sol";
+import "./NujaRegistry.sol";
+import "./Nuja/Nuja.sol";
+import "./Weapon/Weapon.sol";
+import "./Geometry.sol";
 
-contract NujaBattle {
+
+contract NujaBattle is Geometry {
 
     ///////////////////////////////////////////////////////////////
     /// Modifiers
@@ -182,12 +185,26 @@ contract NujaBattle {
 
         return (servers[indexServer].fields[x][y].building, servers[indexServer].fields[x][y].character - 1);
     }
-    function playerInformation(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex, uint8 health, uint8 positionX, uint8 positionY, uint weaponNumber) {
+
+    function playerCharacter(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex) {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
 
-        return (servers[indexServer].players[indexPlayer].characterIndex, servers[indexServer].players[indexPlayer].health, servers[indexServer].players[indexPlayer].positionX, servers[indexServer].players[indexPlayer].positionY, servers[indexServer].players[indexPlayer].weapons.length);
+        return (servers[indexServer].players[indexPlayer].characterIndex);
     }
+    function playerInformation(uint indexServer, uint8 indexPlayer) public view returns(uint8 health, uint weaponNumber) {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+
+        return (servers[indexServer].players[indexPlayer].health, servers[indexServer].players[indexPlayer].weapons.length);
+    }
+    function playerPosition(uint indexServer, uint8 indexPlayer) public view returns(uint8 positionX, uint8 positionY) {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+
+        return (servers[indexServer].players[indexPlayer].positionX, servers[indexServer].players[indexPlayer].positionY);
+    }
+
     function playerWeapons(uint indexServer, uint8 indexPlayer, uint8 indexWeapon) public view returns(uint8 weapon) {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
@@ -200,7 +217,7 @@ contract NujaBattle {
     function movePlayer(uint indexServer, uint8 indexPlayer, uint8 x, uint8 y) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(servers[indexServer].trusted[msg.sender]);
         require(x < 10 && y < 10);
 
         require(servers[indexServer].fields[x][y].character == 0);
@@ -210,18 +227,40 @@ contract NujaBattle {
         servers[indexServer].players[indexPlayer].positionX = x;
         servers[indexServer].fields[x][y].character = indexPlayer+1;
     }
-    function changeHealth(uint indexServer, uint8 indexPlayer, uint8 newHealth) public {
+    function damage(uint indexServer, uint8 indexPlayer, uint8 damage) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
-        require(newHealth >= 0 && newHealth <= 100);
+        require(servers[indexServer].trusted[msg.sender]);
+        require(damage <= 100);
 
-        servers[indexServer].players[indexPlayer].health = newHealth;
+        uint8 remaining = servers[indexServer].players[indexPlayer].health;
+
+        if(remaining < damage) {
+            servers[indexServer].players[indexPlayer].health = 0;
+        }
+        else {
+            servers[indexServer].players[indexPlayer].health = remaining - damage;
+        }
+    }
+    function restore(uint indexServer, uint8 indexPlayer, uint8 restore) public {
+        require(indexServer < serverNumber);
+        require(indexPlayer < servers[indexServer].playerNb);
+        require(servers[indexServer].trusted[msg.sender]);
+        require(restore <= 100);
+
+        uint8 remaining = servers[indexServer].players[indexPlayer].health;
+
+        if(remaining + restore > 100) {
+            servers[indexServer].players[indexPlayer].health = 100;
+        }
+        else {
+            servers[indexServer].players[indexPlayer].health = remaining + restore;
+        }
     }
     function addWeapon(uint indexServer, uint8 indexPlayer, uint8 weapon) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(servers[indexServer].trusted[msg.sender]);
         require(weapon < servers[indexServer].weapons.length);
 
         servers[indexServer].players[indexPlayer].weapons.push(weapon);
@@ -229,7 +268,7 @@ contract NujaBattle {
     function removeWeapon(uint indexServer, uint8 indexPlayer, uint8 indexWeapon) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);    // To implement: trusted nuja
+        require(servers[indexServer].trusted[msg.sender]);
 
         uint nbWeapon = servers[indexServer].players[indexPlayer].weapons.length;
         require(indexWeapon < nbWeapon);
@@ -237,17 +276,6 @@ contract NujaBattle {
         servers[indexServer].players[indexPlayer].weapons[indexWeapon] = servers[indexServer].players[indexPlayer].weapons[nbWeapon-1];
         delete servers[indexServer].players[indexPlayer].weapons[nbWeapon-1];
         servers[indexServer].players[indexPlayer].weapons.length--;
-    }
-
-    // Internal function for maths
-    function max(uint a, uint b) internal pure returns (uint) {
-        return a > b ? a : b;
-    }
-    function abs(int a) internal pure returns (uint) {
-        return a < 0 ? (uint)(-a) : (uint)(a);
-    }
-    function distance(uint x1, uint y1, uint x2, uint y2) internal pure returns (uint) {
-        return max(abs((int)(x1-x2)), abs((int)(y1-y2)));
     }
 
     // Playing your turn
@@ -261,11 +289,14 @@ contract NujaBattle {
     function play(uint indexServer, uint8 playMove, uint8 x, uint8 y, uint8 index) public {
         require(indexServer < serverNumber);
         require(playMove < 6);
+        require(x < 10 && y < 10);
 
         uint8 p = servers[indexServer].playerIndex[msg.sender];
         require(p > 0);
         p -= 1;
-        require(servers[indexServer].players[p].number == servers[indexServer].turnPlayer);
+
+        uint8 number = servers[indexServer].players[p].number;
+        require(number == servers[indexServer].turnPlayer);
 
         if (playMove == 0) {
             move(indexServer, p, x, y);
@@ -277,21 +308,17 @@ contract NujaBattle {
             exploreBuilding(indexServer, p);
         }
         else if (playMove == 3) {
-            require(index < servers[indexServer].players[p].weapons.length);
-            require(x < 10 && y < 10);
-            Weapon w = Weapon(servers[indexServer].weapons[servers[indexServer].players[p].weapons[index]]);
-            w.use(indexServer, x, y, p);
+            useWeapon(indexServer, p, x, y, index);
         }
         else if (playMove == 4) {
-            // TODO: Implement nuja power
+            usePower(indexServer, p, x, y);
         }
 
-
+        // New turn
         servers[indexServer].turnPlayer = (servers[indexServer].turnPlayer+1)%(servers[indexServer].playerNb);
     }
 
     function move(uint indexServer, uint8 p, uint8 x, uint8 y) internal {
-        require(x >= 0 && x < 10 && y >= 0 && y < 10);
         require(servers[indexServer].fields[x][y].character == 0);
         require(distance(x, y, servers[indexServer].players[p].positionX, servers[indexServer].players[p].positionY) <= 1);
 
@@ -302,22 +329,12 @@ contract NujaBattle {
     }
 
     function attack(uint indexServer, uint8 p, uint8 x, uint8 y) internal {
-        require(x >= 0 && x < 10 && y >= 0 && y < 10);
         require(distance(x, y, servers[indexServer].players[p].positionX, servers[indexServer].players[p].positionY) == 1);
 
         uint8 opponent = servers[indexServer].fields[x][y].character;
         require(opponent > 0);
         opponent -= 1;
-        fistAttack(indexServer, opponent);
-    }
-
-    function fistAttack(uint indexServer, uint8 p) internal {
-        if(servers[indexServer].players[p].health <= 10) {
-            servers[indexServer].players[p].health = 0;
-        }
-        else {
-            servers[indexServer].players[p].health -= 10;
-        }
+        damage(indexServer, opponent, 10);
     }
 
     function exploreBuilding(uint indexServer, uint8 p) internal {
@@ -328,5 +345,27 @@ contract NujaBattle {
 
         // Set building as explored
         servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1;
+    }
+
+    function useWeapon(uint indexServer, uint8 p, uint8 x, uint8 y, uint8 index) internal {
+        require(index < servers[indexServer].players[p].weapons.length);
+        address weaponAddress = servers[indexServer].weapons[servers[indexServer].players[p].weapons[index]];
+        Weapon w = Weapon(weaponAddress);
+        w.use(indexServer, x, y, p);
+    }
+
+    function usePower(uint indexServer, uint8 p, uint8 x, uint8 y) internal {
+        CharacterRegistry characterContract = CharacterRegistry(characterRegistry);
+        uint characterIndex = servers[indexServer].players[p].characterIndex;
+        var r_nuja = characterContract.getCharacterNuja(characterIndex);
+        address nujaRegistryAddress = characterContract.getNujaRegistry();
+        NujaRegistry nujaContract = NujaRegistry(nujaRegistryAddress);
+        address nujaAddress = nujaContract.getContract(r_nuja);
+        usePower2(nujaAddress, indexServer, p, x, y);
+    }
+
+    function usePower2(address nujaAddress, uint indexServer, uint8 p, uint8 x, uint8 y) internal {
+        Nuja player_nuja = Nuja(nujaAddress);
+        player_nuja.power(indexServer, x, y, p);
     }
 }

@@ -297,15 +297,32 @@ contract CharacterRegistry is ERC721 {
         return sellOrderList.length;
     }
 
-    function getCharacterInfo(uint _tokenId) public view returns(string nicknameRet, address ownerRet, uint nujaRet, uint currentServerRet) {
+    function getCharacterInfo(uint _tokenId) public view returns(string nicknameRet, address ownerRet) {
         require(_tokenId < characterNumber);
 
         Character memory ret = characterArray[_tokenId];
-        return(ret.nickname, ret.owner, ret.nuja, ret.currentServer-1);
+        return(ret.nickname, ret.owner);
+    }
+
+    function getCharacterNuja(uint _tokenId) public view returns(uint nujaRet) {
+        require(_tokenId < characterNumber);
+
+        Character memory ret = characterArray[_tokenId];
+        return(ret.nuja);
+    }
+
+    function getCharacterCurrentServer(uint _tokenId) public view returns(uint currentServerRet) {
+        require(_tokenId < characterNumber);
+
+        Character memory ret = characterArray[_tokenId];
+        return(ret.currentServer-1);
     }
 
     // Get functions
     function getOwner() public view returns(address ret) {
         return owner;
+    }
+    function getNujaRegistry() public view returns(address ret) {
+        return nujaRegistry;
     }
 }
