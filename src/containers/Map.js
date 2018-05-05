@@ -42,7 +42,7 @@ class Map extends Component {
 
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {
-          self.state.nujaBattle.methods.playerInformation(self.props.server, i).call().then(function(infoPlayer) {
+          self.state.nujaBattle.methods.playerCharacter(self.props.server, i).call().then(function(infoPlayer) {
 
             // Pushing in player array the new player
             var playerArrayTmp = self.state.playerArray

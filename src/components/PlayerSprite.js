@@ -45,31 +45,35 @@ class PlayerSprite extends Component {
 
 
     if (self.state.characterRegistry != null) {
-      self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(ret) {
+      self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
         // Retrieve server info
-        if (self.state.nujaBattle != null) {
-          self.state.nujaBattle.methods.getIndexFromAddress(ret.currentServerRet, ret.ownerRet).call().then(function(playerIndex) {
-            self.state.nujaBattle.methods.playerInformation(ret.currentServerRet, playerIndex).call().then(function(playerInfo) {
-              // Update server infos
-              self.setState({
-                positionX: playerInfo.positionX,
-                positionY: playerInfo.positionY,
-              })
+        self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServer) {
+          if (self.state.nujaBattle != null) {
+            self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
+              self.state.nujaBattle.methods.playerPosition(currentServer, playerIndex).call().then(function(playerInfo) {
+                // Update server infos
+                self.setState({
+                  positionX: playerInfo.positionX,
+                  positionY: playerInfo.positionY,
+                })
+              });
             });
-          });
-        }
+          }
+        });
 
         // Retrieve nuja info
-        if (self.state.nujaRegistry != null) {
-          self.state.nujaRegistry.methods.getContract(ret.nujaRet).call().then(function(addressRet) {
-            var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
-            nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-              ipfs.files.get(ipfsString + '/sprite.gif', function (err, files) {
-                self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
-              })
+        self.state.characterRegistry.methods.getCharacterNuja(self.props.index).call().then(function(characterNuja) {
+          if (self.state.nujaRegistry != null) {
+            self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
+              var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
+              nujaContract.methods.getMetadata().call().then(function(ipfsString) {
+                ipfs.files.get(ipfsString + '/sprite.gif', function (err, files) {
+                  self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+                })
+              });
             });
-          });
-        }
+          }
+        });
       });
     }
   }
