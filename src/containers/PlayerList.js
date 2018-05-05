@@ -30,11 +30,11 @@ class PlayerList extends Component {
       self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {
-          self.state.nujaBattle.methods.playerCharacter(self.props.server, i).call().then(function(infoPlayer) {
+          self.state.nujaBattle.methods.playerCharacter(self.props.server, i).call().then(function(characterIndex) {
 
             // Pushing in player array the new player
             var playerArrayTmp = self.state.playerArray
-            playerArrayTmp.push(<div key={infoPlayer.characterIndex} className="col-md-6"><Player index={infoPlayer.characterIndex}/></div>)
+            playerArrayTmp.push(<div key={characterIndex} className="col-md-6"><Player index={characterIndex}/></div>)
             self.setState({playerArray: playerArrayTmp})
           });
         }
