@@ -1,6 +1,8 @@
 pragma solidity ^0.4.2;
 
-contract Nuja {
+import "../Geometry.sol";
+
+contract Nuja is Geometry {
     // registries
     address constant SERVERREGISTRY = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
 
