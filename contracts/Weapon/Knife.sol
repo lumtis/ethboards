@@ -3,10 +3,10 @@ pragma solidity ^0.4.2;
 import "./Weapon.sol";
 import "../NujaBattle.sol";
 
-contract Pistol is Weapon {
+contract Knife is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmU9Bojt2H2THdkWN7uwF4yyzxQKq8vjMZb5qA8x1oTHYE';
+        return '/ipfs/QmQqfMqrkvuZWot34hAPQAGsDVAAsSJZWtVDUZ2T8nzPCq';
     }
 
     function use(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
@@ -15,11 +15,11 @@ contract Pistol is Weapon {
 
         // Distance requirement
         uint d = distance(x, y, r_x, r_y);
-        require(d > 0 && d < 4);
+        require(d == 1);
 
         // Strike
         var (rr1, rr_p) = nujaContract.fieldInformation(serverId, x, y);
         require(rr_p > 0);
-        nujaContract.damage(serverId, rr_p-1, 20);
+        nujaContract.damage(serverId, rr_p-1, 30);
     }
 }

@@ -5,10 +5,6 @@ import "../NujaBattle.sol";
 
 contract Jetpack is Weapon {
 
-    function getType() public pure returns (uint8 weaponType) {
-        return 0;
-    }
-
     function getMetadata() public pure returns (string metadata) {
         return '/ipfs/QmaucMB5ZRNSNGYoPJaPhETD2LGMuDLzyWagE3NrotALvg';
     }

@@ -1,6 +1,9 @@
 pragma solidity ^0.4.2;
 
-contract Weapon {
+import "../Geometry.sol";
+
+contract Weapon is Geometry {
+
     // Server registry
     address constant SERVERREGISTRY = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
 
@@ -8,13 +11,6 @@ contract Weapon {
         require(msg.sender == SERVERREGISTRY);
         _;
     }
-
-    // Type of the weapon
-    // This value will change how the front end will call the contract
-    // 0: the weapon use only x and y position (launch a bomb)
-    // 1: the weaopon just use one direction (limited scope weapon)
-    // 2: the weapon use one direction and x and y coordinates (charge with a sword)
-    function getType() public pure returns (uint8 weaponType);
 
     // Must return ipfs hash
     // the repository must at least contain image.png and name/default
