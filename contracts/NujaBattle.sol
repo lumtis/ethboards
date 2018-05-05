@@ -47,19 +47,22 @@ contract NujaBattle is Geometry {
 
         mapping (address => uint8) playerIndex;   // Warning: offset
         address[] weapons;
-        mapping (address => bool) trusted;
+        mapping (address => bool) trustedWeapon;
     }
 
     address owner;
     uint serverNumber;
     Server[] servers;
     address characterRegistry;
+    mapping (address => bool) trustedNuja;
 
-
+    uint8 weaponIndex;
     function NujaBattle() public {
         owner = msg.sender;
         serverNumber = 0;
         characterRegistry = address(0);
+
+        weaponIndex = 0;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -86,10 +89,10 @@ contract NujaBattle is Geometry {
         require(indexServer < serverNumber);
         require(servers[indexServer].owner == msg.sender);
         // We verify weapon is not already added
-        require(servers[indexServer].trusted[weapon] == false);
+        require(servers[indexServer].trustedWeapon[weapon] == false);
 
         servers[indexServer].weapons.push(weapon);
-        servers[indexServer].trusted[weapon] = true;
+        servers[indexServer].trustedWeapon[weapon] = true;
     }
 
     function addBuildingToServer(uint indexServer, uint8 x, uint8 y) public {
@@ -121,11 +124,15 @@ contract NujaBattle is Geometry {
         newPlayer.positionY = numero;
 
         // Player information for server
-        /* servers[server].players.push(newPlayer); */
         servers[server].players[servers[server].playerNb] = newPlayer;
-
         servers[server].fields[numero][numero].character = numero+1;
         servers[server].playerIndex[msg.sender] = numero+1;
+
+        // Register the nuja address as trusted
+        NujaRegistry nujaContract = NujaRegistry(reg.getNujaRegistry());
+        trustedNuja[nujaContract.getContract(reg.getCharacterNuja(character))] = true;
+
+        // TODO: Find a way to declare nuja as trusted without this funtion
 
         servers[server].playerNb += 1;
     }
@@ -217,7 +224,7 @@ contract NujaBattle is Geometry {
     function movePlayer(uint indexServer, uint8 indexPlayer, uint8 x, uint8 y) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);
+        require(servers[indexServer].trustedWeapon[msg.sender] || trustedNuja[msg.sender]);
         require(x < 10 && y < 10);
 
         require(servers[indexServer].fields[x][y].character == 0);
@@ -230,7 +237,7 @@ contract NujaBattle is Geometry {
     function damage(uint indexServer, uint8 indexPlayer, uint8 damage) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);
+        require(servers[indexServer].trustedWeapon[msg.sender] || trustedNuja[msg.sender]);
         require(damage <= 100);
 
         uint8 remaining = servers[indexServer].players[indexPlayer].health;
@@ -245,7 +252,7 @@ contract NujaBattle is Geometry {
     function restore(uint indexServer, uint8 indexPlayer, uint8 restore) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);
+        require(servers[indexServer].trustedWeapon[msg.sender] || trustedNuja[msg.sender]);
         require(restore <= 100);
 
         uint8 remaining = servers[indexServer].players[indexPlayer].health;
@@ -260,7 +267,7 @@ contract NujaBattle is Geometry {
     function addWeapon(uint indexServer, uint8 indexPlayer, uint8 weapon) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);
+        require(servers[indexServer].trustedWeapon[msg.sender] || trustedNuja[msg.sender]);
         require(weapon < servers[indexServer].weapons.length);
 
         servers[indexServer].players[indexPlayer].weapons.push(weapon);
@@ -268,7 +275,7 @@ contract NujaBattle is Geometry {
     function removeWeapon(uint indexServer, uint8 indexPlayer, uint8 indexWeapon) public {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerNb);
-        require(servers[indexServer].trusted[msg.sender]);
+        require(servers[indexServer].trustedWeapon[msg.sender] || trustedNuja[msg.sender]);
 
         uint nbWeapon = servers[indexServer].players[indexPlayer].weapons.length;
         require(indexWeapon < nbWeapon);
@@ -334,17 +341,25 @@ contract NujaBattle is Geometry {
         uint8 opponent = servers[indexServer].fields[x][y].character;
         require(opponent > 0);
         opponent -= 1;
-        damage(indexServer, opponent, 10);
+
+        uint8 remaining = servers[indexServer].players[opponent].health;
+        if(remaining < 20) {
+            servers[indexServer].players[opponent].health = 0;
+        }
+        else {
+            servers[indexServer].players[opponent].health -= 20;
+        }
     }
 
     function exploreBuilding(uint indexServer, uint8 p) internal {
         require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building == 2);
 
         // Give object to player
-        servers[indexServer].players[p].weapons.push(0);
+        servers[indexServer].players[p].weapons.push(weaponIndex);
+        weaponIndex = (weaponIndex+1)%7;
 
         // Set building as explored
-        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1;
+        /* servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1; */
     }
 
     function useWeapon(uint indexServer, uint8 p, uint8 x, uint8 y, uint8 index) internal {
