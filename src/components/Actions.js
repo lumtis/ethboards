@@ -163,6 +163,20 @@ class Actions extends Component {
         powerSelected: true,
       })
       PubSub.publish('CROSSES', 'remove');
+
+      for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 10; j++) {
+          this.state.nujaBattle.methods.play(this.props.server, 4, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+
+            // If gas superior than 0 we draw a cross
+            if(error == null) {
+              if(gasAmount > 0) {
+                PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+              }
+            }
+          }.bind({i: i, j: j}));
+        }
+      }
     }
   }
   weaponButton(id) {
@@ -185,7 +199,6 @@ class Actions extends Component {
         for (var i = 0; i < 10; i++) {
           for (var j = 0; j < 10; j++) {
             this.state.nujaBattle.methods.play(this.props.server, 3, i, j, id).estimateGas({from: this.state.account.address}, function(error, gasAmount){
-              console.log(error)
 
               // If gas superior than 0 we draw a cross
               if(error == null) {

@@ -8,15 +8,14 @@ import imageConverter from '../utils/imageConverter'
 
 
 const infoStyle = {
-  position: 'absolute',
   padding: '20px',
-  width: '80%',
+  width: '400px',
   minHeight: '100px',
   backgroundColor: 'rgba(240, 240, 240, 0.9)',
-  // boxShadow:'5px 5px rgba(0, 0, 0, 1)',
   marginRight: 'auto',
   marginLeft: 'auto',
-  marginBottom: '20px'
+  marginBottom: '20px',
+  zIndex: 1000
 };
 
 class WeaponDesc extends Component {

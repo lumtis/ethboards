@@ -25,10 +25,12 @@ class DescSpawner extends Component {
 
     return (
       <div style={{
-        top: this.props.position.y-100+'px',
-        left: this.props.position.x+100+'px',
+        // top: this.props.position.y-100+'px',   TODO: Maybe change this ?
+        // left: this.props.position.x+100+'px',
+        top: '10px',
+        left: '10px',
+        position: 'fixed',
         width: '350px',
-        position: 'absolute'
       }}
       >{desc}</div>
     );
@@ -86,9 +88,8 @@ class WeaponSprite extends Component {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
           <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
-          <ReactCursorPosition>
             <DescSpawner contractAddress={this.props.contractAddress} />
-          </ReactCursorPosition>
+
         </div>
       );
     }
@@ -101,5 +102,8 @@ class WeaponSprite extends Component {
     }
   }
 }
+
+// <ReactCursorPosition>
+// </ReactCursorPosition>
 
 export default WeaponSprite

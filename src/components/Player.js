@@ -31,7 +31,6 @@ class Player extends Component {
       characterRegistry: store.getState().web3.characterRegistryInstance,
       nickname: '',     // Character info
       owner: null,
-      nuja: 0,
       server: 0,
       health: 0,        // Server info
       number: 0,
@@ -69,7 +68,6 @@ class Player extends Component {
             self.setState({
               nickname: characterInfo.nicknameRet,
               owner: characterInfo.ownerRet,
-              nuja: characterNuja,
               server: currentServer,
             })
 
