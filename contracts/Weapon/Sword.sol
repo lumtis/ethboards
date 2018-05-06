@@ -54,7 +54,7 @@ contract Sword is Weapon {
         }
 
         if (striked) {
-            (rr1, rr_p) = nujaContract.fieldInformation(serverId, x, y);
+            (rr1, rr_p) = nujaContract.fieldInformation(serverId, strikedX, strikedY);
             if (rr_p > 0) {
                 nujaContract.damage(serverId, rr_p-1, 40);
             }
