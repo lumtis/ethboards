@@ -190,7 +190,7 @@ contract NujaBattle is Geometry {
         require(x < 10);
         require(y < 10);
 
-        return (servers[indexServer].fields[x][y].building, servers[indexServer].fields[x][y].character - 1);
+        return (servers[indexServer].fields[x][y].building, servers[indexServer].fields[x][y].character);
     }
 
     function playerCharacter(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex) {
