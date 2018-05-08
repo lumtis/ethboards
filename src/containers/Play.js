@@ -12,8 +12,6 @@ class Play extends Component {
   constructor(props) {
     super(props)
 
-    this.changeServer = this.changeServer.bind(this, 'id');
-
     this.state = {
       server: 0,
       accountInitialized: false
@@ -27,6 +25,10 @@ class Play extends Component {
     var self = this
     var web3 = store.getState().web3.web3Instance
 
+    if (Number.isInteger(this.props.match.params.serverid)) {
+      this.setState({server: parseInt(this.props.match.params.serverid)})
+    }
+
     web3.eth.getAccounts(function(err, accounts) {
       if (accounts.length > 0) {
         var account = {"address":accounts[0], "privateKey":""}
@@ -39,19 +41,12 @@ class Play extends Component {
     })
   }
 
-  changeServer(id, e) {
-    e.preventDefault();
-    var self = this;
-
-    self.setState({server: id})
-  }
-
   render() {
     if (this.state.accountInitialized) {
       return (
         <div>
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
-            <Sidebar server={this.state.server} onChangeServer={this.changeServer.bind(this, 'id')} />
+            <Sidebar server={this.state.server} />
           </div>
           <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
 

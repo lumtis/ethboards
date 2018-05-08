@@ -47,17 +47,20 @@ class PlayerSprite extends Component {
     if (self.state.characterRegistry != null) {
       self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
         // Retrieve server info
-        self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServer) {
-          if (self.state.nujaBattle != null) {
-            self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
-              self.state.nujaBattle.methods.playerPosition(currentServer, playerIndex).call().then(function(playerInfo) {
-                // Update server infos
-                self.setState({
-                  positionX: playerInfo.positionX,
-                  positionY: playerInfo.positionY,
-                })
+        self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServerRet) {
+          if(currentServerRet > 0) {
+            var currentServer = currentServerRet-1
+            if (self.state.nujaBattle != null) {
+              self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
+                self.state.nujaBattle.methods.playerPosition(currentServer, playerIndex).call().then(function(playerInfo) {
+                  // Update server infos
+                  self.setState({
+                    positionX: playerInfo.positionX,
+                    positionY: playerInfo.positionY,
+                  })
+                });
               });
-            });
+            }
           }
         });
 

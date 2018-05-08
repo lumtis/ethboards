@@ -54,7 +54,7 @@ class Welcome extends Component {
 
           <img src="/images/title.png" alt="Nuja" style={{width: '100%', bottom: 0, position: 'absolute'}}></img>
           <div style={{textAlign: 'center'}}>
-            <Link to="/play"><button className="button" style={playButton}>Play</button></Link>
+            <Link to="/play/0"><button className="button" style={playButton}>Play</button></Link>
           </div>
         </div>
         <div style={{position:'absolute', marginTop:'100vh'}} >

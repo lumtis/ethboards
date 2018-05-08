@@ -32,7 +32,7 @@ class App extends Component {
         <Router>
           <div>
             <Route exact path="/" component={Welcome}/>
-            <Route path="/play" component={Play}/>
+            <Route path="/play/:serverid" component={Play}/>
           </div>
         </Router>
       </div>

@@ -20,8 +20,6 @@ class Sidebar extends Component {
   constructor(props) {
     super(props)
 
-    this.changeServer = this.changeServer.bind(this);
-
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
@@ -39,7 +37,6 @@ class Sidebar extends Component {
 
   static defaultProps = {
     server: 0,
-    onChangeServer: noop
   }
 
   componentWillMount() {
@@ -58,14 +55,6 @@ class Sidebar extends Component {
         });
       }
     }
-  }
-
-  changeServer(e) {
-    e.preventDefault();
-    var self = this;
-
-    var id = parseInt(self.refs.serverId.value);
-    self.props.onChangeServer(id)
   }
 
   render() {
@@ -92,12 +81,6 @@ class Sidebar extends Component {
     return (
       <div style={{backgroundColor: '#16D7AC', height: '100vh', overflowY: 'scroll'}}>
         <div style={{marginTop: '20px', padding: '20px'}}>
-          <form onSubmit={this.changeServer}>
-            <h3 style={{}}>Choose server</h3>
-            <div className="form-group">
-              <input className="form-control" style={inputStyle} ref="serverId" placeholder="Server id" type="text"/>
-            </div>
-          </form>
           {content}
         </div>
       </div>

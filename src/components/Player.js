@@ -62,51 +62,53 @@ class Player extends Component {
     if (self.state.characterRegistry != null) {
       self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
         self.state.characterRegistry.methods.getCharacterNuja(self.props.index).call().then(function(characterNuja) {
-          self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServer) {
+          self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServerRet) {
 
-            // Update character infos
-            self.setState({
-              nickname: characterInfo.nicknameRet,
-              owner: characterInfo.ownerRet,
-              server: currentServer,
-            })
+            // Check if is currently in a server
+            if(currentServerRet > 0) {
 
-            // Retrieve server info
-            if (self.state.nujaBattle != null) {
-              if (self.state.account != null) {
-                self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
-                  self.state.nujaBattle.methods.playerInformation(currentServer, playerIndex).call().then(function(playerInfo) {
-                    // Update server infos
-                    self.setState({
-                      health: playerInfo.health,
-                      number: playerIndex,
+              var currentServer = currentServerRet-1
+
+              // Update character infos
+              self.setState({
+                nickname: characterInfo.nicknameRet,
+                owner: characterInfo.ownerRet,
+                server: currentServer,
+              })
+
+              // Retrieve server info
+              if (self.state.nujaBattle != null) {
+                if (self.state.account != null) {
+                  self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
+                    self.state.nujaBattle.methods.playerInformation(currentServer, playerIndex).call().then(function(playerInfo) {
+                      // Update server infos
+                      self.setState({
+                        health: playerInfo.health,
+                        number: playerIndex,
+                        weaponList: <WeaponList server={currentServer} player={playerIndex}/>,
+                      })
+                    });
+                  });
+                }
+              }
+
+              // Retrieve nuja info
+              if (self.state.nujaRegistry != null) {
+                self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
+                  var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
+
+                  nujaContract.methods.getMetadata().call().then(function(ipfsString) {
+                    ipfs.files.get(ipfsString + '/image.png', function (err, files) {
+                      self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
                     })
-
-                    // Get the weapons
-                    self.setState({
-                      weaponList: <WeaponList server={currentServer} player={playerIndex}/>,
+                    ipfs.files.get(ipfsString + '/name/default', function (err, files) {
+                      self.setState({name: files[0].content.toString('utf8')})
                     })
                   });
                 });
               }
+
             }
-
-            // Retrieve nuja info
-            if (self.state.nujaRegistry != null) {
-              self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
-                var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
-
-                nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-                  ipfs.files.get(ipfsString + '/image.png', function (err, files) {
-                    self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
-                  })
-                  ipfs.files.get(ipfsString + '/name/default', function (err, files) {
-                    self.setState({name: files[0].content.toString('utf8')})
-                  })
-                });
-              });
-            }
-
           });
         });
       });
