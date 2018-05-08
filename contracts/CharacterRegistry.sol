@@ -80,7 +80,6 @@ contract CharacterRegistry is ERC721 {
         NujaRegistry reg = NujaRegistry(nujaRegistry);
         require(nuja < reg.getNujaNumber());
 
-
         Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner], 0);
         characterArray.push(c);
 
@@ -89,8 +88,12 @@ contract CharacterRegistry is ERC721 {
 
     function setCharacterServer(uint256 c, uint server) public fromServer {
         require(c < characterNumber);
-
         characterArray[c].currentServer = server+1;
+    }
+
+    function unsetCharacterServer(uint256 c) public fromServer {
+        require(c < characterNumber);
+        characterArray[c].currentServer = 0;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -315,7 +318,7 @@ contract CharacterRegistry is ERC721 {
         require(_tokenId < characterNumber);
 
         Character memory ret = characterArray[_tokenId];
-        return(ret.currentServer-1);
+        return(ret.currentServer);
     }
 
     // Get functions
