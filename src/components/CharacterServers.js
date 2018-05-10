@@ -27,7 +27,7 @@ const infoStyle = {
 };
 
 
-class AllServers extends Component {
+class CharacterServers extends Component {
   constructor(props) {
     super(props)
 
@@ -60,37 +60,40 @@ class AllServers extends Component {
 
             for(var i = 0; i < characterNb; i++) {
               self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
-                self.state.characterRegistry.methods.getCharacterCurrentServer(characterIndex).call().then(function(currentServerRet) {
-                  if(currentServerRet > 0) {
-                    //Get the server infos
-                    var currentServer = currentServerRet-1
-                    self.state.nujaBattle.methods.getServerInfo(currentServer).call().then(function(infos) {
+                self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
+                  self.state.characterRegistry.methods.getCharacterCurrentServer(characterIndex).call().then(function(currentServerRet) {
+                    if(currentServerRet > 0) {
+                      //Get the server infos
+                      var currentServer = currentServerRet-1
+                      self.state.nujaBattle.methods.getServerInfo(currentServer).call().then(function(infos) {
 
-                      // Change icon depending on server running
-                      if (infos.runningRet) {
-                        var runIcon = <i class="fas fa-play"></i>
-                      }
-                      else {
-                        runIcon = <i class="fas fa-pause"></i>
-                      }
+                        // Change icon depending on server running
+                        if (infos.runningRet) {
+                          var runIcon = <i class="fas fa-play"></i>
+                        }
+                        else {
+                          runIcon = <i class="fas fa-pause"></i>
+                        }
 
-                      var route = '/play/' + toString(this.serverId)
+                        var route = '/play/' + toString(this.serverId)
 
-                      // Specifying server button
-                      var serverArrayTmp = self.state.serverArray
-                      serverArrayTmp.push(
-                        <div key={this.serverId} style={infoStyle} className="col-md-12">
-                          <Link to={route}>
-                            {runIcon}
-                            {infos.nameRet}
-                            {infos.playerNbRet}
-                            {infos.playerMaxRet}
-                          </Link>
-                        </div>
-                      )
-                      self.setState({serverArray: serverArrayTmp})
-                    }.bind({serverId: currentServer}))
-                  }
+                        // Specifying server button
+                        var serverArrayTmp = self.state.serverArray
+                        serverArrayTmp.push(
+                          <div key={this.serverId} style={infoStyle} className="col-md-12">
+                            <Link to={route}>
+                              {infoRet.nicknameRet}
+                              {runIcon}
+                              {infos.nameRet}
+                              {infos.playerNbRet}
+                              {infos.playerMaxRet}
+                            </Link>
+                          </div>
+                        )
+                        self.setState({serverArray: serverArrayTmp})
+                      }.bind({serverId: currentServer}))
+                    }
+                  })
                 })
               })
             }
@@ -109,4 +112,4 @@ class AllServers extends Component {
   }
 }
 
-export default AllServers
+export default CharacterServers
