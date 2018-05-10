@@ -14,7 +14,7 @@ class Play extends Component {
 
     this.state = {
       server: 0,
-      accountInitialized: false
+      // accountInitialized: false
     }
   }
 
@@ -29,20 +29,20 @@ class Play extends Component {
       this.setState({server: parseInt(this.props.match.params.serverid)})
     }
 
-    web3.eth.getAccounts(function(err, accounts) {
-      if (accounts.length > 0) {
-        var account = {"address":accounts[0], "privateKey":""}
-        store.dispatch({type: 'ACCOUNT_LOGIN', payload: {accountInstance: account}})
-        self.setState({accountInitialized: true})
-      }
-      else {
-        self.setState({accountInitialized: true})
-      }
-    })
+    // web3.eth.getAccounts(function(err, accounts) {
+    //   if (accounts.length > 0) {
+    //     var account = {"address":accounts[0], "privateKey":""}
+    //     store.dispatch({type: 'ACCOUNT_LOGIN', payload: {accountInstance: account}})
+    //     self.setState({accountInitialized: true})
+    //   }
+    //   else {
+    //     self.setState({accountInitialized: true})
+    //   }
+    // })
   }
 
   render() {
-    if (this.state.accountInitialized) {
+    // if (this.state.accountInitialized) {
       return (
         <div>
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
@@ -65,10 +65,10 @@ class Play extends Component {
           </div>
         </div>
       );
-    }
-    else {
-      return (<div></div>)
-    }
+    // }
+    // else {
+    //   return (<div></div>)
+    // }
   }
 }
 

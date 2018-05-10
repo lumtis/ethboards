@@ -39,13 +39,13 @@ class Bar extends Component {
           <div className="container-fluid">
             <ul className="nav navbar-nav">
               <li className="navcell">
-                <Link to="/play"><a className="navlink">Play <i className="fa fa-gamepad"></i></a></Link>
+                <Link to="/play/0"><a className="navlink">Play <i className="fa fa-gamepad"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/play"><a className="navlink">Collection <i className="fa fa-trophy"></i></a></Link>
+                <Link to="/servers"><a className="navlink">My servers<i className="fa fa-map"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/play"><a className="navlink">Marketplace <i className="fa fa-shopping-basket"></i></a></Link>
+                <Link to="/chatacters"><a className="navlink">My characters<i className="fa fa-user-ninja"></i></a></Link>
               </li>
             </ul>
             <div className="addressStyle" style={{paddingTop: '13px'}}>{addr}</div>
