@@ -32,13 +32,15 @@ class Actions extends Component {
       weaponArray: [],
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
+      weaponRegistry: store.getState().web3.weaponRegistryInstance,
       myTurn: false
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
-        account: store.getState().account.accountInstance
+        account: store.getState().account.accountInstance,
+        weaponRegistry: store.getState().web3.weaponRegistryInstance,
       });
     });
   }
@@ -57,24 +59,22 @@ class Actions extends Component {
           // Create button for every player's weapon
           self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
             self.state.nujaBattle.methods.playerInformation(self.props.server, playerIndex).call().then(function(playerInfo) {
+
               // For each weapon, retreive id
               for (var i = 0; i < playerInfo.weaponNumber; i++) {
                 self.state.nujaBattle.methods.playerWeapons(self.props.server, playerIndex, i).call().then(function(weaponId) {
-                  self.state.nujaBattle.methods.getWeaponAddress(self.props.server, weaponId).call().then(function(weaponAddress) {
-                    var weaponArrayTmp = self.state.weaponArray
 
-                    // Push to weapon array the sprite of the weapon wrapped by the callback button
-                    weaponArrayTmp.push(
-                      <div key={this.userWeaponId} className="col-md-3">
-                        <button onClick={self.weaponButton(this.userWeaponId)} style={{
-                          borderWidth: '0px',
-                          backgroundColor: 'rgba(240, 240, 240, 0.0)',
-                        }}>
-                          <WeaponSprite contractAddress={weaponAddress}/>
-                        </button>
-                      </div>)
-                    self.setState({weaponArray: weaponArrayTmp})
-                  }.bind(this));
+                  // Push to weapon array the sprite of the weapon wrapped by the callback button
+                  weaponArrayTmp.push(
+                    <div key={this.userWeaponId} className="col-md-3">
+                      <button onClick={self.weaponButton(this.userWeaponId)} style={{
+                        borderWidth: '0px',
+                        backgroundColor: 'rgba(240, 240, 240, 0.0)',
+                      }}>
+                        <WeaponSprite weaponIndex={weaponId}/>
+                      </button>
+                    </div>)
+                  self.setState({weaponArray: weaponArrayTmp})
                 }.bind({userWeaponId: i}));
               }
             });

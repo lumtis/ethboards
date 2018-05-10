@@ -3,6 +3,7 @@ import store from '../store'
 
 import WeaponSprite from '../components/WeaponSprite'
 
+
 class WeaponList extends Component {
   constructor(props) {
     super(props)

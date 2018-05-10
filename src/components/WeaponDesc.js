@@ -24,6 +24,7 @@ class WeaponDesc extends Component {
 
     this.state = {
       web3: store.getState().web3.web3Instance,
+      weaponRegistry: store.getState().web3.weaponRegistryInstance,
       imageData: '',
       name: '',
       description: ''
@@ -32,31 +33,38 @@ class WeaponDesc extends Component {
     store.subscribe(() => {
       this.setState({
         web3: store.getState().web3.web3Instance,
+        weaponRegistry: store.getState().web3.weaponRegistryInstance,
       });
     });
   }
 
   static defaultProps = {
-    contractAddress: null
+    weaponIndex: 0
   }
 
   componentWillMount() {
     var self = this
-    var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, this.props.contractAddress)
     var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
-    if (weaponContract != null) {
-      weaponContract.methods.getMetadata().call().then(function(ret) {
-        ipfs.files.get(ret + '/image.png', function (err, files) {
-          self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
-        })
-        ipfs.files.get(ret + '/name/default', function (err, files) {
-          self.setState({name: files[0].content.toString('utf8')})
-        })
-        ipfs.files.get(ret + '/description/default', function (err, files) {
-          self.setState({description: files[0].content.toString('utf8')})
-        })
-      });
+    if (weaponRegistry != null) {
+      if (weaponContract != null) {
+
+        // Get the contract address
+        self.state.weaponRegistry.methods.getContract(this.props.weaponIndex).call().then(function(addressRet) {
+          var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, addressRet)
+          weaponContract.methods.getMetadata().call().then(function(ret) {
+            ipfs.files.get(ret + '/image.png', function (err, files) {
+              self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
+            })
+            ipfs.files.get(ret + '/name/default', function (err, files) {
+              self.setState({name: files[0].content.toString('utf8')})
+            })
+            ipfs.files.get(ret + '/description/default', function (err, files) {
+              self.setState({description: files[0].content.toString('utf8')})
+            })
+          });
+        }
+      }
     }
   }
 
