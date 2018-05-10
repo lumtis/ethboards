@@ -1,7 +1,5 @@
 pragma solidity ^0.4.2;
 
-import "./Nuja/Nuja.sol";
-
 contract NujaRegistry {
 
     ///////////////////////////////////////////////////////////////
@@ -39,14 +37,6 @@ contract NujaRegistry {
 
         return nujaArray[index];
     }
-
-    // TODO: implement function to get metadata through 2 byte32 arrays
-    /* function tokenMetadata(uint256 index) public constant returns (string metadataRet) {
-        require(index < nujaNumber);
-        Nuja n = Nuja(nujaArray[index]);
-
-        return n.getMetadata();
-    } */
 
     // Get functions
     function getOwner() public view returns(address ret) {

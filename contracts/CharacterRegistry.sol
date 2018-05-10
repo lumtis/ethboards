@@ -56,6 +56,8 @@ contract CharacterRegistry is ERC721 {
     // Index of the card for the user
     mapping (address => mapping (uint => uint)) indexCharacter;
 
+    mapping (address => bool) starterClaimed;
+
     ///////////////////////////////////////////////////////////////
     /// Constructor
 
@@ -83,6 +85,8 @@ contract CharacterRegistry is ERC721 {
         Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner], 0);
         characterArray.push(c);
 
+        indexCharacter[characterOwner][characterCount[characterOwner]] = characterNumber;
+        characterCount[characterOwner] += 1;
         characterNumber += 1;
     }
 
@@ -94,6 +98,24 @@ contract CharacterRegistry is ERC721 {
     function unsetCharacterServer(uint256 c) public fromServer {
         require(c < characterNumber);
         characterArray[c].currentServer = 0;
+    }
+
+    function claimStarter(string nickname, uint nuja) public {
+        require(starterClaimed[msg.sender] == false);
+        require(nuja < 3);
+
+        Character memory c = Character(nickname, msg.sender, nuja, characterCount[msg.sender], 0);
+        characterArray.push(c);
+
+        indexCharacter[msg.sender][characterCount[msg.sender]] = characterNumber;
+        characterCount[msg.sender] += 1;
+        characterNumber += 1;
+
+        starterClaimed[msg.sender] = true;
+    }
+
+    function isStarterClaimed(address user) public returns(bool starterClaimedRet) {
+        return starterClaimed[user];
     }
 
     ///////////////////////////////////////////////////////////////
