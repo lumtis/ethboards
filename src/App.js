@@ -33,6 +33,8 @@ class App extends Component {
           <div>
             <Route exact path="/" component={Welcome}/>
             <Route path="/play/:serverid" component={Play}/>
+            <Route path="/servers" component={ServerDashboard}/>
+            <Route path="/characters" component={CharacterDashboard}/>
           </div>
         </Router>
       </div>
