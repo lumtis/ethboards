@@ -5,7 +5,7 @@ import Nuja from '../components/Nuja'
 import Bar from '../components/Bar'
 
 var inputStyle = {
-  width: '100px',
+  width: '200px',
   margin: '0 auto',
   backgroundColor: 'rgba(236, 236, 236, 0.6)',
   borderRadius: 0,
@@ -90,32 +90,37 @@ class CharacterDashboard extends Component {
     var chooseStarter = <div></div>
     if(!this.state.starterClaimed) {
       // Form to choose a starter
-      var chooseStarter =
+      chooseStarter =
         <div>
-          <h1>Nickname:</h1>
-          <input style={inputStyle} ref="nickname" placeholder="booba" type="text"/>
-          <div className="col-md-4" style={{}}>
-            <Nuja nujaIndex={0} />
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>
-              <a onClick={this.starterChosen(0)}>
-                <button className='buttonServer'>Choose me</button>
-              </a>
-            </div>
+          <div style={{textAlign: 'center', marginBottom: '20px'}}>
+            <h1>Choose your starter</h1>
+            <h1>Nickname:</h1>
+            <input style={inputStyle} ref="nickname" placeholder="booba" type="text"/>
           </div>
-          <div className="col-md-4" style={{}}>
-            <Nuja nujaIndex={1} />
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>
-              <a onClick={this.starterChosen(1)}>
-                <button className='buttonServer'>Choose me</button>
-              </a>
+          <div className="row">
+            <div className="col-md-4" style={{}}>
+              <Nuja nujaIndex={0} />
+              <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                <a onClick={this.starterChosen(0)}>
+                  <button className='buttonServer'>Choose me !</button>
+                </a>
+              </div>
             </div>
-          </div>
-          <div className="col-md-4" style={{}}>
-            <Nuja nujaIndex={2} />
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>
-              <a onClick={this.starterChosen(2)}>
-                <button className='buttonServer'>Choose me</button>
-              </a>
+            <div className="col-md-4" style={{}}>
+              <Nuja nujaIndex={1} />
+              <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                <a onClick={this.starterChosen(1)}>
+                  <button className='buttonServer'>Choose me !</button>
+                </a>
+              </div>
+            </div>
+            <div className="col-md-4" style={{}}>
+              <Nuja nujaIndex={2} />
+              <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                <a onClick={this.starterChosen(2)}>
+                  <button className='buttonServer'>Choose me !</button>
+                </a>
+              </div>
             </div>
           </div>
         </div>

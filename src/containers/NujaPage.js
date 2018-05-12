@@ -20,13 +20,13 @@ class NujaPage extends Component {
     super(props)
 
     this.state = {
-      nujaRegistry: store.getState().web3.characterRegistryInstance,
+      nujaRegistry: store.getState().web3.nujaRegistryInstance,
       nujaArray: [],
     }
 
     store.subscribe(() => {
       this.setState({
-        nujaRegistry: store.getState().web3.characterRegistryInstance,
+        nujaRegistry: store.getState().web3.nujaRegistryInstance,
       })
     })
   }
@@ -61,7 +61,7 @@ class NujaPage extends Component {
     return(
       <div>
         <Bar style={{paddingRight:'10px'}} />
-        <div className="row">
+        <div style={{marginTop:'30px'}} className="row">
           <div className="col-md-6" style={{}}>
            {infoNuja}
           </div>

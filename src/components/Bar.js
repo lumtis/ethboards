@@ -42,16 +42,16 @@ class Bar extends Component {
                 <Link to="/play/0"><a className="navlink">Play <i className="fa fa-gamepad"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/servers"><a className="navlink">My servers<i className="fa fa-map"></i></a></Link>
+                <Link to="/servers"><a className="navlink">My servers <i className="fa fa-map"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/chatacters"><a className="navlink">My characters<i className="fa fa-user-ninja"></i></a></Link>
+                <Link to="/characters"><a className="navlink">My characters <i className="fa fa-user"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/weapon"><a className="navlink">All weapons<i className="fa fa-fighter-jet"></i></a></Link>
+                <Link to="/weapon"><a className="navlink">All weapons <i className="fa fa-fighter-jet"></i></a></Link>
               </li>
               <li className="navcell">
-                <Link to="/nuja"><a className="navlink">All nujas<i className="fa fa-users"></i></a></Link>
+                <Link to="/nuja"><a className="navlink">All nujas <i className="fa fa-users"></i></a></Link>
               </li>
             </ul>
             <div className="addressStyle" style={{paddingTop: '13px'}}>{addr}</div>

@@ -8,7 +8,7 @@ var nujaRegistryAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
 var characterRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
 var weaponRegistryJson = require('../../build/contracts/WeaponRegistry.json')
-var weaponRegistryAddress = 'TODO'
+var weaponRegistryAddress = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {
@@ -57,7 +57,7 @@ function getWeb3() {
     nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
     nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
     characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
-    var weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
+    weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
 
     results = {
       web3Instance: web3,

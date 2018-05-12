@@ -20,7 +20,7 @@ class DescSpawner extends Component {
   }
 
   render() {
-    var desc = <WeaponDesc contractAddress={this.props.contractAddress} />
+    var desc = <WeaponDesc weaponIndex={this.props.weaponIndex} />
 
     return (
       <div style={{
@@ -96,7 +96,7 @@ class WeaponSprite extends Component {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
           <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
-            <DescSpawner contractAddress={this.props.weaponIndex} />
+            <DescSpawner weaponIndex={this.props.weaponIndex} />
         </div>
       );
     }

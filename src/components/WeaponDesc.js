@@ -11,7 +11,7 @@ const infoStyle = {
   padding: '20px',
   width: '400px',
   minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.9)',
+  backgroundColor: 'rgba(240, 240, 240, 0.7)',
   marginRight: 'auto',
   marginLeft: 'auto',
   marginBottom: '20px',

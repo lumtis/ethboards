@@ -104,7 +104,7 @@ class Map extends Component {
     }
 
     // crosses
-    for (var i = 0; i < this.state.crossArray.length; i++) {
+    for (i = 0; i < this.state.crossArray.length; i++) {
       var offsetX = this.state.crossArray[i].x*64
       var offsetY = this.state.crossArray[i].y*64
       crosses.push(

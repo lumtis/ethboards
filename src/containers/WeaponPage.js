@@ -61,7 +61,7 @@ class WeaponPage extends Component {
     return(
       <div>
         <Bar style={{paddingRight:'10px'}} />
-        <div className="row">
+        <div style={{marginTop:'30px'}} className="row">
           <div className="col-md-6" style={{}}>
            {infoWeapon}
           </div>

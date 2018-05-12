@@ -17,7 +17,7 @@ const infoStyle = {
   padding: '20px',
   width: '80%',
   minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.7)',
+  backgroundColor: 'rgba(240, 240, 240, 0.5)',
   marginRight: 'auto',
   marginLeft: 'auto',
   marginBottom: '20px'
@@ -37,7 +37,8 @@ class ServerDashboard extends Component {
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
-      serverSelected: 0,
+      atLeastOneServer: false,
+      serverSelected: -1,
       serverArray: [],
       weaponServerArray: [],
       weaponArray: [],
@@ -63,8 +64,13 @@ class ServerDashboard extends Component {
 
       // Get all the servers of the user
       self.state.nujaBattle.methods.getServerUserNumber(self.state.account.address).call().then(function(serverNb) {
-        for (var i = 0; i < serverNb; i++) {
 
+        // Enable this to be able to check the server
+        if(serverNb > 0) {
+          self.setState({atLeastOneServer: true})
+        }
+
+        for (var i = 0; i < serverNb; i++) {
           // For each server we add the button
           self.state.nujaBattle.methods.getServerUserNumber(self.state.account.address, i).call().then(function(serverIndex) {
             self.state.nujaBattle.methods.getServerName(serverIndex).call().then(function(serverName) {
@@ -86,20 +92,22 @@ class ServerDashboard extends Component {
       })
 
       // Get weapon from server
-      self.state.nujaBattle.methods.getServerWeaponNb(self.state.serverSelected).call().then(function(weaponNb) {
-        for (var i = 0; i < weaponNb; i++) {
+      if(self.state.serverSelected >= 0) {
+        self.state.nujaBattle.methods.getServerWeaponNb(self.state.serverSelected).call().then(function(weaponNb) {
+          for (var i = 0; i < weaponNb; i++) {
 
-          self.state.nujaBattle.methods.getServerWeapon(self.state.serverSelected, i).call().then(function(weapon) {
-            var weaponServerArrayTmp = self.state.weaponServerArray
-            weaponServerArrayTmp.push(
-              <div key={this.index} className="col-md-4">
-                <WeaponSprite weaponIndex={weapon} />
-              </div>
-            )
-            self.setState({weaponServerArray: weaponServerArrayTmp})
-          }.bind({index: i}))
-        }
-      })
+            self.state.nujaBattle.methods.getServerWeapon(self.state.serverSelected, i).call().then(function(weapon) {
+              var weaponServerArrayTmp = self.state.weaponServerArray
+              weaponServerArrayTmp.push(
+                <div key={this.index} className="col-md-4">
+                  <WeaponSprite weaponIndex={weapon} />
+                </div>
+              )
+              self.setState({weaponServerArray: weaponServerArrayTmp})
+            }.bind({index: i}))
+          }
+        })
+      }
     }
 
     if (self.state.weaponRegistry != null) {
@@ -110,7 +118,7 @@ class ServerDashboard extends Component {
           var weaponArrayTmp = self.state.weaponArray
           weaponArrayTmp.push(
             <a onClick={self.addWeapon(i)}>
-              <div key={i} className="col-md-4">
+              <div key={i} style={{cursor: 'pointer'}} className="col-md-4">
                 <WeaponSprite weaponIndex={i} />
               </div>
             </a>
@@ -163,17 +171,19 @@ class ServerDashboard extends Component {
     if(x >= 0 && x < 10 && y >= 0 && y < 10) {
       // Add the server
       if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addBuildingToServer(this.state.serverSelected, x, y).send({
-          from: this.state.account.address,
-          gasPrice: 2000000000,
-        })
-        .on('error', function(error){ console.log('ERROR: ' + error)})
-        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-        .on('receipt', function(receipt){ console.log('receipt')})
-        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-        .then(function(ret) {
-          alert('Building added')
-        });
+        if(self.state.serverSelected >= 0) {
+          this.state.nujaBattle.methods.addBuildingToServer(this.state.serverSelected, x, y).send({
+            from: this.state.account.address,
+            gasPrice: 2000000000,
+          })
+          .on('error', function(error){ console.log('ERROR: ' + error)})
+          .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+          .on('receipt', function(receipt){ console.log('receipt')})
+          .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+          .then(function(ret) {
+            alert('Building added')
+          });
+        }
       }
     }
     else {
@@ -187,47 +197,39 @@ class ServerDashboard extends Component {
 
       // Add the weapon to the server
       if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addWeaponToServer(this.state.serverSelected, idWeapon).send({
-          from: this.state.account.address,
-          gasPrice: 2000000000,
-        })
-        .on('error', function(error){ console.log('ERROR: ' + error)})
-        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-        .on('receipt', function(receipt){ console.log('receipt')})
-        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-        .then(function(ret) {
-          alert('Weapon added')
-        });
+        if(self.state.serverSelected >= 0) {
+          this.state.nujaBattle.methods.addWeaponToServer(this.state.serverSelected, idWeapon).send({
+            from: this.state.account.address,
+            gasPrice: 2000000000,
+          })
+          .on('error', function(error){ console.log('ERROR: ' + error)})
+          .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+          .on('receipt', function(receipt){ console.log('receipt')})
+          .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+          .then(function(ret) {
+            alert('Weapon added')
+          });
+        }
       }
-
     }.bind(this)
   }
 
 
   render() {
-    return(
+
+    var serverManagement =
       <div>
-        <Bar style={{paddingRight:'10px'}} />
-        <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
-          <form onSubmit={this.addServer}>
-            <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Create server</h1>
-            <div className="form-group">
-              <input className="form-control" style={inputStyle} ref="servername" placeholder="Name" type="text"/>
-            </div>
-            <div className="form-group">
-              <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->10)" type="text"/>
-            </div>
-            <div className="form-group">
-              <button className='button' style={{margin:'20px', boxShadow:'5px 5px rgba(0, 0, 0, 1)'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
-            </div>
-          </form>
-
-          <h1 style={{marginBottom: '20px', marginTop: '0px'}}>List servers</h1>
-          {this.state.serverArray}
-
-        </div>
-        <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
-
+        <h1>You have no server</h1>
+      </div>
+    if (this.state.atLeastOneServer == true) {
+      if(this.state.serverSelected < 0) {
+        serverManagement =
+          <div>
+            <h1>Choose a server</h1>
+          </div>
+      }
+      else {
+        serverManagement =
           <div className="row" style={{padding: '30px'}}>
             <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
               <Map server={this.state.serverSelected} />
@@ -237,34 +239,71 @@ class ServerDashboard extends Component {
                 <div className="row" style={{padding: '30px'}}>
 
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
-                    <form onSubmit={this.addBuilding}>
-                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add building</h1>
-                      <div className="form-group">
-                        <input className="form-control" style={inputStyle} ref="buildingx" placeholder="X" type="text"/>
-                      </div>
-                      <div className="form-group">
-                        <input className="form-control" style={inputStyle} ref="buildingy" placeholder="Y" type="text"/>
-                      </div>
-                      <div className="form-group">
-                        <button className='button' style={{margin:'20px', boxShadow:'5px 5px rgba(0, 0, 0, 1)'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
-                      </div>
-                    </form>
+                    <div style={infoStyle}>
+                      <form onSubmit={this.addBuilding}>
+                        <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add building</h1>
+                        <div className="form-group">
+                          <input className="form-control" style={inputStyle} ref="buildingx" placeholder="X" type="text"/>
+                        </div>
+                        <div className="form-group">
+                          <input className="form-control" style={inputStyle} ref="buildingy" placeholder="Y" type="text"/>
+                        </div>
+                        <div className="form-group">
+                          <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
+                        </div>
+                      </form>
+                    </div>
                   </div>
 
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
-                    <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Server weapons</h1>
-                    <div className="row">
-                      {this.state.weaponServerArray}
-                    </div>
-                    <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
-                    <div className="row">
-                      {this.state.weaponArray}
+                    <div style={infoStyle}>
+                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Server weapons</h1>
+                      <div className="row">
+                        {this.state.weaponServerArray}
+                      </div>
+                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
+                      <div className="row">
+                        {this.state.weaponArray}
+                      </div>
                     </div>
                   </div>
 
                 </div>
             </div>
           </div>
+      }
+    }
+
+    return(
+      <div>
+        <Bar style={{paddingRight:'10px'}} />
+        <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
+
+          <div style={{padding: '30px'}}>
+            <div style={infoStyle}>
+              <form onSubmit={this.addServer}>
+                <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Create server</h1>
+                <div className="form-group">
+                  <input className="form-control" style={inputStyle} ref="servername" placeholder="Name" type="text"/>
+                </div>
+                <div className="form-group">
+                  <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->10)" type="text"/>
+                </div>
+                <div className="form-group">
+                  <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div style={infoStyle}>
+            <h1 style={{marginBottom: '20px', marginTop: '0px'}}>My servers</h1>
+            {this.state.serverArray}
+          </div>
+
+        </div>
+        <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
+          {serverManagement}
         </div>
       </div>
     )

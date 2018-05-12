@@ -22,8 +22,8 @@ class Play extends Component {
   }
 
   componentWillMount() {
-    var self = this
-    var web3 = store.getState().web3.web3Instance
+    // var self = this
+    // var web3 = store.getState().web3.web3Instance
 
     if (Number.isInteger(this.props.match.params.serverid)) {
       this.setState({server: parseInt(this.props.match.params.serverid)})
