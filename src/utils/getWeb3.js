@@ -8,7 +8,7 @@ var nujaRegistryAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
 var characterRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
 var weaponRegistryJson = require('../../build/contracts/WeaponRegistry.json')
-var characterRegistryAddress = 'TODO'
+var weaponRegistryAddress = 'TODO'
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {

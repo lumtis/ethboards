@@ -45,13 +45,13 @@ class Play extends Component {
     // if (this.state.accountInitialized) {
       return (
         <div>
+          <Bar style={{paddingRight:'10px'}} />
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
             <Sidebar server={this.state.server} />
           </div>
           <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
 
             <div className="container-fluid" style={{overflowY: 'scroll', height: '100vh', paddingLeft:0, paddingRight:0}}>
-              <Bar style={{paddingRight:'10px'}} />
               <div className="row" style={{padding: '30px'}}>
                 <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
                   <Map server={this.state.server} />

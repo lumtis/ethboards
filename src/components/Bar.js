@@ -47,6 +47,12 @@ class Bar extends Component {
               <li className="navcell">
                 <Link to="/chatacters"><a className="navlink">My characters<i className="fa fa-user-ninja"></i></a></Link>
               </li>
+              <li className="navcell">
+                <Link to="/weapon"><a className="navlink">All weapons<i className="fa fa-fighter-jet"></i></a></Link>
+              </li>
+              <li className="navcell">
+                <Link to="/nuja"><a className="navlink">All nujas<i className="fa fa-users"></i></a></Link>
+              </li>
             </ul>
             <div className="addressStyle" style={{paddingTop: '13px'}}>{addr}</div>
           </div>

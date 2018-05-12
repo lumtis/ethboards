@@ -66,19 +66,20 @@ class WeaponSprite extends Component {
     var self = this
     var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
-    if (weaponRegistry != null) {
-      if (weaponContract != null) {
+    if (self.state.weaponRegistry != null) {
 
-        // Get the contract address
-        self.state.weaponRegistry.methods.getContract(this.props.weaponIndex).call().then(function(addressRet) {
-          var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, addressRet)
+      // Get the contract address
+      self.state.weaponRegistry.methods.getContract(this.props.weaponIndex).call().then(function(addressRet) {
+        var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, addressRet)
+
+        if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
             ipfs.files.get(ret + '/image.png', function (err, files) {
               self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
             })
           });
-        })
-      }
+        }
+      })
     }
   }
 

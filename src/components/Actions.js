@@ -65,6 +65,7 @@ class Actions extends Component {
                 self.state.nujaBattle.methods.playerWeapons(self.props.server, playerIndex, i).call().then(function(weaponId) {
 
                   // Push to weapon array the sprite of the weapon wrapped by the callback button
+                  var weaponArrayTmp = self.state.weaponArray
                   weaponArrayTmp.push(
                     <div key={this.userWeaponId} className="col-md-3">
                       <button onClick={self.weaponButton(this.userWeaponId)} style={{

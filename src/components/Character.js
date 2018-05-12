@@ -49,6 +49,7 @@ class Character extends Component {
 
   componentWillMount() {
     var self = this
+    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.characterRegistry != null) {
       if (self.state.nujaRegistry != null) {

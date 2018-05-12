@@ -33,11 +33,10 @@ class WeaponList extends Component {
         for (var i = 0; i < playerInfo.weaponNumber; i++) {
           self.state.nujaBattle.methods.playerWeapons(self.props.server, self.props.player, i).call().then(function(weaponId) {
 
-            self.state.nujaBattle.methods.getWeaponAddress(self.props.server, weaponId).call().then(function(weaponAddress) {
-              var weaponArrayTmp = self.state.weaponArray
-              weaponArrayTmp.push(<div key={this.userWeaponId} className="col-md-3"><WeaponSprite contractAddress={weaponAddress}/></div>)
-              self.setState({weaponArray: weaponArrayTmp})
-            }.bind(this));
+            var weaponArrayTmp = self.state.weaponArray
+            weaponArrayTmp.push(<div key={this.userWeaponId} className="col-md-3"><WeaponSprite weaponIndex={weaponId}/></div>)
+            self.setState({weaponArray: weaponArrayTmp})
+
           }.bind({userWeaponId: i}));
         }
       });

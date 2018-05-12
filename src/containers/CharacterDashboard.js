@@ -1,18 +1,31 @@
 import React, { Component } from 'react'
 import store from '../store'
 import Character from '../components/Character'
+import Nuja from '../components/Nuja'
+import Bar from '../components/Bar'
 
+var inputStyle = {
+  width: '100px',
+  margin: '0 auto',
+  backgroundColor: 'rgba(236, 236, 236, 0.6)',
+  borderRadius: 0,
+  border: 0,
+  textAlign: 'center',
+  marginBottom: '20px'
+};
 
 
 class CharacterDashboard extends Component {
   constructor(props) {
     super(props)
 
+    this.starterChosen = this.starterChosen.bind(this);
+
     this.state = {
       characterRegistry: store.getState().web3.characterRegistryInstance,
       account: store.getState().account.accountInstance,
-      characterArray: []
-      starterClaimed: true
+      characterArray: [],
+      starterClaimed: true,
     }
 
     store.subscribe(() => {
@@ -21,7 +34,6 @@ class CharacterDashboard extends Component {
         account: store.getState().account.accountInstance,
       })
     })
-
   }
 
   static defaultProps = {
@@ -31,36 +43,87 @@ class CharacterDashboard extends Component {
     var self = this
 
     if (self.state.characterRegistry != null) {
-      if (self.state.nujaRegistry != null) {
-        self.state.characterRegistry.methods.isStarterClaimed(self.state.account.address).call().then(function(starterClaimed) {
-          self.setState({starterClaimed: starterClaimed})
-        })
+      self.state.characterRegistry.methods.isStarterClaimed(self.state.account.address).call().then(function(starterClaimed) {
+        self.setState({starterClaimed: starterClaimed})
+      })
 
-        // Get every character
-        self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
-          for(var i = 0; i < characterNb; i++) {
-            self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
+      // Get every character
+      self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
+        for(var i = 0; i < characterNb; i++) {
+          self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
 
-              var characterArrayTmp = self.state.characterArray
-              characterArrayTmp.push(<div key={characterIndex} className="col-md-3"><Character charaterIndex={characterIndex} /></div>)
-              self.setState({characterArray: characterArrayTmp})
-            })
-          }
-        })
-      }
+            var characterArrayTmp = self.state.characterArray
+            characterArrayTmp.push(<div key={characterIndex} className="col-md-3"><Character charaterIndex={characterIndex} /></div>)
+            self.setState({characterArray: characterArrayTmp})
+          })
+        }
+      })
     }
   }
+
+
+  starterChosen(id) {
+    return function(e) {
+
+      var nickname = this.refs.nickname.value
+
+      if (self.state.characterRegistry != null) {
+        this.state.characterRegistry.methods.claimStarter(nickname, id).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Chosen')
+        });
+      }
+
+    }.bind(this)
+  }
+
 
   render() {
 
     var chooseStarter = <div></div>
-    // If the user hasn't chosen his starter yet
     if(!this.state.starterClaimed) {
-
+      // Form to choose a starter
+      var chooseStarter =
+        <div>
+          <h1>Nickname:</h1>
+          <input style={inputStyle} ref="nickname" placeholder="booba" type="text"/>
+          <div className="col-md-4" style={{}}>
+            <Nuja nujaIndex={0} />
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <a onClick={this.starterChosen(0)}>
+                <button className='buttonServer'>Choose me</button>
+              </a>
+            </div>
+          </div>
+          <div className="col-md-4" style={{}}>
+            <Nuja nujaIndex={1} />
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <a onClick={this.starterChosen(1)}>
+                <button className='buttonServer'>Choose me</button>
+              </a>
+            </div>
+          </div>
+          <div className="col-md-4" style={{}}>
+            <Nuja nujaIndex={2} />
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <a onClick={this.starterChosen(2)}>
+                <button className='buttonServer'>Choose me</button>
+              </a>
+            </div>
+          </div>
+        </div>
     }
 
     return(
       <div>
+        <Bar style={{paddingRight:'10px'}} />
         <div className="row">
           {chooseStarter}
         </div>

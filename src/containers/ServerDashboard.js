@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import store from '../store'
 import Map from '../containers/Map'
-
+import WeaponSprite from '../components/WeaponSprite'
+import Bar from '../components/Bar'
 
 var inputStyle = {
   width: '80%',
@@ -33,14 +34,18 @@ class ServerDashboard extends Component {
     this.addWeapon = this.addWeapon.bind(this)
 
     this.state = {
+      weaponRegistry: store.getState().web3.weaponRegistryInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
       serverSelected: 0,
-      serverArray: []
+      serverArray: [],
+      weaponServerArray: [],
+      weaponArray: [],
     }
 
     store.subscribe(() => {
       this.setState({
+        weaponRegistry: store.getState().web3.weaponRegistryInstance,
         nujaBattle: store.getState().web3.nujaBattleInstance,
         account: store.getState().account.accountInstance
       })
@@ -55,6 +60,8 @@ class ServerDashboard extends Component {
     var self = this
 
     if (self.state.nujaBattle != null) {
+
+      // Get all the servers of the user
       self.state.nujaBattle.methods.getServerUserNumber(self.state.account.address).call().then(function(serverNb) {
         for (var i = 0; i < serverNb; i++) {
 
@@ -75,7 +82,40 @@ class ServerDashboard extends Component {
 
             }.bind({serverIndex: serverIndex}))
           })
+        }
+      })
 
+      // Get weapon from server
+      self.state.nujaBattle.methods.getServerWeaponNb(self.state.serverSelected).call().then(function(weaponNb) {
+        for (var i = 0; i < weaponNb; i++) {
+
+          self.state.nujaBattle.methods.getServerWeapon(self.state.serverSelected, i).call().then(function(weapon) {
+            var weaponServerArrayTmp = self.state.weaponServerArray
+            weaponServerArrayTmp.push(
+              <div key={this.index} className="col-md-4">
+                <WeaponSprite weaponIndex={weapon} />
+              </div>
+            )
+            self.setState({weaponServerArray: weaponServerArrayTmp})
+          }.bind({index: i}))
+        }
+      })
+    }
+
+    if (self.state.weaponRegistry != null) {
+
+      // Get all the weapon
+      self.state.weaponRegistry.methods.getWeaponNumber().call().then(function(weaponNb) {
+        for (var i = 0; i < weaponNb; i++) {
+          var weaponArrayTmp = self.state.weaponArray
+          weaponArrayTmp.push(
+            <a onClick={self.addWeapon(i)}>
+              <div key={i} className="col-md-4">
+                <WeaponSprite weaponIndex={i} />
+              </div>
+            </a>
+          )
+          self.setState({weaponArray: weaponArrayTmp})
         }
       })
     }
@@ -91,7 +131,7 @@ class ServerDashboard extends Component {
     e.preventDefault();
 
     var name = this.refs.name.value;
-    var slot = parseInt(his.refs.slot.value);
+    var slot = parseInt(this.refs.slot.value);
 
     if(slot >= 2 && slot <= 10) {
       // Add the server
@@ -117,8 +157,8 @@ class ServerDashboard extends Component {
   addBuilding(e) {
     e.preventDefault();
 
-    var x = parseInt(his.refs.buildingx.value);
-    var y = parseInt(his.refs.buildingy.value);
+    var x = parseInt(this.refs.buildingx.value);
+    var y = parseInt(this.refs.buildingy.value);
 
     if(x >= 0 && x < 10 && y >= 0 && y < 10) {
       // Add the server
@@ -141,13 +181,33 @@ class ServerDashboard extends Component {
     }
   }
 
-  addWeapon(e) {
-    e.preventDefault();
+  addWeapon(idWeapon) {
+    return function(e) {
+      e.preventDefault();
+
+      // Add the weapon to the server
+      if (this.state.nujaBattle != null) {
+        this.state.nujaBattle.methods.addWeaponToServer(this.state.serverSelected, idWeapon).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Weapon added')
+        });
+      }
+
+    }.bind(this)
   }
+
 
   render() {
     return(
       <div>
+        <Bar style={{paddingRight:'10px'}} />
         <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
           <form onSubmit={this.addServer}>
             <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Create server</h1>
@@ -163,7 +223,7 @@ class ServerDashboard extends Component {
           </form>
 
           <h1 style={{marginBottom: '20px', marginTop: '0px'}}>List servers</h1>
-          {serverArray}
+          {this.state.serverArray}
 
         </div>
         <div className="col-md-8" style={{paddingRight:0, paddingLeft:0}}>
@@ -192,19 +252,19 @@ class ServerDashboard extends Component {
                   </div>
 
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
-                    <form onSubmit={this.addWeapon}>
-                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
-                      <div className="form-group">
-                        <button className='button' style={{margin:'20px', boxShadow:'5px 5px rgba(0, 0, 0, 1)'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
-                      </div>
-                    </form>
+                    <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Server weapons</h1>
+                    <div className="row">
+                      {this.state.weaponServerArray}
+                    </div>
+                    <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
+                    <div className="row">
+                      {this.state.weaponArray}
+                    </div>
                   </div>
 
                 </div>
-
             </div>
           </div>
-
         </div>
       </div>
     )

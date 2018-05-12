@@ -2,10 +2,14 @@ import React, { Component } from 'react'
 import getWeb3 from './utils/getWeb3'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import store from '../store'
+import store from './store'
 
 import Welcome from './containers/Welcome'
 import Play from './containers/Play'
+import ServerDashboard from './containers/ServerDashboard'
+import CharacterDashboard from './containers/CharacterDashboard'
+import NujaPage from './containers/NujaPage'
+import WeaponPage from './containers/WeaponPage'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -52,6 +56,8 @@ class App extends Component {
               <Route path="/play/:serverid" component={Play}/>
               <Route path="/servers" component={ServerDashboard}/>
               <Route path="/characters" component={CharacterDashboard}/>
+              <Route path="/nuja" component={NujaPage}/>
+              <Route path="/weapon" component={WeaponPage}/>
             </div>
           </Router>
         </div>

@@ -39,7 +39,6 @@ class Nuja extends Component {
         web3: store.getState().web3.web3Instance,
       })
     })
-
   }
 
   static defaultProps = {
@@ -48,10 +47,11 @@ class Nuja extends Component {
 
   componentWillMount() {
     var self = this
+    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.nujaRegistry != null) {
       // Get ipfs data
-      self.state.nujaRegistry.methods.getContract(nujaIndex).call().then(function(addressRet) {
+      self.state.nujaRegistry.methods.getContract(self.props.nujaIndex).call().then(function(addressRet) {
         var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
 
         nujaContract.methods.getMetadata().call().then(function(ipfsString) {

@@ -10,7 +10,7 @@ const web3Reducer = (state = initialState, action) => {
       web3Instance: action.payload.web3Instance,
       nujaBattleInstance: action.payload.nujaBattleInstance,
       nujaRegistryInstance: action.payload.nujaRegistryInstance,
-      characterRegistryInstance: action.payload.characterRegistryInstance
+      characterRegistryInstance: action.payload.characterRegistryInstance,
       weaponRegistryInstance: action.payload.weaponRegistryInstance
     })
   }
