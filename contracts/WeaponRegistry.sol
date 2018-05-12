@@ -27,7 +27,7 @@ contract WeaponRegistry {
     ///////////////////////////////////////////////////////////////
     /// Admin functions
 
-    function addNuja(address weaponContract) public onlyOwner {
+    function addWeapon(address weaponContract) public onlyOwner {
         weaponArray.push(weaponContract);
         weaponNumber += 1;
     }

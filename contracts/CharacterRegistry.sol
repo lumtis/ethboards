@@ -114,7 +114,7 @@ contract CharacterRegistry is ERC721 {
         starterClaimed[msg.sender] = true;
     }
 
-    function isStarterClaimed(address user) public returns(bool starterClaimedRet) {
+    function isStarterClaimed(address user) public view returns(bool starterClaimedRet) {
         return starterClaimed[user];
     }
 
