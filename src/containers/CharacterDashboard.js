@@ -67,7 +67,10 @@ class CharacterDashboard extends Component {
 
       var nickname = this.refs.nickname.value
 
-      if (this.state.characterRegistry != null) {
+      if (!nickname) {
+        alert('Name must not be empty')
+      }
+      else if (this.state.characterRegistry != null) {
         this.state.characterRegistry.methods.claimStarter(nickname, id).send({
           from: this.state.account.address,
           gasPrice: 2000000000,

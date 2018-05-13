@@ -161,7 +161,10 @@ class ServerDashboard extends Component {
     var name = this.refs.servername.value;
     var slot = parseInt(this.refs.slot.value);
 
-    if(slot >= 2 && slot <= 10) {
+    if (!name) {
+      alert('name must not be empty')
+    }
+    else if(slot >= 2 && slot <= 10) {
       // Add the server
       if (this.state.nujaBattle != null) {
         this.state.nujaBattle.methods.addServer(name, slot).send({
