@@ -11,6 +11,7 @@ import '../css/sidebar.css'
 
 var noop = function() {};
 
+
 var inputStyle = {
   width: '80%',
   margin: '0 auto',
@@ -75,6 +76,9 @@ class Sidebar extends Component {
 
   changeServer(e) {
     e.preventDefault();
+
+
+
     if (this.state.changeServer)
       this.setState({changeServer: false})
     else {
@@ -99,14 +103,14 @@ class Sidebar extends Component {
       content = <h3>Please install metamask</h3>
     }
     else {
-      if (this.state.chooseServer) {
+      if (this.state.changeServer) {
 
         // We want to show available server
 
         var buttonReturn =
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <a onClick={this.changeServer}>
-              <i class="fas fa-arrow-left"></i>
+              <button className='buttonServer'><i className="fa fa-arrow-left"></i></button>
             </a>
           </div>
 
@@ -116,10 +120,11 @@ class Sidebar extends Component {
               {buttonReturn}
               <div style={{textAlign: 'center', marginBottom: '20px'}}>
                 <a onClick={this.changeServerByCharacter}>
-                  <button className='buttonServer'>Character servers</button>
+                  <button className='buttonServer'>All servers</button>
                 </a>
               </div>
-              <AllServers />
+              <h3>Your character's servers</h3>
+              <CharacterServers />
             </div>
         }
         else {
@@ -128,10 +133,11 @@ class Sidebar extends Component {
               {buttonReturn}
               <div style={{textAlign: 'center', marginBottom: '20px'}}>
                 <a onClick={this.changeServerByCharacter}>
-                  <button className='buttonServer'>All servers</button>
+                  <button className='buttonServer'>By character</button>
                 </a>
               </div>
-              <CharacterServers />
+              <h3>All servers</h3>
+              <AllServers />
             </div>
         }
       }

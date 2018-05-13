@@ -14,15 +14,10 @@ var flatColorList = [
   '#ffeaa7'
 ]
 
-const infoStyle = {
+const chooseStyle = {
   position: 'relative',
-  padding: '20px',
-  width: '80%',
-  minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.7)',
-  marginRight: 'auto',
-  marginLeft: 'auto',
-  marginBottom: '20px'
+  width: '100%',
+  height: '65px',
 };
 
 
@@ -85,12 +80,16 @@ class JoinInterface extends Component {
                 self.state.characterRegistry.methods.getCharacterCurrentServer(characterIndex).call().then(function(currentServerRet) {
                   if(currentServerRet == 0) {
 
+                    // Get a random color for background
+                    var ranIndex = Math.floor((Math.random() * flatColorList.length))
+                    var ranColor = flatColorList[ranIndex]
+
                     // Specifying server button
                     var characterArrayTmp = self.state.characterArray
                     characterArrayTmp.push(
-                      <div key={this.characterIndex} style={infoStyle} className="col-md-12">
-                        <a onClick={self.joinServer(this.characterIndex)}>
-                          {infoRet.nicknameRet}
+                      <div key={this.characterIndex} style={Object.assign({}, chooseStyle, {backgroundColor: ranColor})} className="col-md-12">
+                        <a style={{cursor: 'pointer'}} onClick={self.joinServer(this.characterIndex)}>
+                          <h1>{infoRet.nicknameRet}</h1>
                         </a>
                       </div>
                     )
@@ -107,8 +106,11 @@ class JoinInterface extends Component {
 
   render() {
     return (
-      <div className="row">
-        {this.state.characterArray}
+      <div>
+        <h3>Join the server :</h3>
+        <div style={{marginTop: '20px'}} className="row">
+          {this.state.characterArray}
+        </div>
       </div>
     )
   }

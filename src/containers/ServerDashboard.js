@@ -4,6 +4,16 @@ import Map from '../containers/Map'
 import WeaponSprite from '../components/WeaponSprite'
 import Bar from '../components/Bar'
 
+
+var flatColorList = [
+  '#55efc4',
+  '#74b9ff',
+  '#a29bfe',
+  '#fab1a0',
+  '#b2bec3',
+  '#ffeaa7'
+]
+
 var inputStyle = {
   width: '80%',
   margin: '0 auto',
@@ -23,6 +33,11 @@ const infoStyle = {
   marginBottom: '20px'
 };
 
+const chooseStyle = {
+  position: 'relative',
+  width: '100%',
+  height: '65px',
+};
 
 class ServerDashboard extends Component {
   constructor(props) {
@@ -72,15 +87,19 @@ class ServerDashboard extends Component {
 
         for (var i = 0; i < serverNb; i++) {
           // For each server we add the button
-          self.state.nujaBattle.methods.getServerUserNumber(self.state.account.address, i).call().then(function(serverIndex) {
+          self.state.nujaBattle.methods.getServerUserIndex(self.state.account.address, i).call().then(function(serverIndex) {
             self.state.nujaBattle.methods.getServerName(serverIndex).call().then(function(serverName) {
+
+              // Get a random color for background
+              var ranIndex = Math.floor((Math.random() * flatColorList.length))
+              var ranColor = flatColorList[ranIndex]
 
               // Add server
               var serverArrayTmp = self.state.serverArray
               serverArrayTmp.push(
-                <div key={this.serverIndex} style={infoStyle} className="col-md-12">
-                  <a onClick={self.changeServer(this.serverIndex)}>
-                    {serverName}
+                <div key={this.serverIndex} style={Object.assign({}, chooseStyle, {backgroundColor: ranColor})} className="col-md-12">
+                  <a style={{cursor: 'pointer'}} onClick={self.changeServer(this.serverIndex)}>
+                    <h1>{serverName}</h1>
                   </a>
                 </div>
               )
@@ -90,24 +109,6 @@ class ServerDashboard extends Component {
           })
         }
       })
-
-      // Get weapon from server
-      if(self.state.serverSelected >= 0) {
-        self.state.nujaBattle.methods.getServerWeaponNb(self.state.serverSelected).call().then(function(weaponNb) {
-          for (var i = 0; i < weaponNb; i++) {
-
-            self.state.nujaBattle.methods.getServerWeapon(self.state.serverSelected, i).call().then(function(weapon) {
-              var weaponServerArrayTmp = self.state.weaponServerArray
-              weaponServerArrayTmp.push(
-                <div key={this.index} className="col-md-4">
-                  <WeaponSprite weaponIndex={weapon} />
-                </div>
-              )
-              self.setState({weaponServerArray: weaponServerArrayTmp})
-            }.bind({index: i}))
-          }
-        })
-      }
     }
 
     if (self.state.weaponRegistry != null) {
@@ -117,8 +118,8 @@ class ServerDashboard extends Component {
         for (var i = 0; i < weaponNb; i++) {
           var weaponArrayTmp = self.state.weaponArray
           weaponArrayTmp.push(
-            <a onClick={self.addWeapon(i)}>
-              <div key={i} style={{cursor: 'pointer'}} className="col-md-4">
+            <a key={i} onClick={self.addWeapon(i)}>
+              <div style={{cursor: 'pointer'}} className="col-md-4">
                 <WeaponSprite weaponIndex={i} />
               </div>
             </a>
@@ -131,14 +132,33 @@ class ServerDashboard extends Component {
 
   changeServer(serverId) {
     return function(e) {
-      this.setState({serverSelected: serverId})
+      var self = this
+      self.setState({serverSelected: serverId, weaponServerArray: []})
+
+      // Get weapons from server
+      if(self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.getServerWeaponNb(serverId).call().then(function(weaponNb) {
+          for (var i = 0; i < weaponNb; i++) {
+
+            self.state.nujaBattle.methods.getServerWeapon(serverId, i).call().then(function(weapon) {
+              var weaponServerArrayTmp = self.state.weaponServerArray
+              weaponServerArrayTmp.push(
+                <div key={this.index} className="col-md-4">
+                  <WeaponSprite weaponIndex={weapon} />
+                </div>
+              )
+              self.setState({weaponServerArray: weaponServerArrayTmp})
+            }.bind({index: i}))
+          }
+        })
+      }
     }.bind(this)
   }
 
   addServer(e) {
     e.preventDefault();
 
-    var name = this.refs.name.value;
+    var name = this.refs.servername.value;
     var slot = parseInt(this.refs.slot.value);
 
     if(slot >= 2 && slot <= 10) {
@@ -171,7 +191,7 @@ class ServerDashboard extends Component {
     if(x >= 0 && x < 10 && y >= 0 && y < 10) {
       // Add the server
       if (this.state.nujaBattle != null) {
-        if(self.state.serverSelected >= 0) {
+        if(this.state.serverSelected >= 0) {
           this.state.nujaBattle.methods.addBuildingToServer(this.state.serverSelected, x, y).send({
             from: this.state.account.address,
             gasPrice: 2000000000,
@@ -197,7 +217,7 @@ class ServerDashboard extends Component {
 
       // Add the weapon to the server
       if (this.state.nujaBattle != null) {
-        if(self.state.serverSelected >= 0) {
+        if(this.state.serverSelected >= 0) {
           this.state.nujaBattle.methods.addWeaponToServer(this.state.serverSelected, idWeapon).send({
             from: this.state.account.address,
             gasPrice: 2000000000,
@@ -232,7 +252,7 @@ class ServerDashboard extends Component {
         serverManagement =
           <div className="row" style={{padding: '30px'}}>
             <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
-              <Map server={this.state.serverSelected} />
+              <Map key={this.state.serverSelected} server={this.state.serverSelected} />
             </div>
             <div className="col-md-12" style={{width:'100%', top:'660px'}}>
 
@@ -258,7 +278,7 @@ class ServerDashboard extends Component {
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
                     <div style={infoStyle}>
                       <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Server weapons</h1>
-                      <div className="row">
+                      <div className="row" style={{marginBottom: '20px'}}>
                         {this.state.weaponServerArray}
                       </div>
                       <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
@@ -298,7 +318,9 @@ class ServerDashboard extends Component {
 
           <div style={infoStyle}>
             <h1 style={{marginBottom: '20px', marginTop: '0px'}}>My servers</h1>
-            {this.state.serverArray}
+            <div className="row">
+              {this.state.serverArray}
+            </div>
           </div>
 
         </div>

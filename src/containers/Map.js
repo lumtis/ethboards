@@ -37,6 +37,7 @@ class Map extends Component {
 
   componentWillMount() {
     var self = this
+
     if (self.state.nujaBattle != null) {
       self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
 

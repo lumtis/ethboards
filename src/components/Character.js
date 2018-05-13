@@ -54,9 +54,11 @@ class Character extends Component {
     if (self.state.characterRegistry != null) {
       if (self.state.nujaRegistry != null) {
 
+
+
         // Get the nickname
         self.state.characterRegistry.methods.getCharacterInfo(self.props.charaterIndex).call().then(function(infoRet) {
-          self.setState({nickname: infoRet.nickname})
+          self.setState({nickname: infoRet.nicknameRet})
         })
 
         // Get ipfs data

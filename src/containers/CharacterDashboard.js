@@ -53,7 +53,7 @@ class CharacterDashboard extends Component {
           self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
 
             var characterArrayTmp = self.state.characterArray
-            characterArrayTmp.push(<div key={characterIndex} className="col-md-3"><Character charaterIndex={characterIndex} /></div>)
+            characterArrayTmp.push(<div key={characterIndex} className="col-md-4"><Character charaterIndex={characterIndex} /></div>)
             self.setState({characterArray: characterArrayTmp})
           })
         }
@@ -67,7 +67,7 @@ class CharacterDashboard extends Component {
 
       var nickname = this.refs.nickname.value
 
-      if (self.state.characterRegistry != null) {
+      if (this.state.characterRegistry != null) {
         this.state.characterRegistry.methods.claimStarter(nickname, id).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
@@ -132,7 +132,7 @@ class CharacterDashboard extends Component {
         <div className="row">
           {chooseStarter}
         </div>
-        <div className="row">
+        <div className="row" style={{marginTop: '30px'}}>
           {this.state.characterArray}
         </div>
       </div>

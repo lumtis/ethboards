@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
+import { withRouter, BrowserRouter as Router } from 'react-router-dom'
 import store from '../store'
 
 /*
@@ -15,21 +15,18 @@ var flatColorList = [
   '#ffeaa7'
 ]
 
-const infoStyle = {
+const chooseStyle = {
   position: 'relative',
-  padding: '20px',
-  width: '80%',
-  minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.7)',
-  marginRight: 'auto',
-  marginLeft: 'auto',
-  marginBottom: '20px'
+  width: '100%',
+  height: '65px',
 };
 
 
 class AllServers extends Component {
   constructor(props) {
     super(props)
+
+    // this.changeServer = this.changeServer.bind(this)
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
@@ -46,6 +43,7 @@ class AllServers extends Component {
   static defaultProps = {
   }
 
+
   componentWillMount() {
     var self = this
 
@@ -57,24 +55,40 @@ class AllServers extends Component {
 
               // Change icon depending on server running
               if (infos.runningRet) {
-                var runIcon = <i class="fas fa-play"></i>
+                var runIcon = <i className="fa fa-play"></i>
               }
               else {
-                runIcon = <i class="fas fa-pause"></i>
+                runIcon = <i className="fa fa-pause"></i>
               }
 
-              var route = '/play/' + toString(this.serverId)
+              var route = '/play/' + this.serverId.toString()
+
+              // Get a random color for background
+              var ranIndex = Math.floor((Math.random() * flatColorList.length))
+              var ranColor = flatColorList[ranIndex]
+
+              // using withRouter to be able to update the route
+              const ChangeServerComponent = withRouter(({ history }) => (
+                <a style={{cursor: 'pointer'}}
+                onClick={() =>
+                  {
+                    history.push(route)
+                    window.location.reload()
+                  }}
+                >
+                  <h1>
+                    {infos.nameRet} (
+                    {infos.playerNbRet}/
+                    {infos.playerMaxRet})
+                  </h1>
+                </a>
+              ))
 
               // Specifying server button
               var serverArrayTmp = self.state.serverArray
               serverArrayTmp.push(
-                <div key={this.serverId} style={infoStyle} className="col-md-12">
-                  <Link to={route}>
-                    {runIcon}
-                    {infos.nameRet}
-                    {infos.playerNbRet}
-                    {infos.playerMaxRet}
-                  </Link>
+                <div key={this.serverId} style={Object.assign({}, chooseStyle, {backgroundColor: ranColor})} className="col-md-12">
+                  <ChangeServerComponent />
                 </div>
               )
               self.setState({serverArray: serverArrayTmp})
