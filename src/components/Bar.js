@@ -33,9 +33,11 @@ class Bar extends Component {
       addr = <p>{this.state.account.address}</p>
     }
 
+    //#F5F5F5
+
     return (
       <div>
-        <nav style={{backgroundColor: '#26E7BC', position: 'relative', width: '100%', zIndex: 1, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)'}}>
+        <nav style={{backgroundColor: '#F4E5C2', position: 'relative', width: '100%', zIndex: 1, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)'}}>
           <div className="container-fluid">
             <ul className="nav navbar-nav">
               <li className="navcell">

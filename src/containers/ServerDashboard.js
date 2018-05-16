@@ -46,6 +46,7 @@ class ServerDashboard extends Component {
     this.changeServer = this.changeServer.bind(this)
     this.addServer = this.addServer.bind(this)
     this.addBuilding = this.addBuilding.bind(this)
+    this.removeBuilding = this.removeBuilding.bind(this)
     this.addWeapon = this.addWeapon.bind(this)
 
     this.state = {
@@ -55,7 +56,6 @@ class ServerDashboard extends Component {
       atLeastOneServer: false,
       serverSelected: -1,
       serverArray: [],
-      weaponServerArray: [],
       weaponArray: [],
     }
 
@@ -133,25 +133,7 @@ class ServerDashboard extends Component {
   changeServer(serverId) {
     return function(e) {
       var self = this
-      self.setState({serverSelected: serverId, weaponServerArray: []})
-
-      // Get weapons from server
-      if(self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.getServerWeaponNb(serverId).call().then(function(weaponNb) {
-          for (var i = 0; i < weaponNb; i++) {
-
-            self.state.nujaBattle.methods.getServerWeapon(serverId, i).call().then(function(weapon) {
-              var weaponServerArrayTmp = self.state.weaponServerArray
-              weaponServerArrayTmp.push(
-                <div key={this.index} className="col-md-4">
-                  <WeaponSprite weaponIndex={weapon} />
-                </div>
-              )
-              self.setState({weaponServerArray: weaponServerArrayTmp})
-            }.bind({index: i}))
-          }
-        })
-      }
+      self.setState({serverSelected: serverId})
     }.bind(this)
   }
 
@@ -214,14 +196,17 @@ class ServerDashboard extends Component {
     }
   }
 
-  addWeapon(idWeapon) {
-    return function(e) {
-      e.preventDefault();
+  removeBuilding(e) {
+    e.preventDefault();
 
-      // Add the weapon to the server
+    var x = parseInt(this.refs.buildingxremove.value);
+    var y = parseInt(this.refs.buildingyremove.value);
+
+    if(x >= 0 && x < 10 && y >= 0 && y < 10) {
+      // Add the server
       if (this.state.nujaBattle != null) {
         if(this.state.serverSelected >= 0) {
-          this.state.nujaBattle.methods.addWeaponToServer(this.state.serverSelected, idWeapon).send({
+          this.state.nujaBattle.methods.removeBuildingFromServer(this.state.serverSelected, x, y).send({
             from: this.state.account.address,
             gasPrice: 2000000000,
           })
@@ -230,10 +215,21 @@ class ServerDashboard extends Component {
           .on('receipt', function(receipt){ console.log('receipt')})
           .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
           .then(function(ret) {
-            alert('Weapon added')
+            alert('Building added')
           });
         }
       }
+    }
+    else {
+      alert('Invalid number (must be 0-9)')
+    }
+  }
+
+  addWeapon(idWeapon) {
+    return function(e) {
+      e.preventDefault();
+
+      this.refs.buildingx.value = idWeapon
     }.bind(this)
   }
 
@@ -272,25 +268,35 @@ class ServerDashboard extends Component {
                           <input className="form-control" style={inputStyle} ref="buildingy" placeholder="Y" type="text"/>
                         </div>
                         <div className="form-group">
+                          <input className="form-control" style={inputStyle} ref="weaponid" placeholder="Weapon id" type="text"/>
+                        </div>
+                        <div className="form-group">
                           <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
                         </div>
                       </form>
-                    </div>
-                  </div>
-
-                  <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
-                    <div style={infoStyle}>
-                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Server weapons</h1>
-                      <div className="row" style={{marginBottom: '20px'}}>
-                        {this.state.weaponServerArray}
-                      </div>
-                      <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add weapon</h1>
+                      <h1 style={{marginBottom: '20px', marginTop: '20px'}}>Select weapon</h1>
                       <div className="row">
                         {this.state.weaponArray}
                       </div>
                     </div>
                   </div>
 
+                  <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
+                    <div style={infoStyle}>
+                      <form onSubmit={this.removeBuilding}>
+                        <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Remove building</h1>
+                        <div className="form-group">
+                          <input className="form-control" style={inputStyle} ref="buildingxremove" placeholder="X" type="text"/>
+                        </div>
+                        <div className="form-group">
+                          <input className="form-control" style={inputStyle} ref="buildingyremove" placeholder="Y" type="text"/>
+                        </div>
+                        <div className="form-group">
+                          <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
                 </div>
             </div>
           </div>

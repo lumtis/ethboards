@@ -180,8 +180,10 @@ class Sidebar extends Component {
       }
     }
 
+    //3FC1C9
+
     return (
-      <div style={{backgroundColor: '#16D7AC', height: '100vh', overflowY: 'scroll'}}>
+      <div style={{backgroundColor: '#8559A5', height: '100vh', overflowY: 'scroll'}}>
         <div style={{marginTop: '20px', padding: '20px'}}>
           {content}
         </div>

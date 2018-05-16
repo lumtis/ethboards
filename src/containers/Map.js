@@ -122,7 +122,7 @@ class Map extends Component {
     }
 
     return (
-      <div>
+      <div style={{marginLeft: '60px'}}>
         <h1>{this.state.mapName}</h1>
         <div style={{
           height: '640px',

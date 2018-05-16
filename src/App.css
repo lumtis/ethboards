@@ -3,19 +3,21 @@
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
-  background:url(/images/bg.png) repeat;
+  /* background:url(/images/bg.png) repeat; */
+  /* background-color: #364F6B; */
+  background-color: #323232;
   height: 100%;
   width: 100%;
 }
 h1, h2 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #26E7BC;
-  text-shadow:2px 2px #9A32D3;
+  color: #ecf0f1;
+  text-shadow:2px 2px #8559A5;
 }
 
 h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #5C6A79;
+  color: #ecf0f1;
 }
 
 .welcomeWrapper {
