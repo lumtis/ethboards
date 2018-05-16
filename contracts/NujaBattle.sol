@@ -22,7 +22,7 @@ contract NujaBattle is Geometry {
     /// Structures
 
     struct Field {
-        uint8 building;
+        uint building;  // Warning: offset
         uint8 character; // Warning: offset
     }
 
@@ -46,7 +46,6 @@ contract NujaBattle is Geometry {
         mapping (uint8 => mapping (uint8 => Field)) fields;
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
-        uint[] weapons;
         bool running;
     }
 
@@ -98,33 +97,33 @@ contract NujaBattle is Geometry {
         serverNumber += 1;
     }
 
-    // Server utilities
-    function addWeaponToServer(uint indexServer, uint weapon) public {
-        require(indexServer < serverNumber);
-        require(servers[indexServer].owner == msg.sender);
-        require(servers[indexServer].running == false);
-
-        // Verify weapon exists
-        WeaponRegistry reg = WeaponRegistry(weaponRegistry);
-        require(weapon < reg.getWeaponNumber());
-
-        // Add the weapon
-        servers[indexServer].weapons.push(weapon);
-
-        // If the weapon is not yet trusted, we make it
-        if(trustedWeapon[reg.getContract(weapon)] == false) {
-            trustedWeapon[reg.getContract(weapon)] = true;
-        }
-    }
-
-    function addBuildingToServer(uint indexServer, uint8 x, uint8 y) public {
+    function addBuildingToServer(uint indexServer, uint8 x, uint8 y, uint weapon) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].running == false);
         require(servers[indexServer].owner == msg.sender);
         require(x < 10 && y < 10);
         require(servers[indexServer].fields[x][y].building == 0);
 
-        servers[indexServer].fields[x][y].building = 2;
+        // Verify weapon exists
+        WeaponRegistry reg = WeaponRegistry(weaponRegistry);
+        require(weapon < reg.getWeaponNumber());
+
+        // If the weapon is not yet trusted, we make it
+        if(trustedWeapon[reg.getContract(weapon)] == false) {
+            trustedWeapon[reg.getContract(weapon)] = true;
+        }
+
+        servers[indexServer].fields[x][y].building = 2 + weapon;
+    }
+
+    function removeBuildingFromServer(uint indexServer, uint8 x, uint8 y) public {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].running == false);
+        require(servers[indexServer].owner == msg.sender);
+        require(x < 10 && y < 10);
+        require(servers[indexServer].fields[x][y].building > 0);
+
+        servers[indexServer].fields[x][y].building = 0;
     }
 
     function addPlayerToServer(uint character, uint server) public {
@@ -201,17 +200,6 @@ contract NujaBattle is Geometry {
     function getServerInfo(uint indexServer) public view returns(string nameRet, uint8 playerNbRet, uint8 playerMaxRet, bool runningRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].name, servers[indexServer].playerNb, servers[indexServer].playerMax, servers[indexServer].running);
-    }
-
-    function getServerWeaponNb(uint indexServer) public view returns(uint weaponNb) {
-        require(indexServer < serverNumber);
-        return servers[indexServer].weapons.length;
-    }
-
-    function getServerWeapon(uint indexServer, uint weaponIndex) public view returns(uint weapon) {
-        require(indexServer < serverNumber);
-        require(weaponIndex < servers[indexServer].weapons.length);
-        return servers[indexServer].weapons[weaponIndex];
     }
 
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {
@@ -435,16 +423,13 @@ contract NujaBattle is Geometry {
     }
 
     function exploreBuilding(uint indexServer, uint8 p) internal {
-        require(servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building == 2);
+        uint buidlingCode = servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building;
+        require(buidlingCode > 1);
 
-        servers[indexServer].players[p].weapons.push(0);
-
-        // Give object to player
-        /* servers[indexServer].players[p].weapons.push(weaponIndex);
-        weaponIndex = (weaponIndex+1)%7; */
+        servers[indexServer].players[p].weapons.push(buidlingCode-2);
 
         // Set building as explored
-        /* servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1; */
+        servers[indexServer].fields[servers[indexServer].players[p].positionX][servers[indexServer].players[p].positionY].building = 1;
     }
 
     function useWeapon(uint indexServer, uint8 p, uint8 x, uint8 y, uint8 index) internal {
@@ -460,16 +445,18 @@ contract NujaBattle is Geometry {
         CharacterRegistry characterContract = CharacterRegistry(characterRegistry);
         uint characterIndex = servers[indexServer].players[p].characterIndex;
         var r_nuja = characterContract.getCharacterNuja(characterIndex);
+
         address nujaRegistryAddress = characterContract.getNujaRegistry();
         NujaRegistry nujaContract = NujaRegistry(nujaRegistryAddress);
         address nujaAddress = nujaContract.getContract(r_nuja);
-        usePower2(nujaAddress, indexServer, p, x, y);
-    }
 
-    function usePower2(address nujaAddress, uint indexServer, uint8 p, uint8 x, uint8 y) internal {
         Nuja player_nuja = Nuja(nujaAddress);
         player_nuja.power(indexServer, x, y, p);
+        /* usePower2(nujaAddress, indexServer, p, x, y); */
     }
+
+    /* function usePower2(address nujaAddress, uint indexServer, uint8 p, uint8 x, uint8 y) internal {
+    } */
 
     // Termination functions
     function killPlayer(uint indexServer, uint8 p) internal {

@@ -2,12 +2,7 @@ import web3
 import json
 from web3 import Web3, HTTPProvider
 
-b_local = True
-
-if b_local:
-    web3 = Web3(HTTPProvider('http://localhost:7545'))
-else:
-    web3 = Web3(HTTPProvider('http://humanity.cards:8545'))
+web3 = Web3(HTTPProvider('http://localhost:7545'))
 
 ### Initialisation
 # Contract abi
