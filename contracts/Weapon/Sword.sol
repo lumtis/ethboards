@@ -1,7 +1,6 @@
 pragma solidity ^0.4.2;
 
 import "./Weapon.sol";
-import "../NujaBattle.sol";
 
 contract Sword is Weapon {
 
@@ -9,18 +8,16 @@ contract Sword is Weapon {
         return '/ipfs/QmUdDzeAkV9ycXxSGrt6YviAMQAK3i2F2aBPNJASTtF1Uo';
     }
 
-    function use(uint serverId, uint8 x, uint8 y, uint8 player) public fromServer {
-        NujaBattle nujaContract = NujaBattle(SERVERREGISTRY);
-        var (r_x, r_y) = nujaContract.playerPosition(serverId, player);
+    function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
+        var (r_x, r_y) =  getPosition(moveInput, player);
 
         // Distance requirement
-        uint d = distance(x, y, r_x, r_y);
-        require(d == 1);
+        require(distance(x, y, r_x, r_y) == 1);
+
+        uint[176] memory tmp = moveInput;
 
         // Move
-        var (rr1, rr_p) = nujaContract.fieldInformation(serverId, x, y);
-        require(rr_p == 0);
-        nujaContract.movePlayer(serverId, player, x, y);
+        tmp = movePlayer(tmp, player, x, y);
 
         bool striked = true;
         uint8 strikedX = 0;
@@ -54,10 +51,13 @@ contract Sword is Weapon {
         }
 
         if (striked) {
-            (rr1, rr_p) = nujaContract.fieldInformation(serverId, strikedX, strikedY);
-            if (rr_p > 0) {
-                nujaContract.damage(serverId, rr_p-1, 40);
+            opponent = getPlayer(moveInput, strikedX, strikedY);
+            if (opponent > 0) {
+                return damage(tmp, opponent-1, 30);
             }
+        }
+        else {
+            return tmp;
         }
     }
 }
