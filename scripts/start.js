@@ -1,9 +1,5 @@
 process.env.NODE_ENV = 'development';
 
-// Load environment variables from .env file. Suppress warnings using silent
-// if this file is missing. dotenv will never modify any environment variables
-// that have already been set.
-// https://github.com/motdotla/dotenv
 require('dotenv').config({silent: true});
 
 var chalk = require('chalk');
@@ -25,6 +21,58 @@ var paths = require('../config/paths');
 var useYarn = pathExists.sync(paths.yarnLockFile);
 var cli = useYarn ? 'yarn' : 'npm';
 var isInteractive = process.stdout.isTTY;
+
+
+////////////////////////////////////////////////////////////////////
+// Start necessary services
+
+var Web3 = require('web3')
+var RedisClient = require('redis')
+
+var redis = RedisClient.createClient(6379, '127.0.0.1')
+var provider = new Web3.providers.HttpProvider('http://localhost:7545')
+var web3 = new Web3(provider)
+
+// Creating contract
+var nujaBattleJson = require('../build/contracts/NujaBattle.json')
+var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+
+redis.on("connect", function () {
+  console.log("connected to redis")
+})
+
+
+function getCurrentTurn(matchId, nbPlayer) {
+  redis.lrange(matchId, 0, 8, function (stateErr, stateReply) {
+    redis.get(matchId + '_turn', function (turnErr, turnReply) {
+      redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
+        if(stateErr == null && turnErr == null && playerTurnErr == null) {
+
+          var lastTurn = turnReply
+          var lastPlayerTurn = playerTurnReply
+          var lastState = JSON.parse(stateReply[stateReply.length-1]).moveOutput
+
+          // Increment player turn till alive player
+          do {
+            lastPlayerTurn++
+            if (lastPlayerTurn >= nbPlayer) {
+              lastPlayerTurn = 0
+              lastTurn++
+            }
+          } while (lastState[128+lastPlayerTurn] == 0)
+
+          return [lastTurn, lastPlayerTurn]
+        }
+      })
+    })
+  })
+  return []
+}
+
+////////////////////////////////////////////////////////////////////
+
+
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
@@ -155,16 +203,7 @@ function addMiddleware(devServer) {
   // Every unrecognized request will be forwarded to it.
   var proxy = require(paths.appPackageJson).proxy;
   devServer.use(historyApiFallback({
-    // Paths with dots should still use the history fallback.
-    // See https://github.com/facebookincubator/create-react-app/issues/387.
     disableDotRule: true,
-    // For single page apps, we generally want to fallback to /index.html.
-    // However we also want to respect `proxy` for API calls.
-    // So if `proxy` is specified, we need to decide which fallback to use.
-    // We use a heuristic: if request `accept`s text/html, we pick /index.html.
-    // Modern browsers include text/html into `accept` header when navigating.
-    // However API calls like `fetch()` won’t generally accept text/html.
-    // If this heuristic doesn’t work well for you, don’t use `proxy`.
     htmlAcceptHeaders: proxy ?
       ['text/html'] :
       ['text/html', '*/*']
@@ -177,12 +216,6 @@ function addMiddleware(devServer) {
       process.exit(1);
     }
 
-    // Otherwise, if proxy is specified, we will let it handle any request.
-    // There are a few exceptions which we won't send to the proxy:
-    // - /index.html (served as HTML5 history API fallback)
-    // - /*.hot-update.json (WebpackDevServer uses this too for hot reloading)
-    // - /sockjs-node/* (WebpackDevServer uses this for hot reloading)
-    // Tip: use https://jex.im/regulex/ to visualize the regex
     var mayProxy = /^(?!\/(index\.html$|.*\.hot-update\.json$|sockjs-node\/)).*$/;
 
     // Pass the scope regex both to Express and to the middleware for proxying
@@ -218,46 +251,123 @@ function addMiddleware(devServer) {
 
 function runDevServer(host, port, protocol) {
   var devServer = new WebpackDevServer(compiler, {
-    // Enable gzip compression of generated files.
     compress: true,
-    // Silence WebpackDevServer's own logs since they're generally not useful.
-    // It will still show compile warnings and errors with this setting.
     clientLogLevel: 'none',
-    // By default WebpackDevServer serves physical files from current directory
-    // in addition to all the virtual build products that it serves from memory.
-    // This is confusing because those files won’t automatically be available in
-    // production build folder unless we copy them. However, copying the whole
-    // project directory is dangerous because we may expose sensitive files.
-    // Instead, we establish a convention that only files in `public` directory
-    // get served. Our build script will copy `public` into the `build` folder.
-    // In `index.html`, you can get URL of `public` folder with %PUBLIC_PATH%:
-    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    // In JavaScript code, you can access it with `process.env.PUBLIC_URL`.
-    // Note that we only recommend to use `public` folder as an escape hatch
-    // for files like `favicon.ico`, `manifest.json`, and libraries that are
-    // for some reason broken when imported through Webpack. If you just want to
-    // use an image, put it in `src` and `import` it from JavaScript instead.
     contentBase: paths.appPublic,
-    // Enable hot reloading server. It will provide /sockjs-node/ endpoint
-    // for the WebpackDevServer client so it can learn when the files were
-    // updated. The WebpackDevServer client is included as an entry point
-    // in the Webpack development configuration. Note that only changes
-    // to CSS are currently hot reloaded. JS changes will refresh the browser.
     hot: true,
-    // It is important to tell WebpackDevServer to use the same "root" path
-    // as we specified in the config. In development, we always serve from /.
     publicPath: config.output.publicPath,
-    // WebpackDevServer is noisy by default so we emit custom message instead
-    // by listening to the compiler events with `compiler.plugin` calls above.
     quiet: true,
-    // Reportedly, this avoids CPU overload on some systems.
-    // https://github.com/facebookincubator/create-react-app/issues/293
     watchOptions: {
       ignored: /node_modules/
     },
-    // Enable HTTPS if the HTTPS environment variable is set to 'true'
     https: protocol === "https",
-    host: host
+    host: host,
+
+    ////////////////////////////////////////////////////////////////////
+    //  Handle request for states and signatures pushing
+
+    setup(app){
+      var bodyParser = require('body-parser');
+      app.use(bodyParser.json());
+
+      // Get the current state of a match
+      app.post("/post/currentstate", bodyParser.json(), function(req, res){
+        redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
+          if(err == null) {
+            console.log('redis push signature error :' + err)
+          } else {
+            // Convert the string stored to json
+            res.send(reply.map(JSON.parse()))
+          }
+        })
+      })
+
+      // Get the current metadata (turn, player's turn) of a match
+      app.post("/post/currentmetadata", bodyParser.json(), function(req, res){
+        redis.get(req.body.matchId + '_turn', function (err1, reply1) {
+          if(err1 == null) {
+            console.log('redis get turn error :' + err1)
+          } else {
+            redis.get(req.body.matchId + '_playerturn', function (err2, reply2) {
+              if(err2 == null) {
+                console.log('redis get player turn error :' + err2)
+              } else {
+                res.send([reply1, reply2])
+              }
+            })
+          }
+        })
+      })
+
+      // Push a new signature
+      app.post("/post/pushsignature", bodyParser.json(), function(req, res){
+
+        // Verify the turn and player turn are correct
+        var matchId = parseInt(req.body.metadata[0])
+        var turn = parseInt(req.body.metadata[1])
+        var playerTurn = parseInt(req.body.metadata[2])
+
+        // We get the identity of the player
+        web3.eth.personal.ecRecover(web3.utils.soliditySha3(
+            {t: 'uint[]', v: req.body.metadata},
+            {t: 'uint8[]', v: req.body.move},
+            {t: 'uint[]', v: req.body.moveOutput},
+          ), req.body.signature, function (addr) {
+
+            nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+
+              // We check the metadata are correct (it is the actual turn)
+              nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+                var actualTurn = getCurrentTurn(matchId, playerMax)
+                if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
+
+                  // We check if the player is present on the server and it's his turn
+                  nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
+                    if(isInServer) {
+                      nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
+                        if(indexPlayer == playerTurn) {
+
+                          // Push the new signature
+                          redis.rpush(req.body.matchId, JSON.stringify({
+                            metadata: req.body.metadata,
+                            move: req.body.move,
+                            moveOutput: req.body.moveOutput,
+                            signature: req.body.signature,
+                          }), function (pushErr, pushReply) {
+                            if(err == null) {
+                              console.log('redis push signature error :' + err)
+                            } else {
+
+                              // If list is full we remove the first element
+                              redis.llen(req.body.matchId, function (lenErr, lenReply) {
+                                if(lenReply > playerMax) {
+                                  redis.lpop(req.body.matchId, function (popErr, popReply) {
+                                  })
+                                }
+                              })
+
+                              res.send("Signature pushed")
+                            }
+                          })
+                        }
+                        else {
+                          console.log('not signer turn')
+                        }
+                      })
+                    }
+                    else {
+                      // TODO: meilleur gestion d'erreur
+                      console.log('signer not in the server')
+                    }
+                  })
+                }
+              })
+            })
+          })
+        )
+      })
+
+    }
   });
 
   // Our custom middleware proxies requests to /index.html or a remote API.
