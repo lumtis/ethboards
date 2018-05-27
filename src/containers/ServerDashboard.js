@@ -5,6 +5,8 @@ import WeaponSprite from '../components/WeaponSprite'
 import Bar from '../components/Bar'
 
 
+// TODO: Change the interface to be able to add weapon with building
+
 var flatColorList = [
   '#55efc4',
   '#74b9ff',

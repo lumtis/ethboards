@@ -6,6 +6,7 @@ import store from '../store'
   Get list of all server
 */
 
+
 var flatColorList = [
   '#55efc4',
   '#74b9ff',
@@ -52,14 +53,6 @@ class AllServers extends Component {
         self.state.nujaBattle.methods.getServerNb().call().then(function(serverNb) {
           for (var i = 0; i < serverNb; i++) {
             self.state.nujaBattle.methods.getServerInfo(i).call().then(function(infos) {
-
-              // Change icon depending on server running
-              if (infos.runningRet) {
-                var runIcon = <i className="fa fa-play"></i>
-              }
-              else {
-                runIcon = <i className="fa fa-pause"></i>
-              }
 
               var route = '/play/' + this.serverId.toString()
 

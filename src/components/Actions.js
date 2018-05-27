@@ -1,3 +1,7 @@
+/*
+  Interface to make move in a match
+*/
+
 import React, { Component } from 'react'
 
 import store from '../store'

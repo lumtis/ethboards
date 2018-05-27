@@ -2,20 +2,15 @@ import React, { Component } from 'react'
 
 import store from '../store'
 
+var SW = require('../utils/stateWrapper')
+
+
 class Tile extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      building: 0,
-      nujaBattle: store.getState().web3.nujaBattleInstance,
     }
-
-    store.subscribe(() => {
-      this.setState({
-        nujaBattle: store.getState().web3.nujaBattleInstance,
-      });
-    });
   }
 
   static defaultProps = {
@@ -25,21 +20,16 @@ class Tile extends Component {
   }
 
   componentWillMount() {
-    var self = this
-
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.fieldInformation(self.props.server, self.props.x, self.props.y).call().then(function(ret) {
-        self.setState({building: ret.buildingRet})
-      });
-    }
   }
 
   render() {
     var offsetX = this.props.x*64
     var offsetY = this.props.y*64
 
+    var building = SW.getBuilding(this.props.x, this.props.y)
+
     var field = <img alt="Nuja"></img>
-    if(this.state.building > 0) {
+    if(building > 0) {
       field = <img src="/images/tileCity1.png" alt="Nuja" style={{
         width: '64px',
         position: 'absolute',

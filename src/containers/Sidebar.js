@@ -35,7 +35,7 @@ class Sidebar extends Component {
       characterId: 0,
       changeServer: false,
       changeServerByCharacter: false,
-      serverRunning: true
+      serverState: 0
     }
 
     store.subscribe(() => {
@@ -67,8 +67,8 @@ class Sidebar extends Component {
 
         // Check if the server is running
         // If it's not and we are not in it, we can join it
-        self.state.nujaBattle.methods.isRunning(self.props.server).call().then(function(runningRet) {
-          self.setState({serverRunning: runningRet})
+        self.state.nujaBattle.methods.getServerState(self.props.server).call().then(function(stateRet) {
+          self.setState({serverState: stateRet})
         })
       }
     }
@@ -163,7 +163,7 @@ class Sidebar extends Component {
         else {
           // Not in the server
 
-          if(this.state.serverRunning) {
+          if(this.state.serverState == 0 || this.state.serverState == 2) {
             var joinInt = <div></div>
           }
           else {

@@ -3,21 +3,15 @@ import store from '../store'
 
 import WeaponSprite from '../components/WeaponSprite'
 
+var SW = require('../utils/stateWrapper')
+
 
 class WeaponList extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      nujaBattle: store.getState().web3.nujaBattleInstance,
-      weaponArray: [],
     }
-
-    store.subscribe(() => {
-      this.setState({
-        nujaBattle: store.getState().web3.nujaBattleInstance,
-      });
-    });
   }
 
   static defaultProps = {
@@ -26,28 +20,20 @@ class WeaponList extends Component {
   }
 
   componentWillMount() {
-    var self = this
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.playerInformation(self.props.server, self.props.player).call().then(function(playerInfo) {
-        // For each weapon, retreive id
-        for (var i = 0; i < playerInfo.weaponNumber; i++) {
-          self.state.nujaBattle.methods.playerWeapons(self.props.server, self.props.player, i).call().then(function(weaponId) {
-
-            var weaponArrayTmp = self.state.weaponArray
-            weaponArrayTmp.push(<div key={this.userWeaponId} className="col-md-3"><WeaponSprite weaponIndex={weaponId}/></div>)
-            self.setState({weaponArray: weaponArrayTmp})
-
-          }.bind({userWeaponId: i}));
-        }
-      });
-    }
   }
 
   render() {
+    var weaponArray = []
+    var weapons = SW.getPlayerWeapons(this.props.player)
+
+    for (var i = 0; i < weapons.length; i++) {
+      weaponArray.push(<div key={i} className="col-md-3"><WeaponSprite weaponIndex={weapons[i]}/></div>)
+    }
+
     return (
-        <div className="row">
-          <div>{this.state.weaponArray}</div>
-        </div>
+      <div className="row">
+        <div>{this.state.weaponArray}</div>
+      </div>
     );
   }
 }

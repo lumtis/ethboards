@@ -8,6 +8,7 @@ import '../css/map.css'
 
 var PubSub = require('pubsub-js')
 
+
 class Map extends Component {
   constructor(props) {
     super(props)
@@ -21,7 +22,7 @@ class Map extends Component {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       playerArray: [],
       crossArray: [],
-      mapName: 'undefined name'
+      mapName: 'undefined name',
     }
 
     store.subscribe(() => {
@@ -35,11 +36,13 @@ class Map extends Component {
     server: 0
   }
 
+
+
   componentWillMount() {
     var self = this
 
     if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(nb) {
 
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {

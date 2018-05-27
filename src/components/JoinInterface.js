@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import store from '../store'
 
-/*
-  Get list of servers for the different character of the user
-*/
 
 var flatColorList = [
   '#55efc4',

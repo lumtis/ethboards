@@ -9,7 +9,7 @@ const footerStyle = {
   fontSize: '16px',
   height: '100px',
   width: '100%',
-  backgroundColor: '#16D7AC',
+  backgroundColor: '#8559A5',
   color: 'white',
   textAlign: 'center',
   marginTop: '30px',
@@ -85,7 +85,7 @@ class Footer extends Component {
     return (
       <div style={footerStyle}>
         <div style={{padding: '31px'}}>
-          <p>© 2018: Soyjak Battle | <button style={{backgroundColor: '#16D7AC', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button> | <a href="mailto:soyjakbattle@gmail.com" style={linkStyle}>soyjakbattle@gmail.com</a></p>
+          <p>© 2018: Nuja Battle | <button style={{backgroundColor: '#8559A5', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button> | <a href="mailto:nujabattle@gmail.com" style={linkStyle}>nujabattle@gmail.com</a></p>
         </div>
       </div>
     );

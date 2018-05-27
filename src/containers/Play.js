@@ -14,32 +14,16 @@ class Play extends Component {
 
     this.state = {
       server: 0,
-      // accountInitialized: false
     }
   }
 
   static defaultProps = {
-    test: 'test'
   }
 
   componentWillMount() {
-    // var self = this
-    // var web3 = store.getState().web3.web3Instance
-
     if (isNaN(this.props.match.params.serverid) == false) {
       this.setState({server: parseInt(this.props.match.params.serverid)})
     }
-
-    // web3.eth.getAccounts(function(err, accounts) {
-    //   if (accounts.length > 0) {
-    //     var account = {"address":accounts[0], "privateKey":""}
-    //     store.dispatch({type: 'ACCOUNT_LOGIN', payload: {accountInstance: account}})
-    //     self.setState({accountInitialized: true})
-    //   }
-    //   else {
-    //     self.setState({accountInitialized: true})
-    //   }
-    // })
   }
 
   render() {
@@ -66,10 +50,6 @@ class Play extends Component {
           </div>
         </div>
       );
-    // }
-    // else {
-    //   return (<div></div>)
-    // }
   }
 }
 
