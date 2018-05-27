@@ -16,7 +16,7 @@ contract Pistol is Weapon {
         require(d > 0 && d < 4);
 
         // Strike
-        uint opponent = getPlayer(tmp, x, y);
+        uint opponent = getPlayer(moveInput, x, y);
         require(opponent > 0);
         return damage(moveInput, opponent-1, 20);
     }

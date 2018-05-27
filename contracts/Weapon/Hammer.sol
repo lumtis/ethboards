@@ -15,7 +15,7 @@ contract Hammer is Weapon {
         require(distance(x, y, r_x, r_y) == 1);
 
         // Strike
-        uint opponent = getPlayer(tmp, x, y);
+        uint opponent = getPlayer(moveInput, x, y);
         require(opponent > 0);
         return damage(moveInput, opponent-1, 50);
     }

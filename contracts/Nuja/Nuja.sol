@@ -1,7 +1,7 @@
 pragma solidity ^0.4.2;
 
 import "../Geometry.sol";
-import "./StateManager.sol"
+import "../StateManager.sol";
 
 contract Nuja is Geometry, StateManager {
     function getMetadata() public constant returns (string metadata);

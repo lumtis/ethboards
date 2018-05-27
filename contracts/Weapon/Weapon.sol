@@ -1,7 +1,7 @@
 pragma solidity ^0.4.2;
 
 import "../Geometry.sol";
-import "./StateManager.sol"
+import "../StateManager.sol";
 
 contract Weapon is Geometry, StateManager {
     // Must return ipfs hash

@@ -21,7 +21,7 @@ contract StateManager {
         return state[x*8+y];
     }
     function setBuilding(uint[176] state, uint8 x, uint8 y, uint code) internal pure returns (uint[176] ret) {
-        state[x*8+y] = code
+        state[x*8+y] = code;
         return state;
     }
 
@@ -29,13 +29,13 @@ contract StateManager {
     function getPlayer(uint[176] state, uint8 x, uint8 y) internal pure returns (uint ret) {
         return state[64+x*8+y];
     }
-    function getPosition(uint[176] state, uint8 p) internal pure returns (uint xret, uint yret) {
-        return (state[136+p], state[144+p]);
+    function getPosition(uint[176] state, uint p) internal pure returns (uint8 xret, uint8 yret) {
+        return (uint8(state[136+p]), uint8(state[144+p]));
     }
 
-    function movePlayer(uint[176] state, uint8 p, uint8 x, uint8 y) internal pure returns (uint[176] ret) {
-      uint8 oldX = state[136+p];
-      uint8 oldY = state[144+p];
+    function movePlayer(uint[176] state, uint p, uint8 x, uint8 y) internal pure returns (uint[176] ret) {
+      uint8 oldX = uint8(state[136+p]);
+      uint8 oldY = uint8(state[144+p]);
 
       // Put player in the new position
       require(state[64+x*8+y] == 0);
@@ -50,12 +50,12 @@ contract StateManager {
     }
 
     // Health function
-    function getHealth(uint[176] state, uint8 p) internal pure returns (uint ret) {
+    function getHealth(uint[176] state, uint p) internal pure returns (uint ret) {
         return state[128+p];
     }
-    function damage(uint[176] state, uint8 p, uint nb) internal pure returns(uint[176] ret) {
+    function damage(uint[176] state, uint p, uint nb) internal pure returns(uint[176] ret) {
         require(nb <= 100);
-        uint8 remaining = (uint8)state[128+p];
+        uint remaining = state[128+p];
 
         if(remaining < nb) {
             state[128+p] = 0;
@@ -66,9 +66,9 @@ contract StateManager {
 
         return state;
     }
-    function restore(uint[176] state, uint8 p, uint nb) internal pure returns(uint[176] ret) {
+    function restore(uint[176] state, uint p, uint nb) internal pure returns(uint[176] ret) {
         require(nb <= 100);
-        uint8 remaining = (uint8)state[128+p];
+        uint remaining = state[128+p];
 
         if(remaining + nb > 100) {
             state[128+p] = 100;
@@ -79,14 +79,14 @@ contract StateManager {
 
         return state;
     }
-    function isAlive(uint[176] state, uint8 p) internal pure returns (bool ret) {
+    function isAlive(uint[176] state, uint p) internal pure returns (bool ret) {
         return state[128+p] > 0;
     }
 
 
     // Weapon function
 
-    function getWeaponNb(uint[176] state, uint8 p) internal pure returns (uint8 ret) {
+    function getWeaponNb(uint[176] state, uint p) internal pure returns (uint8 ret) {
         if(state[152+p] == 0) {
             return 0;
         }
@@ -100,12 +100,12 @@ contract StateManager {
             return 3;
         }
     }
-    function getWeapon(uint[176] state, uint8 p, uint8 index) internal pure returns (uint ret) {
+    function getWeapon(uint[176] state, uint p, uint8 index) internal pure returns (uint ret) {
         require(index < 3);
         require(state[152+p+index*8] > 0);
         return state[152+p+index*8] - 1;
     }
-    function addWeapon(uint[176] state, uint8 p, uint w) internal pure returns (uint[176] ret) {
+    function addWeapon(uint[176] state, uint p, uint w) internal pure returns (uint[176] ret) {
         if(state[152+p] == 0) {
             state[152+p] = w+1;
         }
@@ -120,7 +120,7 @@ contract StateManager {
         }
         return state;
     }
-    function removeWeapon(uint[176] state, uint8 p, uint8 index) internal pure returns (uint[176] ret) {
+    function removeWeapon(uint[176] state, uint p, uint8 index) internal pure returns (uint[176] ret) {
         require(index < 3);
         state[152+p+index*8] = 0;
 
