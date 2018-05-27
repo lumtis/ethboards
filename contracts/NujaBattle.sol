@@ -229,9 +229,9 @@ contract NujaBattle is Geometry, StateManager {
         return servers[indexServer].state;
     }
 
-    function getServerInfo(uint indexServer) public view returns(string nameRet, uint id, uint8 playerMaxRet) {
+    function getServerInfo(uint indexServer) public view returns(string nameRet, uint id, uint8 playerMaxRet, uint8 playerNbRet) {
         require(indexServer < serverNumber);
-        return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax);
+        return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax, servers[indexServer].playerNb);
     }
 
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {
