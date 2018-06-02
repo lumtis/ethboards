@@ -10,7 +10,7 @@ contract Grenade is Weapon {
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
-        require(x > 0 && x < 9 && y > 0 && y < 9);
+        require(x > 0 && x < 7 && y > 0 && y < 7);
 
         var (r_x, r_y) = getPosition(moveInput, player);
 

@@ -24,7 +24,7 @@ contract WaterNujak is Nuja {
             if (opponent > 0) {
                 tmp = damage(tmp, opponent-1, 10);
             }
-            if(x < 9) {
+            if(x < 7) {
                 opponent = getPlayer(tmp, x+1, y-1);
                 if (opponent > 0) {
                     tmp = damage(tmp, opponent-1, 10);
@@ -38,14 +38,14 @@ contract WaterNujak is Nuja {
                 tmp = damage(tmp, opponent-1, 10);
             }
         }
-        if(x < 9){
+        if(x < 7){
             opponent = getPlayer(tmp, x+1, y);
             if (opponent > 0) {
                 tmp = damage(tmp, opponent-1, 10);
             }
         }
 
-        if(y < 9) {
+        if(y < 7) {
             if(x > 0) {
                 opponent = getPlayer(tmp, x-1, y+1);
                 if (opponent > 0) {
@@ -56,7 +56,7 @@ contract WaterNujak is Nuja {
             if (opponent > 0) {
                 tmp = damage(tmp, opponent-1, 10);
             }
-            if(x < 9) {
+            if(x < 7) {
                 opponent = getPlayer(tmp, x+1, y+1);
                 if (opponent > 0) {
                     tmp = damage(tmp, opponent-1, 10);

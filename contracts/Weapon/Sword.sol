@@ -24,7 +24,7 @@ contract Sword is Weapon {
         uint8 strikedY = 0;
 
         // Eventually strike a player
-        if (x > r_x && x < 9) {
+        if (x > r_x && x < 7) {
             strikedX = x + 1;
         }
         else if (x < r_x && x > 0) {
@@ -37,7 +37,7 @@ contract Sword is Weapon {
             striked = false;
         }
 
-        if (y > r_y && y < 9) {
+        if (y > r_y && y < 7) {
             strikedY = y + 1;
         }
         else if (y < r_y && y > 0) {
