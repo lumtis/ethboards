@@ -43,31 +43,42 @@ redis.on("connect", function () {
 })
 
 
-function getCurrentTurn(matchId, nbPlayer) {
-  redis.lrange(matchId, 0, 8, function (stateErr, stateReply) {
-    redis.get(matchId + '_turn', function (turnErr, turnReply) {
-      redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
-        if(stateErr == null && turnErr == null && playerTurnErr == null) {
+function getCurrentTurn(matchId, nbPlayer, cb) {
 
-          var lastTurn = turnReply
-          var lastPlayerTurn = playerTurnReply
-          var lastState = JSON.parse(stateReply[stateReply.length-1]).moveOutput
+  // We first check if the key exists
+  redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+    if(existsReply == 0) {
+      // If the key doesn't exist we can return 0
+      // pushsignature function will determine if the match exist
+      return [0, 0]
+    }
+    else {
+      // If the key exist, get next turn
+      redis.lrange(matchId, 0, 8, function (stateErr, stateReply) {
+        redis.get(matchId + '_turn', function (turnErr, turnReply) {
+          redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
+            if(stateErr == null && turnErr == null && playerTurnErr == null) {
 
-          // Increment player turn till alive player
-          do {
-            lastPlayerTurn++
-            if (lastPlayerTurn >= nbPlayer) {
-              lastPlayerTurn = 0
-              lastTurn++
+              var lastTurn = turnReply
+              var lastPlayerTurn = playerTurnReply
+              var lastState = JSON.parse(stateReply[stateReply.length-1]).moveOutput
+
+              // Increment player turn till alive player
+              do {
+                lastPlayerTurn++
+                if (lastPlayerTurn >= nbPlayer) {
+                  lastPlayerTurn = 0
+                  lastTurn++
+                }
+              } while (lastState[128+lastPlayerTurn] == 0)
+
+              cb([lastTurn, lastPlayerTurn])
             }
-          } while (lastState[128+lastPlayerTurn] == 0)
-
-          return [lastTurn, lastPlayerTurn]
-        }
+          })
+        })
       })
-    })
+    }
   })
-  return []
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -272,27 +283,49 @@ function runDevServer(host, port, protocol) {
 
       // Get the current state of a match
       app.post("/post/currentstate", bodyParser.json(), function(req, res){
-        redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
-          if(err == null) {
-            console.log('redis push signature error :' + err)
-          } else {
-            // Convert the string stored to json
-            res.send(reply.map(JSON.parse()))
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+            // If key exists, get hte list of signatures
+            redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
+              if(err == null) {
+                console.log('redis push signature error :' + err)
+              } else {
+                // Convert the string stored to json
+                res.send(reply.map(JSON.parse()))
+              }
+            })
           }
         })
       })
 
       // Get the current metadata (turn, player's turn) of a match
       app.post("/post/currentmetadata", bodyParser.json(), function(req, res){
-        redis.get(req.body.matchId + '_turn', function (err1, reply1) {
-          if(err1 == null) {
-            console.log('redis get turn error :' + err1)
-          } else {
-            redis.get(req.body.matchId + '_playerturn', function (err2, reply2) {
-              if(err2 == null) {
-                console.log('redis get player turn error :' + err2)
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, then the match doesn't exist or has not started yet
+            res.send([0, -1])
+          }
+          else {
+            // The match exist, we get metadata
+            redis.get(req.body.matchId + '_turn', function (turnErr, turnReply) {
+              if(turnErr == null) {
+                console.log('redis get turn error :' + turnErr)
               } else {
-                res.send([reply1, reply2])
+                redis.get(req.body.matchId + '_playerturn', function (playerturnErr, playerturnReply) {
+                  if(playerturnErr == null) {
+                    console.log('redis get player turn error :' + playerturnErr)
+                  } else {
+                    res.send([turnReply, playerturnReply])
+                  }
+                })
               }
             })
           }
@@ -318,52 +351,62 @@ function runDevServer(host, port, protocol) {
 
               // We check the metadata are correct (it is the actual turn)
               nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
-                var actualTurn = getCurrentTurn(matchId, playerMax)
-                if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
 
-                  // We check if the player is present on the server and it's his turn
-                  nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
-                    if(isInServer) {
-                      nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
-                        if(indexPlayer == playerTurn) {
+                getCurrentTurn(matchId, playerMax, function(actualTurn) {
+                  if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
 
-                          // Push the new signature
-                          redis.rpush(req.body.matchId, JSON.stringify({
-                            metadata: req.body.metadata,
-                            move: req.body.move,
-                            moveOutput: req.body.moveOutput,
-                            signature: req.body.signature,
-                          }), function (pushErr, pushReply) {
-                            if(err == null) {
-                              console.log('redis push signature error :' + err)
-                            } else {
+                    // We check if the player is present on the server and it's his turn
+                    nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
+                      if(isInServer) {
+                        nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
+                          if(indexPlayer == playerTurn) {
 
-                              // If list is full we remove the first element
-                              redis.llen(req.body.matchId, function (lenErr, lenReply) {
-                                if(lenReply > playerMax) {
-                                  redis.lpop(req.body.matchId, function (popErr, popReply) {
-                                  })
-                                }
-                              })
+                            // Push the new signature
+                            redis.rpush(req.body.matchId, JSON.stringify({
+                              metadata: req.body.metadata,
+                              move: req.body.move,
+                              moveOutput: req.body.moveOutput,
+                              signature: req.body.signature,
+                            }), function (pushErr, pushReply) {
+                              if(err != null) {
+                                console.log('redis push signature error :' + err)
+                              } else {
 
-                              res.send("Signature pushed")
-                            }
-                          })
-                        }
-                        else {
-                          console.log('not signer turn')
-                        }
-                      })
-                    }
-                    else {
-                      // TODO: meilleur gestion d'erreur
-                      console.log('signer not in the server')
-                    }
-                  })
-                }
+                                // If list is full we remove the first element
+                                redis.llen(req.body.matchId, function (lenErr, lenReply) {
+                                  if(lenReply > playerMax) {
+                                    redis.lpop(req.body.matchId, function (popErr, popReply) {
+                                    })
+                                  }
+                                })
+
+                                // Update metadata
+                                redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                                  // TODO: gestion erreur
+                                })
+                                redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                                  // TODO: gestion erreur
+                                })
+                                res.send("Signature pushed")
+                              }
+                            })
+
+                          }
+                          else {
+                            console.log('not signer turn')
+                          }
+                        })
+                      }
+                      else {
+                        // TODO: meilleur gestion d'erreur
+                        console.log('signer not in the server')
+                      }
+                    })
+                  }
+                })
               })
             })
-          })
+          }
         )
       })
 
