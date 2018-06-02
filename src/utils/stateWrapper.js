@@ -3,35 +3,61 @@ var request = require('request')
 import store from '../store'
 
 
-exports.updateServer = function(id) {
-  // Get the current state
-  request.post(
-    'http://localhost:3000/post/currentstate',
-    { json: { matchId: id } },
-    function (stateError, stateResponse, stateBody) {
-      if (!stateError && stateResponse.statusCode == 200) {
+// TODO:
+// gérer mieux les erreurs
 
-        // Get the metadata of the state
-        request.post(
-          'http://localhost:3000/post/currentmetadata',
-          { json: { matchId: id } },
-          function (metadataError, metadataResponse, metadataBody) {
-            if (!metadataError && metadataResponse.statusCode == 200) {
-              // Update stored state and metadata
-              store.dispatch({type: 'STATE_UPDATED', payload:
-                {
-                  currentStateInstance: stateBody,
-                  currentStateMatch: id,
-                  currentStateTurn: metadataBody[0],
-                  currentStatePlayerTurn: metadataBody[1],
-                }
+exports.updateServer = function(id) {
+
+  // Get the metadata of the state
+  request.post(
+    'http://localhost:3000/post/currentmetadata',
+    { json: { matchId: id } },
+    function (metadataError, metadataResponse, metadataBody) {
+      if (!metadataError && metadataResponse.statusCode == 200) {
+
+        if(metadataBody[1] == -1) {
+          // If playerturn == -1 the match has not started yet, we get the initial state
+          var nujaBattle = store.getState().web3.nujaBattleInstance
+          if(nujaBattle != null) {
+            nujaBattle.methods.getMatchServer(id).call().then(function(serverId) {
+              nujaBattle.methods.getInitialState(serverId).call().then(function(initialState) {
+                console.log('initial state')
+                console.log(initialState)
+                store.dispatch({type: 'STATE_UPDATED', payload:
+                  {
+                    currentStateInstance: initialState,
+                    currentStateMatch: id,
+                    currentStateTurn: metadataBody[0],
+                    currentStatePlayerTurn: metadataBody[1],
+                  }
+                })
               })
-            }
+            })
           }
-        )
-      }
-      else {
-        console.log(stateError)
+        }
+        else {
+          // The match started, we can get the state from redis
+          request.post(
+            'http://localhost:3000/post/currentstate',
+            { json: { matchId: id } },
+            function (stateError, stateResponse, stateBody) {
+              if (!stateError && stateResponse.statusCode == 200) {
+                // Update stored state and metadata
+                store.dispatch({type: 'STATE_UPDATED', payload:
+                  {
+                    currentStateInstance: stateBody,
+                    currentStateMatch: id,
+                    currentStateTurn: metadataBody[0],
+                    currentStatePlayerTurn: metadataBody[1],
+                  }
+                })
+              }
+              else {
+                console.log(stateError)
+              }
+            }
+          )
+        }
       }
     }
   )
@@ -81,6 +107,11 @@ exports.getCurrentTurn = function(nbPlayer) {
   var lastTurn = store.getState().currentState.currentStateTurn
   var lastPlayerTurn = store.getState().currentState.currentStatePlayerTurn
   var lastState = store.getState().currentState.currentStateInstance[store.getState().currentState.currentStateInstance.length-1].moveOutput
+
+  // State channel has not been initialized yet
+  if (lastPlayerTurn == -1) {
+    return [0, 0]
+  }
 
   // Increment player turn till alive player
   do {
