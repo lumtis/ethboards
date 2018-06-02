@@ -132,28 +132,37 @@ contract NujaBattle is Geometry, StateManager {
         servers[indexServer].state = 0;
     }
 
-    function addBuildingToServer(uint indexServer, uint8 x, uint8 y, uint weapon) public {
+    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint[10] weapon, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
-        require(x < 10 && y < 10);
-        require(servers[indexServer].buildings[x][y] == 0);
+        require(nbBuilding <= 10 && nbBuilding > 0);
 
-        // Verify weapon exists
-        WeaponRegistry reg = WeaponRegistry(weaponRegistry);
-        require(weapon < reg.getWeaponNumber());
+        // Add building
+        for(uint8 i=0; i<nbBuilding; i++) {
+            require(x[i] < 8 && y[i] < 8);
+            require(servers[indexServer].buildings[x[i]][y[i]] == 0);
 
-        servers[indexServer].buildings[x][y] = 2 + weapon;
+            // Verify weapon exists
+            WeaponRegistry reg = WeaponRegistry(weaponRegistry);
+            require(weapon[i] < reg.getWeaponNumber());
+
+            servers[indexServer].buildings[x[i]][y[i]] = 2 + weapon[i];
+        }
     }
 
-    function removeBuildingFromServer(uint indexServer, uint8 x, uint8 y) public {
+    function removeBuildingFromServer(uint indexServer, uint8[10] x, uint8[10] y, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
-        require(x < 10 && y < 10);
-        require(servers[indexServer].buildings[x][y] > 0);
+        require(nbBuilding <= 10 && nbBuilding > 0);
 
-        servers[indexServer].buildings[x][y] = 0;
+        // Add building
+        for(uint8 i=0; i<nbBuilding; i++) {
+            require(x[i] < 8 && y[i] < 8);
+            require(servers[indexServer].buildings[x[i]][y[i]] > 0);
+            servers[indexServer].buildings[x[i]][y[i]] = 0;
+        }
     }
 
     function addPlayerToServer(uint character, uint server) public {
@@ -183,6 +192,9 @@ contract NujaBattle is Geometry, StateManager {
         if(servers[server].playerNb >= servers[server].playerMax) {
             // If it was the last player, we start the game
             servers[server].state = 2;
+            servers[server].currentMatchId = matchNb+1;
+            serverMatch[matchNb] = server+1;
+            matchNb += 1;
         }
     }
 
@@ -232,6 +244,14 @@ contract NujaBattle is Geometry, StateManager {
     function getServerInfo(uint indexServer) public view returns(string nameRet, uint id, uint8 playerMaxRet, uint8 playerNbRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax, servers[indexServer].playerNb);
+    }
+
+    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint buildingRet) {
+        require(indexServer < serverNumber);
+        require(x < 8);
+        require(y < 8);
+
+        return servers[indexServer].buildings[x][y];
     }
 
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {

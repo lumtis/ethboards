@@ -64,6 +64,7 @@ contract CharacterRegistry is ERC721 {
     ///////////////////////////////////////////////////////////////
     /// Admin functions
 
+    // Remove ???
     function changeNujaRegistry(address registry) public onlyOwner {
         nujaRegistry = registry;
     }
