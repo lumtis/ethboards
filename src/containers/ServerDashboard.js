@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import store from '../store'
-import Map from '../containers/Map'
+import MapInitial from '../containers/MapInitial'
 import WeaponSprite from '../components/WeaponSprite'
 import Bar from '../components/Bar'
 
-
-// TODO: Change the interface to be able to add weapon with building
+import '../css/serverdashboard.css'
 
 var flatColorList = [
   '#55efc4',
@@ -17,6 +16,14 @@ var flatColorList = [
 ]
 
 var inputStyle = {
+  width: '80%',
+  margin: '0 auto',
+  backgroundColor: 'rgba(236, 236, 236, 0.6)',
+  borderRadius: 0,
+  border: 0
+};
+
+var inputStyleBuilding = {
   width: '80%',
   margin: '0 auto',
   backgroundColor: 'rgba(236, 236, 236, 0.6)',
@@ -47,18 +54,38 @@ class ServerDashboard extends Component {
 
     this.changeServer = this.changeServer.bind(this)
     this.addServer = this.addServer.bind(this)
-    this.addBuilding = this.addBuilding.bind(this)
-    this.removeBuilding = this.removeBuilding.bind(this)
+
+    this.addBuildings = this.addBuildings.bind(this)
+    this.addNewBuilding = this.addNewBuilding.bind(this)
+    this.updateAddBuildingXForm = this.updateAddBuildingXForm.bind(this)
+    this.updateAddBuildingYForm = this.updateAddBuildingYForm.bind(this)
     this.addWeapon = this.addWeapon.bind(this)
+
+    this.removeBuildings = this.removeBuildings.bind(this)
+    this.removeNewBuilding = this.removeNewBuilding.bind(this)
+    this.updateRemoveBuildingXForm = this.updateRemoveBuildingXForm.bind(this)
+    this.updateRemoveBuildingYForm = this.updateRemoveBuildingYForm.bind(this)
+
+    this.changeServerState = this.changeServerState.bind(this)
 
     this.state = {
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
       atLeastOneServer: false,
+      serverState: 0,
       serverSelected: -1,
       serverArray: [],
       weaponArray: [],
+
+      addBuildingNb: 1,
+      addBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      addBuildingY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      addBuildingWeapon: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+
+      removeBuildingNb: 1,
+      removeBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      removeBuildingY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     }
 
     store.subscribe(() => {
@@ -132,10 +159,17 @@ class ServerDashboard extends Component {
     }
   }
 
+  // Change current server
   changeServer(serverId) {
     return function(e) {
       var self = this
-      self.setState({serverSelected: serverId})
+
+      // Get the state of the server
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.getServerState(serverId).call().then(function(serverState) {
+          self.setState({serverSelected: serverId, serverState: serverState})
+        })
+      }
     }.bind(this)
   }
 
@@ -169,75 +203,172 @@ class ServerDashboard extends Component {
     }
   }
 
-  addBuilding(e) {
-    e.preventDefault();
 
-    var x = parseInt(this.refs.buildingx.value);
-    var y = parseInt(this.refs.buildingy.value);
+  addBuildings(e) {
+    e.preventDefault()
 
-    if(x >= 0 && x < 10 && y >= 0 && y < 10) {
-      // Add the server
-      if (this.state.nujaBattle != null) {
-        if(this.state.serverSelected >= 0) {
-          this.state.nujaBattle.methods.addBuildingToServer(this.state.serverSelected, x, y).send({
-            from: this.state.account.address,
-            gasPrice: 2000000000,
-          })
-          .on('error', function(error){ console.log('ERROR: ' + error)})
-          .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-          .on('receipt', function(receipt){ console.log('receipt')})
-          .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-          .then(function(ret) {
-            alert('Building added')
-          });
-        }
+    // Add buildings to the server
+    if (this.state.nujaBattle != null) {
+      if(this.state.serverSelected >= 0) {
+        this.state.nujaBattle.methods.addBuildingToServer(
+          this.state.serverSelected,
+          this.state.addBuildingX,
+          this.state.addBuildingY,
+          this.state.addBuildingWeapon,
+          this.state.addBuildingNb
+        ).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Building added')
+        });
       }
     }
     else {
       alert('Invalid number (must be 0-9)')
     }
   }
+  addNewBuilding(e) {
+    e.preventDefault()
 
-  removeBuilding(e) {
-    e.preventDefault();
-
-    var x = parseInt(this.refs.buildingxremove.value);
-    var y = parseInt(this.refs.buildingyremove.value);
-
-    if(x >= 0 && x < 10 && y >= 0 && y < 10) {
-      // Add the server
-      if (this.state.nujaBattle != null) {
-        if(this.state.serverSelected >= 0) {
-          this.state.nujaBattle.methods.removeBuildingFromServer(this.state.serverSelected, x, y).send({
-            from: this.state.account.address,
-            gasPrice: 2000000000,
-          })
-          .on('error', function(error){ console.log('ERROR: ' + error)})
-          .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-          .on('receipt', function(receipt){ console.log('receipt')})
-          .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-          .then(function(ret) {
-            alert('Building added')
-          });
-        }
-      }
-    }
-    else {
-      alert('Invalid number (must be 0-9)')
+    if(this.state.addBuildingNb < 10) {
+      this.setState({addBuildingNb: this.state.addBuildingNb+1})
     }
   }
+  updateAddBuildingXForm(index) {
+    return function(e) {
+      e.preventDefault();
 
+      // Changing the addBuildingX array
+      var addBuildingXTmp = this.state.addBuildingX
+      addBuildingXTmp[index] = parseInt(e.target.value)
+      this.setState({addBuildingX: addBuildingXTmp})
+    }.bind(this)
+  }
+  updateAddBuildingYForm(index) {
+    return function(e) {
+      e.preventDefault();
+
+      // Changing the addBuildingY array
+      var addBuildingYTmp = this.state.addBuildingY
+      addBuildingYTmp[index] = parseInt(e.target.value)
+      this.setState({addBuildingY: addBuildingYTmp})
+    }.bind(this)
+  }
   addWeapon(idWeapon) {
     return function(e) {
       e.preventDefault();
 
-      this.refs.buildingx.value = idWeapon
+      // Changing the addBuildingWeapon array
+      var addBuildingWeaponTmp = this.state.addBuildingWeapon
+      addBuildingWeaponTmp[this.state.addBuildingNb-1] = idWeapon
+      this.setState({addBuildingWeapon: addBuildingWeaponTmp})
     }.bind(this)
   }
 
 
-  render() {
 
+  removeBuildings(e) {
+    e.preventDefault()
+
+    // Remove the server
+    if (this.state.nujaBattle != null) {
+      if(this.state.serverSelected >= 0) {
+        this.state.nujaBattle.methods.removeBuildingFromServer(
+          this.state.serverSelected,
+          this.state.removeBuildingX,
+          this.state.removeBuildingY,
+          this.state.removeBuildingNb,
+        ).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Building added')
+        });
+      }
+    }
+    else {
+      alert('Invalid number (must be 0-9)')
+    }
+  }
+  removeNewBuilding(e) {
+    e.preventDefault()
+
+    if(this.state.removeBuildingNb < 10) {
+      this.setState({removeBuildingNb: this.state.removeBuildingNb+1})
+    }
+  }
+  updateRemoveBuildingXForm(index) {
+    return function(e) {
+      e.preventDefault();
+
+      // Changing the removeBuildingX array
+      var removeBuildingXTmp = this.state.removeBuildingX
+      removeBuildingXTmp[index] = parseInt(e.target.value)
+      this.setState({removeBuildingX: removeBuildingXTmp})
+    }.bind(this)
+  }
+  updateRemoveBuildingYForm(index) {
+    return function(e) {
+      e.preventDefault();
+
+      // Changing the removeBuildingY array
+      var removeBuildingYTmp = this.state.removeBuildingY
+      removeBuildingYTmp[index] = parseInt(e.target.value)
+      this.setState({removeBuildingY: removeBuildingYTmp})
+    }.bind(this)
+  }
+
+
+  changeServerState(e) {
+    e.preventDefault();
+    var self = this
+
+    if (self.state.nujaBattle != null) {
+      if(self.state.serverState == 0) {
+
+        // If server is offline, we set it online
+        self.state.nujaBattle.methods.setServerOnline(self.state.serverSelected).send({
+          from: self.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server online')
+        });
+      }
+      else if (self.state.serverState == 1) {
+
+        // If server is online, we set it offline
+        self.state.nujaBattle.methods.setServerOffline(self.state.serverSelected).send({
+          from: self.state.account.address,
+          gasPrice: 2000000000,
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server offlone')
+        });
+      }
+    }
+  }
+
+  render() {
     var serverManagement =
       <div>
         <h1>You have no server</h1>
@@ -250,53 +381,133 @@ class ServerDashboard extends Component {
           </div>
       }
       else {
+
+        var addBuildingForm = <div></div>
+        if(this.state.serverState == 0) {
+          // Form for adding building is specific:
+          // its size change depending on how many building user want to add
+          // unlike other form, all value are manage with react state
+          var addBuildingFormList = []
+          for(var i = 0; i<this.state.addBuildingNb; i++) {
+            addBuildingFormList.push(
+              <div key={i}>
+                <div className="col-md-4">
+                  <input type="text" style={inputStyleBuilding} value={this.state.addBuildingX[i].toString()} onChange={this.updateAddBuildingXForm(i)} />
+                </div>
+                <div className="col-md-4">
+                  <input type="text" style={inputStyleBuilding} value={this.state.addBuildingY[i].toString()} onChange={this.updateAddBuildingYForm(i)} />
+                </div>
+                <div className="col-md-4">
+                  <input type="text" style={inputStyleBuilding} value={this.state.addBuildingWeapon[i]} />
+                </div>
+              </div>
+            )
+          }
+          addBuildingForm =
+          <div>
+            <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add buildings</h1>
+            <div className="row">
+              <div className="col-md-4">
+                <h3 style={{fontSize: '12px'}}>X</h3>
+              </div>
+              <div className="col-md-4">
+                <h3 style={{fontSize: '12px'}}>Y</h3>
+              </div>
+              <div className="col-md-4">
+                <h3 style={{fontSize: '12px'}}>Weapon ID</h3>
+              </div>
+              {addBuildingFormList}
+            </div>
+            <a onClick={this.addNewBuilding}>
+              <button style={{marginBottom: '20px', marginTop: '20px'}} className='buttonServer'>+</button>
+            </a>
+            <a onClick={this.addBuildings}>
+              <button style={{marginBottom: '20px', marginTop: '20px'}} className='buttonServer'>Add buildings</button>
+            </a>
+            <h1 style={{marginBottom: '20px', marginTop: '20px'}}>Select weapon:</h1>
+            <div className="row">
+              {this.state.weaponArray}
+            </div>
+          </div>
+        }
+
+        var removeBuildingForm = <div></div>
+        if(this.state.serverState == 0) {
+          // Same for removing building
+          var removeBuildingFormList = []
+          for(var i = 0; i<this.state.removeBuildingNb; i++) {
+            removeBuildingFormList.push(
+              <div key={i}>
+                <div className="col-md-6">
+                  <input type="text" style={inputStyleBuilding} value={this.state.removeBuildingX[i].toString()} onChange={this.updateRemoveBuildingXForm(i)} />
+                </div>
+                <div className="col-md-6">
+                  <input type="text" style={inputStyleBuilding} value={this.state.removeBuildingY[i].toString()} onChange={this.updateRemoveBuildingYForm(i)} />
+                </div>
+              </div>
+            )
+          }
+          removeBuildingForm =
+          <div>
+            <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Remove buildings</h1>
+            <div className="row">
+              <div className="col-md-6">
+                <h3 style={{fontSize: '12px'}}>X</h3>
+              </div>
+              <div className="col-md-6">
+                <h3 style={{fontSize: '12px'}}>Y</h3>
+              </div>
+              {removeBuildingFormList}
+            </div>
+            <a onClick={this.removeNewBuilding}>
+              <button style={{marginBottom: '20px', marginTop: '20px'}} className='buttonServer'>+</button>
+            </a>
+            <a onClick={this.removeBuildings}>
+              <button style={{marginBottom: '20px', marginTop: '20px'}} className='buttonServer'>Remove buildings</button>
+            </a>
+          </div>
+        }
+
+        // Button to set server state
+        var serverStateButton = <h3>Server is running</h3>
+        if(this.state.serverState == 0) {
+          serverStateButton =
+            <div style={{float: 'right'}}>
+              <a onClick={this.changeServerState}>
+                <button className='buttonOnline'>Set online</button>
+              </a>
+            </div>
+        }
+        else if(this.state.serverState == 1) {
+          serverStateButton =
+            <div style={{float: 'right'}}>
+              <a onClick={this.changeServerState}>
+                <button className='buttonOffline'>Set offline</button>
+              </a>
+            </div>
+        }
+
+        // Interface for managing one server
         serverManagement =
           <div className="row" style={{padding: '30px'}}>
-            <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
-              <Map key={this.state.serverSelected} server={this.state.serverSelected} />
+            <div className="col-md-12" style={{paddingRight:0, paddingLeft:0}}>
+              {serverStateButton}
             </div>
-            <div className="col-md-12" style={{width:'100%', top:'660px'}}>
+            <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
+              <MapInitial key={this.state.serverSelected} server={this.state.serverSelected} />
+            </div>
+            <div className="col-md-12" style={{width:'100%', top:'540px'}}>
 
                 <div className="row" style={{padding: '30px'}}>
-
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
                     <div style={infoStyle}>
-                      <form onSubmit={this.addBuilding}>
-                        <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add building</h1>
-                        <div className="form-group">
-                          <input className="form-control" style={inputStyle} ref="buildingx" placeholder="X" type="text"/>
-                        </div>
-                        <div className="form-group">
-                          <input className="form-control" style={inputStyle} ref="buildingy" placeholder="Y" type="text"/>
-                        </div>
-                        <div className="form-group">
-                          <input className="form-control" style={inputStyle} ref="weaponid" placeholder="Weapon id" type="text"/>
-                        </div>
-                        <div className="form-group">
-                          <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
-                        </div>
-                      </form>
-                      <h1 style={{marginBottom: '20px', marginTop: '20px'}}>Select weapon</h1>
-                      <div className="row">
-                        {this.state.weaponArray}
-                      </div>
+                      {addBuildingForm}
                     </div>
                   </div>
 
                   <div className="col-md-6" style={{paddingRight:0, paddingLeft:0}}>
                     <div style={infoStyle}>
-                      <form onSubmit={this.removeBuilding}>
-                        <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Remove building</h1>
-                        <div className="form-group">
-                          <input className="form-control" style={inputStyle} ref="buildingxremove" placeholder="X" type="text"/>
-                        </div>
-                        <div className="form-group">
-                          <input className="form-control" style={inputStyle} ref="buildingyremove" placeholder="Y" type="text"/>
-                        </div>
-                        <div className="form-group">
-                          <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
-                        </div>
-                      </form>
+                      {removeBuildingForm}
                     </div>
                   </div>
                 </div>

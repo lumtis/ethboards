@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
-import WeaponList from '../containers/WeaponList'
+import WeaponSprite from '../components/WeaponSprite'
+
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
 
@@ -33,7 +34,6 @@ class Player extends Component {
       owner: null,
       server: 0,
       number: 0,
-      weaponList: <div></div>,
       imageData: '',    // Nuja info
       name: ''
     }
@@ -50,7 +50,7 @@ class Player extends Component {
   }
 
   static defaultProps = {
-    index: 0
+    index: 0,
   }
 
   componentWillMount() {
@@ -77,17 +77,15 @@ class Player extends Component {
 
               // Retrieve server info
 
-                if (self.state.account != null) {
-                  self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
-                    self.state.nujaBattle.methods.playerInformation(currentServer, playerIndex).call().then(function(playerInfo) {
-                      // Update server infos
-                      self.setState({
-                        number: playerIndex,
-                        weaponList: <WeaponList server={currentServer} player={playerIndex}/>,
-                      })
-                    });
+              if (self.state.account != null) {
+                self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
+                  self.state.nujaBattle.methods.playerInformation(currentServer, playerIndex).call().then(function(playerInfo) {
+                    // Update server infos
+                    self.setState({
+                      number: playerIndex,
+                    })
                   });
-                }
+                });
               }
 
               // Retrieve nuja info
@@ -103,20 +101,31 @@ class Player extends Component {
                       ipfs.files.get(ipfsString + '/name/default', function (err, files) {
                         self.setState({name: files[0].content.toString('utf8')})
                       })
-                    });
-                  });
+                    })
+                  })
                 }
-              }
+              })
 
-            });
-          });
-        });
+            }
+          })
+        })
       }
     }
   }
 
   render() {
     var health = SW.getPlayerHealth(this.state.number)
+
+    var weaponArray = []
+    var weapons = SW.getPlayerWeapons(this.props.player)
+
+    for (var i = 0; i < weapons.length; i++) {
+      weaponArray.push(<div key={i} className="col-md-3"><WeaponSprite weaponIndex={weapons[i]}/></div>)
+    }
+    var weaponList =
+      <div className="row">
+        <div>{weaponArray}</div>
+      </div>
 
     // If player is dead, we render nothing
     if(health == 0) {
@@ -127,16 +136,16 @@ class Player extends Component {
         <div style={infoStyle}>
           <h1>{this.state.number} - {this.state.nickname}</h1>
           <div className="row" style={{padding: '10px'}}>
-            <div className="col-md-6" style={{}}>
+            <div className="col-md-6">
               <img src={this.state.imageData} alt="Nuja" style={{height: '115px'}}></img>
             </div>
-            <div className="col-md-6" style={{}}>
+            <div className="col-md-6">
               <p>{this.state.name}</p>
               <p>Health: {health}</p>
             </div>
           </div>
           <p style={{fontSize: '10px'}}>{this.state.owner}</p>
-          {this.state.weaponList}
+          {weaponList}
         </div>
       );
     }

@@ -59,7 +59,7 @@ class Actions extends Component {
       self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
         self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
           self.setState({playerIndex: playerIndex, playerMax: playerMax})
-        }
+        })
       })
     }
   }
@@ -261,7 +261,7 @@ class Actions extends Component {
         // Get weapon from player
         var weapons = SW.getPlayerWeapons(this.state.playerIndex)
 
-        for (i = 0; i < weapons.length; i++) {
+        for (var i = 0; i < weapons.length; i++) {
           weaponArray.push(
             <div key={i} className="col-md-3">
               <button onClick={this.weaponButton(i)} style={{

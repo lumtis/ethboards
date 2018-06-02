@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import BuildingDesc from '../components/BuildingDesc'
 import store from '../store'
 
 var SW = require('../utils/stateWrapper')
@@ -9,36 +10,95 @@ class Tile extends Component {
   constructor(props) {
     super(props)
 
+    this.handleMouseHover = this.handleMouseHover.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
     this.state = {
+      nujaBattle: store.getState().web3.nujaBattleInstance,
+      buildingCode: 0,
+      isHovering: false
     }
+
+    store.subscribe(() => {
+      this.setState({
+        nujaBattle: store.getState().web3.nujaBattleInstance,
+      })
+    })
   }
 
   static defaultProps = {
     server: 0,
     x: 0,
-    y: 0
+    y: 0,
+    initial: true       // Initial: render initial building state
   }
 
   componentWillMount() {
+    var self = this
+
+    // If we want the initial buidling, we read the smart contract
+    if(self.props.initial) {
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.getServerBuilding(self.props.server, self.props.x, self.props.y).call().then(function(buildingRet) {
+          self.setState({buildingCode: buildingRet})
+        })
+      }
+    }
+  }
+
+  // Event functions to render description
+  handleMouseHover() {
+    this.setState({isHovering: true});
+  }
+
+  handleMouseLeave() {
+    this.setState({isHovering: false});
   }
 
   render() {
     var offsetX = this.props.x*64
     var offsetY = this.props.y*64
+    var desc = <div></div>
 
-    var building = SW.getBuilding(this.props.x, this.props.y)
-
-    var field = <img alt="Nuja"></img>
-    if(building > 0) {
-      field = <img src="/images/tileCity1.png" alt="Nuja" style={{
-        width: '64px',
-        position: 'absolute',
-        top: offsetY+'px',
-        left: offsetX+'px'
-      }}></img>
+    if(this.props.initial) {
+      var building = this.state.buildingCode
     }
     else {
-      field = <img src="/images/tile.png" alt="Nuja" style={{
+      building = SW.getBuilding(this.props.x, this.props.y)
+    }
+
+    var field = <img alt="Nuja"></img>
+
+    // If there is a building
+    if(building > 0) {
+
+      // If mouse hovering, we show buidling description
+      if (this.state.isHovering) {
+        desc = <BuildingDesc index={building} x={this.props.x} y={this.props.y}/>
+      }
+
+      field =
+      <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
+        <img src="/images/tileCity1.png" alt="Nuja" style={{
+          width: '64px',
+          position: 'absolute',
+          top: offsetY+'px',
+          left: offsetX+'px'
+        }}></img>
+        <div style={{
+          width: '350px',
+          position: 'absolute',
+          top: offsetY+100+'px',
+          left: offsetX-64+'px'
+        }}
+        >{desc}</div>
+      </div>
+    }
+    else {
+
+      // Simple field
+      field =
+      <img src="/images/tile.png" alt="Nuja" style={{
         width: '64px',
         position: 'absolute',
         top: offsetY+'px',
@@ -50,7 +110,7 @@ class Tile extends Component {
       <div>
         {field}
       </div>
-    );
+    )
   }
 }
 

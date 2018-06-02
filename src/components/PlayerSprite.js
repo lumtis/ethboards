@@ -49,7 +49,7 @@ class PlayerSprite extends Component {
 
         self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(characterInfo) {
           // Retrieve server info
-          self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServerRet) {
+          self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(currentServerRet) {
             if(currentServerRet > 0) {
               var currentServer = currentServerRet-1
 
@@ -80,6 +80,7 @@ class PlayerSprite extends Component {
     }
   }
 
+  // Event functions to render description
   handleMouseHover() {
     this.setState({isHovering: true});
   }
@@ -87,7 +88,6 @@ class PlayerSprite extends Component {
   handleMouseLeave() {
     this.setState({isHovering: false});
   }
-
 
   render() {
     var health = SW.getPlayerHealth(this.state.number)

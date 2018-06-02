@@ -69,34 +69,36 @@ class JoinInterface extends Component {
 
     if(self.state.account != null) {
       if(self.state.characterRegistry != null) {
-        self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
+        if (this.state.nujaBattle != null) {
+          self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
 
-          for(var i = 0; i < characterNb; i++) {
-            self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
-              self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
-                self.state.characterRegistry.methods.getCharacterCurrentServer(characterIndex).call().then(function(currentServerRet) {
-                  if(currentServerRet == 0) {
+            for(var i = 0; i < characterNb; i++) {
+              self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
+                self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
+                  self.state.nujaBattle.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
+                    if(currentServerRet == 0) {
 
-                    // Get a random color for background
-                    var ranIndex = Math.floor((Math.random() * flatColorList.length))
-                    var ranColor = flatColorList[ranIndex]
+                      // Get a random color for background
+                      var ranIndex = Math.floor((Math.random() * flatColorList.length))
+                      var ranColor = flatColorList[ranIndex]
 
-                    // Specifying server button
-                    var characterArrayTmp = self.state.characterArray
-                    characterArrayTmp.push(
-                      <div key={this.characterIndex} style={Object.assign({}, chooseStyle, {backgroundColor: ranColor})} className="col-md-12">
-                        <a style={{cursor: 'pointer'}} onClick={self.joinServer(this.characterIndex)}>
-                          <h1>{infoRet.nicknameRet}</h1>
-                        </a>
-                      </div>
-                    )
-                    self.setState({characterArray: characterArrayTmp})
-                  }
-                }.bind({characterIndex: this.characterIndex}))
-              }.bind({characterIndex: characterIndex}))
-            })
-          }
-        })
+                      // Specifying server button
+                      var characterArrayTmp = self.state.characterArray
+                      characterArrayTmp.push(
+                        <div key={this.characterIndex} style={Object.assign({}, chooseStyle, {backgroundColor: ranColor})} className="col-md-12">
+                          <a style={{cursor: 'pointer'}} onClick={self.joinServer(this.characterIndex)}>
+                            <h1>{infoRet.nicknameRet}</h1>
+                          </a>
+                        </div>
+                      )
+                      self.setState({characterArray: characterArrayTmp})
+                    }
+                  }.bind({characterIndex: this.characterIndex}))
+                }.bind({characterIndex: characterIndex}))
+              })
+            }
+          })
+        }
       }
     }
   }

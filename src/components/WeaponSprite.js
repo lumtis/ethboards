@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import store from '../store'
-import ReactCursorPosition from 'react-cursor-position'
 
 var ipfsAPI = require('ipfs-api')
 var weaponJson = require('../../build/contracts/Weapon.json')
@@ -110,7 +109,5 @@ class WeaponSprite extends Component {
   }
 }
 
-// <ReactCursorPosition>
-// </ReactCursorPosition>
 
 export default WeaponSprite

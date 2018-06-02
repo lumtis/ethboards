@@ -35,7 +35,6 @@ class Sidebar extends Component {
       characterId: 0,
       changeServer: false,
       changeServerByCharacter: false,
-      serverState: 0
     }
 
     store.subscribe(() => {
@@ -48,6 +47,7 @@ class Sidebar extends Component {
 
   static defaultProps = {
     server: 0,
+    serverState: 0
   }
 
   componentWillMount() {
@@ -64,20 +64,12 @@ class Sidebar extends Component {
             })
           })
         })
-
-        // Check if the server is running
-        // If it's not and we are not in it, we can join it
-        self.state.nujaBattle.methods.getServerState(self.props.server).call().then(function(stateRet) {
-          self.setState({serverState: stateRet})
-        })
       }
     }
   }
 
   changeServer(e) {
     e.preventDefault();
-
-
 
     if (this.state.changeServer)
       this.setState({changeServer: false})
@@ -106,7 +98,6 @@ class Sidebar extends Component {
       if (this.state.changeServer) {
 
         // We want to show available server
-
         var buttonReturn =
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <a onClick={this.changeServer}>
@@ -142,8 +133,8 @@ class Sidebar extends Component {
         }
       }
       else {
-        // Server actions
 
+        // Server actions
         var buttonChangeServer =
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <a onClick={this.changeServer}>
@@ -152,22 +143,34 @@ class Sidebar extends Component {
           </div>
 
         if (this.state.inServer) {
-          // We are on the server, so we show our character informations and actions
-          content =
-          <div>
-            {buttonChangeServer}
-            <Player index={this.state.characterId} />
-            <Actions server={this.state.server} />
-          </div>
+
+          if(this.state.serverState == 2) {
+            // We are on the server, so we show our character informations and actions
+            content =
+            <div>
+              {buttonChangeServer}
+              <Player index={this.state.characterId} />
+              <Actions server={this.props.server} />
+            </div>
+          }
+          else {
+            // We are on the server but the match has not started yet
+            content =
+            <div>
+              {buttonChangeServer}
+              <h3>You are on this server</h3>
+              <h3>The match has not started yet</h3>
+            </div>
+          }
         }
         else {
-          // Not in the server
 
-          if(this.state.serverState == 0 || this.state.serverState == 2) {
+          // Not in the server
+          if(this.props.serverState == 0 || this.props.serverState == 2) {
             var joinInt = <div></div>
           }
           else {
-            joinInt = <JoinInterface server={this.state.server} />
+            joinInt = <JoinInterface server={this.props.server} />
           }
 
           content =
@@ -179,8 +182,6 @@ class Sidebar extends Component {
         }
       }
     }
-
-    //3FC1C9
 
     return (
       <div style={{backgroundColor: '#8559A5', height: '100vh', overflowY: 'scroll'}}>
