@@ -47,7 +47,7 @@ class PlayerSprite extends Component {
     if (self.state.nujaBattle != null) {
       if (self.state.characterRegistry != null) {
 
-        self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(characterInfo) {
+        self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
           // Retrieve server info
           self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(currentServerRet) {
             if(currentServerRet > 0) {

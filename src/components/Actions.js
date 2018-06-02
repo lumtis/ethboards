@@ -80,19 +80,25 @@ class Actions extends Component {
       })
       PubSub.publish('CROSSES', 'remove');
 
+      console.log(SW.getCurrentState().map(x => parseInt(x)))
+
+      this.state.nujaBattle.methods.simulate(this.props.server, 0, 1, 0, 0, SW.getCurrentState().map(x => parseInt(x))).call({from: this.state.account.address, gas: '100000000'}).then(function(moveOutput) {
+        console.log(moveOutput)
+      })
+
       // We search for every field which gives more than 0 gas (which means that the transaction will not revert)
-      for (var i = 0; i < 10; i++) {
-        for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 0, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
-            // If gas superior than 0 we draw a cross
-            if(error == null) {
-              if(gasAmount > 0) {
-                PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
-              }
-            }
-          }.bind({i: i, j: j}));
-        }
-      }
+      // for (var i = 0; i < 10; i++) {
+      //   for (var j = 0; j < 10; j++) {
+      //     this.state.nujaBattle.methods.simulate(this.props.server, 0, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+      //       // If gas superior than 0 we draw a cross
+      //       if(error == null) {
+      //         if(gasAmount > 0) {
+      //           PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+      //         }
+      //       }
+      //     }.bind({i: i, j: j}));
+      //   }
+      // }
     }
   }
   attackButton(e) {
@@ -255,6 +261,7 @@ class Actions extends Component {
     if(this.state.playerMax > 0 && this.state.playerIndex != -1) {
       // Check if it is the player turn
       var actualTurn = SW.getCurrentTurn(this.state.playerMax)
+
       if(actualTurn[1] == this.state.playerIndex) {
         myTurn = true
 

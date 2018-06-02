@@ -50,7 +50,8 @@ class Sidebar extends Component {
     serverState: 0
   }
 
-  componentWillMount() {
+  // PROBLEM: props are not directly received
+  componentWillReceiveProps() {
     var self = this;
 
     // Verify if user is on the server
@@ -60,9 +61,10 @@ class Sidebar extends Component {
           // If the user is on the server, we need to retreive the character id
           self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(indexUser) {
             self.state.nujaBattle.methods.playerCharacter(self.props.server, indexUser).call().then(function(characterIndex) {
-              self.setState({inServer: isRet, characterId: characterIndex})
+              self.setState({characterId: characterIndex})
             })
           })
+          self.setState({inServer: isRet})
         })
       }
     }
@@ -144,7 +146,7 @@ class Sidebar extends Component {
 
         if (this.state.inServer) {
 
-          if(this.state.serverState == 2) {
+          if(this.props.serverState == 2) {
             // We are on the server, so we show our character informations and actions
             content =
             <div>

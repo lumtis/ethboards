@@ -24,7 +24,6 @@ class Play extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
-        serverState: 0,
       })
     })
   }
@@ -113,7 +112,7 @@ class Play extends Component {
                 <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
                   <Map server={this.state.server} />
                 </div>
-                <div className="col-md-12" style={{width:'100%', top:'660px'}}>
+                <div className="col-md-12" style={{width:'100%', top:'560px'}}>
                   <h1 style={{marginBottom: '40px'}}>Other players :</h1>
                   <PlayerList server={this.state.server} />
                 </div>

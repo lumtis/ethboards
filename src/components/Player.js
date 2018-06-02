@@ -79,12 +79,9 @@ class Player extends Component {
 
               if (self.state.account != null) {
                 self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
-                  self.state.nujaBattle.methods.playerInformation(currentServer, playerIndex).call().then(function(playerInfo) {
-                    // Update server infos
-                    self.setState({
-                      number: playerIndex,
-                    })
-                  });
+                  self.setState({
+                    number: playerIndex,
+                  })
                 });
               }
 
@@ -117,7 +114,7 @@ class Player extends Component {
     var health = SW.getPlayerHealth(this.state.number)
 
     var weaponArray = []
-    var weapons = SW.getPlayerWeapons(this.props.player)
+    var weapons = SW.getPlayerWeapons(this.props.index)
 
     for (var i = 0; i < weapons.length; i++) {
       weaponArray.push(<div key={i} className="col-md-3"><WeaponSprite weaponIndex={weapons[i]}/></div>)
