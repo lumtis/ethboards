@@ -35,9 +35,11 @@ contract NujaBattle is Geometry, StateManager {
 
     struct Server {
         uint id;
-        uint currentMatchId; // Warning: offset
         string name;
         address owner;
+        uint fee;
+        uint moneyBag;
+        uint currentMatchId; // Warning: offset
         uint8 playerMax;
         uint8 playerNb;
         uint8 state;       // 0: offline, 1: waiting, 2: running
@@ -45,6 +47,7 @@ contract NujaBattle is Geometry, StateManager {
         mapping (uint8 => mapping (uint8 => uint)) playersPosition;
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
+        mapping (uint8 => bool) dead;
         /* uint timeoutStart;
         uint8 timeoutPlayer;          // Warning: offset
         uint timeoutBlameStart;
@@ -169,6 +172,7 @@ contract NujaBattle is Geometry, StateManager {
         require(server < serverNumber);
         require(servers[server].state == 1);
         require(characterServer[character] == 0);
+        require(servers[server].playerNb < servers[server].playerMax)
 
         // Verify character exists and subcribes it
         CharacterRegistry reg = CharacterRegistry(characterRegistry);
@@ -189,13 +193,25 @@ contract NujaBattle is Geometry, StateManager {
         servers[server].playerIndex[msg.sender] = numero+1;
 
         servers[server].playerNb += 1;
-        if(servers[server].playerNb >= servers[server].playerMax) {
-            // If it was the last player, we start the game
-            servers[server].state = 2;
-            servers[server].currentMatchId = matchNb+1;
-            serverMatch[matchNb] = server+1;
-            matchNb += 1;
-        }
+    }
+
+    function removePlayerFromServer(uint server, uint8 p) public {
+        require(server < serverNumber);
+        require(servers[server].playerIndex[msg.sender] == p+1);
+
+        servers[server].playerNb -= 1;
+    }
+
+    function startServer(uint server) public {
+        require(server < serverNumber);
+        require(servers[server].owner == msg.sender);
+        require(servers[server].playerNb == servers[server].playerMax);
+
+        // Start the server
+        servers[server].state = 2;
+        servers[server].currentMatchId = matchNb+1;
+        serverMatch[matchNb] = server+1;
+        matchNb += 1;
     }
 
 
@@ -246,6 +262,11 @@ contract NujaBattle is Geometry, StateManager {
         return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax, servers[indexServer].playerNb);
     }
 
+    function getServerFinancial(uint indexServer) public view returns(uint fee, uint moneyBag) {
+        require(indexServer < serverNumber);
+        return(servers[indexServer].fee, servers[indexServer].moneyBag);
+    }
+
     function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint buildingRet) {
         require(indexServer < serverNumber);
         require(x < 8);
@@ -253,6 +274,7 @@ contract NujaBattle is Geometry, StateManager {
 
         return servers[indexServer].buildings[x][y];
     }
+
 
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {
         return serverUserNumber[user];
@@ -439,6 +461,53 @@ contract NujaBattle is Geometry, StateManager {
         // Call the power function
         Nuja player_nuja = Nuja(nujaAddress);
         return player_nuja.power(x, y, p, moveInput);
+    }
+
+
+    //////////////////////////////////////////////////////////////////
+    // Match functions
+
+    function isDead(uint indexServer, uint8 p) public view returns (bool deadRet) {
+        require(indexServer < serverNumber);
+        require(p < servers[indexServer].maxPlayer);
+        return servers[indexServer].dead[p];
+    }
+
+    // A static array is more convenient for nextTurn function
+    function getDeadArray(uint indexServer) public view returns (bool[8] deadArrayRet) {
+        require(indexServer < serverNumber);
+
+        bool[8] memory deadArray;
+
+        for(uint8 i=0; i<servers[indexServer].maxPlayer; i++) {
+            deadArray[i] = servers[indexServer].dead[i];
+        }
+        for(i=servers[indexServer].maxPlayer; i<8; i++) {
+            deadArray[i] = false;
+        }
+
+        return deadArray;
+    }
+
+
+    function killPlayer(
+      uint8 killer,
+      uint8 killed,
+      uint[8][3] metadata,
+      uint8[8][4] move,
+      uint[8][176] moveOutput,
+      uint[8] r,
+      uint[8] s,
+      uint8[8] v,
+      uint8 nbSignature
+      ) public {
+        // Verify all signatures
+
+        // Verify player is killed
+
+        // Get the fund of the player
+
+        // If it was the last player, terminate the server
     }
 
 
@@ -687,52 +756,7 @@ contract NujaBattle is Geometry, StateManager {
 
     } */
 
-
-    // Finish turn
-    /* function finish(address, input) {
-
-    } */
-
-    /* function quit() {
-
-    } */
-
-    // REMOVE
-    // Termination functions
-    /* function killPlayer(uint indexServer, uint8 p) internal {
-        // Remove player from map
-        var (x, y) = playerPosition(indexServer, p);
-        servers[indexServer].fields[x][y].character = 0;
-
-        // Set player to dead
-        servers[indexServer].players[p].alive = false;
-
-        // Unregister the player from the server
-        uint character = servers[indexServer].players[p].characterIndex;
-        CharacterRegistry reg = CharacterRegistry(characterRegistry);
-        reg.unsetCharacterServer(character);
-        servers[indexServer].playerIndex[reg.ownerOf(character)] = 0;
-
-        servers[indexServer].playerNb -= 1;
-
-        // If only one player remaining, we terminate the server
-        if (servers[indexServer].playerNb == 1) {
-            terminateServer(indexServer);
-        }
-    } */
-
-    // REMOVE
-    /* function terminateServer(uint indexServer) internal {
-        // Search for the last player
-        for(uint8 i = 0; i < servers[indexServer].playerMax; i++) {
-            if (servers[indexServer].players[i].alive) {
-                killPlayer(indexServer, i);
-                break;
-            }
-        }
-
-        servers[indexServer].running = false;
-    } */
+    // function kickPlayer(uint indexServer, uint p) internal
 
 
 
