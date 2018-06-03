@@ -44,8 +44,7 @@ contract StateManager {
       state[144+p] = y;
 
       // Remove player from old position
-      state[64+oldX*8+oldY];
-      state[64+x*8+y] = 0;
+      state[64+oldX*8+oldY] = 0;
       return state;
     }
 
@@ -61,7 +60,7 @@ contract StateManager {
             state[128+p] = 0;
         }
         else {
-            state[128+p] =  remaining - nb;
+            state[128+p] = remaining - nb;
         }
 
         return state;

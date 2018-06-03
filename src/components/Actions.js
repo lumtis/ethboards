@@ -17,15 +17,15 @@ class Actions extends Component {
   constructor(props) {
     super(props)
 
-    this.moveButton = this.moveButton.bind(this);
-    this.attackButton = this.attackButton.bind(this);
-    this.exploreBuildingButton = this.exploreBuildingButton.bind(this);
-    this.powerButton = this.powerButton.bind(this);
-    this.weaponButton = this.weaponButton.bind(this);
-    this.idleButton = this.idleButton.bind(this);
+    this.moveButton = this.moveButton.bind(this)
+    this.attackButton = this.attackButton.bind(this)
+    this.exploreBuildingButton = this.exploreBuildingButton.bind(this)
+    this.powerButton = this.powerButton.bind(this)
+    this.weaponButton = this.weaponButton.bind(this)
+    this.idleButton = this.idleButton.bind(this)
 
-    this.getMessage = this.getMessage.bind(this);
-    var token = PubSub.subscribe('CROSSES', this.getMessage);
+    this.getMessage = this.getMessage.bind(this)
+    var token = PubSub.subscribe('CROSSES', this.getMessage)
 
     this.state = {
       moveSelected: false,
@@ -80,25 +80,19 @@ class Actions extends Component {
       })
       PubSub.publish('CROSSES', 'remove');
 
-      console.log(SW.getCurrentState().map(x => parseInt(x)))
-
-      this.state.nujaBattle.methods.simulate(this.props.server, 0, 1, 0, 0, SW.getCurrentState().map(x => parseInt(x))).call({from: this.state.account.address, gas: '100000000'}).then(function(moveOutput) {
-        console.log(moveOutput)
-      })
-
       // We search for every field which gives more than 0 gas (which means that the transaction will not revert)
-      // for (var i = 0; i < 10; i++) {
-      //   for (var j = 0; j < 10; j++) {
-      //     this.state.nujaBattle.methods.simulate(this.props.server, 0, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
-      //       // If gas superior than 0 we draw a cross
-      //       if(error == null) {
-      //         if(gasAmount > 0) {
-      //           PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
-      //         }
-      //       }
-      //     }.bind({i: i, j: j}));
-      //   }
-      // }
+      for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 10; j++) {
+          this.state.nujaBattle.methods.simulate(this.props.server, 0, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
+            // If gas superior than 0 we draw a cross
+            if(error == null) {
+              if(gasAmount > 0) {
+                PubSub.publish('CROSSES', 'add ' + this.i + ' ' + this.j);
+              }
+            }
+          }.bind({i: i, j: j}));
+        }
+      }
     }
   }
   attackButton(e) {
@@ -119,7 +113,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 1, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, 1, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
             // If gas superior than 0 we draw a cross
             if(error == null) {
               if(gasAmount > 0) {
@@ -152,7 +146,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 4, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, 4, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
 
             // If gas superior than 0 we draw a cross
             if(error == null) {
@@ -184,7 +178,7 @@ class Actions extends Component {
 
         for (var i = 0; i < 10; i++) {
           for (var j = 0; j < 10; j++) {
-            this.state.nujaBattle.methods.simulate(this.props.server, 3, i, j, id, SW.getCurrentState()).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+            this.state.nujaBattle.methods.simulate(this.props.server, 3, i, j, id, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
 
               // If gas superior than 0 we draw a cross
               if(error == null) {
@@ -206,15 +200,16 @@ class Actions extends Component {
 
 
   command(playMove, x, y) {
-    if (this.state.nujaBattle != null) {
+    var self = this
+
+    if (self.state.nujaBattle != null) {
 
       // Simulate the turn to get move output
-      this.state.nujaBattle.methods.simulate(this.props.server, playMove, x, y, this.state.selectedWeapon, SW.getCurrentState()).call().then(function(moveOutput) {
-
+      self.state.nujaBattle.methods.simulate(self.props.server, playMove, x, y, self.state.selectedWeapon, SW.getCurrentState()).call({from: self.state.account.address, gas: '1000000'}).then(function(moveOutput) {
         // Creating signature
         var metadata = []
         metadata.push(SW.getCurrentMatch())
-        var currentTurn = SW.getCurrentTurn(this.state.playerMax)
+        var currentTurn = SW.getCurrentTurn(self.state.playerMax)
         metadata.push(currentTurn[0])
         metadata.push(currentTurn[1])
 
@@ -222,11 +217,10 @@ class Actions extends Component {
         move.push(playMove)
         move.push(x)
         move.push(y)
-        move.push(this.state.selectedWeapon)
+        move.push(self.state.selectedWeapon)
 
         // Pushing the signature to the server
-        SW.pushSignature(this.props.server, metadata, move, moveOutput)
-        alert('Done')
+        SW.pushSignature(self.props.server, metadata, move, moveOutput)
       })
     }
   }

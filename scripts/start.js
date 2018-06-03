@@ -33,6 +33,8 @@ var redis = RedisClient.createClient(6379, '127.0.0.1')
 var provider = new Web3.providers.HttpProvider('http://localhost:7545')
 var web3 = new Web3(provider)
 
+var ethjs = require('ethereumjs-util')
+
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
@@ -46,11 +48,11 @@ redis.on("connect", function () {
 function getCurrentTurn(matchId, nbPlayer, cb) {
 
   // We first check if the key exists
-  redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+  redis.exists(matchId + '_turn', function (existsErr, existsReply){
     if(existsReply == 0) {
       // If the key doesn't exist we can return 0
       // pushsignature function will determine if the match exist
-      return [0, 0]
+      cb([0, 0])
     }
     else {
       // If the key exist, get next turn
@@ -293,11 +295,11 @@ function runDevServer(host, port, protocol) {
           else {
             // If key exists, get hte list of signatures
             redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
-              if(err == null) {
+              if(err != null) {
                 console.log('redis push signature error :' + err)
               } else {
                 // Convert the string stored to json
-                res.send(reply.map(JSON.parse()))
+                res.send(reply.map(x => JSON.parse(x)))
               }
             })
           }
@@ -316,11 +318,11 @@ function runDevServer(host, port, protocol) {
           else {
             // The match exist, we get metadata
             redis.get(req.body.matchId + '_turn', function (turnErr, turnReply) {
-              if(turnErr == null) {
+              if(turnErr != null) {
                 console.log('redis get turn error :' + turnErr)
               } else {
                 redis.get(req.body.matchId + '_playerturn', function (playerturnErr, playerturnReply) {
-                  if(playerturnErr == null) {
+                  if(playerturnErr != null) {
                     console.log('redis get player turn error :' + playerturnErr)
                   } else {
                     res.send([turnReply, playerturnReply])
@@ -340,74 +342,82 @@ function runDevServer(host, port, protocol) {
         var turn = parseInt(req.body.metadata[1])
         var playerTurn = parseInt(req.body.metadata[2])
 
-        // We get the identity of the player
-        web3.eth.personal.ecRecover(web3.utils.soliditySha3(
+
+        // Get the message signer
+        var msg = ethjs.toBuffer(web3.utils.soliditySha3(
             {t: 'uint[]', v: req.body.metadata},
             {t: 'uint8[]', v: req.body.move},
             {t: 'uint[]', v: req.body.moveOutput},
-          ), req.body.signature, function (addr) {
+        ))
+        var prefix = new Buffer("\x19Ethereum Signed Message:\n")
+        var prefixedMsg = ethjs.sha3(
+          Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
+        )
+        var splittedSig = ethjs.fromRpcSig(req.body.signature)
+        var pubKey = ethjs.ecrecover(prefixedMsg, splittedSig.v, splittedSig.r, splittedSig.s)
+        var addrBuf = ethjs.pubToAddress(pubKey)
+        var addr = ethjs.bufferToHex(addrBuf)
 
-            nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+        nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
 
-              // We check the metadata are correct (it is the actual turn)
-              nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+          // We check the metadata are correct (it is the actual turn)
+          nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
 
-                getCurrentTurn(matchId, playerMax, function(actualTurn) {
-                  if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
+            getCurrentTurn(matchId, playerMax, function(actualTurn) {
+              if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
 
-                    // We check if the player is present on the server and it's his turn
-                    nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
-                      if(isInServer) {
-                        nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
-                          if(indexPlayer == playerTurn) {
+                // We check if the player is present on the server and it's his turn
+                nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
+                  if(isInServer) {
+                    nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
+                      if(indexPlayer == playerTurn) {
 
-                            // Push the new signature
-                            redis.rpush(req.body.matchId, JSON.stringify({
-                              metadata: req.body.metadata,
-                              move: req.body.move,
-                              moveOutput: req.body.moveOutput,
-                              signature: req.body.signature,
-                            }), function (pushErr, pushReply) {
-                              if(err != null) {
-                                console.log('redis push signature error :' + err)
-                              } else {
+                        // Push the new signature
+                        redis.rpush(req.body.matchId, JSON.stringify({
+                          metadata: req.body.metadata,
+                          move: req.body.move,
+                          moveOutput: req.body.moveOutput,
+                          signature: req.body.signature,
+                        }), function (pushErr, pushReply) {
+                          if(pushErr != null) {
+                            console.log('redis push signature error :' + pushErr)
+                          } else {
 
-                                // If list is full we remove the first element
-                                redis.llen(req.body.matchId, function (lenErr, lenReply) {
-                                  if(lenReply > playerMax) {
-                                    redis.lpop(req.body.matchId, function (popErr, popReply) {
-                                    })
-                                  }
+                            // If list is full we remove the first element
+                            redis.llen(req.body.matchId, function (lenErr, lenReply) {
+                              if(lenReply > playerMax) {
+                                redis.lpop(req.body.matchId, function (popErr, popReply) {
                                 })
-
-                                // Update metadata
-                                redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
-                                  // TODO: gestion erreur
-                                })
-                                redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
-                                  // TODO: gestion erreur
-                                })
-                                res.send("Signature pushed")
                               }
                             })
 
-                          }
-                          else {
-                            console.log('not signer turn')
+                            // Update metadata
+                            redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                              // TODO: gestion erreur
+                            })
+                            redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                              // TODO: gestion erreur
+                            })
+                            res.send("Signature pushed")
                           }
                         })
+
                       }
                       else {
-                        // TODO: meilleur gestion d'erreur
-                        console.log('signer not in the server')
+                        console.log('not signer turn')
                       }
                     })
                   }
+                  else {
+                    // TODO: meilleur gestion d'erreur
+                    console.log('signer not in the server')
+                  }
                 })
-              })
+              }
             })
-          }
-        )
+          })
+        })
+
       })
 
     }

@@ -45,6 +45,7 @@ exports.updateServer = function(id) {
             function (stateError, stateResponse, stateBody) {
               if (!stateError && stateResponse.statusCode == 200) {
                 // Update stored state and metadata
+
                 store.dispatch({type: 'STATE_UPDATED', payload:
                   {
                     currentStateInstance: stateBody,
@@ -67,34 +68,44 @@ exports.updateServer = function(id) {
 
 exports.pushSignature = function(serverId, metadata, move, moveOutput) {
 
-  self.state.web3.eth.personal.sign(self.state.web3.utils.soliditySha3(
-    {t: 'uint[]', v: metadata},
-    {t: 'uint8[]', v: move},
-    {t: 'uint[]', v: moveOutput},
-  ), self.state.account.address).then(function(sig) {
+  var web3 = store.getState().web3.web3Instance
+  var account = store.getState().account.accountInstance
 
-    // Send request
-    request.post(
-      'http://localhost:3000/post/pushsignature',
-      { json:
-        {
-          matchId: serverId,
-          metadata: metadata,
-          move: move,
-          moveOutput: moveOutput,
-          signature: sig
+  if(web3 != null && account != null) {
+
+    // Signing message
+    web3.eth.personal.sign(web3.utils.soliditySha3(
+      {t: 'uint[]', v: metadata},
+      {t: 'uint8[]', v: move},
+      {t: 'uint[]', v: moveOutput},
+    ), account.address).then(function(sig) {
+
+      // Send signature to server
+      request.post(
+        'http://localhost:3000/post/pushsignature',
+        { json:
+          {
+            matchId: serverId,
+            metadata: metadata,
+            move: move,
+            moveOutput: moveOutput,
+            signature: sig
+          }
+        },
+        function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            console.log(body)
+          }
+          else {
+            console.log(error)
+          }
         }
-      },
-      function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-          console.log(body)
-        }
-        else {
-          console.log(error)
-        }
-      }
-    )
-  })
+      )
+    })
+  }
+  else {
+    console.log('web3 or account not initialized')
+  }
 }
 
 
@@ -102,13 +113,13 @@ exports.pushSignature = function(serverId, metadata, move, moveOutput) {
 // Inspired from stateManager contract
 
 exports.getCurrentMatch = function() {
-  return store.getState().currentState.currentStateMatch
+  return parseInt(store.getState().currentState.currentStateMatch)
 }
 
 exports.getCurrentTurn = function(nbPlayer) {
-  var lastTurn = store.getState().currentState.currentStateTurn
-  var lastPlayerTurn = store.getState().currentState.currentStatePlayerTurn
-  var lastState = store.getState().currentState.currentStateInstance[store.getState().currentState.currentStateInstance.length-1].moveOutput
+  var lastTurn = parseInt(store.getState().currentState.currentStateTurn)
+  var lastPlayerTurn = parseInt(store.getState().currentState.currentStatePlayerTurn)
+  var lastState = store.getState().currentState.currentStateInstance[store.getState().currentState.currentStateInstance.length-1].moveOutput.map(x => parseInt(x))
 
   // State channel has not been initialized yet
   if (lastPlayerTurn == -1) {
@@ -134,7 +145,7 @@ exports.getCurrentState = function() {
   }
 
   var lastState = currentState[currentState.length-1].moveOutput
-  return lastState
+  return lastState.map(x => parseInt(x))
 }
 
 exports.getBuilding = function(x, y) {

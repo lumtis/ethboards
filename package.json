@@ -52,6 +52,8 @@
     "dotenv": "^2.0.0",
     "drizzle": "^1.1.0",
     "eth-new-contract": "^0.3.0",
+    "eth-sig-util": "^1.4.2",
+    "ethereumjs-util": "^5.2.0",
     "file-system": "^2.2.2",
     "fullpage-react": "^3.0.29",
     "inline-style-prefixer": "^3.0.8",
@@ -72,11 +74,13 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^4.0.8",
+    "redis": "^2.8.0",
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
     "redux-thunk": "^2.2.0",
-    "web3": "^1.0.0-beta.26",
+    "web3": "^1.0.0-beta.30",
     "web3-bzz": "^1.0.0-beta.26",
+    "web3-eth-personal": "^1.0.0-beta.34",
     "web3js-raw": "0.0.1-beta.5"
   },
   "scripts": {
