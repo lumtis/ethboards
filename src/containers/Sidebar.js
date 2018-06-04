@@ -29,6 +29,7 @@ class Sidebar extends Component {
     this.changeServerByCharacter = this.changeServerByCharacter.bind(this)
 
     this.quitServer = this.quitServer.bind(this)
+    this.startServer = this.startServer.bind(this)
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
@@ -37,6 +38,7 @@ class Sidebar extends Component {
       characterId: 0,
       changeServer: false,
       changeServerByCharacter: false,
+      serverReady: false
     }
 
     store.subscribe(() => {
@@ -68,7 +70,17 @@ class Sidebar extends Component {
           })
           self.setState({inServer: isRet})
         })
+
+        // Check if the server is ready
+        if(this.props.serverState == 1) {
+          self.state.nujaBattle.methods.getServerInfo(self.props.server).call().then(function(infoRet) {
+            if(infoRet.playerMaxRet == infoRet.playerNbRet) {
+              self.setState({serverReady: true})
+            }
+          })
+        }
       }
+
     }
   }
 
@@ -95,17 +107,37 @@ class Sidebar extends Component {
     var self = this;
     if (self.state.account != null) {
       if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.removePlayerFromServer.props.server).send({
+        self.state.nujaBattle.methods.removePlayerFromServer(self.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
           }
-        })
+        )
         .on('error', function(error){ console.log('ERROR: ' + error)})
         .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
         .on('receipt', function(receipt){ console.log('receipt')})
         .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
         .then(function(ret) {
           alert('Server left')
+        })
+      }
+    }
+  }
+
+  startServer(e) {
+    var self = this;
+    if (self.state.account != null) {
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.startServer(this.props.server).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+          }
+        )
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server started')
         })
       }
     }
@@ -166,6 +198,18 @@ class Sidebar extends Component {
             </a>
           </div>
 
+        // Button to start the server
+        var buttonStartServer = <h3>Waiting for opponents</h3>
+        if(this.state.serverReady) {
+          buttonStartServer =
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <h3>Server is full</h3>
+              <a onClick={this.startServer}>
+                <button className='buttonServer'>start the server</button>
+              </a>
+            </div>
+        }
+
         if (this.state.inServer) {
 
           if(this.props.serverState == 2) {
@@ -183,7 +227,7 @@ class Sidebar extends Component {
             <div>
               {buttonChangeServer}
               <h3>You are in</h3>
-              <h3>Waiting for opponents</h3>
+              {buttonStartServer}
               <a onClick={this.quitServer}>
                 <button className='buttonServer'>Quit server</button>
               </a>
@@ -197,13 +241,16 @@ class Sidebar extends Component {
             var joinInt = <div></div>
           }
           else {
-            joinInt = <JoinInterface server={this.props.server} />
+            if(this.state.serverReady == false) {
+              joinInt = <JoinInterface server={this.props.server} />
+            }
           }
 
           content =
           <div>
             {buttonChangeServer}
             <h3>You are not on this server</h3>
+            {buttonStartServer}
             {joinInt}
           </div>
         }
