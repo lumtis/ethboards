@@ -15,6 +15,8 @@ contract NujaBattle is Geometry, StateManager {
     address owner;
     address characterRegistry;
     address weaponRegistry;
+    uint serverCreationFee;
+    uint cheatWarrant;
 
     ///////////////////////////////////////////////////////////////
     /// Modifiers
@@ -28,6 +30,7 @@ contract NujaBattle is Geometry, StateManager {
     /// Structures
 
     struct Player {
+        address owner;
         uint characterIndex;
         uint8 initialX;
         uint8 initialY;
@@ -79,6 +82,8 @@ contract NujaBattle is Geometry, StateManager {
         serverNumber = 0;
         characterRegistry = address(0);
         weaponRegistry = address(0);
+        serverCreationFee = 5 finney;
+        cheatWarrant = 5 finney;
         matchNb= 0;
     }
 
@@ -93,10 +98,21 @@ contract NujaBattle is Geometry, StateManager {
         weaponRegistry = registry;
     }
 
-    function addServer(string name, uint8 max) public {
+    function changeServerCreationFee(uint fee) public onlyOwner {
+        serverCreationFee = fee * 1 finney;
+    }
+
+    function changeCheatWarrant(uint warrant) public onlyOwner {
+        cheatWarrant = warrant * 1 finney;
+    }
+
+    function addServer(string name, uint8 max, uint fee, uint moneyBag) public payable {
         require(max > 1 && max <= 8);
+        require(msg.value == serverCreationFee);
         Server memory newServer;
         newServer.id = serverNumber;
+        newServer.fee = fee * 1 finney;
+        newServer.moneyBag = moneyBag * 1 finney;
         newServer.currentMatchId = 0;
         newServer.name = name;
         newServer.owner = msg.sender;
@@ -112,6 +128,9 @@ contract NujaBattle is Geometry, StateManager {
         serverUserIndex[msg.sender][serverUserNumber[msg.sender]] = serverNumber;
         serverUserNumber[msg.sender] += 1;
         serverNumber += 1;
+
+        // Transfer fee to contract owner
+        owner.transfer(msg.value);
     }
 
     // Set the server online, player can then join it
@@ -168,11 +187,15 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
-    function addPlayerToServer(uint character, uint server) public {
+    function addPlayerToServer(uint character, uint server) public payable {
         require(server < serverNumber);
         require(servers[server].state == 1);
         require(characterServer[character] == 0);
-        require(servers[server].playerNb < servers[server].playerMax)
+        require(servers[server].playerNb < servers[server].playerMax);
+
+        // Verify value
+        uint sumValue = servers[server].fee + servers[server].moneyBag + cheatWarrant;
+        require(msg.value == sumValue);
 
         // Verify character exists and subcribes it
         CharacterRegistry reg = CharacterRegistry(characterRegistry);
@@ -184,34 +207,79 @@ contract NujaBattle is Geometry, StateManager {
         uint8 numero = servers[server].playerNb;
         Player memory newPlayer;
         newPlayer.characterIndex = character;
-        newPlayer.initialX = numero;
-        newPlayer.initialY = numero;
+        newPlayer.owner = msg.sender;
 
         // Player information for server
         servers[server].players[numero] = newPlayer;
-        servers[server].playersPosition[numero][numero] = numero+1;
         servers[server].playerIndex[msg.sender] = numero+1;
 
         servers[server].playerNb += 1;
     }
 
-    function removePlayerFromServer(uint server, uint8 p) public {
+
+    function removePlayerFromServer(uint server) public {
         require(server < serverNumber);
-        require(servers[server].playerIndex[msg.sender] == p+1);
+        require(servers[server].state == 1);
+        require(servers[server].playerNb > 0);
+
+        // Get the player of the caller
+        uint8 p = servers[server].playerIndex[msg.sender];
+        require(p > 0);
+        p -= 1;
+
+        // Remove player from server
+        servers[server].playerIndex[msg.sender] = 0;
+        characterServer[servers[server].players[p].characterIndex] = 0;
+
+        // Reindexation if he was not the last player
+        if(p < servers[server].playerNb-1) {
+            servers[server].players[p] = servers[server].players[servers[server].playerNb-1];
+            servers[server].playerIndex[servers[server].players[p].owner] = p;
+        }
+
+        // The caller get back his money
+        uint sumValue = servers[server].fee + servers[server].moneyBag + cheatWarrant;
+        msg.sender.transfer(sumValue);
 
         servers[server].playerNb -= 1;
     }
 
     function startServer(uint server) public {
         require(server < serverNumber);
-        require(servers[server].owner == msg.sender);
         require(servers[server].playerNb == servers[server].playerMax);
+        // require(servers[server].owner == msg.sender);  // not necessary in fact
+
+        uint8 maxPlayer = servers[server].playerMax;
+        for(uint8 i=0; i<maxPlayer; i++) {
+
+            // Search randomly for not used position
+            do {
+              int random = int(keccak256(block.timestamp))%maxPlayer;
+              if(random < 0) {
+                  random *= -1;
+              }
+              uint8 x = uint8(random);
+              random = int(keccak256(random))%maxPlayer;
+              if(random < 0) {
+                  random *= -1;
+              }
+              uint8 y = uint8(random);
+            } while (servers[server].playersPosition[x][y] > 0);
+
+            // Set the new position for the player
+            servers[server].playersPosition[x][y] = i+1;
+            servers[server].players[i].initialX = x;
+            servers[server].players[i].initialY = y;
+        }
 
         // Start the server
         servers[server].state = 2;
         servers[server].currentMatchId = matchNb+1;
         serverMatch[matchNb] = server+1;
         matchNb += 1;
+
+        // Owner get the fees
+        servers[server].owner.transfer(servers[server].fee * maxPlayer);
     }
 
 
@@ -469,7 +537,7 @@ contract NujaBattle is Geometry, StateManager {
 
     function isDead(uint indexServer, uint8 p) public view returns (bool deadRet) {
         require(indexServer < serverNumber);
-        require(p < servers[indexServer].maxPlayer);
+        require(p < servers[indexServer].playerMax);
         return servers[indexServer].dead[p];
     }
 
@@ -479,10 +547,10 @@ contract NujaBattle is Geometry, StateManager {
 
         bool[8] memory deadArray;
 
-        for(uint8 i=0; i<servers[indexServer].maxPlayer; i++) {
+        for(uint8 i=0; i<servers[indexServer].playerMax; i++) {
             deadArray[i] = servers[indexServer].dead[i];
         }
-        for(i=servers[indexServer].maxPlayer; i<8; i++) {
+        for(i=servers[indexServer].playerMax; i<8; i++) {
             deadArray[i] = false;
         }
 
