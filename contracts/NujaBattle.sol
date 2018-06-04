@@ -292,6 +292,14 @@ contract NujaBattle is Geometry, StateManager {
         return serverNumber;
     }
 
+    function getCheatWarrant() public view returns(uint cheatWarrantRet) {
+        return cheatWarrant;
+    }
+
+    function getServerCreationFee() public view returns(uint serverCreationFeeRet) {
+        return serverCreationFee;
+    }
+
     function getServerName(uint indexServer) public view returns(string nameRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].name;
@@ -330,7 +338,7 @@ contract NujaBattle is Geometry, StateManager {
         return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax, servers[indexServer].playerNb);
     }
 
-    function getServerFinancial(uint indexServer) public view returns(uint fee, uint moneyBag) {
+    function getServerFinancial(uint indexServer) public view returns(uint feeRet, uint moneyBagRet) {
         require(indexServer < serverNumber);
         return(servers[indexServer].fee, servers[indexServer].moneyBag);
     }

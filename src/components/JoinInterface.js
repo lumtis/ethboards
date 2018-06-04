@@ -36,6 +36,9 @@ class JoinInterface extends Component {
         nujaBattle: store.getState().web3.nujaBattleInstance,
         characterRegistry: store.getState().web3.characterRegistryInstance,
         account: store.getState().account.accountInstance,
+        serverFee: 0,
+        serverMoneyBag: 0,
+        cheatWarrant: 0,
       });
     });
   }
@@ -52,6 +55,8 @@ class JoinInterface extends Component {
         this.state.nujaBattle.methods.addPlayerToServer(characterId, this.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
+          value: this.state.serverFee + this.state.serverMoneyBag + this.state.cheatWarrant
+          }
         })
         .on('error', function(error){ console.log('ERROR: ' + error)})
         .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
@@ -68,8 +73,8 @@ class JoinInterface extends Component {
     var self = this
 
     if(self.state.account != null) {
-      if(self.state.characterRegistry != null) {
-        if (this.state.nujaBattle != null) {
+      if (this.state.nujaBattle != null) {
+        if(self.state.characterRegistry != null) {
           self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
 
             for(var i = 0; i < characterNb; i++) {
@@ -99,6 +104,16 @@ class JoinInterface extends Component {
             }
           })
         }
+
+        // Get server financial infos
+        self.state.nujaBattle.methods.getServerInfo(this.props.server).call().then(function(financial) {
+            self.setState({serverFee: financial.feeRet, serverMoneyBag: financial.moneyBagRet})
+        })
+
+        // Get contract cheat warrant
+        self.state.nujaBattle.methods.getCheatWarrant(this.props.server).call().then(function(cheatWarrant) {
+            self.setState({cheatWarrant: cheatWarrant})
+        })
       }
     }
   }
@@ -107,6 +122,9 @@ class JoinInterface extends Component {
     return (
       <div>
         <h3>Join the server :</h3>
+        <h3>Fee : {this.state.serverFee}</h3>
+        <h3>Money Bag : {this.state.serverMoneyBag}</h3>
+        <h3>Cheat Warrant : {this.state.cheatWarrant}</h3>
         <div style={{marginTop: '20px'}} className="row">
           {this.state.characterArray}
         </div>

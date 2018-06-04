@@ -28,6 +28,8 @@ class Sidebar extends Component {
     this.changeServer = this.changeServer.bind(this)
     this.changeServerByCharacter = this.changeServerByCharacter.bind(this)
 
+    this.quitServer = this.quitServer.bind(this)
+
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
@@ -86,6 +88,26 @@ class Sidebar extends Component {
       this.setState({changeServerByCharacter: false})
     else {
       this.setState({changeServerByCharacter: true})
+    }
+  }
+
+  quitServer(e) {
+    var self = this;
+    if (self.state.account != null) {
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.removePlayerFromServer.props.server).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+          }
+        })
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server left')
+        })
+      }
     }
   }
 
@@ -160,8 +182,11 @@ class Sidebar extends Component {
             content =
             <div>
               {buttonChangeServer}
-              <h3>You are on this server</h3>
-              <h3>The match has not started yet</h3>
+              <h3>You are in</h3>
+              <h3>Waiting for opponents</h3>
+              <a onClick={this.quitServer}>
+                <button className='buttonServer'>Quit server</button>
+              </a>
             </div>
           }
         }

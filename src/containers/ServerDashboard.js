@@ -138,6 +138,11 @@ class ServerDashboard extends Component {
           })
         }
       })
+
+      // Get server creation fee
+      self.state.nujaBattle.methods.getServerCreationFee(this.props.server).call().then(function(serverCreationFee) {
+          self.setState({serverCreationFee: serverCreationFee})
+      })
     }
 
     if (self.state.weaponRegistry != null) {
@@ -178,6 +183,8 @@ class ServerDashboard extends Component {
 
     var name = this.refs.servername.value;
     var slot = parseInt(this.refs.slot.value);
+    var fee = parseInt(this.refs.fee.value);
+    var moneybag = parseInt(this.refs.moneybag.value);
 
     if (!name) {
       alert('name must not be empty')
@@ -185,9 +192,10 @@ class ServerDashboard extends Component {
     else if(slot >= 2 && slot <= 10) {
       // Add the server
       if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addServer(name, slot).send({
+        this.state.nujaBattle.methods.addServer(name, slot, fee, moneybag).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
+          value: this.state.serverCreationFee
         })
         .on('error', function(error){ console.log('ERROR: ' + error)})
         .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
@@ -530,6 +538,15 @@ class ServerDashboard extends Component {
                 </div>
                 <div className="form-group">
                   <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->10)" type="text"/>
+                </div>
+                <div className="form-group">
+                  <input className="form-control" style={inputStyle} ref="fee" placeholder="Server fee (finney)" type="text"/>
+                </div>
+                <div className="form-group">
+                  <input className="form-control" style={inputStyle} ref="moneybag" placeholder="Money bag(finney)" type="text"/>
+                </div>
+                <div className="form-group">
+                  <h3>Server creation fee is: {this.state.serverCreationFee}</h3>
                 </div>
                 <div className="form-group">
                   <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
