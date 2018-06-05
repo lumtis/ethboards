@@ -1,4 +1,4 @@
-pragma solidity ^0.4.2;
+aws ecr get-login --no-include-email --region eu-west-1pragma solidity ^0.4.2;
 
 import "./CharacterRegistry.sol";
 import "./NujaRegistry.sol";
@@ -567,6 +567,7 @@ contract NujaBattle is Geometry, StateManager {
 
 
     function killPlayer(
+      uint indexServer,
       uint8 killer,
       uint8 killed,
       uint[8][3] metadata,
@@ -575,22 +576,100 @@ contract NujaBattle is Geometry, StateManager {
       uint[8] r,
       uint[8] s,
       uint8[8] v,
+      uint[176] originState,
       uint8 nbSignature
       ) public {
+        require(indexServer < serverNumber);
+        require(nbSignature > 0);
+        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
+        require(metadata[0][2] < servers[indexServer].playerMax);
+
+        // Check if it is the first turn
+        // During first turn not all alive player are required to be part of the signatures list
+        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
+            bool begining = true;
+        }
+        else {
+            begining = false;
+        }
+
+        // If not the begining, all alive player should be part of the signature list
+        if(!begining) {
+            require(nbSignature == servers[indexServer].playerNb);
+        }
+        else {
+            // If we are at begining, the originState is the initial state
+            originState = getInitialState(indexServer);
+        }
+
+        // Verify the killer is the last player
+        require(metadata[nbSignature-1][2] == killer);
+
+        // Verify the killed has been actually killed in the last turn
+        if(nbSignature == 1) {
+            require(isAlive(originState, killed) && !(isAlive(moveOutput[0], killed)));
+        }
+        else {
+            require(isAlive(moveOutput[nbSignature-2], killed) && !(isAlive(moveOutput[nbSignature-1], killed)));
+        }
+
         // Verify all signatures
+        for(uint8 i=0; i<nbSignature; i++) {
 
-        // Verify player is killed
+            // Verify that the move have been signed by the player
+            require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
 
-        // Get the fund of the player
+            // Simulate the turn and verify the simulated output is the given output
+            if(i == 0) {
+                uint[176] memory simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+            }
+            else {
+                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveInput[i-1]);
+            }
+            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+
+            // If not the last turn check the next turn is correctly the next player
+            if(i < nbSignature-1) {
+                uint[3] memory newMetadata = nextTurn(indexServer, metadata);
+                require(newMetadata[0] == metadata[i+1][0]);
+                require(newMetadata[1] == metadata[i+1][1]);
+                require(newMetadata[2] == metadata[i+1][2]);
+            }
+        }
+
+        // Kill the player
+        servers[indexServer].dead[killed] = true;
+        servers[indexServer].playerNb -= 1;
+
+        // Get the fund of the killed
+        servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
+
+        // The killed has not cheat, he get his warrant back
+        servers[indexServer].players[killed].owner.transfer(cheatWarrant);
 
         // If it was the last player, terminate the server
+        if(servers[indexServer].playerNb == 1) {
+            // Winner get his money back
+            servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
+            servers[indexServer].players[killer].owner.transfer(cheatWarrant);
+
+            // Reset server
+            servers[indexServer].playerNb = 0;
+            for(i=0; i<servers[indexServer].playerMax; i++) {
+                if(i != killer) {
+                    servers[indexServer].dead[killed] = true;
+                }
+            }
+            servers[indexServer].dead[killer] = ;
+            servers[indexServer].state = 1;
+        }
     }
 
 
     //////////////////////////////////////////////////////////////////
     // Side effects functions
 
-    /* function moveOwner(
+    function moveOwner(
       uint[3] metadata,
       uint8[4] move,
       uint[176] moveOutput,
@@ -606,23 +685,24 @@ contract NujaBattle is Geometry, StateManager {
         bytes32 msg = keccak256(prefix, hashedMove);
 
         return ecrecover(msg, v, (bytes32)r, (bytes32)s);
-    } */
+    }
 
-    /* function nextTurn(
+    function nextTurn(
+      uint indexServer,
       uint[3] metadata,
-      uint[176] moveOutput,
-      uint8 playerNb
       ) internal pure returns (uint[3] metadataRet) {
+
+        // We skip dead player
         do {
             metadata[2]++;
-            if(metadata[2] >= playerNb) {
+            if(metadata[2] >= servers[indexServer].playerNb) {
                 metadata[2] = 0;
                 metadata[1]++;
             }
-        } while (state[128+metadata[2]]);
+        } while (servers[indexServer].dead[metadata[2]]);
 
         return(metadata);
-    } */
+    }
 
 
     /* function verifyState(
