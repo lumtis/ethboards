@@ -17,6 +17,8 @@ contract NujaBattle is Geometry, StateManager {
     address weaponRegistry;
     uint serverCreationFee;
     uint cheatWarrant;
+    uint blameThreshold;
+    uint timeoutThreshold;
 
     ///////////////////////////////////////////////////////////////
     /// Modifiers
@@ -51,12 +53,17 @@ contract NujaBattle is Geometry, StateManager {
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
         mapping (uint8 => bool) dead;
+
+        uint8 blamed;            // Warning: offset
+        uint8 blamer;
+        uint blameTimestamp
+        uint blameTurn;
+        uint blameTurnPlayer;
+
         /* uint timeoutStart;
         uint8 timeoutPlayer;          // Warning: offset
         uint timeoutBlameStart;
-        uint8 blamePlayer;            // Warning: offset
-        uint lastConfirmedTurn;
-        uint lastConfirmedTurnPlayer; */
+
         /* uint8[8][4] lastMoves;        // Used to avoid not shared timeout attack */
     }
 
@@ -85,6 +92,10 @@ contract NujaBattle is Geometry, StateManager {
         serverCreationFee = 5 finney;
         cheatWarrant = 5 finney;
         matchNb= 0;
+
+        // 300 sec = 5 min
+        blameThreshold = 300;
+        timeoutThreshold = 300;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -106,6 +117,14 @@ contract NujaBattle is Geometry, StateManager {
         cheatWarrant = warrant * 1 finney;
     }
 
+    function changeBlameThreshold(uint threshold) public onlyOwner {
+        blameThreshold = threshold;
+    }
+
+    function changeTimeoutThreshold(uint threshold) public onlyOwner {
+        timeoutThreshold = threshold;
+    }
+
     function addServer(string name, uint8 max, uint fee, uint moneyBag) public payable {
         require(max > 1 && max <= 8);
         require(msg.value == serverCreationFee);
@@ -119,6 +138,7 @@ contract NujaBattle is Geometry, StateManager {
         newServer.state = 0;
         newServer.playerMax = max;
         newServer.playerNb = 0;
+        newServer.blamed = 0;
         /* newServer.timeoutStart = 0;
         newServer.lastConfirmedTurn = 0;
         newServer.lastConfirmedTurnPlayer = 0; */
@@ -565,6 +585,41 @@ contract NujaBattle is Geometry, StateManager {
         return deadArray;
     }
 
+    function moveOwner(
+      uint[3] metadata,
+      uint8[4] move,
+      uint[176] moveOutput,
+      uint r,
+      uint s,
+      uint8 v
+      ) internal pure returns (address recovered) {
+
+        // Calculate the hash of the move
+        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
+
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 msg = keccak256(prefix, hashedMove);
+
+        return ecrecover(msg, v, (bytes32)r, (bytes32)s);
+    }
+
+    function nextTurn(
+      uint indexServer,
+      uint[3] metadata,
+      uint[176] moveOutput
+      ) internal pure returns (uint[3] metadataRet) {
+
+        // We skip dead player
+        do {
+            metadata[2]++;
+            if(metadata[2] >= servers[indexServer].playerNb) {
+                metadata[2] = 0;
+                metadata[1]++;
+            }
+        } while (servers[indexServer].dead[metadata[2]] && getHealth(moveOutput, metadata[2]) == 0);
+
+        return(metadata);
+    }
 
     function killPlayer(
       uint indexServer,
@@ -624,13 +679,13 @@ contract NujaBattle is Geometry, StateManager {
                 uint[176] memory simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
             }
             else {
-                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveInput[i-1]);
+                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
             }
             require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
 
             // If not the last turn check the next turn is correctly the next player
             if(i < nbSignature-1) {
-                uint[3] memory newMetadata = nextTurn(indexServer, metadata);
+                uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
                 require(newMetadata[0] == metadata[i+1][0]);
                 require(newMetadata[1] == metadata[i+1][1]);
                 require(newMetadata[2] == metadata[i+1][2]);
@@ -667,41 +722,132 @@ contract NujaBattle is Geometry, StateManager {
 
 
     //////////////////////////////////////////////////////////////////
-    // Side effects functions
+    // Dispute functions
+    //////////////////////////////////////////////////////////////////
 
-    function moveOwner(
-      uint[3] metadata,
-      uint8[4] move,
-      uint[176] moveOutput,
-      uint r,
-      uint s,
-      uint8 v
-      ) internal pure returns (address recovered) {
+    //////////////////////////////////////////////////////////////////
+    // Cheat functions
 
-        // Calculate the hash of the move
-        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
-
-        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = keccak256(prefix, hashedMove);
-
-        return ecrecover(msg, v, (bytes32)r, (bytes32)s);
+    function blamePending(uint indexServer) public view returns(bool pendingRet) {
+        require(indexServer < serverNumber);
+        return (servers[indexServer].blamed > 0);
     }
 
-    function nextTurn(
+    // Called by anybody to blame a cheater
+    // The blamed cheater will have a timeout to prove he hasn't cheated
+    function blame(
       uint indexServer,
-      uint[3] metadata,
-      ) internal pure returns (uint[3] metadataRet) {
+      uint[8][3] metadata,
+      uint8[8][4] move,
+      uint[8][176] moveOutput,
+      uint[8] r,
+      uint[8] s,
+      uint8[8] v,
+      uint[176] originState,
+      uint8 nbSignature
+      ) public {
+        require(indexServer < serverNumber);
+        require(nbSignature > 0);
+        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
+        require(metadata[0][2] < servers[indexServer].playerMax);
 
-        // We skip dead player
-        do {
-            metadata[2]++;
-            if(metadata[2] >= servers[indexServer].playerNb) {
-                metadata[2] = 0;
-                metadata[1]++;
+        // Check if it is the first turn
+        // During first turn not all alive player are required to be part of the signatures list
+        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
+            bool begining = true;
+        }
+        else {
+            begining = false;
+        }
+
+        // If not the begining, all alive player should be part of the signature list
+        if(!begining) {
+            require(nbSignature == servers[indexServer].playerNb);
+        }
+        else {
+            // If we are at begining, the originState is the initial state
+            originState = getInitialState(indexServer);
+        }
+
+        // Verify all signatures
+        for(uint8 i=0; i<nbSignature; i++) {
+
+            // Verify that the move have been signed by the player
+            require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+
+            // Simulate the turn and verify the simulated output is the given output
+            if(i == 0) {
+                uint[176] memory simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
             }
-        } while (servers[indexServer].dead[metadata[2]]);
+            else {
+                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+            }
 
-        return(metadata);
+            if(i < nbSignature-1) {
+                // If not the last signature we use require to be sure the signature list is valid
+                require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+
+                // If not the last turn check the next turn is correctly the next player
+                uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
+                require(newMetadata[0] == metadata[i+1][0]);
+                require(newMetadata[1] == metadata[i+1][1]);
+                require(newMetadata[2] == metadata[i+1][2]);
+            }
+            else {
+                // If it is the last signature, if it is the last signature and the simulated output doesn't correspond
+                // then we can blame the cheater
+                require(keccak256(simulatedTurn) != keccak256(moveInput[i]));
+            }
+        }
+
+        // Register the blamed user
+        require(servers[indexServer].playerIndex[msg.sender] > 0);
+        servers[indexServer].blamer = servers[indexServer].playerIndex[msg.sender]-1;
+        servers[indexServer].blamed = metadata[nbSignature-1][2] + 1;
+        servers[indexServer].blameTimestamp = now;
+        servers[indexServer].blameTurn = metadata[nbSignature-1][1];
+        servers[indexServer].blameTurnPlayer = metadata[nbSignature-1][2];
+    }
+
+    // Called by blamed cheater to prove he hasn't cheated
+    // If the protest succeed, the blamer is kicked
+    function protest(
+      uint[8][3] metadata,
+      uint8[8][4] move,
+      uint[8][176] moveOutput,
+      uint[8] r,
+      uint[8] s,
+      uint8[8] v,
+      uint8 nbSignature
+      ) public {
+
+          // Get server
+          uint matchId = metadata[0][0];
+          uint serverId = serverMatch[matchId]
+          require(serverId > 0);
+          serverId -= 1;
+
+          require(servers[serverId].blamePlayer > 0);
+    } */
+
+    // If the blamed cheater hasn't prove in time, he's kicked
+    function confirmBlame(uint indexServer) public {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].blamed > 0);
+        require(servers[indexServer].blameTimestamp + blameThreshold > now);
+
+        // Kick blamed player
+        kickPlayer(indexServer, servers[indexServer].blamed - 1);
+
+        // Blamer get his money back
+
+
+        // No user to blame anymore
+        servers[indexServer].blamed = 0;
+    }
+
+    function kickPlayer(uint indexServer, uint p) internal {
+
     }
 
 
@@ -771,9 +917,7 @@ contract NujaBattle is Geometry, StateManager {
     } */
 
 
-    //////////////////////////////////////////////////////////////////
-    // Dispute functions
-    //////////////////////////////////////////////////////////////////
+
 
     //////////////////////////////////////////////////////////////////
     // Timeout functions
@@ -862,55 +1006,6 @@ contract NujaBattle is Geometry, StateManager {
     /* function confirmTimeout() public {
     } */
 
-    //////////////////////////////////////////////////////////////////
-    // Cheat functions
-
-    // Called by anybody to blame a cheater
-    // The blamed cheater will have a timeout to prove he hasn't cheated
-    /* function blame(
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint8 nbSignature
-      ) public {
-
-          // Get server
-          uint matchId = metadata[0][0];
-          uint serverId = serverMatch[matchId]
-          require(serverId > 0);
-          serverId -= 1;
-
-          require(servers[serverId].blamePlayer == 0);
-    } */
-
-    // Called by blamed cheater to prove he hasn't cheated
-    // If the protest succeed, the blamer is kicked
-    /* function protest(
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint8 nbSignature
-      ) public {
-
-          // Get server
-          uint matchId = metadata[0][0];
-          uint serverId = serverMatch[matchId]
-          require(serverId > 0);
-          serverId -= 1;
-
-          require(servers[serverId].blamePlayer > 0);
-    } */
-
-    // If the blamed cheater hasn't prove in time, he's kicked
-    /* function confirmBlame() public {
-
-    } */
 
     // function kickPlayer(uint indexServer, uint p) internal
 
