@@ -52,28 +52,29 @@ contract NujaBattle is Geometry, StateManager {
         mapping (uint8 => mapping (uint8 => uint)) playersPosition;
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
-        mapping (uint8 => bool) dead;
 
-        uint8 blamed;            // Warning: offset
+        uint8 currentTimeoutPlayer;
+        uint currentTimeoutTurn;
+        uint currentTimeoutTimestamp;
+        address currentTimeoutClaimer;
+        uint8[8][4] lastMoves;        // Used to avoid not shared timeout attack
+
+        /* uint8 blamed;            // Warning: offset
         uint8 blamer;
         uint blameTimestamp
-        uint blameTurn;
-        uint blameTurnPlayer;
-
-        /* uint timeoutStart;
-        uint8 timeoutPlayer;          // Warning: offset
-        uint timeoutBlameStart;
-
-        /* uint8[8][4] lastMoves;        // Used to avoid not shared timeout attack */
+        uint blameTurn; */
     }
+
+    uint serverNumber;
+    Server[] servers;
 
     // Get the server associated with the match id
     // The value is server.id + 1 because 0 represents not started yet match or ended match
     mapping (uint => uint) serverMatch;
     uint matchNb;
 
-    uint serverNumber;
-    Server[] servers;
+    // Give for a given match the turn that have been timed out
+    mapping (uint => mapping (uint => mapping (uint => uint8))) matchTimeoutTurns; // Warning: offset
 
     // Necessary to get user's server
     mapping (address => uint) serverUserNumber;
@@ -138,10 +139,16 @@ contract NujaBattle is Geometry, StateManager {
         newServer.state = 0;
         newServer.playerMax = max;
         newServer.playerNb = 0;
-        newServer.blamed = 0;
-        /* newServer.timeoutStart = 0;
+
+        newServer.currentTimeoutTimestamp = 0;
+        newServer.currentTimeoutPlayer = 0;
+        newServer.currentTimeoutTurn = 0;
+
+        /* newServer.blamed = 0;
+        newServer.timeoutStart = 0;
         newServer.lastConfirmedTurn = 0;
         newServer.lastConfirmedTurnPlayer = 0; */
+
         servers.push(newServer);
 
         // Update general information
@@ -454,10 +461,6 @@ contract NujaBattle is Geometry, StateManager {
         return characterServer[characterId];
     }
 
-    /* function getLastMoves(uint indexServer) public view returns(uint8[8][4] ret) {
-        return servers[indexServer].lastMoves;
-    } */
-
     //////////////////////////////////////////////////////////////////
     // Turn simulation
 
@@ -563,27 +566,6 @@ contract NujaBattle is Geometry, StateManager {
     //////////////////////////////////////////////////////////////////
     // Match functions
 
-    function isDead(uint indexServer, uint8 p) public view returns (bool deadRet) {
-        require(indexServer < serverNumber);
-        require(p < servers[indexServer].playerMax);
-        return servers[indexServer].dead[p];
-    }
-
-    // A static array is more convenient for nextTurn function
-    function getDeadArray(uint indexServer) public view returns (bool[8] deadArrayRet) {
-        require(indexServer < serverNumber);
-
-        bool[8] memory deadArray;
-
-        for(uint8 i=0; i<servers[indexServer].playerMax; i++) {
-            deadArray[i] = servers[indexServer].dead[i];
-        }
-        for(i=servers[indexServer].playerMax; i<8; i++) {
-            deadArray[i] = false;
-        }
-
-        return deadArray;
-    }
 
     function moveOwner(
       uint[3] metadata,
@@ -616,7 +598,7 @@ contract NujaBattle is Geometry, StateManager {
                 metadata[2] = 0;
                 metadata[1]++;
             }
-        } while (servers[indexServer].dead[metadata[2]] && getHealth(moveOutput, metadata[2]) == 0);
+        } while (getHealth(moveOutput, metadata[2]) == 0);
 
         return(metadata);
     }
@@ -671,16 +653,32 @@ contract NujaBattle is Geometry, StateManager {
         // Verify all signatures
         for(uint8 i=0; i<nbSignature; i++) {
 
-            // Verify that the move have been signed by the player
-            require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+            // Check if this turn has been timed out
+            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
+            if(timedoutPlayer > 0) {
+                timedoutPlayer -= 1;
 
-            // Simulate the turn and verify the simulated output is the given output
-            if(i == 0) {
-                uint[176] memory simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                if(i == 0) {
+                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
+                }
+                else {
+                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
+                }
             }
             else {
-                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                // Verify that the move have been signed by the player
+                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+
+                // Simulate the turn and verify the simulated output is the given output
+                if(i == 0) {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                }
+                else {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                }
             }
+
+            // Verify integrity
             require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
 
             // If not the last turn check the next turn is correctly the next player
@@ -693,8 +691,7 @@ contract NujaBattle is Geometry, StateManager {
         }
 
         // Kill the player
-        servers[indexServer].dead[killed] = true;
-        servers[indexServer].playerNb -= 1;
+        removePlayer(indexServer, killed, false);
 
         // Get the fund of the killed
         servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
@@ -704,20 +701,29 @@ contract NujaBattle is Geometry, StateManager {
 
         // If it was the last player, terminate the server
         if(servers[indexServer].playerNb == 1) {
-            // Winner get his money back
-            servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
-            servers[indexServer].players[killer].owner.transfer(cheatWarrant);
-
-            // Reset server
-            servers[indexServer].playerNb = 0;
-            for(i=0; i<servers[indexServer].playerMax; i++) {
-                if(i != killer) {
-                    servers[indexServer].dead[killed] = true;
-                }
-            }
-            servers[indexServer].dead[killer] = ;
-            servers[indexServer].state = 1;
+            terminateServer(indexServer, killer);
         }
+    }
+
+    function removePlayer(uint indexServer, uint8 killed) internal {
+        servers[indexServer].playerNb -= 1;
+
+        // Set character server to 0
+        uint character = servers[indexServer].players[killed].characterIndex;
+        characterServer[character] = 0;
+    }
+
+    function terminateServer(uint indexServer, uint8 winner) internal {
+        // Winner get his money back
+        servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag);
+        servers[indexServer].players[winner].owner.transfer(cheatWarrant);
+
+        // Reset server
+        servers[indexServer].playerNb = 0;
+        servers[indexServer].state = 1;
+        servers[indexServer].currentTimeoutTimestamp = 0;
+        servers[indexServer].currentTimeoutPlayer = 0;
+        servers[indexServer].currentTimeoutTurn = 0;
     }
 
 
@@ -726,11 +732,239 @@ contract NujaBattle is Geometry, StateManager {
     //////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////
+    // Timeout functions
+
+
+
+    function isTimeout(uint indexServer) public view returns(bool isRet) {
+        require(indexServer < serverNumber);
+        return (servers[indexServer].currentTimeoutTimestamp > 0);
+    }
+
+    function timeoutInfos(uint indexServer) public view returns(uint8 timeoutPlayerRet, uint timeoutTurnRet, uint timeoutTimestampRet, address timeoutClaimerRet) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].currentTimeoutTimestamp > 0);
+
+        return (servers[indexServer].currentTimeoutPlayer, servers[indexServer].currentTimeoutTurn, servers[indexServer].currentTimeoutTimestamp, servers[indexServer].currentTimeoutClaimer);
+    }
+
+    function getLastMoves(uint indexServer) public view returns(uint8[8][4] moveRet) {
+        require(indexServer < serverNumber);
+
+        return servers[indexServer].lastMoves;
+    }
+
+
+    // Called by anybody to start a timeout process against the player
+    function startTimeout(
+      uint indexServer,
+      uint[8][3] metadata,
+      uint8[8][4] move,
+      uint[8][176] moveOutput,
+      uint[8] r,
+      uint[8] s,
+      uint8[8] v,
+      uint[176] originState,
+      uint8 nbSignature
+      ) public {
+        require(indexServer < serverNumber);
+        require(nbSignature > 0);
+        require(servers[indexServer].currentTimeoutTimestamp == 0);
+        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
+        require(metadata[0][2] < servers[indexServer].playerMax);
+        require(servers[indexServer].playerIndex[msg.sender] > 0);
+
+        // Check if it is the first turn
+        // During first turn not all alive player are required to be part of the signatures list
+        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
+            bool begining = true;
+        }
+        else {
+            begining = false;
+        }
+
+        // If not the begining, all alive player should be part of the signature list
+        if(!begining) {
+            require(nbSignature == servers[indexServer].playerNb);
+        }
+        else {
+            // If we are at begining, the originState is the initial state
+            originState = getInitialState(indexServer);
+        }
+
+        // Verify all signatures
+        for(uint8 i=0; i<nbSignature; i++) {
+
+            // Check if this turn has been timed out
+            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
+            if(timedoutPlayer > 0) {
+                timedoutPlayer -= 1;
+
+                if(i == 0) {
+                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
+                }
+                else {
+                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
+                }
+            }
+            else {
+                // Verify that the move have been signed by the player
+                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+
+                // Simulate the turn and verify the simulated output is the given output
+                if(i == 0) {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                }
+                else {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                }
+            }
+
+            // Check integrity
+            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+
+            // If not the last turn check the next turn is correctly the next player
+            uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
+            require(newMetadata[0] == metadata[i+1][0]);
+            require(newMetadata[1] == metadata[i+1][1]);
+            require(newMetadata[2] == metadata[i+1][2]);
+
+            // Set lastMove to be sure state is shared
+            servers[indexServer].lastMoves[i] = move[i];
+        }
+
+        // Set timeout attribute
+        // Last metadata is last player
+        require(newMetadata[1] > servers[indexServer].currentTimeoutTurn || (newMetadata[1] == servers[indexServer].currentTimeoutTurn && newMetadata[2] > servers[indexServer].currentTimeoutPlayer));
+        servers[indexServer].currentTimeoutPlayer = newMetadata[2];
+        servers[indexServer].currentTimeoutTurn = newMetadata[1];
+        servers[indexServer].currentTimeoutTimestamp = now;
+        servers[indexServer].currentTimeoutClaimer = msg.sender;
+    }
+
+    // Called by playing player to stop the timeout against him
+    // He has to show he had played the turn
+    // The last turn will be incremented
+    // Only his signature is suficient (startTimeout imply last signature have been verified)
+    function stopTimeout(
+      uint indexServer,
+      uint[8][3] metadata,
+      uint8[8][4] move,
+      uint[8][176] moveOutput,
+      uint[8] r,
+      uint[8] s,
+      uint8[8] v,
+      uint[176] originState,
+      uint8 nbSignature
+      ) public {
+        require(indexServer < serverNumber);
+        require(nbSignature > 0);
+        require(servers[indexServer].currentTimeoutTimestamp > 0);
+        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
+        require(metadata[0][2] < servers[indexServer].playerMax);
+        require(servers[indexServer].playerIndex[msg.sender] == servers[indexServer].currentTimeoutPlayer);
+
+        // Check if it is the first turn
+        // During first turn not all alive player are required to be part of the signatures list
+        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
+            bool begining = true;
+        }
+        else {
+            begining = false;
+        }
+
+        // If not the begining, all alive player should be part of the signature list
+        if(!begining) {
+            require(nbSignature == servers[indexServer].playerNb);
+        }
+        else {
+            // If we are at begining, the originState is the initial state
+            originState = getInitialState(indexServer);
+        }
+
+        // Verify all signatures
+        for(uint8 i=0; i<nbSignature; i++) {
+
+            // Check if this turn has been timed out
+            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
+            if(timedoutPlayer > 0) {
+                timedoutPlayer -= 1;
+
+                if(i == 0) {
+                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
+                }
+                else {
+                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
+                }
+            }
+            else {
+                // Verify that the move have been signed by the player
+                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+
+                // Simulate the turn and verify the simulated output is the given output
+                if(i == 0) {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                }
+                else {
+                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                }
+            }
+
+            // Check integrity
+            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+
+            // If not the last turn check the next turn is correctly the next player
+            uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
+            require(newMetadata[0] == metadata[i+1][0]);
+            require(newMetadata[1] == metadata[i+1][1]);
+            require(newMetadata[2] == metadata[i+1][2]);
+
+            // Set lastMove to be sure state is shared
+            servers[indexServer].lastMoves[i] = move[i];
+        }
+
+        // Set new value to timeout to avoid time out stressing
+        require(newMetadata[1] > servers[indexServer].currentTimeoutTurn || (newMetadata[1] == servers[indexServer].currentTimeoutTurn && newMetadata[2] > servers[indexServer].currentTimeoutPlayer));
+        servers[indexServer].currentTimeoutPlayer = newMetadata[2];
+        servers[indexServer].currentTimeoutTurn = newMetadata[1];
+        servers[indexServer].currentTimeoutTimestamp = 0;
+    }
+
+
+    // Called by anybody to confirm a timeout process
+    // The player hasn't played his turn in time, he's kicked
+    function confirmTimeout(uint indexServer) public {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].currentTimeoutTimestamp > 0);
+        require(servers[indexServer].currentTimeoutTimestamp + timeoutThreshold > now);
+
+        // Kick blamed player
+        removePlayer(indexServer, servers[indexServer].currentTimeoutPlayer);
+
+        // Claimer get money
+        servers[indexServer].currentTimeoutClaimer.transfer(servers[indexServer].moneyBag);
+        servers[indexServer].currentTimeoutClaimer.transfer(cheatWarrant);
+
+        // register timeout
+        uint matchId = servers[indexServer].currentMatchId - 1;
+        matchTimeoutTurns[matchId][servers[indexServer].currentTimeoutPlayer][servers[indexServer].currentTimeoutTurn] = servers[indexServer].currentTimeoutPlayer+1;
+
+        /// Reset timeout
+        servers[indexServer].currentTimeoutTimestamp = 0;
+    }
+
+
+    //////////////////////////////////////////////////////////////////
     // Cheat functions
 
-    function blamePending(uint indexServer) public view returns(bool pendingRet) {
+    /* function blamePending(uint indexServer) public view returns(bool pendingRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].blamed > 0);
+    }
+
+    function getBlameInfo(uint indexServer) public view returns(uint8 blamed, uint8 blamer, uint blameTimestamp, uint blameTurn, uint blameTurnPlayer) {
+        require(indexServer < serverNumber);
+        return (servers[indexServer].blamed, servers[indexServer].blamer, servers[indexServer].blameTimestamp, servers[indexServer].blameTurn, servers[indexServer].blameTurnPlayer);
     }
 
     // Called by anybody to blame a cheater
@@ -750,6 +984,7 @@ contract NujaBattle is Geometry, StateManager {
         require(nbSignature > 0);
         require(metadata[0][0] == servers[indexServer].currentMatchId-1);
         require(metadata[0][2] < servers[indexServer].playerMax);
+        require(servers[indexServer].playerIndex[msg.sender] > 0);
 
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list
@@ -801,7 +1036,6 @@ contract NujaBattle is Geometry, StateManager {
         }
 
         // Register the blamed user
-        require(servers[indexServer].playerIndex[msg.sender] > 0);
         servers[indexServer].blamer = servers[indexServer].playerIndex[msg.sender]-1;
         servers[indexServer].blamed = metadata[nbSignature-1][2] + 1;
         servers[indexServer].blameTimestamp = now;
@@ -828,7 +1062,7 @@ contract NujaBattle is Geometry, StateManager {
           serverId -= 1;
 
           require(servers[serverId].blamePlayer > 0);
-    } */
+    }
 
     // If the blamed cheater hasn't prove in time, he's kicked
     function confirmBlame(uint indexServer) public {
@@ -836,184 +1070,18 @@ contract NujaBattle is Geometry, StateManager {
         require(servers[indexServer].blamed > 0);
         require(servers[indexServer].blameTimestamp + blameThreshold > now);
 
+        uint8 blamer = servers[indexServer].blamer;
+        uint8 blamed = servers[indexServer].blamed;
+
         // Kick blamed player
-        kickPlayer(indexServer, servers[indexServer].blamed - 1);
+        servers[indexServer].dead[killed] = true;
+        servers[indexServer].playerNb -= 1;
 
-        // Blamer get his money back
-
+        // Blamer get money from cheater
+        servers[indexServer].blamer.transfer(servers[indexServer].moneyBag);
+        servers[indexServer].blamer.transfer(cheatWarrant);
 
         // No user to blame anymore
         servers[indexServer].blamed = 0;
-    }
-
-    function kickPlayer(uint indexServer, uint p) internal {
-
-    }
-
-
-    /* function verifyState(
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint8 nbSignature,
-      address caller
-      ) internal {
-
-        // Get server
-        uint matchId = metadata[0][0];
-        uint serverId = serverMatch[matchId]
-        require(serverId > 0);
-        serverId -= 1;
-
-        // Verify caller is in the server
-        require(isAddressInServer(serverId, caller));
-
-        uint lastTurn =  metadata[0][1];
-        uint lastPlayer =  metadata[0][2];
-
-        // Check if number of signature is less than player number (this means we are in the first match turn)
-        require(nbSignature > 1 && nbSignature < servers[serverId].playerMax)
-        if(nbSignature < servers[serverId].playerMax) {
-            require(metadata[0][1] == 0 && metadata[0][2] == 0);
-        }
-
-        // We check if all signatures are correctly signed
-        for(uint8 i = 0; i<nbSignature; i++) {
-            // Verify metadata
-            require(metadata[i][0] == matchId);
-
-            // Verify match turn
-            if(lastPlayer+i >= nbSignature) {
-                require(metadata[i][1] == lastTurn+1);
-            }
-            else {
-                require(metadata[i][1] == lastTurn);
-            }
-
-            // Verify player turn
-            require(metadata[i][2] == (lastPlayer+i)%(nbSignature));
-
-            // Check the move signer
-            require(getIndexFromAddress(serverId, moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i])) == metadata[i][2]);
-
-            // Skip dead player
-            uint8 j = i;
-            for(i = i+1; i<nbSignature; i++) {
-                if(getHealth(moveOutput[j], (lastPlayer+i)%(nbSignature)) > 0) {
-                    i = i-1; // i will be incremented by the first loop
-                    break;
-                }
-            }
-        }
-
-        // This signature has been approved by all player so we can state them as confirmed
-        if(metadata[0][1] > 0 || metadata[0][2] > 0) {
-            servers[serverId].lastConfirmedTurn = lastTurn;
-            servers[serverId].lastConfirmedTurnPlayer = lastPlayer;
-        }
     } */
-
-
-
-
-    //////////////////////////////////////////////////////////////////
-    // Timeout functions
-
-    // Called by anybody to start a timeout process against the player
-    // TODO: first player case
-    // TODO: manage dead player
-    /* function startTimeout(
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint8 nbSignature
-      ) public {
-
-        // Get server
-        uint matchId = metadata[0][0];
-        uint serverId = serverMatch[matchId]
-        require(serverId > 0);
-        serverId -= 1;
-
-        // No pending timeout
-        require(servers[serverId].timeoutPlayer == 0);
-
-        // Verify the sended signatures
-        verifyState(metadata, move, moveOutput, r, s, v, nbSignature, msg.sender);
-
-        // Get blamed player
-        if(nbSignature < servers[serverId].playerMax) {
-            servers[serverId].timeoutPlayer = metadata[nbSignature][2] + 1; // +1 because offset
-        }
-        else {
-            servers[serverId].timeoutPlayer = metadata[0][2] + 1;           // +1 because offset
-        }
-
-        servers[serverId].timeoutBlameStart = now;
-
-        // In case the called has maliciously not shared his state
-        servers[serverId].lastMoves = move;
-    } */
-
-    // Called by playing player to stop the timeout against him
-    // He has to show he had played the turn
-    // The last turn will be incremented
-    // Only his signature is suficient (startTimeout imply last signature have been verified)
-    /* function stopTimeout(
-      uint[3] metadata,
-      uint8[4] move,
-      uint[176] moveOutput,
-      uint r,
-      uint s,
-      uint8 v,
-      ) public {
-        // Get server
-        uint matchId = metadata[0];
-        uint serverId = serverMatch[matchId]
-        require(serverId > 0);
-        serverId -= 1;
-
-        // Check if the caller is actually blamed
-        require(isAddressInServer(serverId, msg.sender));
-        uint8 playerId = getIndexFromAddress(serverId, msg.sender);
-        require(servers[serverId].timeoutPlayer == playerId+1);
-
-        // Check metadata
-        // TODO: manage dead player
-        if(servers[serverId].lastConfirmedTurnPlayer == servers[serverId].playerMax-1) {
-            require(metadata[1] == servers[serverId].lastConfirmedTurn + 1);
-        }
-        else {
-            require(metadata[1] == servers[serverId].lastConfirmedTurn);
-        }
-        require(metadata[2] == playerId);
-
-        // Check the signature
-        // Check the move signer
-        require(getIndexFromAddress(serverId, moveOwner(metadata, move, moveOutput, r, s, v)) == playerId);
-
-        // TODO: Set timeout to 0 and add the move to list
-    } */
-
-    // Called by anybody to confirm a timeout process
-    // The player hasn't played his turn in time, he's kicked
-    /* function confirmTimeout() public {
-    } */
-
-
-    // function kickPlayer(uint indexServer, uint p) internal
-
-
-
-    // TODO:
-    // Finir fonction dispute
-    // Rafistoler code en fonction de la nouvelle architecture (server.state)
-    // Faire fonction de fin de partie/kill de joueur
-    // Permettre à n'importe qui de rentabiliser son serveur
 }

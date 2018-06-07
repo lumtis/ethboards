@@ -57,7 +57,7 @@ contract StateManager {
         uint remaining = state[128+p];
 
         if(remaining < nb) {
-            state[128+p] = 0;
+            state = kill(state, p);
         }
         else {
             state[128+p] = remaining - nb;
@@ -80,6 +80,17 @@ contract StateManager {
     }
     function isAlive(uint[176] state, uint p) internal pure returns (bool ret) {
         return state[128+p] > 0;
+    }
+    function kill(uint[176] state, uint p) internal pure returns (bool ret) {
+        state[128+p] = 0;
+
+        // Set the position of the player to 0
+        uint8 x = uint8(state[136+p]);
+        uint8 y = uint8(state[144+p]);
+
+        state[64+x*8+y] = 0;
+
+        return state;
     }
 
 
