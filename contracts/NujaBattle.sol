@@ -1,4 +1,4 @@
-aws ecr get-login --no-include-email --region eu-west-1pragma solidity ^0.4.2;
+pragma solidity ^0.4.2;
 
 import "./CharacterRegistry.sol";
 import "./NujaRegistry.sol";
@@ -74,7 +74,8 @@ contract NujaBattle is Geometry, StateManager {
     uint matchNb;
 
     // Give for a given match the turn that have been timed out
-    mapping (uint => mapping (uint => mapping (uint => uint8))) matchTimeoutTurns; // Warning: offset
+    mapping (uint => mapping (uint => mapping (uint => bool))) matchTimeoutTurns;
+    mapping (uint => mapping (uint8 => bool)) deadPlayer;
 
     // Necessary to get user's server
     mapping (address => uint) serverUserNumber;
@@ -582,19 +583,19 @@ contract NujaBattle is Geometry, StateManager {
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 msg = keccak256(prefix, hashedMove);
 
-        return ecrecover(msg, v, (bytes32)r, (bytes32)s);
+        return ecrecover(msg, v, bytes32(r), bytes32(s));
     }
 
     function nextTurn(
       uint indexServer,
       uint[3] metadata,
       uint[176] moveOutput
-      ) internal pure returns (uint[3] metadataRet) {
+      ) internal view returns (uint[3] metadataRet) {
 
         // We skip dead player
         do {
             metadata[2]++;
-            if(metadata[2] >= servers[indexServer].playerNb) {
+            if(uint(metadata[2]) >= servers[indexServer].playerNb) {
                 metadata[2] = 0;
                 metadata[1]++;
             }
@@ -603,13 +604,20 @@ contract NujaBattle is Geometry, StateManager {
         return(metadata);
     }
 
+    function verifyNextTurn(uint indexServer, uint[3] metadata, uint[3] metadataNext, uint[176] moveOutput) internal view {
+        uint[3] memory newMetadata = nextTurn(indexServer, metadata, moveOutput);
+        require(newMetadata[0] == metadataNext[0]);
+        require(newMetadata[1] == metadataNext[1]);
+        require(newMetadata[2] == metadataNext[2]);
+    }
+
     function killPlayer(
       uint indexServer,
       uint8 killer,
       uint8 killed,
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
+      uint[3][8] metadata,
+      uint8[4][8] move,
+      uint[176][8] moveOutput,
       uint[8] r,
       uint[8] s,
       uint8[8] v,
@@ -620,23 +628,15 @@ contract NujaBattle is Geometry, StateManager {
         require(nbSignature > 0);
         require(metadata[0][0] == servers[indexServer].currentMatchId-1);
         require(metadata[0][2] < servers[indexServer].playerMax);
+        require(!deadPlayer[metadata[0][0]][killed]);
 
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list
         if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            bool begining = true;
-        }
-        else {
-            begining = false;
-        }
-
-        // If not the begining, all alive player should be part of the signature list
-        if(!begining) {
-            require(nbSignature == servers[indexServer].playerNb);
-        }
-        else {
-            // If we are at begining, the originState is the initial state
             originState = getInitialState(indexServer);
+        }
+        else {
+            require(nbSignature == servers[indexServer].playerNb);
         }
 
         // Verify the killer is the last player
@@ -654,20 +654,17 @@ contract NujaBattle is Geometry, StateManager {
         for(uint8 i=0; i<nbSignature; i++) {
 
             // Check if this turn has been timed out
-            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
-            if(timedoutPlayer > 0) {
-                timedoutPlayer -= 1;
-
+            if(matchTimeoutTurns[metadata[i][0]][metadata[i][1]][metadata[i][2]]) {
                 if(i == 0) {
-                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
+                    uint[176] memory simulatedTurn = kill(originState, uint8(metadata[i][2]));
                 }
                 else {
-                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
+                    simulatedTurn = kill(moveOutput[i-1], uint8(metadata[i][2]));
                 }
             }
             else {
                 // Verify that the move have been signed by the player
-                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[uint8(metadata[i][2])].owner);
 
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
@@ -679,19 +676,16 @@ contract NujaBattle is Geometry, StateManager {
             }
 
             // Verify integrity
-            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
             // If not the last turn check the next turn is correctly the next player
             if(i < nbSignature-1) {
-                uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
-                require(newMetadata[0] == metadata[i+1][0]);
-                require(newMetadata[1] == metadata[i+1][1]);
-                require(newMetadata[2] == metadata[i+1][2]);
+                verifyNextTurn(indexServer, metadata[i], metadata[i+1], moveOutput[i]);
             }
         }
 
         // Kill the player
-        removePlayer(indexServer, killed, false);
+        removePlayer(indexServer, killed);
 
         // Get the fund of the killed
         servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
@@ -707,6 +701,9 @@ contract NujaBattle is Geometry, StateManager {
 
     function removePlayer(uint indexServer, uint8 killed) internal {
         servers[indexServer].playerNb -= 1;
+
+        // Set player to dead
+        deadPlayer[servers[indexServer].currentMatchId-1][killed];
 
         // Set character server to 0
         uint character = servers[indexServer].players[killed].characterIndex;
@@ -734,8 +731,6 @@ contract NujaBattle is Geometry, StateManager {
     //////////////////////////////////////////////////////////////////
     // Timeout functions
 
-
-
     function isTimeout(uint indexServer) public view returns(bool isRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].currentTimeoutTimestamp > 0);
@@ -758,9 +753,9 @@ contract NujaBattle is Geometry, StateManager {
     // Called by anybody to start a timeout process against the player
     function startTimeout(
       uint indexServer,
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
+      uint[3][8] metadata,
+      uint8[4][8] move,
+      uint[176][8] moveOutput,
       uint[8] r,
       uint[8] s,
       uint8[8] v,
@@ -768,78 +763,75 @@ contract NujaBattle is Geometry, StateManager {
       uint8 nbSignature
       ) public {
         require(indexServer < serverNumber);
-        require(nbSignature > 0);
         require(servers[indexServer].currentTimeoutTimestamp == 0);
-        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
-        require(metadata[0][2] < servers[indexServer].playerMax);
         require(servers[indexServer].playerIndex[msg.sender] > 0);
 
-        // Check if it is the first turn
-        // During first turn not all alive player are required to be part of the signatures list
-        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            bool begining = true;
+        if(nbSignature == 0) {
+            // First turn to time out
+            require(servers[indexServer].currentTimeoutTurn == 0 && servers[indexServer].currentTimeoutPlayer == 0);
+            servers[indexServer].currentTimeoutTimestamp = now;
+            servers[indexServer].currentTimeoutClaimer = msg.sender;
         }
         else {
-            begining = false;
-        }
+            // Not the first turn
+            require(metadata[0][0] == servers[indexServer].currentMatchId-1);
+            require(metadata[0][2] < servers[indexServer].playerMax);
 
-        // If not the begining, all alive player should be part of the signature list
-        if(!begining) {
-            require(nbSignature == servers[indexServer].playerNb);
-        }
-        else {
-            // If we are at begining, the originState is the initial state
-            originState = getInitialState(indexServer);
-        }
-
-        // Verify all signatures
-        for(uint8 i=0; i<nbSignature; i++) {
-
-            // Check if this turn has been timed out
-            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
-            if(timedoutPlayer > 0) {
-                timedoutPlayer -= 1;
-
-                if(i == 0) {
-                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
-                }
-                else {
-                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
-                }
+            // Check if it is the first turn
+            // During first turn not all alive player are required to be part of the signatures list
+            if(metadata[0][1] == 0 && metadata[0][2] == 0) {
+                originState = getInitialState(indexServer);
             }
             else {
-                // Verify that the move have been signed by the player
-                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
-
-                // Simulate the turn and verify the simulated output is the given output
-                if(i == 0) {
-                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
-                }
-                else {
-                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
-                }
+                require(nbSignature == servers[indexServer].playerNb);
             }
 
-            // Check integrity
-            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+            // Verify all signatures
+            for(uint8 i=0; i<nbSignature; i++) {
 
-            // If not the last turn check the next turn is correctly the next player
-            uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
-            require(newMetadata[0] == metadata[i+1][0]);
-            require(newMetadata[1] == metadata[i+1][1]);
-            require(newMetadata[2] == metadata[i+1][2]);
+                // Check if this turn has been timed out
+                if(matchTimeoutTurns[metadata[i][0]][metadata[i][1]][metadata[i][2]]) {
+                    if(i == 0) {
+                        uint[176] memory simulatedTurn = kill(originState, uint8(metadata[i][2]));
+                    }
+                    else {
+                        simulatedTurn = kill(moveOutput[i-1], uint8(metadata[i][2]));
+                    }
+                }
+                else {
+                    // Verify that the move have been signed by the player
+                    require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[uint8(metadata[i][2])].owner);
 
-            // Set lastMove to be sure state is shared
-            servers[indexServer].lastMoves[i] = move[i];
+                    // Simulate the turn and verify the simulated output is the given output
+                    if(i == 0) {
+                        simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                    }
+                    else {
+                        simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                    }
+                }
+
+                // Check integrity
+                require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
+
+                // If not the last turn check the next turn is correctly the next player
+                uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
+                require(newMetadata[0] == metadata[i+1][0]);
+                require(newMetadata[1] == metadata[i+1][1]);
+                require(newMetadata[2] == metadata[i+1][2]);
+
+                // Set lastMove to be sure state is shared
+                servers[indexServer].lastMoves[i] = move[i];
+            }
+
+            // Set timeout attribute
+            // Last metadata is last player
+            require(newMetadata[1] > servers[indexServer].currentTimeoutTurn || (newMetadata[1] == servers[indexServer].currentTimeoutTurn && newMetadata[2] >= servers[indexServer].currentTimeoutPlayer));
+            servers[indexServer].currentTimeoutPlayer = uint8(newMetadata[2]);
+            servers[indexServer].currentTimeoutTurn = newMetadata[1];
+            servers[indexServer].currentTimeoutTimestamp = now;
+            servers[indexServer].currentTimeoutClaimer = msg.sender;
         }
-
-        // Set timeout attribute
-        // Last metadata is last player
-        require(newMetadata[1] > servers[indexServer].currentTimeoutTurn || (newMetadata[1] == servers[indexServer].currentTimeoutTurn && newMetadata[2] > servers[indexServer].currentTimeoutPlayer));
-        servers[indexServer].currentTimeoutPlayer = newMetadata[2];
-        servers[indexServer].currentTimeoutTurn = newMetadata[1];
-        servers[indexServer].currentTimeoutTimestamp = now;
-        servers[indexServer].currentTimeoutClaimer = msg.sender;
     }
 
     // Called by playing player to stop the timeout against him
@@ -848,9 +840,9 @@ contract NujaBattle is Geometry, StateManager {
     // Only his signature is suficient (startTimeout imply last signature have been verified)
     function stopTimeout(
       uint indexServer,
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
+      uint[3][8] metadata,
+      uint8[4][8] move,
+      uint[176][8] moveOutput,
       uint[8] r,
       uint[8] s,
       uint8[8] v,
@@ -867,39 +859,27 @@ contract NujaBattle is Geometry, StateManager {
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list
         if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            bool begining = true;
-        }
-        else {
-            begining = false;
-        }
-
-        // If not the begining, all alive player should be part of the signature list
-        if(!begining) {
-            require(nbSignature == servers[indexServer].playerNb);
-        }
-        else {
-            // If we are at begining, the originState is the initial state
             originState = getInitialState(indexServer);
+        }
+        else {
+            require(nbSignature == servers[indexServer].playerNb);
         }
 
         // Verify all signatures
         for(uint8 i=0; i<nbSignature; i++) {
 
             // Check if this turn has been timed out
-            uint timedoutPlayer = matchTimeoutTurns[metadata[0]][metadata[2]][metadata[1]];
-            if(timedoutPlayer > 0) {
-                timedoutPlayer -= 1;
-
+            if(matchTimeoutTurns[metadata[i][0]][metadata[i][1]][metadata[i][2]]) {
                 if(i == 0) {
-                    uint[176] memory simulatedTurn = kill(originState, timedoutPlayer);
+                    uint[176] memory simulatedTurn = kill(originState, uint8(metadata[i][2]));
                 }
                 else {
-                    simulatedTurn = kill(moveOutput[i-1], timedoutPlayer);
+                    simulatedTurn = kill(moveOutput[i-1], uint8(metadata[i][2]));
                 }
             }
             else {
                 // Verify that the move have been signed by the player
-                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
+                require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[uint8(metadata[i][2])].owner);
 
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
@@ -911,7 +891,7 @@ contract NujaBattle is Geometry, StateManager {
             }
 
             // Check integrity
-            require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
             // If not the last turn check the next turn is correctly the next player
             uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
@@ -925,7 +905,7 @@ contract NujaBattle is Geometry, StateManager {
 
         // Set new value to timeout to avoid time out stressing
         require(newMetadata[1] > servers[indexServer].currentTimeoutTurn || (newMetadata[1] == servers[indexServer].currentTimeoutTurn && newMetadata[2] > servers[indexServer].currentTimeoutPlayer));
-        servers[indexServer].currentTimeoutPlayer = newMetadata[2];
+        servers[indexServer].currentTimeoutPlayer = uint8(newMetadata[2]);
         servers[indexServer].currentTimeoutTurn = newMetadata[1];
         servers[indexServer].currentTimeoutTimestamp = 0;
     }
@@ -947,7 +927,7 @@ contract NujaBattle is Geometry, StateManager {
 
         // register timeout
         uint matchId = servers[indexServer].currentMatchId - 1;
-        matchTimeoutTurns[matchId][servers[indexServer].currentTimeoutPlayer][servers[indexServer].currentTimeoutTurn] = servers[indexServer].currentTimeoutPlayer+1;
+        matchTimeoutTurns[matchId][servers[indexServer].currentTimeoutTurn][servers[indexServer].currentTimeoutPlayer] = true;
 
         /// Reset timeout
         servers[indexServer].currentTimeoutTimestamp = 0;
@@ -1020,7 +1000,7 @@ contract NujaBattle is Geometry, StateManager {
 
             if(i < nbSignature-1) {
                 // If not the last signature we use require to be sure the signature list is valid
-                require(keccak256(simulatedTurn) == keccak256(moveInput[i]));
+                require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
                 // If not the last turn check the next turn is correctly the next player
                 uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
@@ -1031,7 +1011,7 @@ contract NujaBattle is Geometry, StateManager {
             else {
                 // If it is the last signature, if it is the last signature and the simulated output doesn't correspond
                 // then we can blame the cheater
-                require(keccak256(simulatedTurn) != keccak256(moveInput[i]));
+                require(keccak256(simulatedTurn) != keccak256(moveOutput[i]));
             }
         }
 

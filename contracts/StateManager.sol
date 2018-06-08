@@ -81,7 +81,7 @@ contract StateManager {
     function isAlive(uint[176] state, uint p) internal pure returns (bool ret) {
         return state[128+p] > 0;
     }
-    function kill(uint[176] state, uint p) internal pure returns (bool ret) {
+    function kill(uint[176] state, uint p) internal pure returns (uint[176] ret) {
         state[128+p] = 0;
 
         // Set the position of the player to 0
