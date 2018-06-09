@@ -102,11 +102,17 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
 
   // Get list of signature to prove the kill
   redis.llen(matchId, function (llenErr, llenReply) {
-    redis.lrange(matchId, -8, llenReply, function (stateErr, stateReply) {
+    redis.lrange(matchId, -9, llenReply, function (stateErr, stateReply) {
+
+      // killPlayer function needs the origin state the the signature list
+      // To get it we get the 9 last signatures, the origin state is the first one
+      // We update it if we need to remove signature
+      var originState = JSON.parse(stateReply[0]).moveOutput
 
       // Remove useless signature
-      for(var i=0; i<8; i++) {
+      for(var i=1; i<9; i++) {
         if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[0] <= killer) {
+          originState = JSON.parse(stateReply[0]).moveOutput
           stateReply.shift()
         }
         else {
@@ -118,7 +124,8 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
       redis.rpush(matchId + '_killedplayers', JSON.stringify({
         signaturesList: stateReply,
         killer: killer,
-        killed: killed
+        killed: killed,
+        originState: originState
       }), function (pushErr, pushReply) {
         if(pushErr != null) {
           console.log('redis push player to kill error :' + pushErr)
