@@ -56,31 +56,80 @@ function getCurrentTurn(matchId, nbPlayer, cb) {
     }
     else {
       // If the key exist, get next turn
-      redis.lrange(matchId, 0, 8, function (stateErr, stateReply) {
-        redis.get(matchId + '_turn', function (turnErr, turnReply) {
-          redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
-            if(stateErr == null && turnErr == null && playerTurnErr == null) {
+      redis.llen(matchId, function (llenErr, llenReply) {
+        redis.lrange(matchId, -1, llenReply, function (stateErr, stateReply) {
+          redis.get(matchId + '_turn', function (turnErr, turnReply) {
+            redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
+              if(stateErr == null && turnErr == null && playerTurnErr == null) {
 
-              var lastTurn = turnReply
-              var lastPlayerTurn = playerTurnReply
-              var lastState = JSON.parse(stateReply[stateReply.length-1]).moveOutput
+                var lastTurn = turnReply
+                var lastPlayerTurn = playerTurnReply
+                var lastState = JSON.parse(stateReply[0]).moveOutput
 
-              // Increment player turn till alive player
-              do {
-                lastPlayerTurn++
-                if (lastPlayerTurn >= nbPlayer) {
-                  lastPlayerTurn = 0
-                  lastTurn++
-                }
-              } while (lastState[128+lastPlayerTurn] == 0)
+                // Increment player turn till alive player
+                do {
+                  lastPlayerTurn++
+                  if (lastPlayerTurn >= nbPlayer) {
+                    lastPlayerTurn = 0
+                    lastTurn++
+                  }
+                } while (lastState[128+lastPlayerTurn] == 0)
 
-              cb([lastTurn, lastPlayerTurn])
-            }
+                cb([lastTurn, lastPlayerTurn])
+              }
+            })
           })
         })
       })
     }
   })
+}
+
+// Get list of killed player in a turn
+function getKilledPlayers(moveInput, moveOutput) {
+  var killed = []
+
+  // WARNING: String ?
+  for(var i=0; i<8; i++){
+    if(moveInput[128+i] > 0 && moveOutput[128+i] == 0){
+      killed.push(i)
+    }
+  }
+  return killed
+}
+
+function pushKilledPlayer(matchId, killer, killed, turn) {
+
+  // Get list of signature to prove the kill
+  redis.llen(matchId, function (llenErr, llenReply) {
+    redis.lrange(matchId, -8, llenReply, function (stateErr, stateReply) {
+
+      // Remove useless signature
+      for(var i=0; i<8; i++) {
+        if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[0] <= killer) {
+          stateReply.shift()
+        }
+        else {
+          break
+        }
+      }
+
+      // Push the signatures to the players to kill list
+      redis.rpush(matchId + '_killedplayers', JSON.stringify({
+        signaturesList: stateReply,
+        killer: killer,
+        killed: killed
+      }), function (pushErr, pushReply) {
+        if(pushErr != null) {
+          console.log('redis push player to kill error :' + pushErr)
+        }
+        else {
+          console.log('signatures pushed')
+        }
+      })
+
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -296,7 +345,7 @@ function runDevServer(host, port, protocol) {
             // If key exists, get hte list of signatures
             redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
               if(err != null) {
-                console.log('redis push signature error :' + err)
+                console.log('redis get state error :' + err)
               } else {
                 // Convert the string stored to json
                 res.send(reply.map(x => JSON.parse(x)))
@@ -328,6 +377,29 @@ function runDevServer(host, port, protocol) {
                     res.send([turnReply, playerturnReply])
                   }
                 })
+              }
+            })
+          }
+        })
+      })
+
+      // Get the list of player to kill
+      app.post("/post/currentkilledplayers", bodyParser.json(), function(req, res){
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + '_killedplayers', function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+            // If key exists, get hte list of signatures
+            redis.lrange(req.body.matchId + '_killedplayers', 0, 8, function (err, reply) {
+              if(err != null) {
+                console.log('redis get killed players error :' + err)
+              } else {
+                // Convert the string stored to json
+                res.send(reply.map(x => JSON.parse(x)))
               }
             })
           }
@@ -372,35 +444,97 @@ function runDevServer(host, port, protocol) {
                     nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
                       if(indexPlayer == playerTurn) {
 
-                        // Push the new signature
-                        redis.rpush(req.body.matchId, JSON.stringify({
-                          metadata: req.body.metadata,
-                          move: req.body.move,
-                          moveOutput: req.body.moveOutput,
-                          signature: req.body.signature,
-                        }), function (pushErr, pushReply) {
-                          if(pushErr != null) {
-                            console.log('redis push signature error :' + pushErr)
-                          } else {
+                        // We check that the turn is not cheated by simulating it
+                        if(turn == 0 && playerTurn == 0){
 
-                            // If list is full we remove the first element
-                            redis.llen(req.body.matchId, function (lenErr, lenReply) {
-                              if(lenReply > playerMax) {
-                                redis.lpop(req.body.matchId, function (popErr, popReply) {
+                          // First turn, we simulate from initialState
+                          nujaBattle.methods.getInitialState(serverId).call().then(function(initialState) {
+                            nujaBattle.methods.simulate(serverId, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], initialState).call().then(function(simulatedOutput){
+
+                              // WARNING HAS THEY HAVE THE SAME FORMAT ?
+                              // Comparing hashed
+                              if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
+
+                                // Push the new signature
+                                redis.rpush(req.body.matchId, JSON.stringify({
+                                  metadata: req.body.metadata,
+                                  move: req.body.move,
+                                  moveOutput: req.body.moveOutput,
+                                  signature: req.body.signature,
+                                }), function (pushErr, pushReply) {
+                                  if(pushErr != null) {
+                                    console.log('redis push signature error :' + pushErr)
+                                  }
+                                  else {
+                                    // If there are killed players during this turn, we push them
+                                    var killed = getKilledPlayers(initialState, req.body.moveOutput)
+                                    for(var i=0; i<killed.length; i++){
+                                      pushKilledPlayer(matchId, req.body.metadata[2], killed[i], req.body.metadata[1])
+                                    }
+
+                                    // Update metadata
+                                    redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                                      // TODO: gestion erreur
+                                    })
+                                    redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                                      // TODO: gestion erreur
+                                    })
+                                    res.send("Signature pushed")
+                                  }
                                 })
-                              }
-                            })
 
-                            // Update metadata
-                            redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
-                              // TODO: gestion erreur
+                              }
+
                             })
-                            redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
-                              // TODO: gestion erreur
+                          })
+                        }
+                        else {
+
+                          // Not first turn, get last moveOutput
+                          redis.llen(matchId, function (llenErr, llenReply) {
+                            redis.lrange(matchId, -1, llenReply, function (stateErr, stateReply) {
+                              var lastState = JSON.parse(stateReply[0]).moveOutput
+
+                              nujaBattle.methods.simulate(serverId, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call().then(function(simulatedOutput){
+
+                                // WARNING HAS THEY HAVE THE SAME FORMAT ?
+                                // Comparing hashed
+                                if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
+
+                                  // Push the new signature
+                                  redis.rpush(req.body.matchId, JSON.stringify({
+                                    metadata: req.body.metadata,
+                                    move: req.body.move,
+                                    moveOutput: req.body.moveOutput,
+                                    signature: req.body.signature,
+                                  }), function (pushErr, pushReply) {
+                                    if(pushErr != null) {
+                                      console.log('redis push signature error :' + pushErr)
+                                    }
+                                    else {
+                                      // If there are killed players during this turn, we push them
+                                      killed = getKilledPlayers(lastState, req.body.moveOutput)
+                                      for(i=0; i<killed.length; i++){
+                                        pushKilledPlayer(matchId, req.body.metadata[2], killed[i], req.body.metadata[1])
+                                      }
+
+                                      // Update metadata
+                                      redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                                        // TODO: gestion erreur
+                                      })
+                                      redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                                        // TODO: gestion erreur
+                                      })
+                                      res.send("Signature pushed")
+                                    }
+                                  })
+
+                                }
+
+                              })
                             })
-                            res.send("Signature pushed")
-                          }
-                        })
+                          })
+                        }
 
                       }
                       else {
