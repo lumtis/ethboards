@@ -619,6 +619,25 @@ contract NujaBattle is Geometry, StateManager {
         return deadPlayer[servers[indexServer].currentMatchId-1][p];
     }
 
+    // Useful for iterative function
+    function getKilledArray(uint indexServer) public view returns(bool[8] killedRet) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].currentMatchId > 0);
+
+        bool[8] memory killedArray;
+
+        for(uint8 i=0; i<8; i++) {
+            if(deadPlayer[servers[indexServer].currentMatchId-1][p]) {
+                killedArray[i] = true;
+            }
+            else {
+                killedArray[i] = false;
+            }
+        }
+
+        return killedArray;
+    }
+
 
     function killPlayer(
       uint indexServer,
