@@ -5,6 +5,7 @@ import Actions from '../components/Actions'
 import AllServers from '../components/AllServers'
 import CharacterServers from '../components/CharacterServers'
 import JoinInterface from '../components/JoinInterface'
+import KillInterface from '../components/KillInterface'
 
 import store from '../store'
 import '../css/sidebar.css'
@@ -219,6 +220,7 @@ class Sidebar extends Component {
               {buttonChangeServer}
               <Player index={this.state.characterId} />
               <Actions server={this.props.server} />
+              <KillInterface server={this.props.server} />
             </div>
           }
           else {
