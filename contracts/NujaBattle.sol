@@ -611,6 +611,15 @@ contract NujaBattle is Geometry, StateManager {
         require(newMetadata[2] == metadataNext[2]);
     }
 
+
+    function isKilled(uint indexServer, uint8 p) public view returns(bool isRet) {
+        require(indexServer < serverNumber);
+        require(servers[indexServer].currentMatchId > 0);
+
+        return deadPlayer[servers[indexServer].currentMatchId-1][p];
+    }
+
+
     function killPlayer(
       uint indexServer,
       uint8 killer,
