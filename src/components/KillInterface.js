@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import store from '../store'
 import '../css/killinterface.css'
 var request = require('request')
+var ethjs = require('ethereumjs-util')
 
 
 class KillInterface extends Component {
@@ -16,12 +17,14 @@ class KillInterface extends Component {
       playerIndex: 0,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
+      web3: store.getState().web3.web3Instance,
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
         account: store.getState().account.accountInstance,
+        web3: store.getState().web3.web3Instance,
       })
     })
   }
@@ -97,15 +100,32 @@ class KillInterface extends Component {
         metadata.push(signaturesList[i].metadata)
         move.push(signaturesList[i].move)
         moveOutput.push(signaturesList[i].moveOutput)
-        r.push(signaturesList[i].r)
-        s.push(signaturesList[i].s)
-        v.push(signaturesList[i].v)
+
+        var rHex = signaturesList[i].signature.slice(0, 66)
+        r.push(this.state.web3.utils.toBN(rHex).toString())
+
+        var sHex = '0x' + signaturesList[i].signature.slice(66, 130)
+        s.push(this.state.web3.utils.toBN(sHex).toString())
+
+        var splittedSig = ethjs.fromRpcSig(signaturesList[i].signature)
+        v.push(splittedSig.v)
+      }
+
+      // Fill empty value with data
+      for(; i<8; i++) {
+        metadata.push(signaturesList[0].metadata)
+        move.push(signaturesList[0].move)
+        moveOutput.push(signaturesList[0].moveOutput)
+        r.push('0')
+        s.push('0')
+        v.push(0)
       }
 
       // Send trasaction
       this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
         from: this.state.account.address,
         gasPrice: 2000000000,
+        gas: '1000000'
       })
       .on('error', function(error){ console.log('ERROR: ' + error)})
       .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
@@ -119,7 +139,6 @@ class KillInterface extends Component {
   }
 
   render() {
-    console.log(this.state.playerToKill)
 
     if(this.state.playerToKill != null) {
       // The player to kill is ourself, therefore we show another message
@@ -127,7 +146,9 @@ class KillInterface extends Component {
         return(
           <div>
             <h3>You are dead</h3>
-            <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Quit server</button>
+            <div style={{textAlign: 'center'}}>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Quit server</button>
+            </div>
           </div>
         )
       }
@@ -135,7 +156,9 @@ class KillInterface extends Component {
         return(
           <div>
             <h3>Player {this.state.playerToKill.killed} has been killed</h3>
-            <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Confirm death</button>
+            <div style={{textAlign: 'center'}}>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Confirm death</button>
+            </div>
           </div>
         )
       }

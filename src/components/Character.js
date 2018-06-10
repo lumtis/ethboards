@@ -44,7 +44,6 @@ class Character extends Component {
         web3: store.getState().web3.web3Instance,
       })
     })
-
   }
 
   static defaultProps = {
