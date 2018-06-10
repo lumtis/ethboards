@@ -30,7 +30,7 @@ var Web3 = require('web3')
 var RedisClient = require('redis')
 
 var redis = RedisClient.createClient(6379, '127.0.0.1')
-var provider = new Web3.providers.HttpProvider('http://localhost:7545')
+var provider = new Web3.providers.HttpProvider('http://localhost:8545')
 var web3 = new Web3(provider)
 
 var ethjs = require('ethereumjs-util')
@@ -40,6 +40,13 @@ var nujaBattleJson = require('../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
+
+const turnPrefix = '_turn4'
+const playerTurnPrefix = '_playerturn4'
+const statePrefix = '_state4'
+const killedPlayerPrefix = '_killedplayers4'
+
+
 redis.on("connect", function () {
   console.log("connected to redis")
 })
@@ -48,7 +55,7 @@ redis.on("connect", function () {
 function getCurrentTurn(matchId, nbPlayer, cb) {
 
   // We first check if the key exists
-  redis.exists(matchId + '_turn', function (existsErr, existsReply){
+  redis.exists(matchId + turnPrefix, function (existsErr, existsReply){
     if(existsReply == 0) {
       // If the key doesn't exist we can return 0
       // pushsignature function will determine if the match exist
@@ -56,10 +63,10 @@ function getCurrentTurn(matchId, nbPlayer, cb) {
     }
     else {
       // If the key exist, get next turn
-      redis.llen(matchId, function (llenErr, llenReply) {
-        redis.lrange(matchId, -1, llenReply, function (stateErr, stateReply) {
-          redis.get(matchId + '_turn', function (turnErr, turnReply) {
-            redis.get(matchId + '_playerturn', function (playerTurnErr, playerTurnReply) {
+      redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+        redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+          redis.get(matchId + turnPrefix, function (turnErr, turnReply) {
+            redis.get(matchId + playerTurnPrefix, function (playerTurnErr, playerTurnReply) {
               if(stateErr == null && turnErr == null && playerTurnErr == null) {
 
                 var lastTurn = turnReply
@@ -101,8 +108,8 @@ function getKilledPlayers(moveInput, moveOutput) {
 function pushKilledPlayer(matchId, killer, killed, turn) {
 
   // Get list of signature to prove the kill
-  redis.llen(matchId, function (llenErr, llenReply) {
-    redis.lrange(matchId, -9, llenReply, function (stateErr, stateReply) {
+  redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+    redis.lrange(matchId + statePrefix, -9, llenReply, function (stateErr, stateReply) {
 
       // killPlayer function needs the origin state the the signature list
       // To get it we get the 9 last signatures, the origin state is the first one
@@ -120,8 +127,8 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
         }
       }
 
-      // Push the signatures to the players to kill list
-      redis.rpush(matchId + '_killedplayers', JSON.stringify({
+      //Push the signatures to the players to kill list
+      redis.rpush(matchId + killedPlayerPrefix, JSON.stringify({
         signaturesList: stateReply,
         killer: killer,
         killed: killed,
@@ -135,8 +142,8 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
         }
       })
 
-    }
-  }
+    })
+  })
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -343,14 +350,14 @@ function runDevServer(host, port, protocol) {
       app.post("/post/currentstate", bodyParser.json(), function(req, res){
 
         // We first check if the key exists
-        redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
           if(existsReply == 0) {
             // If the key doesn't exist, no data
             res.send(null)
           }
           else {
             // If key exists, get hte list of signatures
-            redis.lrange(req.body.matchId, 0, 8, function (err, reply) {
+            redis.lrange(req.body.matchId + statePrefix, 0, 8, function (err, reply) {
               if(err != null) {
                 console.log('redis get state error :' + err)
               } else {
@@ -366,18 +373,18 @@ function runDevServer(host, port, protocol) {
       app.post("/post/currentmetadata", bodyParser.json(), function(req, res){
 
         // We first check if the key exists
-        redis.exists(req.body.matchId + '_turn', function (existsErr, existsReply){
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
           if(existsReply == 0) {
             // If the key doesn't exist, then the match doesn't exist or has not started yet
             res.send([0, -1])
           }
           else {
             // The match exist, we get metadata
-            redis.get(req.body.matchId + '_turn', function (turnErr, turnReply) {
+            redis.get(req.body.matchId + turnPrefix, function (turnErr, turnReply) {
               if(turnErr != null) {
                 console.log('redis get turn error :' + turnErr)
               } else {
-                redis.get(req.body.matchId + '_playerturn', function (playerturnErr, playerturnReply) {
+                redis.get(req.body.matchId + playerTurnPrefix, function (playerturnErr, playerturnReply) {
                   if(playerturnErr != null) {
                     console.log('redis get player turn error :' + playerturnErr)
                   } else {
@@ -394,14 +401,14 @@ function runDevServer(host, port, protocol) {
       app.post("/post/currentkilledplayers", bodyParser.json(), function(req, res){
 
         // We first check if the key exists
-        redis.exists(req.body.matchId + '_killedplayers', function (existsErr, existsReply){
+        redis.exists(req.body.matchId + killedPlayerPrefix, function (existsErr, existsReply){
           if(existsReply == 0) {
             // If the key doesn't exist, no data
             res.send(null)
           }
           else {
             // If key exists, get hte list of signatures
-            redis.lrange(req.body.matchId + '_killedplayers', 0, 8, function (err, reply) {
+            redis.lrange(req.body.matchId + killedPlayerPrefix, 0, 8, function (err, reply) {
               if(err != null) {
                 console.log('redis get killed players error :' + err)
               } else {
@@ -455,15 +462,14 @@ function runDevServer(host, port, protocol) {
                         if(turn == 0 && playerTurn == 0){
 
                           // First turn, we simulate from initialState
-                          nujaBattle.methods.getInitialState(serverId).call().then(function(initialState) {
-                            nujaBattle.methods.simulate(serverId, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], initialState).call().then(function(simulatedOutput){
-
+                          nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+                            nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], initialState).call({gas: '1000000'}).then(function(simulatedOutput){
                               // WARNING HAS THEY HAVE THE SAME FORMAT ?
                               // Comparing hashed
                               if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
 
                                 // Push the new signature
-                                redis.rpush(req.body.matchId, JSON.stringify({
+                                redis.rpush(req.body.matchId + statePrefix, JSON.stringify({
                                   metadata: req.body.metadata,
                                   move: req.body.move,
                                   moveOutput: req.body.moveOutput,
@@ -475,15 +481,16 @@ function runDevServer(host, port, protocol) {
                                   else {
                                     // If there are killed players during this turn, we push them
                                     var killed = getKilledPlayers(initialState, req.body.moveOutput)
+
                                     for(var i=0; i<killed.length; i++){
                                       pushKilledPlayer(matchId, req.body.metadata[2], killed[i], req.body.metadata[1])
                                     }
 
                                     // Update metadata
-                                    redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                                    redis.set(req.body.matchId + turnPrefix, turn, function (turnErr, turnReply){
                                       // TODO: gestion erreur
                                     })
-                                    redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                                    redis.set(req.body.matchId + playerTurnPrefix, playerTurn, function (playerturnErr, playerturnReply){
                                       // TODO: gestion erreur
                                     })
                                     res.send("Signature pushed")
@@ -498,18 +505,18 @@ function runDevServer(host, port, protocol) {
                         else {
 
                           // Not first turn, get last moveOutput
-                          redis.llen(matchId, function (llenErr, llenReply) {
-                            redis.lrange(matchId, -1, llenReply, function (stateErr, stateReply) {
+                          redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                            redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
                               var lastState = JSON.parse(stateReply[0]).moveOutput
 
-                              nujaBattle.methods.simulate(serverId, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call().then(function(simulatedOutput){
+                              nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call().then(function(simulatedOutput){
 
                                 // WARNING HAS THEY HAVE THE SAME FORMAT ?
                                 // Comparing hashed
                                 if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
 
                                   // Push the new signature
-                                  redis.rpush(req.body.matchId, JSON.stringify({
+                                  redis.rpush(req.body.matchId + statePrefix, JSON.stringify({
                                     metadata: req.body.metadata,
                                     move: req.body.move,
                                     moveOutput: req.body.moveOutput,
@@ -526,10 +533,10 @@ function runDevServer(host, port, protocol) {
                                       }
 
                                       // Update metadata
-                                      redis.set(req.body.matchId + '_turn', turn, function (turnErr, turnReply){
+                                      redis.set(req.body.matchId + turnPrefix, turn, function (turnErr, turnReply){
                                         // TODO: gestion erreur
                                       })
-                                      redis.set(req.body.matchId + '_playerturn', playerTurn, function (playerturnErr, playerturnReply){
+                                      redis.set(req.body.matchId + playerTurnPrefix, playerTurn, function (playerturnErr, playerturnReply){
                                         // TODO: gestion erreur
                                       })
                                       res.send("Signature pushed")
