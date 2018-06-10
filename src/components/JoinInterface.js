@@ -22,8 +22,6 @@ class JoinInterface extends Component {
   constructor(props) {
     super(props)
 
-    this.joinServer = this.joinServer.bind(this)
-
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
@@ -45,28 +43,6 @@ class JoinInterface extends Component {
 
   static defaultProps = {
     server: 0
-  }
-
-
-  joinServer(characterId) {
-    return function(e) {
-      // Join the server
-      if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addPlayerToServer(characterId, this.props.server).send({
-          from: this.state.account.address,
-          gasPrice: 2000000000,
-          value: this.state.serverFee + this.state.serverMoneyBag + this.state.cheatWarrant
-          }
-        })
-        .on('error', function(error){ console.log('ERROR: ' + error)})
-        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-        .on('receipt', function(receipt){ console.log('receipt')})
-        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-        .then(function(ret) {
-          alert('Server joined')
-        });
-      }
-    }.bind(this)
   }
 
   componentWillMount() {
@@ -106,25 +82,46 @@ class JoinInterface extends Component {
         }
 
         // Get server financial infos
-        self.state.nujaBattle.methods.getServerInfo(this.props.server).call().then(function(financial) {
+        self.state.nujaBattle.methods.getServerFinancial(this.props.server).call().then(function(financial) {
             self.setState({serverFee: financial.feeRet, serverMoneyBag: financial.moneyBagRet})
         })
 
         // Get contract cheat warrant
-        self.state.nujaBattle.methods.getCheatWarrant(this.props.server).call().then(function(cheatWarrant) {
+        self.state.nujaBattle.methods.getCheatWarrant().call().then(function(cheatWarrant) {
             self.setState({cheatWarrant: cheatWarrant})
         })
       }
     }
   }
 
+  joinServer(characterId) {
+    return function(e) {
+      // Join the server
+      if (this.state.nujaBattle != null) {
+        this.state.nujaBattle.methods.addPlayerToServer(characterId, this.props.server).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+          value: parseInt(this.state.serverFee) + parseInt(this.state.serverMoneyBag) + parseInt(this.state.cheatWarrant)
+          }
+        )
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server joined')
+        });
+      }
+    }.bind(this)
+  }
+
   render() {
     return (
       <div>
-        <h3>Join the server :</h3>
-        <h3>Fee : {this.state.serverFee}</h3>
-        <h3>Money Bag : {this.state.serverMoneyBag}</h3>
-        <h3>Cheat Warrant : {this.state.cheatWarrant}</h3>
+        <h3 style={{marginTop: '30px'}}>Join the server :</h3>
+        <h3 style={{fontSize: '12px'}}>Fee : {this.state.serverFee/1000000000000000000} ETH</h3>
+        <h3 style={{fontSize: '12px'}}>Money Bag : {this.state.serverMoneyBag/1000000000000000000} ETH</h3>
+        <h3 style={{fontSize: '12px'}}>Cheat Warrant : {this.state.cheatWarrant/1000000000000000000} ETH</h3>
         <div style={{marginTop: '20px'}} className="row">
           {this.state.characterArray}
         </div>

@@ -140,7 +140,7 @@ class ServerDashboard extends Component {
       })
 
       // Get server creation fee
-      self.state.nujaBattle.methods.getServerCreationFee(this.props.server).call().then(function(serverCreationFee) {
+      self.state.nujaBattle.methods.getServerCreationFee().call().then(function(serverCreationFee) {
           self.setState({serverCreationFee: serverCreationFee})
       })
     }
@@ -546,7 +546,7 @@ class ServerDashboard extends Component {
                   <input className="form-control" style={inputStyle} ref="moneybag" placeholder="Money bag(finney)" type="text"/>
                 </div>
                 <div className="form-group">
-                  <h3>Server creation fee is: {this.state.serverCreationFee}</h3>
+                  <h3 style={{fontSize: '14px'}}>Server creation fee: {this.state.serverCreationFee/1000000000000000000} ETH</h3>
                 </div>
                 <div className="form-group">
                   <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>

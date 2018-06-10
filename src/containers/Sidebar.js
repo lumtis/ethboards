@@ -55,26 +55,27 @@ class Sidebar extends Component {
     serverState: 0
   }
 
-  // PROBLEM: props are not directly received
-  componentWillReceiveProps() {
+  componentWillReceiveProps(props) {
     var self = this;
 
     // Verify if user is on the server
     if (self.state.account != null) {
       if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.isAddressInServer(self.props.server, self.state.account.address).call().then(function(isRet) {
+        self.state.nujaBattle.methods.isAddressInServer(props.server, self.state.account.address).call().then(function(isRet) {
           // If the user is on the server, we need to retreive the character id
-          self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(indexUser) {
-            self.state.nujaBattle.methods.playerCharacter(self.props.server, indexUser).call().then(function(characterIndex) {
-              self.setState({characterId: characterIndex})
+          if(isRet) {
+            self.state.nujaBattle.methods.getIndexFromAddress(props.server, self.state.account.address).call().then(function(indexUser) {
+              self.state.nujaBattle.methods.playerCharacter(props.server, indexUser).call().then(function(characterIndex) {
+                self.setState({characterId: characterIndex})
+              })
             })
-          })
+          }
           self.setState({inServer: isRet})
         })
 
         // Check if the server is ready
-        if(this.props.serverState == 1) {
-          self.state.nujaBattle.methods.getServerInfo(self.props.server).call().then(function(infoRet) {
+        if(parseInt(props.serverState) == 1) {
+          self.state.nujaBattle.methods.getServerInfo(props.server).call().then(function(infoRet) {
             if(infoRet.playerMaxRet == infoRet.playerNbRet) {
               self.setState({serverReady: true})
             }
@@ -111,6 +112,7 @@ class Sidebar extends Component {
         self.state.nujaBattle.methods.removePlayerFromServer(self.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
+          gas: 200000
           }
         )
         .on('error', function(error){ console.log('ERROR: ' + error)})
@@ -131,6 +133,7 @@ class Sidebar extends Component {
         self.state.nujaBattle.methods.startServer(this.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
+          gas: 1000000
           }
         )
         .on('error', function(error){ console.log('ERROR: ' + error)})
@@ -230,9 +233,11 @@ class Sidebar extends Component {
               {buttonChangeServer}
               <h3>You are in</h3>
               {buttonStartServer}
-              <a onClick={this.quitServer}>
-                <button className='buttonServer'>Quit server</button>
-              </a>
+              <div style={{textAlign: 'center', marginTop: '30px'}}>
+                <a onClick={this.quitServer}>
+                  <button className='buttonServer'>Quit server</button>
+                </a>
+              </div>
             </div>
           }
         }

@@ -36,7 +36,7 @@ class KillInterface extends Component {
     // Get the index of our player
     if (self.state.nujaBattle != null) {
       self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
-        self.setState({playerIndex: playerIndex, playerMax: playerMax})
+        self.setState({playerIndex: playerIndex})
       })
     }
 
@@ -48,7 +48,7 @@ class KillInterface extends Component {
           // Get list of killed player
           request.post(
             'http://localhost:3000/post/currentkilledplayers',
-            { json: { matchId: id } },
+            { json: { matchId: matchId } },
             function (killedPlayerError, killedPlayerResponse, killedPlayerBody) {
               if (!killedPlayerError && killedPlayerResponse.statusCode == 200) {
 
@@ -63,7 +63,7 @@ class KillInterface extends Component {
                       self.setState({playerToKill: killedPlayerBody[i]})
                     }
                   }
-                }
+                })
 
               }
             }
@@ -119,29 +119,30 @@ class KillInterface extends Component {
   }
 
   render() {
-    var content = <div></div>
+    console.log(this.state.playerToKill)
 
-    if(playerToKill != null) {
+    if(this.state.playerToKill != null) {
       // The player to kill is ourself, therefore we show another message
-      if(playerToKill.killed == playerIndex) {
-        content =
-        <div>
-          <h3>You are dead</h3>
-          <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Quit server</button>
-        </div>
+      if(this.state.playerToKill.killed == this.state.playerIndex) {
+        return(
+          <div>
+            <h3>You are dead</h3>
+            <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Quit server</button>
+          </div>
+        )
       }
       else {
-        content =
-        <div>
-          <h3>Player {playerToKill.killed} has been killed</h3>
-          <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Confirm death</button>
-        </div>
+        return(
+          <div>
+            <h3>Player {this.state.playerToKill.killed} has been killed</h3>
+            <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Confirm death</button>
+          </div>
+        )
       }
     }
-
-    return (
-      {content}
-    )
+    else {
+      return(null)
+    }
   }
 }
 

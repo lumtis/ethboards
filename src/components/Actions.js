@@ -83,7 +83,7 @@ class Actions extends Component {
       // We search for every field which gives more than 0 gas (which means that the transaction will not revert)
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 0, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 0, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
             // If gas superior than 0 we draw a cross
             if(error == null) {
               if(gasAmount > 0) {
@@ -113,7 +113,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 1, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 1, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
             // If gas superior than 0 we draw a cross
             if(error == null) {
               if(gasAmount > 0) {
@@ -146,7 +146,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.simulate(this.props.server, 4, i, j, 0, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 4, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
 
             // If gas superior than 0 we draw a cross
             if(error == null) {
@@ -178,7 +178,7 @@ class Actions extends Component {
 
         for (var i = 0; i < 10; i++) {
           for (var j = 0; j < 10; j++) {
-            this.state.nujaBattle.methods.simulate(this.props.server, 3, i, j, id, SW.getCurrentState()).estimateGas({from: this.state.account.address, gas: '1000000'}, function(error, gasAmount){
+            this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 3, i, j, id, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
 
               // If gas superior than 0 we draw a cross
               if(error == null) {
@@ -205,7 +205,7 @@ class Actions extends Component {
     if (self.state.nujaBattle != null) {
 
       // Simulate the turn to get move output
-      self.state.nujaBattle.methods.simulate(self.props.server, playMove, x, y, self.state.selectedWeapon, SW.getCurrentState()).call({from: self.state.account.address, gas: '1000000'}).then(function(moveOutput) {
+      self.state.nujaBattle.methods.simulate(self.props.server, self.state.playerIndex, playMove, x, y, self.state.selectedWeapon, SW.getCurrentState()).call({gas: '1000000'}).then(function(moveOutput) {
         // Creating signature
         var metadata = []
         metadata.push(SW.getCurrentMatch())

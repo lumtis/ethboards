@@ -42,6 +42,7 @@ class Play extends Component {
       if (self.state.nujaBattle != null) {
 
         self.state.nujaBattle.methods.getServerState(parseInt(serverId)).call().then(function(serverState) {
+
           if(serverState == 2) {
             self.state.nujaBattle.methods.getServerCurrentMatch(parseInt(serverId)).call().then(function(matchId) {
               SW.updateServer(matchId)
@@ -75,7 +76,6 @@ class Play extends Component {
       )
     }
     else if(this.state.serverState == 1) {
-
       // Initial map without player list
       return (
         <div>
