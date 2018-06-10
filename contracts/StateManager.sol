@@ -56,7 +56,7 @@ contract StateManager {
         require(nb <= 100);
         uint remaining = state[128+p];
 
-        if(remaining < nb) {
+        if(remaining <= nb) {
             state = kill(state, p);
         }
         else {

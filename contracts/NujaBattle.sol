@@ -49,7 +49,7 @@ contract NujaBattle is Geometry, StateManager {
         uint8 playerNb;
         uint8 state;       // 0: offline, 1: waiting, 2: running
         mapping (uint8 => mapping (uint8 => uint)) buildings;
-        mapping (uint8 => mapping (uint8 => uint)) playersPosition;
+        mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
 
@@ -57,7 +57,9 @@ contract NujaBattle is Geometry, StateManager {
         uint currentTimeoutTurn;
         uint currentTimeoutTimestamp;
         address currentTimeoutClaimer;
-        uint8[8][4] lastMoves;        // Used to avoid not shared timeout attack
+
+        // Used to avoid not shared timeout attack
+        mapping (uint8 => mapping (uint8 => uint8)) lastMoves;
 
         /* uint8 blamed;            // Warning: offset
         uint8 blamer;
@@ -144,6 +146,7 @@ contract NujaBattle is Geometry, StateManager {
         newServer.currentTimeoutTimestamp = 0;
         newServer.currentTimeoutPlayer = 0;
         newServer.currentTimeoutTurn = 0;
+        newServer.currentTimeoutClaimer = msg.sender;
 
         /* newServer.blamed = 0;
         newServer.timeoutStart = 0;
@@ -278,20 +281,21 @@ contract NujaBattle is Geometry, StateManager {
         // require(servers[server].owner == msg.sender);  // not necessary in fact
 
         uint8 maxPlayer = servers[server].playerMax;
+        int random = int(keccak256(block.timestamp));
         for(uint8 i=0; i<maxPlayer; i++) {
 
             // Search randomly for not used position
             do {
-              int random = int(keccak256(block.timestamp))%maxPlayer;
+              random = int(keccak256(random));
               if(random < 0) {
                   random *= -1;
               }
-              uint8 x = uint8(random);
-              random = int(keccak256(random))%maxPlayer;
+              uint8 x = uint8(random%maxPlayer);
+              random = int(keccak256(random));
               if(random < 0) {
                   random *= -1;
               }
-              uint8 y = uint8(random);
+              uint8 y = uint8(random%maxPlayer);
             } while (servers[server].playersPosition[x][y] > 0);
 
             // Set the new position for the player
@@ -472,16 +476,13 @@ contract NujaBattle is Geometry, StateManager {
     // 3: Weapon
     // 4: Nuja power
     // 5: Idle
-    function simulate(uint indexServer, uint8 idMove, uint8 xMove, uint8 yMove, uint8 indexWeapon, uint[176] moveInput) public view returns (uint[176] moveOutput) {
+    function simulate(uint indexServer, uint8 p, uint8 idMove, uint8 xMove, uint8 yMove, uint8 indexWeapon, uint[176] moveInput) public view returns (uint[176] moveOutput) {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 2);
         require(idMove < 6);
         require(xMove < 8 && yMove < 8);
-
-        // Get the index of the sender
-        uint8 p = servers[indexServer].playerIndex[msg.sender];
-        require(p > 0);
-        p -= 1;
+        require(p < servers[indexServer].playerMax);
+        require(isAlive(moveInput, p));
 
         if (idMove == 0) {
             return move(p, xMove, yMove, moveInput);
@@ -519,7 +520,7 @@ contract NujaBattle is Geometry, StateManager {
         require(opponent > 0);
         opponent -= 1;
 
-        return damage(moveInput, opponent, 20);
+        return damage(moveInput, opponent, 100);
     }
 
     function exploreBuilding(uint8 p, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
@@ -612,7 +613,7 @@ contract NujaBattle is Geometry, StateManager {
     }
 
 
-    function isKilled(uint indexServer, uint8 p) public view returns(bool isRet) {
+    function isKilled(uint indexServer, uint8 p) public view returns (bool isRet) {
         require(indexServer < serverNumber);
         require(servers[indexServer].currentMatchId > 0);
 
@@ -620,14 +621,14 @@ contract NujaBattle is Geometry, StateManager {
     }
 
     // Useful for iterative function
-    function getKilledArray(uint indexServer) public view returns(bool[8] killedRet) {
+    function getKilledArray(uint indexServer) public view returns (bool[8] killedRet) {
         require(indexServer < serverNumber);
         require(servers[indexServer].currentMatchId > 0);
 
         bool[8] memory killedArray;
 
         for(uint8 i=0; i<8; i++) {
-            if(deadPlayer[servers[indexServer].currentMatchId-1][p]) {
+            if(deadPlayer[servers[indexServer].currentMatchId-1][i]) {
                 killedArray[i] = true;
             }
             else {
@@ -696,15 +697,15 @@ contract NujaBattle is Geometry, StateManager {
 
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
-                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), move[i][0], move[i][1], move[i][2], move[i][3], originState);
                 }
                 else {
-                    simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
                 }
             }
 
             // Verify integrity
-            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
+            //require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
             // If not the last turn check the next turn is correctly the next player
             if(i < nbSignature-1) {
@@ -716,10 +717,10 @@ contract NujaBattle is Geometry, StateManager {
         removePlayer(indexServer, killed);
 
         // Get the fund of the killed
-        servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
+        //servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
 
         // The killed has not cheat, he get his warrant back
-        servers[indexServer].players[killed].owner.transfer(cheatWarrant);
+        //servers[indexServer].players[killed].owner.transfer(cheatWarrant);
 
         // If it was the last player, terminate the server
         if(servers[indexServer].playerNb == 1) {
@@ -731,7 +732,7 @@ contract NujaBattle is Geometry, StateManager {
         servers[indexServer].playerNb -= 1;
 
         // Set player to dead
-        deadPlayer[servers[indexServer].currentMatchId-1][killed];
+        deadPlayer[servers[indexServer].currentMatchId-1][killed] = true;
 
         // Set character server to 0
         uint character = servers[indexServer].players[killed].characterIndex;
@@ -739,16 +740,15 @@ contract NujaBattle is Geometry, StateManager {
     }
 
     function terminateServer(uint indexServer, uint8 winner) internal {
-        // Winner get his money back
-        servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag);
-        servers[indexServer].players[winner].owner.transfer(cheatWarrant);
-
         // Reset server
         servers[indexServer].playerNb = 0;
         servers[indexServer].state = 1;
         servers[indexServer].currentTimeoutTimestamp = 0;
         servers[indexServer].currentTimeoutPlayer = 0;
         servers[indexServer].currentTimeoutTurn = 0;
+
+        // Winner get his money back
+        //servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
     }
 
 
@@ -759,7 +759,7 @@ contract NujaBattle is Geometry, StateManager {
     //////////////////////////////////////////////////////////////////
     // Timeout functions
 
-    function isTimeout(uint indexServer) public view returns(bool isRet) {
+    /* function isTimeout(uint indexServer) public view returns(bool isRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].currentTimeoutTimestamp > 0);
     }
@@ -780,9 +780,9 @@ contract NujaBattle is Geometry, StateManager {
 
     // Called by anybody to start a timeout process against the player
     function startTimeout(
-      uint indexServer,
-      uint[3][8] metadata,
-      uint8[4][8] move,
+      uint indexServer
+      uint[3][8] metadata
+      uint8[4][8] move
       uint[176][8] moveOutput,
       uint[8] r,
       uint[8] s,
@@ -849,7 +849,10 @@ contract NujaBattle is Geometry, StateManager {
                 require(newMetadata[2] == metadata[i+1][2]);
 
                 // Set lastMove to be sure state is shared
-                servers[indexServer].lastMoves[i] = move[i];
+                servers[indexServer].lastMoves[i][0] = move[i][0];
+                servers[indexServer].lastMoves[i][1] = move[i][1];
+                servers[indexServer].lastMoves[i][2] = move[i][2];
+                servers[indexServer].lastMoves[i][3] = move[i][3];
             }
 
             // Set timeout attribute
@@ -860,6 +863,7 @@ contract NujaBattle is Geometry, StateManager {
             servers[indexServer].currentTimeoutTimestamp = now;
             servers[indexServer].currentTimeoutClaimer = msg.sender;
         }
+
     }
 
     // Called by playing player to stop the timeout against him
@@ -867,7 +871,7 @@ contract NujaBattle is Geometry, StateManager {
     // The last turn will be incremented
     // Only his signature is suficient (startTimeout imply last signature have been verified)
     function stopTimeout(
-      uint indexServer,
+      uint indexServer
       uint[3][8] metadata,
       uint8[4][8] move,
       uint[176][8] moveOutput,
@@ -928,7 +932,10 @@ contract NujaBattle is Geometry, StateManager {
             require(newMetadata[2] == metadata[i+1][2]);
 
             // Set lastMove to be sure state is shared
-            servers[indexServer].lastMoves[i] = move[i];
+            servers[indexServer].lastMoves[i][0] = move[i][0];
+            servers[indexServer].lastMoves[i][1] = move[i][1];
+            servers[indexServer].lastMoves[i][2] = move[i][2];
+            servers[indexServer].lastMoves[i][3] = move[i][3];
         }
 
         // Set new value to timeout to avoid time out stressing
@@ -936,6 +943,7 @@ contract NujaBattle is Geometry, StateManager {
         servers[indexServer].currentTimeoutPlayer = uint8(newMetadata[2]);
         servers[indexServer].currentTimeoutTurn = newMetadata[1];
         servers[indexServer].currentTimeoutTimestamp = 0;
+
     }
 
 
@@ -946,20 +954,21 @@ contract NujaBattle is Geometry, StateManager {
         require(servers[indexServer].currentTimeoutTimestamp > 0);
         require(servers[indexServer].currentTimeoutTimestamp + timeoutThreshold > now);
 
+        // Claimer get money
+        servers[indexServer].currentTimeoutClaimer.transfer(servers[indexServer].moneyBag + cheatWarrant);
+
         // Kick blamed player
         removePlayer(indexServer, servers[indexServer].currentTimeoutPlayer);
 
-        // Claimer get money
-        servers[indexServer].currentTimeoutClaimer.transfer(servers[indexServer].moneyBag);
-        servers[indexServer].currentTimeoutClaimer.transfer(cheatWarrant);
-
         // register timeout
         uint matchId = servers[indexServer].currentMatchId - 1;
-        matchTimeoutTurns[matchId][servers[indexServer].currentTimeoutTurn][servers[indexServer].currentTimeoutPlayer] = true;
+        uint turn = servers[indexServer].currentTimeoutTurn;
+        uint playerTurn = servers[indexServer].currentTimeoutPlayer;
+        matchTimeoutTurns[matchId][turn][playerTurn] = true;
 
         /// Reset timeout
         servers[indexServer].currentTimeoutTimestamp = 0;
-    }
+    } */
 
 
     //////////////////////////////////////////////////////////////////
