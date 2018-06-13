@@ -76,7 +76,7 @@ exports.pushSignature = function(serverId, metadata, move, moveOutput) {
     // Signing message
     web3.eth.personal.sign(web3.utils.soliditySha3(
       {t: 'uint[]', v: metadata},
-      {t: 'uint8[]', v: move},
+      {t: 'uint[]', v: move},
       {t: 'uint[]', v: moveOutput},
     ), account.address).then(function(sig) {
 

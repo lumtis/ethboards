@@ -97,27 +97,27 @@ class KillInterface extends Component {
       var v = []
 
       for(var i=0; i<nbSignature; i++) {
-        metadata.push(signaturesList[i].metadata)
-        move.push(signaturesList[i].move)
-        moveOutput.push(signaturesList[i].moveOutput)
+        metadata.push(signaturesList[i].metadata.map(x => x.toString()))
+        move.push(signaturesList[i].move.map(x => x.toString()))
+        moveOutput.push(signaturesList[i].moveOutput.map(x => x.toString()))
 
         var rHex = signaturesList[i].signature.slice(0, 66)
-        r.push(this.state.web3.utils.toBN(rHex).toString())
+        r.push(rHex)
 
         var sHex = '0x' + signaturesList[i].signature.slice(66, 130)
-        s.push(this.state.web3.utils.toBN(sHex).toString())
+        s.push(sHex)
 
         var splittedSig = ethjs.fromRpcSig(signaturesList[i].signature)
         v.push(splittedSig.v)
       }
 
-      // Fill empty value with data
+      // Fill empty value with junk data
       for(; i<8; i++) {
         metadata.push(signaturesList[0].metadata)
         move.push(signaturesList[0].move)
         moveOutput.push(signaturesList[0].moveOutput)
-        r.push('0')
-        s.push('0')
+        r.push(signaturesList[0].signature.slice(0, 66))
+        s.push('0x' + signaturesList[0].signature.slice(66, 130))
         v.push(0)
       }
 
@@ -135,8 +135,8 @@ class KillInterface extends Component {
         alert('Player killed')
       });
     }
-
   }
+
 
   render() {
 

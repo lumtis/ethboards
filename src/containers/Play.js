@@ -113,7 +113,7 @@ class Play extends Component {
                   <Map server={this.state.server} />
                 </div>
                 <div className="col-md-12" style={{width:'100%', top:'560px'}}>
-                  <h1 style={{marginBottom: '40px'}}>Other players :</h1>
+                  <h1 style={{marginBottom: '40px'}}>Players :</h1>
                   <PlayerList server={this.state.server} />
                 </div>
               </div>
