@@ -41,10 +41,10 @@ var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 
-const turnPrefix = '_turn4'
-const playerTurnPrefix = '_playerturn4'
-const statePrefix = '_state4'
-const killedPlayerPrefix = '_killedplayers4'
+const turnPrefix = '_turn'
+const playerTurnPrefix = '_playerturn'
+const statePrefix = '_state'
+const killedPlayerPrefix = '_killedplayers'
 
 
 redis.on("connect", function () {
@@ -432,9 +432,10 @@ function runDevServer(host, port, protocol) {
         // Get the message signer
         var msg = ethjs.toBuffer(web3.utils.soliditySha3(
             {t: 'uint[]', v: req.body.metadata},
-            {t: 'uint8[]', v: req.body.move},
+            {t: 'uint[]', v: req.body.move},
             {t: 'uint[]', v: req.body.moveOutput},
         ))
+
         var prefix = new Buffer("\x19Ethereum Signed Message:\n")
         var prefixedMsg = ethjs.sha3(
           Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
