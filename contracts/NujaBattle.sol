@@ -571,20 +571,20 @@ contract NujaBattle is Geometry, StateManager {
 
     function moveOwner(
       uint[3] metadata,
-      uint8[4] move,
+      uint[4] move,
       uint[176] moveOutput,
-      uint r,
-      uint s,
+      bytes32 r,
+      bytes32 s,
       uint8 v
-      ) internal pure returns (address recovered) {
+      ) public pure returns (address recovered) {
 
         // Calculate the hash of the move
-        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
+        bytes32 hashedMove = sha3(metadata, move, moveOutput);
 
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = keccak256(prefix, hashedMove);
+        bytes32 msg = sha3(prefix, hashedMove);
 
-        return ecrecover(msg, v, bytes32(r), bytes32(s));
+        return ecrecover(msg, v, r, s);
     }
 
     function nextTurn(
@@ -645,10 +645,10 @@ contract NujaBattle is Geometry, StateManager {
       uint8 killer,
       uint8 killed,
       uint[3][8] metadata,
-      uint8[4][8] move,
+      uint[4][8] move,
       uint[176][8] moveOutput,
-      uint[8] r,
-      uint[8] s,
+      bytes32[8] r,
+      bytes32[8] s,
       uint8[8] v,
       uint[176] originState,
       uint8 nbSignature
@@ -697,15 +697,15 @@ contract NujaBattle is Geometry, StateManager {
 
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
-                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), move[i][0], move[i][1], move[i][2], move[i][3], originState);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), originState);
                 }
                 else {
-                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveOutput[i-1]);
                 }
             }
 
             // Verify integrity
-            //require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
+            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
             // If not the last turn check the next turn is correctly the next player
             if(i < nbSignature-1) {
@@ -717,10 +717,10 @@ contract NujaBattle is Geometry, StateManager {
         removePlayer(indexServer, killed);
 
         // Get the fund of the killed
-        //servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
+        servers[indexServer].players[killer].owner.transfer(servers[indexServer].moneyBag);
 
         // The killed has not cheat, he get his warrant back
-        //servers[indexServer].players[killed].owner.transfer(cheatWarrant);
+        servers[indexServer].players[killed].owner.transfer(cheatWarrant);
 
         // If it was the last player, terminate the server
         if(servers[indexServer].playerNb == 1) {
@@ -728,11 +728,15 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
+
     function removePlayer(uint indexServer, uint8 killed) internal {
         servers[indexServer].playerNb -= 1;
 
         // Set player to dead
         deadPlayer[servers[indexServer].currentMatchId-1][killed] = true;
+
+        // Set player index to 0
+        servers[indexServer].playerIndex[servers[indexServer].players[killed].owner] = 0;
 
         // Set character server to 0
         uint character = servers[indexServer].players[killed].characterIndex;
@@ -741,14 +745,14 @@ contract NujaBattle is Geometry, StateManager {
 
     function terminateServer(uint indexServer, uint8 winner) internal {
         // Reset server
-        servers[indexServer].playerNb = 0;
+        removePlayer(indexServer, winner);
         servers[indexServer].state = 1;
         servers[indexServer].currentTimeoutTimestamp = 0;
         servers[indexServer].currentTimeoutPlayer = 0;
         servers[indexServer].currentTimeoutTurn = 0;
 
         // Winner get his money back
-        //servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
+        servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
     }
 
 
