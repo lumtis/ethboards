@@ -29,6 +29,11 @@ contract NujaBattle is Geometry, StateManager {
         _;
     }
 
+    modifier fromTimeoutManager {
+        require(msg.sender == timeoutRegistry);
+        _;
+    }
+
     ///////////////////////////////////////////////////////////////
     /// Structures
 
@@ -53,11 +58,6 @@ contract NujaBattle is Geometry, StateManager {
         mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
-
-        /* uint8 blamed;
-        uint8 blamer;
-        uint blameTimestamp
-        uint blameTurn; */
     }
 
     uint serverNumber;
@@ -137,16 +137,6 @@ contract NujaBattle is Geometry, StateManager {
         newServer.state = 0;
         newServer.playerMax = max;
         newServer.playerNb = 0;
-
-        newServer.currentTimeoutTimestamp = 0;
-        newServer.currentTimeoutPlayer = 0;
-        newServer.currentTimeoutTurn = 0;
-        newServer.currentTimeoutClaimer = msg.sender;
-
-        /* newServer.blamed = 0;
-        newServer.timeoutStart = 0;
-        newServer.lastConfirmedTurn = 0;
-        newServer.lastConfirmedTurnPlayer = 0; */
 
         servers.push(newServer);
 
@@ -353,6 +343,11 @@ contract NujaBattle is Geometry, StateManager {
     function getPlayerMax(uint indexServer) public view returns(uint8 playerMaxRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].playerMax;
+    }
+
+    function getPlayerNb(uint indexServer) public view returns(uint8 playerNbRet) {
+        require(indexServer < serverNumber);
+        return servers[indexServer].playerNb;
     }
 
     function getServerState(uint indexServer) public view returns(uint8 stateRet) {
@@ -574,10 +569,10 @@ contract NujaBattle is Geometry, StateManager {
       ) public pure returns (address recovered) {
 
         // Calculate the hash of the move
-        bytes32 hashedMove = sha3(metadata, move, moveOutput);
+        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
 
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = sha3(prefix, hashedMove);
+        bytes32 msg = keccak256(prefix, hashedMove);
 
         return ecrecover(msg, v, r, s);
     }
@@ -586,7 +581,7 @@ contract NujaBattle is Geometry, StateManager {
       uint indexServer,
       uint[3] metadata,
       uint[176] moveOutput
-      ) internal view returns (uint[3] metadataRet) {
+      ) public view returns (uint[3] metadataRet) {
 
         // We skip dead player
         do {
@@ -742,147 +737,30 @@ contract NujaBattle is Geometry, StateManager {
         // Reset server
         removePlayer(indexServer, winner);
         servers[indexServer].state = 1;
-        servers[indexServer].currentTimeoutTimestamp = 0;
-        servers[indexServer].currentTimeoutPlayer = 0;
-        servers[indexServer].currentTimeoutTurn = 0;
+        servers[indexServer].currentMatchId = 0;
 
         // Winner get his money back
         servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
     }
 
-
-    //////////////////////////////////////////////////////////////////
-    // Dispute functions
-    //////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////
-    // Cheat functions
-
-    /* function blamePending(uint indexServer) public view returns(bool pendingRet) {
-        require(indexServer < serverNumber);
-        return (servers[indexServer].blamed > 0);
-    }
-
-    function getBlameInfo(uint indexServer) public view returns(uint8 blamed, uint8 blamer, uint blameTimestamp, uint blameTurn, uint blameTurnPlayer) {
-        require(indexServer < serverNumber);
-        return (servers[indexServer].blamed, servers[indexServer].blamer, servers[indexServer].blameTimestamp, servers[indexServer].blameTurn, servers[indexServer].blameTurnPlayer);
-    }
-
-    // Called by anybody to blame a cheater
-    // The blamed cheater will have a timeout to prove he hasn't cheated
-    function blame(
-      uint indexServer,
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint[176] originState,
-      uint8 nbSignature
-      ) public {
-        require(indexServer < serverNumber);
-        require(nbSignature > 0);
-        require(metadata[0][0] == servers[indexServer].currentMatchId-1);
-        require(metadata[0][2] < servers[indexServer].playerMax);
-        require(servers[indexServer].playerIndex[msg.sender] > 0);
-
-        // Check if it is the first turn
-        // During first turn not all alive player are required to be part of the signatures list
-        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            bool begining = true;
-        }
-        else {
-            begining = false;
-        }
-
-        // If not the begining, all alive player should be part of the signature list
-        if(!begining) {
-            require(nbSignature == servers[indexServer].playerNb);
-        }
-        else {
-            // If we are at begining, the originState is the initial state
-            originState = getInitialState(indexServer);
-        }
-
-        // Verify all signatures
-        for(uint8 i=0; i<nbSignature; i++) {
-
-            // Verify that the move have been signed by the player
-            require(moveOwner(metadata[i], move[i], moveOutput[i], r[i], s[i], v[i]) == servers[indexServer].players[metadata[i][2]].owner);
-
-            // Simulate the turn and verify the simulated output is the given output
-            if(i == 0) {
-                uint[176] memory simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], originState);
-            }
-            else {
-                simulatedTurn = simulate(indexServer, move[i][0], move[i][1], move[i][2], move[i][3], moveOutput[i-1]);
-            }
-
-            if(i < nbSignature-1) {
-                // If not the last signature we use require to be sure the signature list is valid
-                require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
-
-                // If not the last turn check the next turn is correctly the next player
-                uint[3] memory newMetadata = nextTurn(indexServer, metadata[i], moveOutput[i]);
-                require(newMetadata[0] == metadata[i+1][0]);
-                require(newMetadata[1] == metadata[i+1][1]);
-                require(newMetadata[2] == metadata[i+1][2]);
-            }
-            else {
-                // If it is the last signature, if it is the last signature and the simulated output doesn't correspond
-                // then we can blame the cheater
-                require(keccak256(simulatedTurn) != keccak256(moveOutput[i]));
-            }
-        }
-
-        // Register the blamed user
-        servers[indexServer].blamer = servers[indexServer].playerIndex[msg.sender]-1;
-        servers[indexServer].blamed = metadata[nbSignature-1][2] + 1;
-        servers[indexServer].blameTimestamp = now;
-        servers[indexServer].blameTurn = metadata[nbSignature-1][1];
-        servers[indexServer].blameTurnPlayer = metadata[nbSignature-1][2];
-    }
-
-    // Called by blamed cheater to prove he hasn't cheated
-    // If the protest succeed, the blamer is kicked
-    function protest(
-      uint[8][3] metadata,
-      uint8[8][4] move,
-      uint[8][176] moveOutput,
-      uint[8] r,
-      uint[8] s,
-      uint8[8] v,
-      uint8 nbSignature
-      ) public {
-
-          // Get server
-          uint matchId = metadata[0][0];
-          uint serverId = serverMatch[matchId]
-          require(serverId > 0);
-          serverId -= 1;
-
-          require(servers[serverId].blamePlayer > 0);
-    }
-
-    // If the blamed cheater hasn't prove in time, he's kicked
-    function confirmBlame(uint indexServer) public {
-        require(indexServer < serverNumber);
-        require(servers[indexServer].blamed > 0);
-        require(servers[indexServer].blameTimestamp + blameThreshold > now);
-
-        uint8 blamer = servers[indexServer].blamer;
-        uint8 blamed = servers[indexServer].blamed;
+    // Function for timeout manager
+    function timeoutPlayer(uint matchId, address timeoutClaimer, uint timeoutTurn, uint8 timeoutPlayer) public fromTimeoutManager {
+        // Claimer get money
+        timeoutClaimer.transfer(servers[serverMatch[matchId]-1].moneyBag + cheatWarrant);
 
         // Kick blamed player
-        servers[indexServer].dead[killed] = true;
-        servers[indexServer].playerNb -= 1;
+        removePlayer(serverMatch[matchId]-1, timeoutPlayer);
 
-        // Blamer get money from cheater
-        servers[indexServer].blamer.transfer(servers[indexServer].moneyBag);
-        servers[indexServer].blamer.transfer(cheatWarrant);
+        // register timeout
+        matchTimeoutTurns[matchId][timeoutTurn][timeoutPlayer] = true;
+    }
 
-        // No user to blame anymore
-        servers[indexServer].blamed = 0;
-    } */
+    function isTimedout(uint matchId, uint turn, uint turnPlayer) public view returns (bool timedoutRet) {
+        return matchTimeoutTurns[matchId][turn][turnPlayer];
+    }
+    function getPlayerAddress(uint matchId, uint turnPlayer) public view returns (address ownerRet) {
+        require(serverMatch[matchId] > 0);
+        require(uint8(turnPlayer) < servers[serverMatch[matchId]-1].playerMax);
+        servers[serverMatch[matchId]-1].players[uint8(turnPlayer)].owner;
+    }
 }
