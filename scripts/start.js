@@ -432,6 +432,83 @@ function runDevServer(host, port, protocol) {
       var bodyParser = require('body-parser');
       app.use(bodyParser.json());
 
+
+      // Get the a state given the turn beginning
+      app.post("/post/specificstate", bodyParser.json(), function(req, res){
+        // req.body.matchId
+        // req.body.turnBegin
+        // req.body.playerBegin
+        // req.body.turnEnd
+        // req.body.playerEnd
+        // We first check if the key exists
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+
+            // Get list of signature to prove the kill
+            redis.llen(req.body.matchId + statePrefix, function (llenErr, llenReply) {
+
+              // Get all states
+              redis.lrange(req.body.matchId + statePrefix, 0, llenReply, function (stateErr, stateReply) {
+
+                // Search where states list state
+                var badInput = false
+                var i = 0
+                while(JSON.parse(stateReply[i]).metadata[1] != req.body.turnBegin || JSON.parse(stateReply[i]).metadata[0] != req.body.playerBegin) {
+                  i++
+                  if(i >= llenReply) {
+                    badInput = true
+                    break
+                  }
+                }
+
+                if(!badInput) {
+                  // Get the origin state of the states list
+                  if(i == 0) {
+                    var originState = JSON.parse(stateReply[0]).moveOutput
+                  }
+                  else {
+                    originState = JSON.parse(stateReply[i-1]).moveOutput
+                  }
+
+                  // Get all the states
+                  var maxStateNb = i+8
+                  var states = []
+                  while(JSON.parse(stateReply[i]).metadata[1] != req.body.turnEnd || JSON.parse(stateReply[i]).metadata[0] != req.body.playerEnd) {
+                    states.push(JSON.parse(stateReply[i]))
+                    i++
+                    if(i >= maxStateNb || i >= llenReply) {
+                      badInput = true
+                      break
+                    }
+                  }
+
+                  if(!badInput) {
+
+                    // Send response
+                    var response = {}
+                    response.state = states
+                    response.originState = originState
+
+                    res.send(response)
+                  }
+                  else {
+                    res.send(null)
+                  }
+                }
+                else {
+                  res.send(null)
+                }
+              })
+            })
+          }
+        })
+      })
+
+
       // Get the current state of a match
       app.post("/post/currentstate", bodyParser.json(), function(req, res){
 
@@ -442,7 +519,6 @@ function runDevServer(host, port, protocol) {
             res.send(null)
           }
           else {
-
             // Get list of signature to prove the kill
             redis.llen(req.body.matchId + statePrefix, function (llenErr, llenReply) {
               redis.lrange(req.body.matchId + statePrefix, -9, llenReply, function (stateErr, stateReply) {
@@ -473,7 +549,6 @@ function runDevServer(host, port, protocol) {
                 res.send(response)
               })
             })
-
           }
         })
       })
