@@ -40,6 +40,10 @@ var nujaBattleJson = require('../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
+var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
+var timeoutManagerAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
+
 
 const turnPrefix = '_turn'
 const playerTurnPrefix = '_playerturn'
@@ -89,6 +93,88 @@ function getCurrentTurn(matchId, nbPlayer, cb) {
         })
       })
     }
+  })
+}
+
+// Used when a user has not shared his move and claim timeout
+function updateLastMoves(matchId, nbPlayer, cb) {
+  timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+    getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
+      if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[0])) {
+
+        timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
+          timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
+            timeoutManager.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
+              // We get the last state to check missing moves
+              redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                  var lastState = JSON.parse(stateReply[0])
+
+                  // Search where missing moves start
+                  var i = 0
+                  var lastMovesTurn = lastMovesbegin.turnRet[0]
+                  var lastMovesPlayer = lastMovesbegin.playerRet[0]
+                  while(lastState.metadata[1] > lastMovesTurn || (lastState.metadata[1] == lastMovesTurn && lastState.metadata[2] >= lastMovesPlayer)) {
+                      i += 1
+                      lastMovesTurn = lastMovesbegin.turnRet[i]
+                      lastMovesPlayer = lastMovesbegin.playerRet[i]
+                  }
+
+                  // Push the missing signature
+                  nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+                    var lastMoveOutput = lastState.moveOutput
+
+
+                    // Define recursive function to push all missing moves
+                    function simulateAndPush(n, endCallback) {
+                      // We pushed all missing moves, we terminate
+                      if(n >= lastMoves.nbRet) {
+                        endCallback()
+                      }
+                      else {
+                        // Simulate the missing move to get the missing moveOutput
+                        nujaBattle.methods.simulate(serverId, lastMovesPlayer, lastMoves.moveRet[n][0], lastMoves.moveRet[n][1], lastMoves.moveRet[n][2], lastMoves.moveRet[n][3], lastMoveOutput).call({gas: '1000000'}).then(function(simulatedOutput){
+
+                          // Get the signature from r s and v values
+                          lastSignature = ethjs.toRpcSig(
+                            lastMovesSignature.lastVRet[n],
+                            ethjs.toBuffer(lastMovesSignature.lastRRet[n]),
+                            ethjs.toBuffer(lastMovesSignature.lastSRet[n])
+                          )
+
+                          // Push the missing move
+                          redis.rpush(matchId + statePrefix, JSON.stringify({
+                            metadata: [matchId, lastMovesPlayer, lastMovesTurn],
+                            move: lastMoves.moveRet[n],
+                            moveOutput: simulatedOutput,
+                            signature: lastSignature,
+                          }), function (pushErr, pushReply) {
+                            if(pushErr != null) {
+                              // Recursion
+                              simulateAndPush(n+1, endCallback)
+                            }
+                            else {
+                              // Unexcepted error occured, we directly call end function for safety
+                              endCallback()
+                            }
+                          })
+                        })
+                      }
+                    }
+                    // Call the recursive fucntion
+                    simulateAndPush(i, cb)
+
+                  }
+                })
+              })
+            })
+          })
+        })
+      }
+      else {
+        cb()
+      }
+    })
   })
 }
 
