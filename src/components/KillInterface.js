@@ -121,7 +121,7 @@ class KillInterface extends Component {
         v.push(0)
       }
 
-      // Send trasaction
+      // Send transaction
       this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
         from: this.state.account.address,
         gasPrice: 2000000000,
@@ -133,7 +133,7 @@ class KillInterface extends Component {
       .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
       .then(function(ret) {
         alert('Player killed')
-      });
+      })
     }
   }
 
@@ -147,7 +147,7 @@ class KillInterface extends Component {
           <div>
             <h3>You are dead</h3>
             <div style={{textAlign: 'center'}}>
-              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Quit server</button>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonKill">Quit server</button>
             </div>
           </div>
         )
@@ -157,7 +157,7 @@ class KillInterface extends Component {
           <div>
             <h3>Player {this.state.playerToKill.killed} has been killed</h3>
             <div style={{textAlign: 'center'}}>
-              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonExplore">Confirm death</button>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.killPlayer} className="buttonKill">Confirm death</button>
             </div>
           </div>
         )
