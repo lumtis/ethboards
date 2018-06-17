@@ -302,6 +302,8 @@ contract TimeoutManager {
     // The player hasn't played his turn in time, he's kicked
     function confirmTimeout(uint matchId) public {
 
+        var currentTimestamp = Math.floor(Date.now() / 1000)
+
         // Verify caller is on the server
         require(NujaBattle(serverAddress).isAddressInServer(NujaBattle(serverAddress).getMatchServer(matchId), msg.sender));
 

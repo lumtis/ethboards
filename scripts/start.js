@@ -203,7 +203,7 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
       var originState = JSON.parse(stateReply[0]).moveOutput
 
       // Remove useless signature
-      for(var i=1; i<9; i++) {
+      for(var i=0; i<9; i++) {
         if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[0] <= killer) {
           originState = JSON.parse(stateReply[0]).moveOutput
           stateReply.shift()
@@ -442,15 +442,38 @@ function runDevServer(host, port, protocol) {
             res.send(null)
           }
           else {
-            // If key exists, get hte list of signatures
-            redis.lrange(req.body.matchId + statePrefix, 0, 8, function (err, reply) {
-              if(err != null) {
-                console.log('redis get state error :' + err)
-              } else {
-                // Convert the string stored to json
-                res.send(reply.map(x => JSON.parse(x)))
-              }
+
+            // Get list of signature to prove the kill
+            redis.llen(req.body.matchId + statePrefix, function (llenErr, llenReply) {
+              redis.lrange(req.body.matchId + statePrefix, -9, llenReply, function (stateErr, stateReply) {
+
+                // killPlayer function needs the origin state the the signature list
+                // To get it we get the 9 last signatures, the origin state is the first one
+                // We update it if we need to remove signature
+                var originState = JSON.parse(stateReply[0]).moveOutput
+
+                // Remove useless signature
+                if(stateReply.length >= 8) {
+                  for(var i=0; i<9; i++) {
+                    // Verify if the first signer is not redundant
+                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length]).metadata[1] && JSON.parse(stateReply[0]).metadata[0] <= JSON.parse(stateReply[.length]).metadata[0]) {
+                      originState = JSON.parse(stateReply[0]).moveOutput
+                      stateReply.shift()
+                    }
+                    else {
+                      break
+                    }
+                  }
+                }
+
+                var response = {}
+                response.state = stateReply.map(x => JSON.parse(x))
+                response.originState = originState
+
+                res.send(response)
+              })
             })
+
           }
         })
       })
