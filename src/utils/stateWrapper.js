@@ -48,10 +48,11 @@ exports.updateServer = function(id) {
 
                 store.dispatch({type: 'STATE_UPDATED', payload:
                   {
-                    currentStateInstance: stateBody,
+                    currentStateInstance: stateBody.state,
                     currentStateMatch: id,
                     currentStateTurn: metadataBody[0],
                     currentStatePlayerTurn: metadataBody[1],
+                    originState: stateBody.originState
                   }
                 })
               }
@@ -139,13 +140,23 @@ exports.getCurrentTurn = function(nbPlayer) {
 }
 
 exports.getCurrentState = function() {
-  var currentState = store.getState().currentState.currentStateInstance
+  var lastStates = store.getState().currentState.currentStateInstance
   if(currentState == null) {
     return null
   }
 
   var lastState = currentState[currentState.length-1].moveOutput
   return lastState.map(x => parseInt(x))
+}
+
+exports.getLastStates = function() {
+  var currentState = store.getState().currentState.currentStateInstance
+  return currentState
+}
+
+exports.getOriginState = function() {
+  var originState = store.getState().currentState.originState
+  return originState
 }
 
 exports.getBuilding = function(x, y) {

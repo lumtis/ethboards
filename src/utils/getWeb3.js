@@ -3,6 +3,8 @@ import Web3 from 'web3'
 
 var nujaBattleJson = require('../../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var timeoutManagerJson = require('../../build/contracts/TimeoutManager.json')
+var timeoutManagerAddress = '...'
 var nujaRegistryJson = require('../../build/contracts/NujaRegistry.json')
 var nujaRegistryAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
@@ -29,6 +31,7 @@ function getWeb3() {
 
     // Get contracts
     var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+    var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
     var nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
     var characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
     var weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
@@ -36,6 +39,7 @@ function getWeb3() {
     results = {
       web3Instance: web3,
       nujaBattleInstance: nujaBattle,
+      timeoutManagerInstance: timeoutManager,
       nujaRegistryInstance: nujaRegistry,
       characterRegistryInstance: characterRegistry,
       weaponRegistryInstance: weaponRegistry
@@ -55,6 +59,7 @@ function getWeb3() {
 
     // Get contracts
     nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+    timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
     nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
     characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
     weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
@@ -62,6 +67,7 @@ function getWeb3() {
     results = {
       web3Instance: web3,
       nujaBattleInstance: nujaBattle,
+      timeoutManagerInstance: timeoutManager,
       nujaRegistryInstance: nujaRegistry,
       characterRegistryInstance: characterRegistry,
       weaponRegistryInstance: weaponRegistry
