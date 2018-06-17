@@ -31,12 +31,12 @@ contract TimeoutManager {
     mapping (uint => mapping (uint8 => bytes32)) lastS;
     mapping (uint => mapping (uint8 => uint8)) lastV;
 
+    // Used to let the front end code adding the missing last moves
+    mapping (uint => uint) lastMovesTurn;
+    mapping (uint => uint8) lastMovesPlayer;
+
     // 0 - 8
     mapping (uint => uint8) lastMovesNb;
-
-    // Used to let the front end code adding the missing last moves
-    mapping (uint => uint8) lastMovesPlayerBegin;
-    mapping (uint => uint) lastMovesTurnBegin;
 
 
     function TimeoutManager() public {
@@ -75,7 +75,7 @@ contract TimeoutManager {
         return (ret, lastMovesNb[matchId]);
     }
 
-    function getLastMovesSignatures(uint matchId) public view returns(bytes32[8] lastRRet, bytes32[8] lastSRet, uint8[8] lastVRet) {
+    function getLastMovesSignature(uint matchId) public view returns(bytes32[8] lastRRet, bytes32[8] lastSRet, uint8[8] lastVRet) {
         require(isTimeout(matchId));
 
         bytes32[8] memory Rret;
@@ -91,9 +91,18 @@ contract TimeoutManager {
         return (Rret, Sret, Vret);
     }
 
-    function getLastMovesBegin(uint matchId) public view returns(uint turnBeginRet, uint8 playerBeginRet) {
+    function getLastMovesMetadata(uint matchId) public view returns(uint[8] turnRet, uint8[8] playerRet) {
         require(isTimeout(matchId));
-        return (lastMovesTurnBegin[matchId], lastMovesPlayerBegin[matchId]);
+
+        uint[8] memory turn;
+        uint8[8] memory player;
+
+        for(uint8 i; i<8; i++) {
+            turn[i] = lastMovesTurn[matchId][i];
+            player[i] = lastMovesPlayer[matchId][i];
+        }
+
+        return (turn, player);
     }
 
 
@@ -138,8 +147,6 @@ contract TimeoutManager {
             }
 
             lastMovesNb[metadata[0][0]] = nbSignature;
-            lastMovesTurnBegin[metadata[0][0]] = metadata[0][1];
-            lastMovesPlayerBegin[metadata[0][0]] = uint8(metadata[0][2]);
 
             // Verify all signatures
             for(uint8 i=0; i<nbSignature; i++) {
@@ -180,6 +187,8 @@ contract TimeoutManager {
                 lastMoves[metadata[0][0]][i][1] = uint8(move[i][1]);
                 lastMoves[metadata[0][0]][i][2] = uint8(move[i][2]);
                 lastMoves[metadata[0][0]][i][3] = uint8(move[i][3]);
+                lastMovesTurn[metadata[0][0]][i] = metadata[i][1];
+                lastMovesPlayer[metadata[0][0]][i] = uint8(metadata[i][2]);
                 lastR[metadata[0][0]][i] = signatureRS[i][0];
                 lastS[metadata[0][0]][i] = signatureRS[i][1];
                 lastV[metadata[0][0]][i] = v[i];
@@ -234,8 +243,6 @@ contract TimeoutManager {
         }
 
         lastMovesNb[metadata[0][0]] = nbSignature;
-        lastMovesTurnBegin[metadata[0][0]] = metadata[0][1];
-        lastMovesPlayerBegin[metadata[0][0]] = uint8(metadata[0][2]);
 
         // Verify all signatures
         for(uint8 i=0; i<nbSignature; i++) {
@@ -276,6 +283,8 @@ contract TimeoutManager {
             lastMoves[metadata[0][0]][i][1] = uint8(move[i][1]);
             lastMoves[metadata[0][0]][i][2] = uint8(move[i][2]);
             lastMoves[metadata[0][0]][i][3] = uint8(move[i][3]);
+            lastMovesTurn[metadata[0][0]][i] = metadata[i][1];
+            lastMovesPlayer[metadata[0][0]][i] = uint8(metadata[i][2]);
             lastR[metadata[0][0]][i] = signatureRS[i][0];
             lastS[metadata[0][0]][i] = signatureRS[i][1];
             lastV[metadata[0][0]][i] = v[i];
