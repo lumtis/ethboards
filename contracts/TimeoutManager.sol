@@ -22,6 +22,11 @@ contract TimeoutManager {
     mapping (uint => uint) currentTimeoutTimestamp;
     mapping (uint => address) currentTimeoutClaimer;
 
+    // Store player timed out for front-end code
+    mapping (uint => uint8) nbTimeout;
+    mapping (uint => mapping (uint8 => uint)) timeoutTurn;
+    mapping (uint => mapping (uint8 => uint8)) timeoutPlayer;
+
     // Used to avoid not shared turn attack
     // matchId => turnIndex => turnKey (0-3) => value
     mapping (uint => mapping (uint8 => mapping (uint8 => uint8))) lastMoves;
@@ -31,12 +36,13 @@ contract TimeoutManager {
     mapping (uint => mapping (uint8 => bytes32)) lastS;
     mapping (uint => mapping (uint8 => uint8)) lastV;
 
-    // Used to let the front end code adding the missing last moves
+    // Used to let the front-end code adding the missing last moves
     mapping (uint => uint) lastMovesTurn;
     mapping (uint => uint8) lastMovesPlayer;
 
     // 0 - 8
     mapping (uint => uint8) lastMovesNb;
+
 
 
     function TimeoutManager() public {
@@ -103,6 +109,25 @@ contract TimeoutManager {
         }
 
         return (turn, player);
+    }
+
+    function getTimeoutPlayers(uint matchId) public view returns(uint8 nbTimeoutRet, uint[8] timeoutTurnRet, uint8[8] timeoutPlayerRet) {
+        uint[8] memory turns;
+        uint8[8] memory players;
+
+        // Fill turn and player turn
+        for(uint8 i=0; i<nbTimeout; i++) {
+            turns[i] = timeoutTurn[matchId][i];
+            players[i] = timeoutPlayer[matchId][i];
+        }
+
+        // Fill remaining data
+        for(;i<8;i++) {
+            turns[i] = 0;
+            players[i] = 0;
+        }
+
+        return (nbTimeout, turns, players);
     }
 
 
@@ -316,5 +341,10 @@ contract TimeoutManager {
 
         /// Reset timeout
         currentTimeoutTimestamp[matchId] = 0;
+
+        // Update timeout maps
+        timeoutTurn[matchId][nbTimeout[matchId]] = currentTimeoutTurn[matchId];
+        timeoutPlayer[matchId][nbTimeout[matchId]] = currentTimeoutPlayer[matchId];
+        nbTimeout[matchId] += 1;
     }
 }
