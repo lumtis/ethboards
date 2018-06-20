@@ -67,7 +67,7 @@ exports.updateServer = function(id) {
   )
 }
 
-exports.pushSignature = function(serverId, metadata, move, moveOutput) {
+exports.pushSignature = function(id, metadata, move, moveOutput) {
 
   var web3 = store.getState().web3.web3Instance
   var account = store.getState().account.accountInstance
@@ -86,7 +86,7 @@ exports.pushSignature = function(serverId, metadata, move, moveOutput) {
         'http://localhost:3000/post/pushsignature',
         { json:
           {
-            matchId: serverId,
+            matchId: id,
             metadata: metadata,
             move: move,
             moveOutput: moveOutput,
@@ -106,6 +106,72 @@ exports.pushSignature = function(serverId, metadata, move, moveOutput) {
   }
   else {
     console.log('web3 or account not initialized')
+  }
+}
+
+// Get state to stop timeout
+exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
+  // Request the state to be able to stop timeout
+
+  // Get the turn to begin with
+  // TODO: add gas to 100000
+  var timeoutManager = store.getState().web3.timeoutManagerInstance
+  if(timeoutManager != null) {
+
+    self.state.timeoutManager.methods.getLastMoves(id).call().then(function(lastMoves) {
+
+      // Check if it is the first turn
+      if(lastMoves.nbRet == 0) {
+        // Get timeout informations to fill necessary parameters
+        request.post(
+          'http://localhost:3000/post/specificstate',
+          { json:
+            {
+              matchId: id,
+              turnBegin: 0,
+              playerBegin: 0,
+              turnEnd: timeoutTurn,
+              playerEnd: timeoutPlayerTurn
+            }
+          },
+          function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              // Call callback with response
+              cb(body)
+            }
+            else {
+              console.log(error)
+            }
+          }
+        )
+      }
+      else {
+        self.state.timeoutManager.methods.getLastMovesMetadata(id).call().then(function(lastMetadatas) {
+          // Get timeout informations to fill necessary parameters
+          request.post(
+            'http://localhost:3000/post/specificstate',
+            { json:
+              {
+                matchId: id,
+                turnBegin: lastMetadatas.turnRet[0],
+                playerBegin: lastMetadatas.playerRet[0],
+                turnEnd: timeoutTurn,
+                playerEnd: timeoutPlayerTurn
+              }
+            },
+            function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                // Call callback with response
+                cb(body)
+              }
+              else {
+                console.log(error)
+              }
+            }
+          )
+        })
+      }
+    })
   }
 }
 
@@ -140,7 +206,7 @@ exports.getCurrentTurn = function(nbPlayer) {
 }
 
 exports.getCurrentState = function() {
-  var lastStates = store.getState().currentState.currentStateInstance
+  var currentState = store.getState().currentState.currentStateInstance
   if(currentState == null) {
     return null
   }
