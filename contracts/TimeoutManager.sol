@@ -37,8 +37,8 @@ contract TimeoutManager {
     mapping (uint => mapping (uint8 => uint8)) lastV;
 
     // Used to let the front-end code adding the missing last moves
-    mapping (uint => uint) lastMovesTurn;
-    mapping (uint => uint8) lastMovesPlayer;
+    mapping (uint =>  mapping (uint8 => uint)) lastMovesTurn;
+    mapping (uint =>  mapping (uint8 => uint8)) lastMovesPlayer;
 
     // 0 - 8
     mapping (uint => uint8) lastMovesNb;
@@ -56,6 +56,9 @@ contract TimeoutManager {
         timeoutThreshold = threshold;
     }
 
+    function getTimeoutThreshold() public view returns (uint thresholdRet) {
+        return timeoutThreshold;
+    }
 
     function isTimeout(uint matchId) public view returns(bool isRet) {
         return (currentTimeoutTimestamp[matchId] > 0);
@@ -116,7 +119,7 @@ contract TimeoutManager {
         uint8[8] memory players;
 
         // Fill turn and player turn
-        for(uint8 i=0; i<nbTimeout; i++) {
+        for(uint8 i=0; i<nbTimeout[matchId]; i++) {
             turns[i] = timeoutTurn[matchId][i];
             players[i] = timeoutPlayer[matchId][i];
         }
@@ -127,7 +130,7 @@ contract TimeoutManager {
             players[i] = 0;
         }
 
-        return (nbTimeout, turns, players);
+        return (nbTimeout[matchId], turns, players);
     }
 
 
@@ -326,9 +329,6 @@ contract TimeoutManager {
     // Called by anybody to confirm a timeout process
     // The player hasn't played his turn in time, he's kicked
     function confirmTimeout(uint matchId) public {
-
-        var currentTimestamp = Math.floor(Date.now() / 1000)
-
         // Verify caller is on the server
         require(NujaBattle(serverAddress).isAddressInServer(NujaBattle(serverAddress).getMatchServer(matchId), msg.sender));
 
