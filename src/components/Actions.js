@@ -56,10 +56,11 @@ class Actions extends Component {
 
     // necessary informations from server
     if (self.state.nujaBattle != null) {
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
+        self.setState({playerMax: playerMax})
+      })
       self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
-        self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
-          self.setState({playerIndex: playerIndex, playerMax: playerMax})
-        })
+        self.setState({playerIndex: playerIndex})
       })
     }
   }
@@ -220,7 +221,7 @@ class Actions extends Component {
         move.push(self.state.selectedWeapon)
 
         // Pushing the signature to the server
-        SW.pushSignature(self.props.server, metadata, move, moveOutput)
+        SW.pushSignature(SW.getCurrentMatch(), metadata, move, moveOutput)
       })
     }
   }
