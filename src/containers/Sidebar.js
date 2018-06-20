@@ -5,6 +5,7 @@ import Actions from '../components/Actions'
 import AllServers from '../components/AllServers'
 import CharacterServers from '../components/CharacterServers'
 import JoinInterface from '../components/JoinInterface'
+import KillInterface from '../components/KillInterface'
 
 import store from '../store'
 import '../css/sidebar.css'
@@ -28,6 +29,9 @@ class Sidebar extends Component {
     this.changeServer = this.changeServer.bind(this)
     this.changeServerByCharacter = this.changeServerByCharacter.bind(this)
 
+    this.quitServer = this.quitServer.bind(this)
+    this.startServer = this.startServer.bind(this)
+
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
@@ -35,7 +39,7 @@ class Sidebar extends Component {
       characterId: 0,
       changeServer: false,
       changeServerByCharacter: false,
-      serverRunning: true
+      serverReady: false
     }
 
     store.subscribe(() => {
@@ -48,36 +52,42 @@ class Sidebar extends Component {
 
   static defaultProps = {
     server: 0,
+    serverState: 0
   }
 
-  componentWillMount() {
+  componentWillReceiveProps(props) {
     var self = this;
 
     // Verify if user is on the server
     if (self.state.account != null) {
       if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.isAddressInServer(self.props.server, self.state.account.address).call().then(function(isRet) {
+        self.state.nujaBattle.methods.isAddressInServer(props.server, self.state.account.address).call().then(function(isRet) {
           // If the user is on the server, we need to retreive the character id
-          self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(indexUser) {
-            self.state.nujaBattle.methods.playerCharacter(self.props.server, indexUser).call().then(function(characterIndex) {
-              self.setState({inServer: isRet, characterId: characterIndex})
+          if(isRet) {
+            self.state.nujaBattle.methods.getIndexFromAddress(props.server, self.state.account.address).call().then(function(indexUser) {
+              self.state.nujaBattle.methods.playerCharacter(props.server, indexUser).call().then(function(characterIndex) {
+                self.setState({characterId: characterIndex})
+              })
             })
-          })
+          }
+          self.setState({inServer: isRet})
         })
 
-        // Check if the server is running
-        // If it's not and we are not in it, we can join it
-        self.state.nujaBattle.methods.isRunning(self.props.server).call().then(function(runningRet) {
-          self.setState({serverRunning: runningRet})
-        })
+        // Check if the server is ready
+        if(parseInt(props.serverState) == 1) {
+          self.state.nujaBattle.methods.getServerInfo(props.server).call().then(function(infoRet) {
+            if(infoRet.playerMaxRet == infoRet.playerNbRet) {
+              self.setState({serverReady: true})
+            }
+          })
+        }
       }
+
     }
   }
 
   changeServer(e) {
     e.preventDefault();
-
-
 
     if (this.state.changeServer)
       this.setState({changeServer: false})
@@ -95,6 +105,48 @@ class Sidebar extends Component {
     }
   }
 
+  quitServer(e) {
+    var self = this;
+    if (self.state.account != null) {
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.removePlayerFromServer(self.props.server).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+          gas: 200000
+          }
+        )
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server left')
+        })
+      }
+    }
+  }
+
+  startServer(e) {
+    var self = this;
+    if (self.state.account != null) {
+      if (self.state.nujaBattle != null) {
+        self.state.nujaBattle.methods.startServer(this.props.server).send({
+          from: this.state.account.address,
+          gasPrice: 2000000000,
+          gas: 1000000
+          }
+        )
+        .on('error', function(error){ console.log('ERROR: ' + error)})
+        .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+        .on('receipt', function(receipt){ console.log('receipt')})
+        .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+        .then(function(ret) {
+          alert('Server started')
+        })
+      }
+    }
+  }
+
   render() {
     var content = <div></div>
 
@@ -106,7 +158,6 @@ class Sidebar extends Component {
       if (this.state.changeServer) {
 
         // We want to show available server
-
         var buttonReturn =
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <a onClick={this.changeServer}>
@@ -142,8 +193,8 @@ class Sidebar extends Component {
         }
       }
       else {
-        // Server actions
 
+        // Server actions
         var buttonChangeServer =
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <a onClick={this.changeServer}>
@@ -151,36 +202,67 @@ class Sidebar extends Component {
             </a>
           </div>
 
+        // Button to start the server
+        var buttonStartServer = <h3>Waiting for opponents</h3>
+        if(this.state.serverReady) {
+          buttonStartServer =
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <h3>Server is full</h3>
+              <a onClick={this.startServer}>
+                <button className='buttonServer'>start the server</button>
+              </a>
+            </div>
+        }
+
         if (this.state.inServer) {
-          // We are on the server, so we show our character informations and actions
-          content =
-          <div>
-            {buttonChangeServer}
-            <Player index={this.state.characterId} />
-            <Actions server={this.state.server} />
-          </div>
+
+          if(this.props.serverState == 2) {
+            // We are on the server, so we show our character informations and actions
+            content =
+            <div>
+              {buttonChangeServer}
+              <Player index={this.state.characterId} />
+              <Actions server={this.props.server} />
+              <KillInterface server={this.props.server} />
+            </div>
+          }
+          else {
+            // We are on the server but the match has not started yet
+            content =
+            <div>
+              {buttonChangeServer}
+              <h3>You are in</h3>
+              {buttonStartServer}
+              <div style={{textAlign: 'center', marginTop: '30px'}}>
+                <a onClick={this.quitServer}>
+                  <button className='buttonServer'>Quit server</button>
+                </a>
+              </div>
+            </div>
+          }
         }
         else {
-          // Not in the server
 
-          if(this.state.serverRunning) {
+          // Not in the server
+          if(this.props.serverState == 0 || this.props.serverState == 2) {
             var joinInt = <div></div>
           }
           else {
-            joinInt = <JoinInterface server={this.state.server} />
+            if(this.state.serverReady == false) {
+              joinInt = <JoinInterface server={this.props.server} />
+            }
           }
 
           content =
           <div>
             {buttonChangeServer}
             <h3>You are not on this server</h3>
+            {buttonStartServer}
             {joinInt}
           </div>
         }
       }
     }
-
-    //3FC1C9
 
     return (
       <div style={{backgroundColor: '#8559A5', height: '100vh', overflowY: 'scroll'}}>

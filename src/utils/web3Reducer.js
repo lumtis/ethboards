@@ -1,6 +1,10 @@
 const initialState = {
   web3Instance: null,
-  contractInstance: null
+  nujaBattleInstance: null,
+  timeoutManagerInstance: null,
+  nujaRegistryInstance: null,
+  characterRegistryInstance: null,
+  weaponRegistryInstance: null
 }
 
 const web3Reducer = (state = initialState, action) => {
@@ -9,6 +13,7 @@ const web3Reducer = (state = initialState, action) => {
     return Object.assign({}, state, {
       web3Instance: action.payload.web3Instance,
       nujaBattleInstance: action.payload.nujaBattleInstance,
+      timeoutManagerInstance: action.payload.timeoutManagerInstance,
       nujaRegistryInstance: action.payload.nujaRegistryInstance,
       characterRegistryInstance: action.payload.characterRegistryInstance,
       weaponRegistryInstance: action.payload.weaponRegistryInstance

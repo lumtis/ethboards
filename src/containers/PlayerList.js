@@ -27,7 +27,7 @@ class PlayerList extends Component {
   componentWillMount() {
     var self = this
     if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(nb) {
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {
           self.state.nujaBattle.methods.playerCharacter(self.props.server, i).call().then(function(characterIndex) {

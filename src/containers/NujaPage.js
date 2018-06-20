@@ -3,6 +3,10 @@ import store from '../store'
 import Nuja from '../components/Nuja'
 import Bar from '../components/Bar'
 
+
+// IMPORTANT
+
+
 const infoStyle = {
   position: 'relative',
   padding: '20px',
@@ -13,7 +17,6 @@ const infoStyle = {
   marginLeft: 'auto',
   marginBottom: '20px'
 };
-
 
 class NujaPage extends Component {
   constructor(props) {

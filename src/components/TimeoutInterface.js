@@ -1,0 +1,360 @@
+import React, { Component } from 'react'
+
+import store from '../store'
+import '../css/timeoutinterface.css'
+
+var SW = require('../utils/stateWrapper')
+
+
+class TimeoutInterface extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      running: false,
+      matchId: 0,
+      playerMax: 0,
+      playerIndex: 0,
+      timeoutBlamed: -1,
+      remainingTime: 0,
+      timeoutTurn: 0,
+      timeoutPlayerTurn: 0,
+      account: store.getState().account.accountInstance,
+      nujaBattle: store.getState().web3.nujaBattleInstance,
+      timeoutManager: store.getState().web3.timeoutManagerInstance,
+    }
+
+    store.subscribe(() => {
+      this.setState({
+        account: store.getState().account.accountInstance,
+        nujaBattle: store.getState().web3.nujaBattleInstance,
+        timeoutManager: store.getState().web3.timeoutManagerInstance,
+      })
+    })
+  }
+
+  static defaultProps = {
+    server: 0
+  }
+
+  componentWillMount() {
+    var self = this
+
+    // Get the current match
+    if(self.state.nujaBattle != null && self.state.timeoutManager != null) {
+
+      // Get server player max
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
+        self.setState({playerMax: playerMax})
+      })
+      self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+        self.setState({playerIndex: playerIndex})
+      })
+
+      self.state.nujaBattle.methods.getServerState(self.props.server).call().then(function(serverState) {
+        if(serverState == 2) {
+          self.state.nujaBattle.methods.getServerCurrentMatch(self.props.server).call().then(function(matchId) {
+            self.setState({matchId: matchId, running: true})
+
+
+            // Check if pending timeout
+            self.state.timeoutManager.methods.isTimeout(matchId).call().then(function(isTimeout) {
+              if(isTimeout) {
+                self.state.timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+                  // Set timeout info
+                  self.setState({
+                    timeoutBlamed: timeoutInfo.timeoutPlayerRet
+                    timeoutTurn: timeoutInfo.timeoutTurnRet,
+                    timeoutPlayerTurn: timeoutInfo.timeoutPlayerRet
+                  })
+
+                  // Compute remaining time
+                  self.state.timeoutManager.methods.getTimeoutThreshold().call().then(function(timeoutThreshold) {
+                      var currentTimestamp = new Date().getTime() / 1000
+                      var endTimestamp = timeoutThreshold timeoutInfo.timeoutTimestampRet
+                      var remaining = endTimestamp - currentTimestamp
+
+                      if (remaining<0) {
+                        remaining = 0
+                      }
+                      self.setState({remainingTime: remaining})
+                  })
+                })
+              }
+              else {
+                self.setState({timeoutBlamed: -1})
+              }
+            })
+
+
+          })
+        }
+        self.setState({running: false})
+      })
+    }
+  }
+
+  startTimeout(e) {
+    e.preventDefault()
+    var self = this
+
+    // Parameters
+    var metadata = []
+    var move = []
+    var moveOutput = []
+    var signatureRS = []
+    var v = []
+    var nbSignature = 0
+
+    if (this.state.timeoutManager != null) {
+      var lastStates = SW.getLastStates()
+
+      // Fill last state data
+      var i = 0
+      if(lastStates != null) {
+        nbSignature = lastStates.length
+        while(i < lastStates.length) {
+
+          metadata.push(lastStates[i].metadata)
+          move.push(lastStates[i].move)
+          moveOutput.push(lastStates[i].moveOutput)
+
+          var rHex = lastStates[i].signature.slice(0, 66)
+          var sHex = '0x' + lastStates[i].signature.slice(66, 130)
+          signatureRS.push([rHex, sHex])
+          var splittedSig = ethjs.fromRpcSig(lastStates[i].signature)
+          v.push(splittedSig.v)
+
+          i++
+        }
+      }
+
+      // Fill the remaining parameters with junk data
+      for(; i<8; i++) {
+        var tmp = []
+        for(var j=0; j<3; j++) {
+          tmp.push('0')
+        }
+        metadata.push(tmp)
+        tmp = []
+        for(j=0; j<4; j++) {
+          tmp.push('0')
+        }
+        move.push(tmp)
+        tmp = []
+        for(j=0; j<176; j++) {
+          tmp.push('0')
+        }
+        moveOutput.push(tmp)
+        tmp = []
+        for(j=0; j<2; j++) {
+          tmp.push('')
+        }
+        signatureRS.push(tmp)
+        v.push('0')
+      }
+
+      // Get origin state
+      var originState = SW.getOriginState()
+      if(originState == null) {
+        originState = []
+        for(i=0; i<176; i++) {
+          originState.push('0')
+        }
+      }
+
+      // If first turn, only metadata[0][0] has to hold the match id
+      if(lastStates == null) {
+        metadata[0][0] = self.state.matchId.toString()
+      }
+
+      self.state.timeoutManager.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
+        from: self.state.account.address,
+        gasPrice: 2000000000,
+        gas: '1000000'
+      })
+      .on('error', function(error){ console.log('ERROR: ' + error)})
+      .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+      .on('receipt', function(receipt){ console.log('receipt')})
+      .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+      .then(function(ret) {
+        alert('Timeout processed')
+      })
+    }
+  }
+
+  stopTimeout(e) {
+    e.preventDefault()
+    var self = this
+
+    if (this.state.timeoutManager != null) {
+      SW.getTimeoutState(self.state.matchId, self.state.timeoutTurn, self.state.timeoutPlayerTurn, function(timeoutState) {
+
+        if(timeoutState != null) {
+
+          // Parameters
+          var metadata = []
+          var move = []
+          var moveOutput = []
+          var signatureRS = []
+          var v = []
+          var nbSignature = timeoutState.states.length
+
+
+          // Fill last state data
+          var i = 0
+          while(i < timeoutState.states.length) {
+
+            metadata.push(timeoutState.states[i].metadata)
+            move.push(timeoutState.states[i].move)
+            moveOutput.push(timeoutState.states[i].moveOutput)
+
+            var rHex = timeoutState.states[i].signature.slice(0, 66)
+            var sHex = '0x' + timeoutState.states[i].signature.slice(66, 130)
+            signatureRS.push([rHex, sHex])
+            var splittedSig = ethjs.fromRpcSig(timeoutState.states[i].signature)
+            v.push(splittedSig.v)
+
+            i++
+          }
+
+          // Fill the remaining parameters with junk data
+          for(; i<8; i++) {
+            var tmp = []
+            for(var j=0; j<3; j++) {
+              tmp.push('0')
+            }
+            metadata.push(tmp)
+            tmp = []
+            for(j=0; j<4; j++) {
+              tmp.push('0')
+            }
+            move.push(tmp)
+            tmp = []
+            for(j=0; j<176; j++) {
+              tmp.push('0')
+            }
+            moveOutput.push(tmp)
+            tmp = []
+            for(j=0; j<2; j++) {
+              tmp.push('')
+            }
+            signatureRS.push(tmp)
+            v.push('0')
+          }
+
+          self.state.timeoutManager.methods.stopTimeout(metadata, move, moveOutput, signatureRS, v, timeoutState.originState, nbSignature).send({
+            from: self.state.account.address,
+            gasPrice: 2000000000,
+            gas: '1000000'
+          })
+          .on('error', function(error){ console.log('ERROR: ' + error)})
+          .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+          .on('receipt', function(receipt){ console.log('receipt')})
+          .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+          .then(function(ret) {
+            alert('Time out stopped')
+          })
+
+        }
+      })
+    }
+  }
+
+  confirmTimeout(e) {
+    e.preventDefault()
+    var self = this
+
+    if(timeoutManager != null) {
+      self.state.timeoutManager.methods.confirmTimeout(self.state.matchId).send({
+        from: self.state.account.address,
+        gasPrice: 2000000000,
+        gas: '1000000'
+      })
+      .on('error', function(error){ console.log('ERROR: ' + error)})
+      .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+      .on('receipt', function(receipt){ console.log('receipt')})
+      .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+      .then(function(ret) {
+        alert('Time out confirmed')
+      })
+    }
+  }
+
+
+  render() {
+    var content = <div></div>
+    var actualTurn = SW.getCurrentTurn(this.state.playerMax)
+
+    if(this.state.running == true) {
+      if(this.state.timeoutBlamed == -1) {
+        // No timeout process is currently pending
+
+        // If it is not our turn, we display button to start timeout
+        if(actualTurn[1] != this.state.playerIndex) {
+          content =
+            <div style={{textAlign: 'center'}}>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.startTimeout} className="buttonTimeout">Start timeout</button>
+            </div>
+        }
+      }
+      else {
+        if(this.state.timeoutBlamed == this.state.playerIndex) {
+          // If we are the blamed player
+
+          // Check if the turn has been played
+          if(actualTurn[0] > this.state.timeoutTurn || (actualTurn[0] == this.state.timeoutTurn && actualTurn[1] == this.state.timeoutPlayerTurn)) {
+            // Turn has been played
+            content =
+              <div style={{textAlign: 'center'}}>
+                <h3>Time out process has been launched</h3>
+                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.stopTimeout} className="buttonTimeout">Stop time out process</button>
+              </div>
+          }
+          else
+          {
+            // Turn has not been played
+            if(this.state.remainingTime > 0) {
+              content =
+                <div style={{textAlign: 'center'}}>
+                  <h3>Time out process launched</h3>
+                  <h3>You have {this.state.remainingTime} seconds</h3>
+                  <h3>to play</h3>
+                </div>
+            }
+            else {
+              content =
+                <div style={{textAlign: 'center'}}>
+                  <h3>Time out</h3>
+                </div>
+            }
+          }
+        }
+        else {
+          // We are not the blamed player
+          if(this.state.remainingTime > 0) {
+            content =
+              <div style={{textAlign: 'center'}}>
+                <h3>Time out in process</h3>
+                <h3>Time left:</h3>
+                <h3>{this.state.remainingTime} seconds...</h3>
+              </div>
+          }
+          else {
+            content =
+              <div style={{textAlign: 'center'}}>
+                <h3>Time out</h3>
+                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.confirmTimeout} className="buttonTimeout">Kick the player</button>
+              </div>
+          }
+        }
+      }
+    }
+
+    return (
+      {content}
+    )
+  }
+}
+
+export default TimeoutInterface

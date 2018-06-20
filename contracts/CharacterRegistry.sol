@@ -13,10 +13,6 @@ contract CharacterRegistry is ERC721 {
         _;
     }
 
-    modifier fromServer {
-        require(msg.sender == serverRegistry);
-        _;
-    }
 
     ///////////////////////////////////////////////////////////////
     /// Structures
@@ -26,7 +22,6 @@ contract CharacterRegistry is ERC721 {
         address owner;
         uint nuja;
         uint indexUser;
-        uint currentServer; // Warning the offset
     }
 
     struct SellOrder {
@@ -45,7 +40,6 @@ contract CharacterRegistry is ERC721 {
     /// Attributes
 
     address nujaRegistry;
-    address serverRegistry;
     address owner;
     uint characterNumber;
     Character[] characterArray;
@@ -63,7 +57,6 @@ contract CharacterRegistry is ERC721 {
 
     function CharacterRegistry() public {
         nujaRegistry = address(0);
-        serverRegistry = address(0);
         owner = msg.sender;
         characterNumber = 0;
     }
@@ -71,18 +64,16 @@ contract CharacterRegistry is ERC721 {
     ///////////////////////////////////////////////////////////////
     /// Admin functions
 
+    // Remove ???
     function changeNujaRegistry(address registry) public onlyOwner {
         nujaRegistry = registry;
-    }
-    function changeServerRegistry(address registry) public onlyOwner {
-        serverRegistry = registry;
     }
 
     function addCharacter(string nickname, address characterOwner, uint nuja) public onlyOwner {
         NujaRegistry reg = NujaRegistry(nujaRegistry);
         require(nuja < reg.getNujaNumber());
 
-        Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner], 0);
+        Character memory c = Character(nickname, characterOwner, nuja, characterCount[characterOwner]);
         characterArray.push(c);
 
         indexCharacter[characterOwner][characterCount[characterOwner]] = characterNumber;
@@ -90,21 +81,12 @@ contract CharacterRegistry is ERC721 {
         characterNumber += 1;
     }
 
-    function setCharacterServer(uint256 c, uint server) public fromServer {
-        require(c < characterNumber);
-        characterArray[c].currentServer = server+1;
-    }
-
-    function unsetCharacterServer(uint256 c) public fromServer {
-        require(c < characterNumber);
-        characterArray[c].currentServer = 0;
-    }
 
     function claimStarter(string nickname, uint nuja) public {
         require(starterClaimed[msg.sender] == false);
         require(nuja < 3);
 
-        Character memory c = Character(nickname, msg.sender, nuja, characterCount[msg.sender], 0);
+        Character memory c = Character(nickname, msg.sender, nuja, characterCount[msg.sender]);
         characterArray.push(c);
 
         indexCharacter[msg.sender][characterCount[msg.sender]] = characterNumber;
@@ -154,7 +136,6 @@ contract CharacterRegistry is ERC721 {
     function approve(address _to, uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId));
         require(msg.sender != _to);
-        require(characterArray[_tokenId].currentServer == 0);
 
         approveMap[_tokenId] = _to;
         Approval(msg.sender, _to, _tokenId);
@@ -165,7 +146,6 @@ contract CharacterRegistry is ERC721 {
         require(_from == ownerOf(_tokenId));
         require(_from != _to);
         require(approveMap[_tokenId] == _to);
-        require(characterArray[_tokenId].currentServer == 0);
 
         characterCount[_from] -= 1;
 
@@ -188,7 +168,6 @@ contract CharacterRegistry is ERC721 {
         address newOwner = msg.sender;
         require(newOwner != oldOwner);
         require(approveMap[_tokenId] == msg.sender);
-        require(characterArray[_tokenId].currentServer == 0);
 
         characterCount[oldOwner] -= 1;
 
@@ -212,7 +191,6 @@ contract CharacterRegistry is ERC721 {
         require(oldOwner == ownerOf(_tokenId));
         require(oldOwner != newOwner);
         require(newOwner != address(0));
-        require(characterArray[_tokenId].currentServer == 0);
 
         characterCount[oldOwner] -= 1;
 
@@ -240,7 +218,7 @@ contract CharacterRegistry is ERC721 {
     // TODO: implement this function with 2 byte32 arrays
     function tokenMetadata(uint256 _tokenId) public constant returns (string infoUrl) {
         require(_tokenId < characterNumber);
-        return "nothing";
+        return "nothing";//TODO
     }
 
 
@@ -248,7 +226,6 @@ contract CharacterRegistry is ERC721 {
     function createSellOrder(uint256 _tokenId, uint price) public {
         require(_tokenId < characterNumber);
         require(msg.sender == ownerOf(_tokenId));
-        require(characterArray[_tokenId].currentServer == 0);
 
         SellOrder memory newOrder = SellOrder(msg.sender, _tokenId, price);
         sellOrderList.push(newOrder);
@@ -334,13 +311,6 @@ contract CharacterRegistry is ERC721 {
 
         Character memory ret = characterArray[_tokenId];
         return(ret.nuja);
-    }
-
-    function getCharacterCurrentServer(uint _tokenId) public view returns(uint currentServerRet) {
-        require(_tokenId < characterNumber);
-
-        Character memory ret = characterArray[_tokenId];
-        return(ret.currentServer);
     }
 
     // Get functions

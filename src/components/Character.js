@@ -1,3 +1,7 @@
+/*
+  Shows basic information about a character
+*/
+
 import React, { Component } from 'react'
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
@@ -40,7 +44,6 @@ class Character extends Component {
         web3: store.getState().web3.web3Instance,
       })
     })
-
   }
 
   static defaultProps = {
@@ -53,8 +56,6 @@ class Character extends Component {
 
     if (self.state.characterRegistry != null) {
       if (self.state.nujaRegistry != null) {
-
-
 
         // Get the nickname
         self.state.characterRegistry.methods.getCharacterInfo(self.props.charaterIndex).call().then(function(infoRet) {

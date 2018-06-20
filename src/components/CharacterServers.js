@@ -1,10 +1,11 @@
+/*
+  Get list of servers for the different character of the user
+*/
+
 import React, { Component } from 'react'
 import { withRouter, BrowserRouter as Router, Link } from 'react-router-dom'
 import store from '../store'
 
-/*
-  Get list of servers for the different character of the user
-*/
 
 var flatColorList = [
   '#55efc4',
@@ -55,19 +56,11 @@ class CharacterServers extends Component {
             for(var i = 0; i < characterNb; i++) {
               self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
                 self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
-                  self.state.characterRegistry.methods.getCharacterCurrentServer(characterIndex).call().then(function(currentServerRet) {
+                  self.state.nujaBattle.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
                     if(currentServerRet > 0) {
                       //Get the server infos
                       var currentServer = currentServerRet-1
                       self.state.nujaBattle.methods.getServerInfo(currentServer).call().then(function(infos) {
-
-                        // Change icon depending on server running
-                        if (infos.runningRet) {
-                          var runIcon = <i class="fa fa-play"></i>
-                        }
-                        else {
-                          runIcon = <i class="fa fa-pause"></i>
-                        }
 
                         var route = '/play/' + this.serverId.toString()
 

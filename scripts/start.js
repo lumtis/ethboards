@@ -1,9 +1,5 @@
 process.env.NODE_ENV = 'development';
 
-// Load environment variables from .env file. Suppress warnings using silent
-// if this file is missing. dotenv will never modify any environment variables
-// that have already been set.
-// https://github.com/motdotla/dotenv
 require('dotenv').config({silent: true});
 
 var chalk = require('chalk');
@@ -25,6 +21,397 @@ var paths = require('../config/paths');
 var useYarn = pathExists.sync(paths.yarnLockFile);
 var cli = useYarn ? 'yarn' : 'npm';
 var isInteractive = process.stdout.isTTY;
+
+
+////////////////////////////////////////////////////////////////////
+// Start necessary services
+
+var Web3 = require('web3')
+var RedisClient = require('redis')
+
+var redis = RedisClient.createClient(6379, '127.0.0.1')
+var provider = new Web3.providers.HttpProvider('http://localhost:8545')
+var web3 = new Web3(provider)
+
+var ethjs = require('ethereumjs-util')
+
+// Creating contract
+var nujaBattleJson = require('../build/contracts/NujaBattle.json')
+var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+
+var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
+var timeoutManagerAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
+
+
+const turnPrefix = '_turn'
+const playerTurnPrefix = '_playerturn'
+const statePrefix = '_state'
+const killedPlayerPrefix = '_killedplayers'
+const nbTimeoutPrefix = '_nbtimeout'
+
+
+redis.on("connect", function () {
+  console.log("connected to redis")
+})
+
+
+function getCurrentTurn(matchId, nbPlayer, cb) {
+
+  // We first check if the key exists
+  redis.exists(matchId + turnPrefix, function (existsErr, existsReply){
+    if(existsReply == 0) {
+      // If the key doesn't exist we can return 0
+      // pushsignature function will determine if the match exist
+      cb([0, 0])
+    }
+    else {
+      // If the key exist, get next turn
+      redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+        redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+          redis.get(matchId + turnPrefix, function (turnErr, turnReply) {
+            redis.get(matchId + playerTurnPrefix, function (playerTurnErr, playerTurnReply) {
+              if(stateErr == null && turnErr == null && playerTurnErr == null) {
+
+                var lastTurn = turnReply
+                var lastPlayerTurn = playerTurnReply
+                var lastState = JSON.parse(stateReply[0]).moveOutput
+
+                // Increment player turn till alive player
+                do {
+                  lastPlayerTurn++
+                  if (lastPlayerTurn >= nbPlayer) {
+                    lastPlayerTurn = 0
+                    lastTurn++
+                  }
+                } while (lastState[128+lastPlayerTurn] == 0)
+
+                cb([lastTurn, lastPlayerTurn])
+              }
+            })
+          })
+        })
+      })
+    }
+  })
+}
+
+// Updata states and variables after time out occured
+function updateTimeout(matchId, cb) {
+  // Verify the nb of timeout is the same as timeout manager contract
+  // If not we update turn and player turn
+  // Remove eventual additional states
+  // And add the state with timeouted player killed
+
+  // Recursive function for all timeout
+  function updateTimeoutRecursive(endCallback) {
+    var actualNbTimeout = -1
+
+    // We first check if the key exists
+    redis.exists(matchId + nbTimeoutPrefix, function (existsErr, existsReply) {
+      if(existsReply == 0) {
+        // Key does'nt exist, so number of timeout is 0
+        actualNbTimeout = 0
+      }
+      redis.get(matchId + turnPrefix, function (nbErr, nbReply) {
+        if(actualNbTimeout = -1) {
+          actualNbTimeout = nbReply
+        }
+
+        // Check if actual number is the same from contract
+        timeoutManager.methods.getTimeoutPlayers(matchId).call().then(function(timeoutPlayers) {
+          if(actualNbTimeout >= timeoutPlayers.nbTimeoutRet) {
+            endCallback()
+          }
+          else {
+            // Remove all moves ahead the timeout
+
+            // Recursive function to remove all moves ahead the timeout
+            function removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_) {
+              // Get the last state
+              redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+
+                if(llenReply == 0) {
+                  // No remaining turn so no turn ahead
+                  endCallback_()
+                }
+
+                redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                  // Check with the metadata if the moves is ahead
+                  var actualLastTurn = JSON.parse(stateReply[0]).metadata[1]
+                  var actualLastTurnPlayer = JSON.parse(stateReply[0]).metadata[2]
+
+                  if(actualLastTurn > timeoutTurn || (actualLastTurn == timeoutTurn && actualLastTurnPlayer >= timeoutTurnPlayer)) {
+                    redis.rpop(matchId + statePrefix, function (rpopErr, rpopReply) {
+                      removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_)
+                    })
+                  }
+                  else {
+                    // All moves were removed
+                    endCallback_()
+                  }
+
+                })
+              })
+            }
+
+            // Call removeMoves callback function
+            removeMovesAheadTimeout(timeoutPlayers.timeoutTurnRet[actualNbTimeout], timeoutPlayers.timeoutPlayerRet[actualNbTimeout], function() {
+              // All player has been removed
+              // We add a new moves in the states list with timed out player killed
+
+              if(timeoutPlayers.timeoutTurnRet[actualNbTimeout] == 0 && timeoutPlayers.timeoutPlayerRet[actualNbTimeout] == 0) {
+                // If it is the first turn to be timed out we use initialState
+                nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+                  nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+
+                    // Kill the timed out player
+                    nujaBattle.methods.kill(initialState, timeoutPlayers.timeoutPlayerRet[actualNbTimeout]).call({gas: '1000000'}).then(function(timedoutState) {
+                      var timeoutMetadata = [matchId, timeoutPlayers.timeoutTurnRet[actualNbTimeout], timeoutPlayers.timeoutPlayerRet[actualNbTimeout]]
+
+                      // Fill junk data for move and signature as they are useless for timed out turn
+                      var timeoutMove = [0,0,0,0]
+                      var timeoutSignature = ''
+
+                      // We push the timed out move
+                      redis.rpush(matchId + statePrefix, JSON.stringify({
+                        metadata: timeoutMetadata,
+                        move: timeoutMove,
+                        moveOutput: timedoutState,
+                        signature: timeoutSignature,
+                      }), function (pushErr, pushReply) {
+                        if(pushErr != null) {
+                          console.log('redis push signature error :' + pushErr)
+                        }
+                        else {
+                          // Update metadata
+                          redis.set(matchId + turnPrefix, timeoutPlayers.timeoutTurnRet[actualNbTimeout], function (turnErr, turnReply){
+                            // TODO: gestion erreur
+                            redis.set(matchId + playerTurnPrefix, timeoutPlayers.timeoutPlayerRet[actualNbTimeout], function (playerturnErr, playerturnReply){
+                              // TODO: gestion erreur
+
+                              // Recall the function in case there are other timed ou turns
+                              updateTimeoutRecursive()
+                            })
+                          })
+                        }
+                      })
+
+                    })
+
+                  })
+                })
+              }
+              else {
+                // If not the first turn we get the last turn
+                redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                  redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                    var lastMoveOutput = JSON.parse(stateReply[0]).moveOutput
+
+                    // Kill the timed out player
+                    nujaBattle.methods.kill(lastMoveOutput, timeoutPlayers.timeoutPlayerRet[actualNbTimeout]).call({gas: '1000000'}).then(function(timedoutState) {
+                      var timeoutMetadata = [matchId, timeoutPlayers.timeoutTurnRet[actualNbTimeout], timeoutPlayers.timeoutPlayerRet[actualNbTimeout]]
+
+                      // Fill junk data for move and signature as they are useless for timed out turn
+                      var timeoutMove = [0,0,0,0]
+                      var timeoutSignature = ''
+
+                      // We push the timed out move
+                      redis.rpush(matchId + statePrefix, JSON.stringify({
+                        metadata: timeoutMetadata,
+                        move: timeoutMove,
+                        moveOutput: timedoutState,
+                        signature: timeoutSignature,
+                      }), function (pushErr, pushReply) {
+                        if(pushErr != null) {
+                          console.log('redis push signature error :' + pushErr)
+                        }
+                        else {
+                          // Update metadata
+                          redis.set(matchId + turnPrefix, timeoutPlayers.timeoutTurnRet[actualNbTimeout], function (turnErr, turnReply){
+                            // TODO: gestion erreur
+                            redis.set(matchId + playerTurnPrefix, timeoutPlayers.timeoutPlayerRet[actualNbTimeout], function (playerturnErr, playerturnReply){
+                              // TODO: gestion erreur
+
+                              // Recall the function in case there are other timed ou turns
+                              updateTimeoutRecursive()
+                            })
+                          })
+                        }
+                      })
+
+                    })
+
+                  })
+                })
+              }
+            })
+          }
+        })
+      })
+    })
+  }
+
+  // Call recursive function for first time
+  updateTimeoutRecursive(matchId, cb)
+}
+
+
+// Used when a user has not shared his move and claim timeout
+// If a player has been timed out, remove eventual moves that has been played after
+function updateLastMoves(matchId, nbPlayer, cb) {
+
+  // Before anything update the list of state depending of timeout that occured
+  updateTimeout(function() {
+
+    // Check if there are not shared moves
+    timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+      getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
+        if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[0])) {
+
+          timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
+            timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
+              timeoutManager.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
+                // We get the last state to check missing moves
+                redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                  redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                    var lastState = JSON.parse(stateReply[0])
+
+                    // Search where missing moves start
+                    var i = 0
+                    while(lastState.metadata[1] > parseInt(lastMovesMetadata.turnRet[i]) || (lastState.metadata[1] == parseInt(lastMovesMetadata.turnRet[i]) && lastState.metadata[2] >= parseInt(lastMovesMetadata.playerRet[i]))) {
+                        i += 1
+                    }
+
+                    // Push the missing signature
+                    nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+                      var lastMoveOutput = lastState.moveOutput
+
+                      // Define recursive function to push all missing moves
+                      function simulateAndPush(n, endCallback) {
+
+                        if(n >= lastMoves.nbRet) {
+
+                          // We pushed all missing moves, we update metadata and terminate
+                          // Metadata is last missing move metadata
+                          redis.set(req.body.matchId + turnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (turnErr, turnReply){
+                            // TODO: gestion erreur
+                            redis.set(req.body.matchId + playerTurnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (playerturnErr, playerturnReply){
+                              // TODO: gestion erreur
+                              endCallback()
+                            })
+                          })
+
+                        }
+                        else {
+                          // Simulate the missing move to get the missing moveOutput
+                          nujaBattle.methods.simulate(serverId, parseInt(lastMovesMetadata.playerRet[i]), lastMoves.moveRet[n][0], lastMoves.moveRet[n][1], lastMoves.moveRet[n][2], lastMoves.moveRet[n][3], lastMoveOutput).call({gas: '1000000'}).then(function(simulatedOutput){
+
+                            lastMoveOutput = simulatedOutput
+
+                            // Get the signature from r s and v values
+                            lastSignature = ethjs.toRpcSig(
+                              lastMovesSignature.lastVRet[n],
+                              ethjs.toBuffer(lastMovesSignature.lastRRet[n]),
+                              ethjs.toBuffer(lastMovesSignature.lastSRet[n])
+                            )
+
+                            // Push the missing move
+                            redis.rpush(matchId + statePrefix, JSON.stringify({
+                              metadata: [matchId, parseInt(lastMovesMetadata.turnRet[i]), parseInt(lastMovesMetadata.playerRet[i])],
+                              move: lastMoves.moveRet[n],
+                              moveOutput: simulatedOutput,
+                              signature: lastSignature,
+                            }), function (pushErr, pushReply) {
+                              if(pushErr != null) {
+                                // Recursion
+                                simulateAndPush(n+1, endCallback)
+                              }
+                              else {
+                                // Unexcepted error occured, we directly call end function for safety
+                                endCallback()
+                              }
+                            })
+                          })
+                        }
+                      }
+                      // Call the recursive fucntion
+                      simulateAndPush(i, cb)
+
+                    })
+                  })
+                })
+              })
+            })
+          })
+        }
+        else {
+          //
+          cb()
+        }
+      })
+    })
+  })
+}
+
+// Get list of killed player in a turn
+function getKilledPlayers(moveInput, moveOutput) {
+  var killed = []
+
+  // WARNING: String ?
+  for(var i=0; i<8; i++){
+    if(moveInput[128+i] > 0 && moveOutput[128+i] == 0){
+      killed.push(i)
+    }
+  }
+  return killed
+}
+
+function pushKilledPlayer(matchId, killer, killed, turn) {
+
+  // Get list of signature to prove the kill
+  redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+    redis.lrange(matchId + statePrefix, -9, llenReply, function (stateErr, stateReply) {
+
+      // killPlayer function needs the origin state the the signature list
+      // To get it we get the 9 last signatures, the origin state is the first one
+      // We update it if we need to remove signature
+      var originState = JSON.parse(stateReply[0]).moveOutput
+
+      // Remove useless signature
+      for(var i=0; i<9; i++) {
+        if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[0] <= killer) {
+          originState = JSON.parse(stateReply[0]).moveOutput
+          stateReply.shift()
+        }
+        else {
+          break
+        }
+      }
+
+      //Push the signatures to the players to kill list
+      redis.rpush(matchId + killedPlayerPrefix, JSON.stringify({
+        signaturesList: stateReply,
+        killer: killer,
+        killed: killed,
+        originState: originState
+      }), function (pushErr, pushReply) {
+        if(pushErr != null) {
+          console.log('redis push player to kill error :' + pushErr)
+        }
+        else {
+          console.log('signatures pushed')
+        }
+      })
+
+    })
+  })
+}
+
+////////////////////////////////////////////////////////////////////
+
+
 
 // Warn and crash if required files are missing
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
@@ -155,16 +542,7 @@ function addMiddleware(devServer) {
   // Every unrecognized request will be forwarded to it.
   var proxy = require(paths.appPackageJson).proxy;
   devServer.use(historyApiFallback({
-    // Paths with dots should still use the history fallback.
-    // See https://github.com/facebookincubator/create-react-app/issues/387.
     disableDotRule: true,
-    // For single page apps, we generally want to fallback to /index.html.
-    // However we also want to respect `proxy` for API calls.
-    // So if `proxy` is specified, we need to decide which fallback to use.
-    // We use a heuristic: if request `accept`s text/html, we pick /index.html.
-    // Modern browsers include text/html into `accept` header when navigating.
-    // However API calls like `fetch()` won’t generally accept text/html.
-    // If this heuristic doesn’t work well for you, don’t use `proxy`.
     htmlAcceptHeaders: proxy ?
       ['text/html'] :
       ['text/html', '*/*']
@@ -177,12 +555,6 @@ function addMiddleware(devServer) {
       process.exit(1);
     }
 
-    // Otherwise, if proxy is specified, we will let it handle any request.
-    // There are a few exceptions which we won't send to the proxy:
-    // - /index.html (served as HTML5 history API fallback)
-    // - /*.hot-update.json (WebpackDevServer uses this too for hot reloading)
-    // - /sockjs-node/* (WebpackDevServer uses this for hot reloading)
-    // Tip: use https://jex.im/regulex/ to visualize the regex
     var mayProxy = /^(?!\/(index\.html$|.*\.hot-update\.json$|sockjs-node\/)).*$/;
 
     // Pass the scope regex both to Express and to the middleware for proxying
@@ -218,46 +590,357 @@ function addMiddleware(devServer) {
 
 function runDevServer(host, port, protocol) {
   var devServer = new WebpackDevServer(compiler, {
-    // Enable gzip compression of generated files.
     compress: true,
-    // Silence WebpackDevServer's own logs since they're generally not useful.
-    // It will still show compile warnings and errors with this setting.
     clientLogLevel: 'none',
-    // By default WebpackDevServer serves physical files from current directory
-    // in addition to all the virtual build products that it serves from memory.
-    // This is confusing because those files won’t automatically be available in
-    // production build folder unless we copy them. However, copying the whole
-    // project directory is dangerous because we may expose sensitive files.
-    // Instead, we establish a convention that only files in `public` directory
-    // get served. Our build script will copy `public` into the `build` folder.
-    // In `index.html`, you can get URL of `public` folder with %PUBLIC_PATH%:
-    // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    // In JavaScript code, you can access it with `process.env.PUBLIC_URL`.
-    // Note that we only recommend to use `public` folder as an escape hatch
-    // for files like `favicon.ico`, `manifest.json`, and libraries that are
-    // for some reason broken when imported through Webpack. If you just want to
-    // use an image, put it in `src` and `import` it from JavaScript instead.
     contentBase: paths.appPublic,
-    // Enable hot reloading server. It will provide /sockjs-node/ endpoint
-    // for the WebpackDevServer client so it can learn when the files were
-    // updated. The WebpackDevServer client is included as an entry point
-    // in the Webpack development configuration. Note that only changes
-    // to CSS are currently hot reloaded. JS changes will refresh the browser.
     hot: true,
-    // It is important to tell WebpackDevServer to use the same "root" path
-    // as we specified in the config. In development, we always serve from /.
     publicPath: config.output.publicPath,
-    // WebpackDevServer is noisy by default so we emit custom message instead
-    // by listening to the compiler events with `compiler.plugin` calls above.
     quiet: true,
-    // Reportedly, this avoids CPU overload on some systems.
-    // https://github.com/facebookincubator/create-react-app/issues/293
     watchOptions: {
       ignored: /node_modules/
     },
-    // Enable HTTPS if the HTTPS environment variable is set to 'true'
     https: protocol === "https",
-    host: host
+    host: host,
+
+    ////////////////////////////////////////////////////////////////////
+    //  Handle request for states and signatures pushing
+
+    setup(app){
+      var bodyParser = require('body-parser');
+      app.use(bodyParser.json());
+
+
+      // Get the a state given the turn beginning
+      app.post("/post/specificstate", bodyParser.json(), function(req, res){
+        // req.body.matchId
+        // req.body.turnBegin
+        // req.body.playerBegin
+        // req.body.turnEnd
+        // req.body.playerEnd
+        // We first check if the key exists
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+
+            // Get list of signature to prove the kill
+            redis.llen(req.body.matchId + statePrefix, function (llenErr, llenReply) {
+
+              // Get all states
+              redis.lrange(req.body.matchId + statePrefix, 0, llenReply, function (stateErr, stateReply) {
+                // Search where states list start
+                var badInput = false
+                var i = 0
+                while(JSON.parse(stateReply[i]).metadata[1] != req.body.turnBegin || JSON.parse(stateReply[i]).metadata[2] != req.body.playerBegin) {
+                  i++
+                  if(i >= llenReply) {
+                    badInput = true
+                    break
+                  }
+                }
+
+                if(!badInput) {
+                  // Get the origin state of the states list
+                  // It represents the output of the begin move
+                  originState = JSON.parse(stateReply[i]).moveOutput
+
+                  // If we are not the first turn, we don't count the first turn
+                  if(req.body.turnEnd > 0) {
+                    i++
+                  }
+
+                  // Get all the states
+                  var maxStateNb = i+8
+                  var states = []
+                  while(JSON.parse(stateReply[i]).metadata[1] < req.body.turnEnd || (JSON.parse(stateReply[i]).metadata[1] == req.body.turnEnd && JSON.parse(stateReply[i]).metadata[2] <= req.body.playerEnd)) {
+                    states.push(JSON.parse(stateReply[i]))
+                    i++
+                    if(i >= maxStateNb || i >= llenReply) {
+                      badInput = true
+                      break
+                    }
+                  }
+
+                  if(!badInput) {
+
+                    // Send response
+                    var response = {}
+                    response.state = states
+                    response.originState = originState
+
+                    res.send(response)
+                  }
+                  else {
+                    res.send(null)
+                  }
+                }
+                else {
+                  res.send(null)
+                }
+              })
+            })
+          }
+        })
+      })
+
+
+      // Get the current state of a match
+      app.post("/post/currentstate", bodyParser.json(), function(req, res){
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+            // Get list of signature to prove the kill
+            redis.llen(req.body.matchId + statePrefix, function (llenErr, llenReply) {
+              redis.lrange(req.body.matchId + statePrefix, -9, llenReply, function (stateErr, stateReply) {
+
+                // killPlayer function needs the origin state the the signature list
+                // To get it we get the 9 last signatures, the origin state is the first one
+                // We update it if we need to remove signature
+                var originState = JSON.parse(stateReply[0]).moveOutput
+
+                // Remove useless signature
+                if(stateReply.length >= 8) {
+                  for(var i=0; i<9; i++) {
+                    // Verify if the first signer is not redundant
+                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length-1]).metadata[1] && JSON.parse(stateReply[0]).metadata[0] <= JSON.parse(stateReply[stateReply.length-1]).metadata[0]) {
+                      originState = JSON.parse(stateReply[0]).moveOutput
+                      stateReply.shift()
+                    }
+                    else {
+                      break
+                    }
+                  }
+                }
+
+                var response = {}
+                response.state = stateReply.map(x => JSON.parse(x))
+                response.originState = originState
+
+                res.send(response)
+              })
+            })
+          }
+        })
+      })
+
+      // Get the current metadata (turn, player's turn) of a match
+      app.post("/post/currentmetadata", bodyParser.json(), function(req, res){
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, then the match doesn't exist or has not started yet
+            res.send([0, -1])
+          }
+          else {
+
+            // Before getting the metadata we check if we need to updateLastMoves
+            nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+              updateLastMoves(matchId, playerMax, function () {
+
+                // The match exist, we get metadata
+                redis.get(req.body.matchId + turnPrefix, function (turnErr, turnReply) {
+                  if(turnErr != null) {
+                    console.log('redis get turn error :' + turnErr)
+                  } else {
+                    redis.get(req.body.matchId + playerTurnPrefix, function (playerturnErr, playerturnReply) {
+                      if(playerturnErr != null) {
+                        console.log('redis get player turn error :' + playerturnErr)
+                      } else {
+                        res.send([turnReply, playerturnReply])
+                      }
+                    })
+                  }
+                })
+
+              })
+            })
+
+          }
+        })
+      })
+
+      // Get the list of player to kill
+      app.post("/post/currentkilledplayers", bodyParser.json(), function(req, res){
+
+        // We first check if the key exists
+        redis.exists(req.body.matchId + killedPlayerPrefix, function (existsErr, existsReply){
+          if(existsReply == 0) {
+            // If the key doesn't exist, no data
+            res.send(null)
+          }
+          else {
+            // If key exists, get hte list of signatures
+            redis.lrange(req.body.matchId + killedPlayerPrefix, 0, 8, function (err, reply) {
+              if(err != null) {
+                console.log('redis get killed players error :' + err)
+              } else {
+                // Convert the string stored to json
+                res.send(reply.map(x => JSON.parse(x)))
+              }
+            })
+          }
+        })
+      })
+
+      // Push a new signature
+      app.post("/post/pushsignature", bodyParser.json(), function(req, res){
+
+        // Verify the turn and player turn are correct
+        var matchId = parseInt(req.body.metadata[0])
+        var turn = parseInt(req.body.metadata[1])
+        var playerTurn = parseInt(req.body.metadata[2])
+
+
+        // Get the message signer
+        var msg = ethjs.toBuffer(web3.utils.soliditySha3(
+            {t: 'uint[]', v: req.body.metadata},
+            {t: 'uint[]', v: req.body.move},
+            {t: 'uint[]', v: req.body.moveOutput},
+        ))
+
+        var prefix = new Buffer("\x19Ethereum Signed Message:\n")
+        var prefixedMsg = ethjs.sha3(
+          Buffer.concat([prefix, new Buffer(String(msg.length)), msg])
+        )
+        var splittedSig = ethjs.fromRpcSig(req.body.signature)
+        var pubKey = ethjs.ecrecover(prefixedMsg, splittedSig.v, splittedSig.r, splittedSig.s)
+        var addrBuf = ethjs.pubToAddress(pubKey)
+        var addr = ethjs.bufferToHex(addrBuf)
+
+        nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+
+          // We check the metadata are correct (it is the actual turn)
+          nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+
+            getCurrentTurn(matchId, playerMax, function(actualTurn) {
+              if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
+
+                // We check if the player is present on the server and it's his turn
+                nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
+                  if(isInServer) {
+                    nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
+                      if(indexPlayer == playerTurn) {
+
+                        // We check that the turn is not cheated by simulating it
+                        if(turn == 0 && playerTurn == 0){
+
+                          // First turn, we simulate from initialState
+                          nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+                            nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], initialState).call({gas: '1000000'}).then(function(simulatedOutput){
+                              // WARNING HAS THEY HAVE THE SAME FORMAT ?
+                              // Comparing hashed
+                              if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
+
+                                // Push the new signature
+                                redis.rpush(req.body.matchId + statePrefix, JSON.stringify({
+                                  metadata: req.body.metadata,
+                                  move: req.body.move,
+                                  moveOutput: req.body.moveOutput,
+                                  signature: req.body.signature,
+                                }), function (pushErr, pushReply) {
+                                  if(pushErr != null) {
+                                    console.log('redis push signature error :' + pushErr)
+                                  }
+                                  else {
+                                    // If there are killed players during this turn, we push them
+                                    var killed = getKilledPlayers(initialState, req.body.moveOutput)
+
+                                    for(var i=0; i<killed.length; i++){
+                                      pushKilledPlayer(matchId, req.body.metadata[2], killed[i], req.body.metadata[1])
+                                    }
+
+                                    // Update metadata
+                                    redis.set(req.body.matchId + turnPrefix, turn, function (turnErr, turnReply){
+                                      // TODO: gestion erreur
+                                      redis.set(req.body.matchId + playerTurnPrefix, playerTurn, function (playerturnErr, playerturnReply){
+                                        // TODO: gestion erreur
+                                        res.send("Signature pushed")
+                                      })
+                                    })
+
+                                  }
+                                })
+
+                              }
+
+                            })
+                          })
+                        }
+                        else {
+
+                          // Not first turn, get last moveOutput
+                          redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                            redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                              var lastState = JSON.parse(stateReply[0]).moveOutput
+
+                              nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call().then(function(simulatedOutput){
+
+                                // WARNING HAS THEY HAVE THE SAME FORMAT ?
+                                // Comparing hashed
+                                if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
+
+                                  // Push the new signature
+                                  redis.rpush(req.body.matchId + statePrefix, JSON.stringify({
+                                    metadata: req.body.metadata,
+                                    move: req.body.move,
+                                    moveOutput: req.body.moveOutput,
+                                    signature: req.body.signature,
+                                  }), function (pushErr, pushReply) {
+                                    if(pushErr != null) {
+                                      console.log('redis push signature error :' + pushErr)
+                                    }
+                                    else {
+                                      // If there are killed players during this turn, we push them
+                                      killed = getKilledPlayers(lastState, req.body.moveOutput)
+                                      for(i=0; i<killed.length; i++){
+                                        pushKilledPlayer(matchId, req.body.metadata[2], killed[i], req.body.metadata[1])
+                                      }
+
+                                      // Update metadata
+                                      redis.set(req.body.matchId + turnPrefix, turn, function (turnErr, turnReply){
+                                        // TODO: gestion erreur
+                                        redis.set(req.body.matchId + playerTurnPrefix, playerTurn, function (playerturnErr, playerturnReply){
+                                          // TODO: gestion erreur
+                                          res.send("Signature pushed")
+                                        })
+                                      })
+                                    }
+                                  })
+
+                                }
+
+                              })
+                            })
+                          })
+                        }
+
+                      }
+                      else {
+                        console.log('not signer turn')
+                      }
+                    })
+                  }
+                  else {
+                    // TODO: meilleur gestion d'erreur
+                    console.log('signer not in the server')
+                  }
+                })
+              }
+            })
+          })
+        })
+
+      })
+
+    }
   });
 
   // Our custom middleware proxies requests to /index.html or a remote API.

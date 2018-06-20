@@ -1,3 +1,7 @@
+/*
+  Interface to make move in a match
+*/
+
 import React, { Component } from 'react'
 
 import store from '../store'
@@ -6,22 +10,22 @@ import '../css/actions.css'
 import WeaponSprite from '../components/WeaponSprite'
 
 var PubSub = require('pubsub-js')
+var SW = require('../utils/stateWrapper')
 
-// TODO: Implement weapon and nuja power
 
 class Actions extends Component {
   constructor(props) {
     super(props)
 
-    this.moveButton = this.moveButton.bind(this);
-    this.attackButton = this.attackButton.bind(this);
-    this.exploreBuildingButton = this.exploreBuildingButton.bind(this);
-    this.powerButton = this.powerButton.bind(this);
-    this.weaponButton = this.weaponButton.bind(this);
-    this.idleButton = this.idleButton.bind(this);
+    this.moveButton = this.moveButton.bind(this)
+    this.attackButton = this.attackButton.bind(this)
+    this.exploreBuildingButton = this.exploreBuildingButton.bind(this)
+    this.powerButton = this.powerButton.bind(this)
+    this.weaponButton = this.weaponButton.bind(this)
+    this.idleButton = this.idleButton.bind(this)
 
-    this.getMessage = this.getMessage.bind(this);
-    var token = PubSub.subscribe('CROSSES', this.getMessage);
+    this.getMessage = this.getMessage.bind(this)
+    var token = PubSub.subscribe('CROSSES', this.getMessage)
 
     this.state = {
       moveSelected: false,
@@ -29,18 +33,16 @@ class Actions extends Component {
       weaponSelected: false,
       powerSelected: false,
       selectedWeapon: 0,
-      weaponArray: [],
+      playerIndex: -1,
+      playerMax: 0,
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
-      weaponRegistry: store.getState().web3.weaponRegistryInstance,
-      myTurn: false
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
         account: store.getState().account.accountInstance,
-        weaponRegistry: store.getState().web3.weaponRegistryInstance,
       });
     });
   }
@@ -51,37 +53,15 @@ class Actions extends Component {
 
   componentWillMount() {
     var self = this
+
+    // necessary informations from server
     if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.isTurn(self.props.server, self.state.account.address).call().then(function(ret) {
-        self.setState({myTurn: ret})
-
-        if(ret == true) {
-          // Create button for every player's weapon
-          self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
-            self.state.nujaBattle.methods.playerInformation(self.props.server, playerIndex).call().then(function(playerInfo) {
-
-              // For each weapon, retreive id
-              for (var i = 0; i < playerInfo.weaponNumber; i++) {
-                self.state.nujaBattle.methods.playerWeapons(self.props.server, playerIndex, i).call().then(function(weaponId) {
-
-                  // Push to weapon array the sprite of the weapon wrapped by the callback button
-                  var weaponArrayTmp = self.state.weaponArray
-                  weaponArrayTmp.push(
-                    <div key={this.userWeaponId} className="col-md-3">
-                      <button onClick={self.weaponButton(this.userWeaponId)} style={{
-                        borderWidth: '0px',
-                        backgroundColor: 'rgba(240, 240, 240, 0.0)',
-                      }}>
-                        <WeaponSprite weaponIndex={weaponId}/>
-                      </button>
-                    </div>)
-                  self.setState({weaponArray: weaponArrayTmp})
-                }.bind({userWeaponId: i}));
-              }
-            });
-          });
-        }
-      });
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
+        self.setState({playerMax: playerMax})
+      })
+      self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+        self.setState({playerIndex: playerIndex})
+      })
     }
   }
 
@@ -104,7 +84,7 @@ class Actions extends Component {
       // We search for every field which gives more than 0 gas (which means that the transaction will not revert)
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.play(this.props.server, 0, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 0, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
             // If gas superior than 0 we draw a cross
             if(error == null) {
               if(gasAmount > 0) {
@@ -134,7 +114,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.play(this.props.server, 1, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 1, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
             // If gas superior than 0 we draw a cross
             if(error == null) {
               if(gasAmount > 0) {
@@ -167,7 +147,7 @@ class Actions extends Component {
 
       for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-          this.state.nujaBattle.methods.play(this.props.server, 4, i, j, 0).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+          this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 4, i, j, 0, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
 
             // If gas superior than 0 we draw a cross
             if(error == null) {
@@ -199,7 +179,7 @@ class Actions extends Component {
 
         for (var i = 0; i < 10; i++) {
           for (var j = 0; j < 10; j++) {
-            this.state.nujaBattle.methods.play(this.props.server, 3, i, j, id).estimateGas({from: this.state.account.address}, function(error, gasAmount){
+            this.state.nujaBattle.methods.simulate(this.props.server, this.state.playerIndex, 3, i, j, id, SW.getCurrentState()).estimateGas({gas: '1000000'}, function(error, gasAmount){
 
               // If gas superior than 0 we draw a cross
               if(error == null) {
@@ -221,18 +201,28 @@ class Actions extends Component {
 
 
   command(playMove, x, y) {
-    if (this.state.nujaBattle != null) {
-      this.state.nujaBattle.methods.play(this.props.server, playMove, x, y, this.state.selectedWeapon).send({
-        from: this.state.account.address,
-        gasPrice: 2000000000,
+    var self = this
+
+    if (self.state.nujaBattle != null) {
+
+      // Simulate the turn to get move output
+      self.state.nujaBattle.methods.simulate(self.props.server, self.state.playerIndex, playMove, x, y, self.state.selectedWeapon, SW.getCurrentState()).call({gas: '1000000'}).then(function(moveOutput) {
+        // Creating signature
+        var metadata = []
+        metadata.push(SW.getCurrentMatch())
+        var currentTurn = SW.getCurrentTurn(self.state.playerMax)
+        metadata.push(currentTurn[0])
+        metadata.push(currentTurn[1])
+
+        var move = []
+        move.push(playMove)
+        move.push(x)
+        move.push(y)
+        move.push(self.state.selectedWeapon)
+
+        // Pushing the signature to the server
+        SW.pushSignature(SW.getCurrentMatch(), metadata, move, moveOutput)
       })
-      .on('error', function(error){ console.log('ERROR: ' + error)})
-      .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-      .on('receipt', function(receipt){ console.log('receipt')})
-      .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-      .then(function(ret) {
-        alert('Done')
-      });
     }
   }
 
@@ -260,8 +250,34 @@ class Actions extends Component {
 
   render() {
     var content = <div></div>
+    var myTurn = false
+    var weaponArray = []
 
-    if(this.state.myTurn) {
+    if(this.state.playerMax > 0 && this.state.playerIndex != -1) {
+      // Check if it is the player turn
+      var actualTurn = SW.getCurrentTurn(this.state.playerMax)
+
+      if(actualTurn[1] == this.state.playerIndex) {
+        myTurn = true
+
+        // Get weapon from player
+        var weapons = SW.getPlayerWeapons(this.state.playerIndex)
+
+        for (var i = 0; i < weapons.length; i++) {
+          weaponArray.push(
+            <div key={i} className="col-md-3">
+              <button onClick={this.weaponButton(i)} style={{
+                borderWidth: '0px',
+                backgroundColor: 'rgba(240, 240, 240, 0.0)',
+              }}>
+                <WeaponSprite weaponIndex={weapons[i]}/>
+              </button>
+            </div>)
+        }
+      }
+    }
+
+    if(myTurn) {
       content =
       <div style={{padding: '2px'}}>
         <h3>Your turn !</h3>
@@ -274,7 +290,7 @@ class Actions extends Component {
         </div>
         <h3>Weapons:</h3>
         <div className="row" style={{marginTop: '20px', marginBottom: '20px'}}>
-          <div>{this.state.weaponArray}</div>
+          <div>{weaponArray}</div>
         </div>
       </div>
     }

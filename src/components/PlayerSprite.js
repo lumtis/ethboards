@@ -6,6 +6,8 @@ import imageConverter from '../utils/imageConverter'
 
 var ipfsAPI = require('ipfs-api')
 var nujaJson = require('../../build/contracts/Nuja.json')
+var SW = require('../utils/stateWrapper')
+
 
 class PlayerSprite extends Component {
   constructor(props) {
@@ -19,8 +21,7 @@ class PlayerSprite extends Component {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
-      positionX: 0,
-      positionY: 0,
+      number: 0,
       imageData: '',
       isHovering: false
     }
@@ -43,44 +44,43 @@ class PlayerSprite extends Component {
     var self = this
     var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
+    if (self.state.nujaBattle != null) {
+      if (self.state.characterRegistry != null) {
 
-    if (self.state.characterRegistry != null) {
-      self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
-        // Retrieve server info
-        self.state.characterRegistry.methods.getCharacterCurrentServer(self.props.index).call().then(function(currentServerRet) {
-          if(currentServerRet > 0) {
-            var currentServer = currentServerRet-1
-            if (self.state.nujaBattle != null) {
+        self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
+          // Retrieve server info
+          self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(currentServerRet) {
+            if(currentServerRet > 0) {
+              var currentServer = currentServerRet-1
+
               self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
-                self.state.nujaBattle.methods.playerPosition(currentServer, playerIndex).call().then(function(playerInfo) {
-                  // Update server infos
-                  self.setState({
-                    positionX: playerInfo.positionX,
-                    positionY: playerInfo.positionY,
-                  })
-                });
-              });
-            }
-          }
-        });
-
-        // Retrieve nuja info
-        self.state.characterRegistry.methods.getCharacterNuja(self.props.index).call().then(function(characterNuja) {
-          if (self.state.nujaRegistry != null) {
-            self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
-              var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
-              nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-                ipfs.files.get(ipfsString + '/sprite.gif', function (err, files) {
-                  self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+                self.setState({
+                  number: playerIndex,
                 })
-              });
-            });
-          }
-        });
-      });
+              })
+            }
+          })
+
+          // Retrieve nuja info
+          self.state.characterRegistry.methods.getCharacterNuja(self.props.index).call().then(function(characterNuja) {
+            if (self.state.nujaRegistry != null) {
+              self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
+                var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
+                nujaContract.methods.getMetadata().call().then(function(ipfsString) {
+                  ipfs.files.get(ipfsString + '/sprite.gif', function (err, files) {
+                    self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+                  })
+                })
+              })
+            }
+          })
+
+        })
+      }
     }
   }
 
+  // Event functions to render description
   handleMouseHover() {
     this.setState({isHovering: true});
   }
@@ -89,33 +89,40 @@ class PlayerSprite extends Component {
     this.setState({isHovering: false});
   }
 
-
   render() {
-    var offsetX = this.state.positionX*64+15
-    var offsetY = this.state.positionY*64+15
+    var health = SW.getPlayerHealth(this.state.number)
+    var positions = SW.getPlayerPosition(this.state.number)
+    var offsetX = positions[0]*64+15
+    var offsetY = positions[1]*64+15
     var desc = <div></div>
 
     if (this.state.isHovering) {
       desc = <Player index={this.props.index} />
     }
 
-    return (
-      <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-        <img src={this.state.imageData} alt="Nuja" style={{
-          width: '32px',
-          position: 'absolute',
-          top: offsetY+'px',
-          left: offsetX+'px'
-        }}></img>
-        <div style={{
-          top: offsetY-100+'px',
-          left: offsetX+'px',
-          width: '350px',
-          position: 'absolute'
-        }}
-        >{desc}</div>
-      </div>
-    );
+    // If player is dead, we render nothing
+    if(health == 0) {
+      return(null)
+    }
+    else {
+      return (
+        <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
+          <img src={this.state.imageData} alt="Nuja" style={{
+            width: '32px',
+            position: 'absolute',
+            top: offsetY+'px',
+            left: offsetX+'px'
+          }}></img>
+          <div style={{
+            top: offsetY-100+'px',
+            left: offsetX+'px',
+            width: '350px',
+            position: 'absolute'
+          }}
+          >{desc}</div>
+        </div>
+      );
+    }
   }
 }
 

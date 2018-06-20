@@ -8,6 +8,7 @@ import '../css/map.css'
 
 var PubSub = require('pubsub-js')
 
+
 class Map extends Component {
   constructor(props) {
     super(props)
@@ -21,14 +22,14 @@ class Map extends Component {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       playerArray: [],
       crossArray: [],
-      mapName: 'undefined name'
+      mapName: 'undefined name',
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
-      });
-    });
+      })
+    })
   }
 
   static defaultProps = {
@@ -39,7 +40,7 @@ class Map extends Component {
     var self = this
 
     if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getPlayerNb(self.props.server).call().then(function(nb) {
+      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(nb) {
 
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {
@@ -49,12 +50,12 @@ class Map extends Component {
             var playerArrayTmp = self.state.playerArray
             playerArrayTmp.push(<PlayerSprite key={characterIndex} index={characterIndex}/>)
             self.setState({playerArray: playerArrayTmp})
-          });
+          })
         }
-      });
+      })
       self.state.nujaBattle.methods.getServerName(self.props.server).call().then(function(name) {
         self.setState({mapName: name})
-      });
+      })
     }
   }
 
@@ -91,8 +92,8 @@ class Map extends Component {
   }
 
   render() {
-    const rows = 10
-    const columns = 10
+    const rows = 8
+    const columns = 8
 
     var tiles = []
     var crosses = []
@@ -100,7 +101,7 @@ class Map extends Component {
     // Tilemap
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < columns; j++) {
-          tiles[rows*i+j] = <Tile key={rows*i+j} server={this.props.server} x={i} y={j} />
+          tiles[rows*i+j] = <Tile key={rows*i+j} server={this.props.server} x={i} y={j} initial={false} />
       }
     }
 
@@ -134,7 +135,7 @@ class Map extends Component {
           <div>{crosses}</div>
         </div>
       </div>
-    );
+    )
   }
 }
 
