@@ -41,15 +41,15 @@ var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var timeoutManagerAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn'
-const playerTurnPrefix = '_playerturn'
-const statePrefix = '_state'
-const killedPlayerPrefix = '_killedplayers'
-const nbTimeoutPrefix = '_nbtimeout'
+const turnPrefix = '_turn12'
+const playerTurnPrefix = '_playerturn12'
+const statePrefix = '_state12'
+const killedPlayerPrefix = '_killedplayers12'
+const nbTimeoutPrefix = '_nbtimeout12'
 
 
 redis.on("connect", function () {
@@ -192,7 +192,7 @@ function updateTimeout(matchId, cb) {
                               // TODO: gestion erreur
 
                               // Recall the function in case there are other timed ou turns
-                              updateTimeoutRecursive()
+                              updateTimeoutRecursive(endCallback)
                             })
                           })
                         }
@@ -235,7 +235,7 @@ function updateTimeout(matchId, cb) {
                               // TODO: gestion erreur
 
                               // Recall the function in case there are other timed ou turns
-                              updateTimeoutRecursive()
+                              updateTimeoutRecursive(endCallback)
                             })
                           })
                         }
@@ -254,7 +254,7 @@ function updateTimeout(matchId, cb) {
   }
 
   // Call recursive function for first time
-  updateTimeoutRecursive(matchId, cb)
+  updateTimeoutRecursive(cb)
 }
 
 
@@ -263,94 +263,102 @@ function updateTimeout(matchId, cb) {
 function updateLastMoves(matchId, nbPlayer, cb) {
 
   // Before anything update the list of state depending of timeout that occured
-  updateTimeout(function() {
+  updateTimeout(matchId, function() {
 
     // Check if there are not shared moves
-    timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
-      getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
-        if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[0])) {
+    timeoutManager.methods.isTimeout(matchId).call().then(function(isTimeout) {
+      if(isTimeout) {
+        timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+          getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
+            if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[0])) {
 
-          timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
-            timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
-              timeoutManager.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
-                // We get the last state to check missing moves
-                redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
-                  redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
-                    var lastState = JSON.parse(stateReply[0])
+              timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
+                timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
+                  timeoutManager.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
+                    // We get the last state to check missing moves
+                    redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
+                      redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                        var lastState = JSON.parse(stateReply[0])
 
-                    // Search where missing moves start
-                    var i = 0
-                    while(lastState.metadata[1] > parseInt(lastMovesMetadata.turnRet[i]) || (lastState.metadata[1] == parseInt(lastMovesMetadata.turnRet[i]) && lastState.metadata[2] >= parseInt(lastMovesMetadata.playerRet[i]))) {
-                        i += 1
-                    }
-
-                    // Push the missing signature
-                    nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
-                      var lastMoveOutput = lastState.moveOutput
-
-                      // Define recursive function to push all missing moves
-                      function simulateAndPush(n, endCallback) {
-
-                        if(n >= lastMoves.nbRet) {
-
-                          // We pushed all missing moves, we update metadata and terminate
-                          // Metadata is last missing move metadata
-                          redis.set(req.body.matchId + turnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (turnErr, turnReply){
-                            // TODO: gestion erreur
-                            redis.set(req.body.matchId + playerTurnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (playerturnErr, playerturnReply){
-                              // TODO: gestion erreur
-                              endCallback()
-                            })
-                          })
-
+                        // Search where missing moves start
+                        var i = 0
+                        while(lastState.metadata[1] > parseInt(lastMovesMetadata.turnRet[i]) || (lastState.metadata[1] == parseInt(lastMovesMetadata.turnRet[i]) && lastState.metadata[2] >= parseInt(lastMovesMetadata.playerRet[i]))) {
+                            i += 1
                         }
-                        else {
-                          // Simulate the missing move to get the missing moveOutput
-                          nujaBattle.methods.simulate(serverId, parseInt(lastMovesMetadata.playerRet[i]), lastMoves.moveRet[n][0], lastMoves.moveRet[n][1], lastMoves.moveRet[n][2], lastMoves.moveRet[n][3], lastMoveOutput).call({gas: '1000000'}).then(function(simulatedOutput){
 
-                            lastMoveOutput = simulatedOutput
+                        // Push the missing signature
+                        nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+                          var lastMoveOutput = lastState.moveOutput
 
-                            // Get the signature from r s and v values
-                            lastSignature = ethjs.toRpcSig(
-                              lastMovesSignature.lastVRet[n],
-                              ethjs.toBuffer(lastMovesSignature.lastRRet[n]),
-                              ethjs.toBuffer(lastMovesSignature.lastSRet[n])
-                            )
+                          // Define recursive function to push all missing moves
+                          function simulateAndPush(n, endCallback) {
 
-                            // Push the missing move
-                            redis.rpush(matchId + statePrefix, JSON.stringify({
-                              metadata: [matchId, parseInt(lastMovesMetadata.turnRet[i]), parseInt(lastMovesMetadata.playerRet[i])],
-                              move: lastMoves.moveRet[n],
-                              moveOutput: simulatedOutput,
-                              signature: lastSignature,
-                            }), function (pushErr, pushReply) {
-                              if(pushErr != null) {
-                                // Recursion
-                                simulateAndPush(n+1, endCallback)
-                              }
-                              else {
-                                // Unexcepted error occured, we directly call end function for safety
-                                endCallback()
-                              }
-                            })
-                          })
-                        }
-                      }
-                      // Call the recursive fucntion
-                      simulateAndPush(i, cb)
+                            if(n >= lastMoves.nbRet) {
 
+                              // We pushed all missing moves, we update metadata and terminate
+                              // Metadata is last missing move metadata
+                              redis.set(req.body.matchId + turnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (turnErr, turnReply){
+                                // TODO: gestion erreur
+                                redis.set(req.body.matchId + playerTurnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (playerturnErr, playerturnReply){
+                                  // TODO: gestion erreur
+                                  endCallback()
+                                })
+                              })
+
+                            }
+                            else {
+                              // Simulate the missing move to get the missing moveOutput
+                              nujaBattle.methods.simulate(serverId, parseInt(lastMovesMetadata.playerRet[i]), lastMoves.moveRet[n][0], lastMoves.moveRet[n][1], lastMoves.moveRet[n][2], lastMoves.moveRet[n][3], lastMoveOutput).call({gas: '1000000'}).then(function(simulatedOutput){
+
+                                lastMoveOutput = simulatedOutput
+
+                                // Get the signature from r s and v values
+                                lastSignature = ethjs.toRpcSig(
+                                  lastMovesSignature.lastVRet[n],
+                                  ethjs.toBuffer(lastMovesSignature.lastRRet[n]),
+                                  ethjs.toBuffer(lastMovesSignature.lastSRet[n])
+                                )
+
+                                // Push the missing move
+                                redis.rpush(matchId + statePrefix, JSON.stringify({
+                                  metadata: [matchId, parseInt(lastMovesMetadata.turnRet[i]), parseInt(lastMovesMetadata.playerRet[i])],
+                                  move: lastMoves.moveRet[n],
+                                  moveOutput: simulatedOutput,
+                                  signature: lastSignature,
+                                }), function (pushErr, pushReply) {
+                                  if(pushErr != null) {
+                                    // Recursion
+                                    simulateAndPush(n+1, endCallback)
+                                  }
+                                  else {
+                                    // Unexcepted error occured, we directly call end function for safety
+                                    endCallback()
+                                  }
+                                })
+                              })
+                            }
+                          }
+                          // Call the recursive fucntion
+                          simulateAndPush(i, cb)
+
+                        })
+                      })
                     })
                   })
                 })
               })
-            })
+            }
+            else {
+              // No missing last move
+              cb()
+            }
           })
-        }
-        else {
-          //
-          cb()
-        }
-      })
+        })
+      }
+      else {
+        // No time out
+        cb()
+      }
     })
   })
 }
@@ -742,24 +750,26 @@ function runDevServer(host, port, protocol) {
           else {
 
             // Before getting the metadata we check if we need to updateLastMoves
-            nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
-              updateLastMoves(matchId, playerMax, function () {
+            nujaBattle.methods.getMatchServer(req.body.matchId).call().then(function(serverId) {
+              nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+                updateLastMoves(req.body.matchId, playerMax, function () {
 
-                // The match exist, we get metadata
-                redis.get(req.body.matchId + turnPrefix, function (turnErr, turnReply) {
-                  if(turnErr != null) {
-                    console.log('redis get turn error :' + turnErr)
-                  } else {
-                    redis.get(req.body.matchId + playerTurnPrefix, function (playerturnErr, playerturnReply) {
-                      if(playerturnErr != null) {
-                        console.log('redis get player turn error :' + playerturnErr)
-                      } else {
-                        res.send([turnReply, playerturnReply])
-                      }
-                    })
-                  }
+                  // The match exist, we get metadata
+                  redis.get(req.body.matchId + turnPrefix, function (turnErr, turnReply) {
+                    if(turnErr != null) {
+                      console.log('redis get turn error :' + turnErr)
+                    } else {
+                      redis.get(req.body.matchId + playerTurnPrefix, function (playerturnErr, playerturnReply) {
+                        if(playerturnErr != null) {
+                          console.log('redis get player turn error :' + playerturnErr)
+                        } else {
+                          res.send([turnReply, playerturnReply])
+                        }
+                      })
+                    }
+                  })
+
                 })
-
               })
             })
 
