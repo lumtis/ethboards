@@ -4,13 +4,13 @@ import Web3 from 'web3'
 var nujaBattleJson = require('../../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
 var timeoutManagerJson = require('../../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '...'
+var timeoutManagerAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var nujaRegistryJson = require('../../build/contracts/NujaRegistry.json')
-var nujaRegistryAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
+var nujaRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
-var characterRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
+var characterRegistryAddress = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
 var weaponRegistryJson = require('../../build/contracts/WeaponRegistry.json')
-var weaponRegistryAddress = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
+var weaponRegistryAddress = '0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F'
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {
