@@ -96,26 +96,17 @@ contract NujaBattle is Geometry, StateManager {
     ///////////////////////////////////////////////////////////////
     /// Administration functions
 
-    function changeCharacterRegistry(address registry) public onlyOwner {
+    function setRegistries(address characterRegistry_, address weaponRegistry_, address timeoutRegistry_) public onlyOwner {
         require(!registryInitialized);
-        characterRegistry = registry;
-    }
 
-    function changeWeaponRegistry(address registry) public onlyOwner {
-        require(!registryInitialized);
-        weaponRegistry = registry;
-    }
+        characterRegistry = characterRegistry_;
+        weaponRegistry = weaponRegistry_;
+        timeoutRegistry = timeoutRegistry_;
 
-    function changeTimeoutRegistry(address registry) public onlyOwner {
-        require(!registryInitialized);
-        timeoutRegistry = registry;
-    }
-
-    function setRegistryInitialized() public onlyOwner {
-        require(!registryInitialized);
         registryInitialized = true;
     }
 
+    /* 
     function changeServerCreationFee(uint fee) public onlyOwner {
         serverCreationFee = fee * 1 finney;
     }
@@ -123,6 +114,7 @@ contract NujaBattle is Geometry, StateManager {
     function changeCheatWarrant(uint warrant) public onlyOwner {
         cheatWarrant = warrant * 1 finney;
     }
+     */
 
     function addServer(string name, uint8 max, uint fee, uint moneyBag) public payable {
         require(max > 1 && max <= 8);

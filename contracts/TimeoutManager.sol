@@ -49,7 +49,7 @@ contract TimeoutManager {
         owner = msg.sender;
         // 300 sec = 5 min
         timeoutThreshold = 300;
-        serverAddress = address(0);
+        serverAddress = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
     }
 
     function changeTimeoutThreshold(uint threshold) public onlyOwner {
