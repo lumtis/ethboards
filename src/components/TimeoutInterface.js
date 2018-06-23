@@ -3,6 +3,9 @@ import React, { Component } from 'react'
 import store from '../store'
 import '../css/timeoutinterface.css'
 
+var ethjs = require('ethereumjs-util')
+
+
 var SW = require('../utils/stateWrapper')
 
 
@@ -10,10 +13,15 @@ class TimeoutInterface extends Component {
   constructor(props) {
     super(props)
 
+    this.startTimeout = this.startTimeout.bind(this)
+    this.stopTimeout = this.stopTimeout.bind(this)
+    this.confirmTimeout = this.confirmTimeout.bind(this)
+    this.updateRemainingTime = this.updateRemainingTime.bind(this)
+
     this.state = {
       running: false,
       matchId: 0,
-      playerMax: 0,
+      playerMax: 2,
       playerIndex: 0,
       timeoutBlamed: -1,
       remainingTime: 0,
@@ -34,7 +42,9 @@ class TimeoutInterface extends Component {
   }
 
   static defaultProps = {
-    server: 0
+    server: 0,
+    turn: 0,
+    turnPlayer: 0
   }
 
   componentWillMount() {
@@ -63,21 +73,23 @@ class TimeoutInterface extends Component {
                 self.state.timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
                   // Set timeout info
                   self.setState({
-                    timeoutBlamed: timeoutInfo.timeoutPlayerRet
+                    timeoutBlamed: timeoutInfo.timeoutPlayerRet,
                     timeoutTurn: timeoutInfo.timeoutTurnRet,
                     timeoutPlayerTurn: timeoutInfo.timeoutPlayerRet
                   })
 
                   // Compute remaining time
                   self.state.timeoutManager.methods.getTimeoutThreshold().call().then(function(timeoutThreshold) {
+
                       var currentTimestamp = new Date().getTime() / 1000
-                      var endTimestamp = timeoutThreshold timeoutInfo.timeoutTimestampRet
+                      var endTimestamp = parseInt(timeoutThreshold) + parseInt(timeoutInfo.timeoutTimestampRet)
                       var remaining = endTimestamp - currentTimestamp
 
                       if (remaining<0) {
                         remaining = 0
                       }
-                      self.setState({remainingTime: remaining})
+                      self.setState({remainingTime: Math.floor(remaining)})
+                      setTimeout(self.updateRemainingTime, 1000)
                   })
                 })
               }
@@ -89,7 +101,9 @@ class TimeoutInterface extends Component {
 
           })
         }
-        self.setState({running: false})
+        else {
+          self.setState({running: false})
+        }
       })
     }
   }
@@ -106,12 +120,13 @@ class TimeoutInterface extends Component {
     var v = []
     var nbSignature = 0
 
-    if (this.state.timeoutManager != null) {
+    if (self.state.timeoutManager != null) {
       var lastStates = SW.getLastStates()
 
       // Fill last state data
       var i = 0
-      if(lastStates != null) {
+
+      if(this.props.turn > 0 || (this.props.turn == 0 && this.props.turnPlayer > 0)) {
         nbSignature = lastStates.length
         while(i < lastStates.length) {
 
@@ -148,7 +163,7 @@ class TimeoutInterface extends Component {
         moveOutput.push(tmp)
         tmp = []
         for(j=0; j<2; j++) {
-          tmp.push('')
+          tmp.push('0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0')
         }
         signatureRS.push(tmp)
         v.push('0')
@@ -167,6 +182,21 @@ class TimeoutInterface extends Component {
       if(lastStates == null) {
         metadata[0][0] = self.state.matchId.toString()
       }
+
+      // console.log('metadata')
+      // console.log(metadata)
+      // console.log('move')
+      // console.log(move)
+      // console.log('moveOutput')
+      // console.log(moveOutput)
+      // console.log('signatureRS')
+      // console.log(signatureRS)
+      // console.log('v')
+      // console.log(v)
+      // console.log('originState')
+      // console.log(originState)
+      // console.log('nbSignature')
+      // console.log(nbSignature)
 
       self.state.timeoutManager.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
@@ -237,7 +267,7 @@ class TimeoutInterface extends Component {
             moveOutput.push(tmp)
             tmp = []
             for(j=0; j<2; j++) {
-              tmp.push('')
+              tmp.push('0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0')
             }
             signatureRS.push(tmp)
             v.push('0')
@@ -265,7 +295,7 @@ class TimeoutInterface extends Component {
     e.preventDefault()
     var self = this
 
-    if(timeoutManager != null) {
+    if(self.state.timeoutManager != null) {
       self.state.timeoutManager.methods.confirmTimeout(self.state.matchId).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
@@ -281,12 +311,28 @@ class TimeoutInterface extends Component {
     }
   }
 
+  updateRemainingTime() {
+    console.log('Updating remaining time')
+    if(this.state.remainingTime > 0) {
+      var remaining = this.state.remainingTime
+      remaining -= 1
+      if (remaining<0) {
+        remaining = 0
+      }
+      this.setState({remainingTime: Math.floor(remaining)})
+      setTimeout(this.updateRemainingTime, 1000)
+    }
+  }
+
 
   render() {
-    var content = <div></div>
-    var actualTurn = SW.getCurrentTurn(this.state.playerMax)
+    var content = null
+
+    // BUG: using getCurrentTurn gave us an error, we use props instead
+    var actualTurn = [this.props.turn,this.props.turnPlayer] //SW.getCurrentTurn(this.state.playerMax)
 
     if(this.state.running == true) {
+
       if(this.state.timeoutBlamed == -1) {
         // No timeout process is currently pending
 
@@ -351,9 +397,7 @@ class TimeoutInterface extends Component {
       }
     }
 
-    return (
-      {content}
-    )
+    return (content)
   }
 }
 
