@@ -45,11 +45,11 @@ var timeoutManagerAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn12'
-const playerTurnPrefix = '_playerturn12'
-const statePrefix = '_state12'
-const killedPlayerPrefix = '_killedplayers12'
-const nbTimeoutPrefix = '_nbtimeout12'
+const turnPrefix = '_turn3'
+const playerTurnPrefix = '_playerturn3'
+const statePrefix = '_state3'
+const killedPlayerPrefix = '_killedplayers3'
+const nbTimeoutPrefix = '_nbtimeout3'
 
 
 redis.on("connect", function () {
@@ -891,9 +891,8 @@ function runDevServer(host, port, protocol) {
                             redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
                               var lastState = JSON.parse(stateReply[0]).moveOutput
 
-                              nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call().then(function(simulatedOutput){
+                              nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], lastState).call({gas: '1000000'}).then(function(simulatedOutput){
 
-                                // WARNING HAS THEY HAVE THE SAME FORMAT ?
                                 // Comparing hashed
                                 if(web3.utils.sha3(simulatedOutput.toString()) == web3.utils.sha3(req.body.moveOutput.toString())) {
 
