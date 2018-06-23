@@ -48,7 +48,7 @@ contract TimeoutManager {
     function TimeoutManager() public {
         owner = msg.sender;
         // 300 sec = 5 min
-        timeoutThreshold = 300;
+        timeoutThreshold = 1200;
         serverAddress = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
     }
 
@@ -334,7 +334,7 @@ contract TimeoutManager {
 
         // Verify timeout process is pending
         require(currentTimeoutTimestamp[matchId] > 0);
-        require(currentTimeoutTimestamp[matchId] + timeoutThreshold > now);
+        require(now > currentTimeoutTimestamp[matchId] + timeoutThreshold);
 
         // Call the necessary function in NujaBattle contract to manage fund, etc.
         NujaBattle(serverAddress).timeoutPlayer(matchId, currentTimeoutClaimer[matchId], currentTimeoutTurn[matchId], currentTimeoutPlayer[matchId]);

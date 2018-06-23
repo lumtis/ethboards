@@ -106,7 +106,7 @@ contract NujaBattle is Geometry, StateManager {
         registryInitialized = true;
     }
 
-    /* 
+    /*
     function changeServerCreationFee(uint fee) public onlyOwner {
         serverCreationFee = fee * 1 finney;
     }
@@ -481,6 +481,9 @@ contract NujaBattle is Geometry, StateManager {
         else if (idMove == 4) {
             return usePower(indexServer, p, xMove, yMove, moveInput);
         }
+        else {
+            return moveInput;
+        }
     }
 
     function move(uint p, uint8 x, uint8 y, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
@@ -502,7 +505,7 @@ contract NujaBattle is Geometry, StateManager {
         require(opponent > 0);
         opponent -= 1;
 
-        return damage(moveInput, opponent, 100);
+        return damage(moveInput, opponent, 20);
     }
 
     function exploreBuilding(uint8 p, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
