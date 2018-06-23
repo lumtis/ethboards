@@ -8,6 +8,8 @@ import store from '../store'
 import '../css/actions.css'
 
 import WeaponSprite from '../components/WeaponSprite'
+import KillInterface from '../components/KillInterface'
+import TimeoutInterface from '../components/TimeoutInterface'
 
 var PubSub = require('pubsub-js')
 var SW = require('../utils/stateWrapper')
@@ -249,7 +251,7 @@ class Actions extends Component {
 
 
   render() {
-    var content = <div></div>
+    var content = null
     var myTurn = false
     var weaponArray = []
 
@@ -275,32 +277,38 @@ class Actions extends Component {
             </div>)
         }
       }
+
+      if(myTurn) {
+        content =
+          <div style={{padding: '2px'}}>
+            <h3>Your turn !</h3>
+            <div style={{textAlign: 'center'}}>
+              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.moveButton} className="buttonExplore">Move <i className="fa fa-arrows-alt"></i></button>
+              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.attackButton} className="buttonExplore">Attack <i className="fa fa-gavel"></i></button>
+              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.exploreBuildingButton} className="buttonExplore">Explore <i className="fa fa-building"></i></button>
+              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.powerButton} className="buttonExplore">Power <i className="fa fa-star"></i></button>
+              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.idleButton} className="buttonExplore">Sleep <i className="fa fa-bed"></i></button>
+            </div>
+            <h3>Weapons:</h3>
+            <div className="row" style={{marginTop: '20px', marginBottom: '20px'}}>
+              <div>{weaponArray}</div>
+            </div>
+          </div>
+      }
+      else {
+        content = <h3>Not your turn</h3>
+      }
+
+      return (
+        <div>
+          {content}
+          <KillInterface server={this.props.server} />
+          <TimeoutInterface server={this.props.server} turn={actualTurn[0]} turnPlayer={actualTurn[1]} />
+        </div>
+      );
     }
 
-    if(myTurn) {
-      content =
-      <div style={{padding: '2px'}}>
-        <h3>Your turn !</h3>
-        <div style={{textAlign: 'center'}}>
-          <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.moveButton} className="buttonExplore">Move <i className="fa fa-arrows-alt"></i></button>
-          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.attackButton} className="buttonExplore">Attack <i className="fa fa-gavel"></i></button>
-          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.exploreBuildingButton} className="buttonExplore">Explore <i className="fa fa-building"></i></button>
-          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.powerButton} className="buttonExplore">Power <i className="fa fa-star"></i></button>
-          <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.idleButton} className="buttonExplore">Sleep <i className="fa fa-bed"></i></button>
-        </div>
-        <h3>Weapons:</h3>
-        <div className="row" style={{marginTop: '20px', marginBottom: '20px'}}>
-          <div>{weaponArray}</div>
-        </div>
-      </div>
-    }
-    else {
-      content = <h3>Not your turn</h3>
-    }
-
-    return (
-      <div>{content}</div>
-    );
+    return (null)
   }
 }
 

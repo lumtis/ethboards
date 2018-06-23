@@ -263,16 +263,16 @@ exports.getPlayerWeapons = function(p) {
 
   var lastState = currentState[currentState.length-1].moveOutput
 
-  if(lastState[152+parseInt(p)] == 0) {
+  if(parseInt(lastState[152+parseInt(p)]) == 0) {
       return []
   }
-  else if(lastState[160+p] == 0) {
-      return [lastState[152+parseInt(p)]]
+  else if(parseInt(lastState[160+parseInt(p)]) == 0) {
+      return [parseInt(lastState[152+parseInt(p)])-1]
   }
-  else if(lastState[168+p] == 0) {
-      return [lastState[152+parseInt(p)], lastState[160+parseInt(p)]]
+  else if(parseInt(lastState[168+parseInt(p)]) == 0) {
+      return [parseInt(lastState[152+parseInt(p)])-1, parseInt(lastState[160+parseInt(p)])-1]
   }
   else {
-      return [lastState[152+parseInt(p)], lastState[160+parseInt(p)], lastState[168+parseInt(p)]]
+      return [parseInt(lastState[152+parseInt(p)])-1, parseInt(lastState[160+parseInt(p)])-1, parseInt(lastState[168+parseInt(p)])-1]
   }
 }
