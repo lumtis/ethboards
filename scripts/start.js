@@ -387,9 +387,10 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
       // We update it if we need to remove signature
       var originState = JSON.parse(stateReply[0]).moveOutput
 
+
       // Remove useless signature
       for(var i=0; i<9; i++) {
-        if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[2] <= killer) {
+        if(JSON.parse(stateReply[0]).metadata[1] < turn-1 || (JSON.parse(stateReply[0]).metadata[1] == turn-1 && JSON.parse(stateReply[0]).metadata[2] <= killer)) {
           originState = JSON.parse(stateReply[0]).moveOutput
           stateReply.shift()
         }
@@ -397,6 +398,8 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
           break
         }
       }
+
+      console.log(stateReply)
 
       //Push the signatures to the players to kill list
       redis.rpush(matchId + killedPlayerPrefix, JSON.stringify({
@@ -717,7 +720,7 @@ function runDevServer(host, port, protocol) {
                 if(stateReply.length >= 8) {
                   for(var i=0; i<9; i++) {
                     // Verify if the first signer is not redundant
-                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length-1]).metadata[1] && JSON.parse(stateReply[0]).metadata[2] <= JSON.parse(stateReply[stateReply.length-1]).metadata[2]) {
+                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length-1]).metadata[1]-1 || (JSON.parse(stateReply[0]).metadata[1]-1 == JSON.parse(stateReply[stateReply.length-1]).metadata[1] && JSON.parse(stateReply[0]).metadata[2] <= JSON.parse(stateReply[stateReply.length-1]).metadata[2])) {
                       originState = JSON.parse(stateReply[0]).moveOutput
                       stateReply.shift()
                     }

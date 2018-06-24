@@ -121,22 +121,19 @@ class KillInterface extends Component {
         v.push(0)
       }
 
-      console.log('signature number:')
-      console.log(nbSignature)
-
-      // Send transaction
-      // this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
-      //   from: this.state.account.address,
-      //   gasPrice: 2000000000,
-      //   gas: '1000000'
-      // })
-      // .on('error', function(error){ console.log('ERROR: ' + error)})
-      // .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
-      // .on('receipt', function(receipt){ console.log('receipt')})
-      // .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
-      // .then(function(ret) {
-      //   alert('Player killed')
-      // })
+      //Send transaction
+      this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
+        from: this.state.account.address,
+        gasPrice: 2000000000,
+        gas: '1000000'
+      })
+      .on('error', function(error){ console.log('ERROR: ' + error)})
+      .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
+      .on('receipt', function(receipt){ console.log('receipt')})
+      .on('confirmation', function(confirmationNumber, receipt){ console.log('confirmation')})
+      .then(function(ret) {
+        alert('Player killed')
+      })
     }
   }
 
