@@ -115,9 +115,10 @@ class PlayerSprite extends Component {
           }}></img>
           <div style={{
             top: offsetY-100+'px',
-            left: offsetX+'px',
+            left: offsetX+40+'px',
             width: '350px',
-            position: 'absolute'
+            position: 'absolute',
+            zIndex: 999
           }}
           >{desc}</div>
         </div>
