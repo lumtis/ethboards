@@ -728,13 +728,13 @@ contract NujaBattle is Geometry, StateManager {
         if(servers[serverMatch[matchId]-1].playerNb == 1) {
 
             // Search for last alive player
-            /* for(uint8 i=0; i<servers[serverMatch[matchId]-1].playerMax; i++) {
-                if(deadPlayer[matchId][i] == true) {
+            for(uint8 i=0; i<servers[serverMatch[matchId]-1].playerMax; i++) {
+                if(deadPlayer[matchId][i] == false) {
                   // Terminate the server
                   terminateServer(serverMatch[matchId]-1, i);
                   break;
                 }
-            } */
+            }
         }
     }
 
