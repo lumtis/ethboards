@@ -35,7 +35,7 @@ class Sidebar extends Component {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       account: store.getState().account.accountInstance,
       inServer: false,
-      characterId: 0,
+      characterId: -1,
       changeServer: false,
       changeServerByCharacter: false,
       serverReady: false
@@ -65,7 +65,7 @@ class Sidebar extends Component {
           if(isRet) {
             self.state.nujaBattle.methods.getIndexFromAddress(props.server, self.state.account.address).call().then(function(indexUser) {
               self.state.nujaBattle.methods.playerCharacter(props.server, indexUser).call().then(function(characterIndex) {
-                self.setState({characterId: characterIndex})
+                self.setState({characterId: parseInt(characterIndex)})
               })
             })
           }
@@ -147,7 +147,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    var content = <div></div>
+    var content = null
 
     // Get the content of the sidebar depending if we are on the server or not
     if (this.state.account == null) {
@@ -217,12 +217,13 @@ class Sidebar extends Component {
 
           if(this.props.serverState == 2) {
             // We are on the server, so we show our character informations and actions
-            content =
-            <div>
-              {buttonChangeServer}
-              <Player index={this.state.characterId} />
-              <Actions server={this.props.server} />
-            </div>
+            if(this.state.characterId > -1) {
+              content =
+              <div>
+                <Player index={this.state.characterId} />
+                <Actions server={this.props.server} />
+              </div>
+            }
           }
           else {
             // We are on the server but the match has not started yet
@@ -255,7 +256,6 @@ class Sidebar extends Component {
           <div>
             {buttonChangeServer}
             <h3>You are not on this server</h3>
-            {buttonStartServer}
             {joinInt}
           </div>
         }
