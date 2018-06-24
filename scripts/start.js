@@ -37,19 +37,19 @@ var ethjs = require('ethereumjs-util')
 
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var nujaBattleAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
+var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn3'
-const playerTurnPrefix = '_playerturn3'
-const statePrefix = '_state3'
-const killedPlayerPrefix = '_killedplayers3'
-const nbTimeoutPrefix = '_nbtimeout3'
+const turnPrefix = '_turn'
+const playerTurnPrefix = '_playerturn'
+const statePrefix = '_state'
+const killedPlayerPrefix = '_killedplayers'
+const nbTimeoutPrefix = '_nbtimeout'
 
 
 redis.on("connect", function () {
@@ -389,7 +389,7 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
 
       // Remove useless signature
       for(var i=0; i<9; i++) {
-        if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[0] <= killer) {
+        if(JSON.parse(stateReply[0]).metadata[1] < turn && JSON.parse(stateReply[0]).metadata[2] <= killer) {
           originState = JSON.parse(stateReply[0]).moveOutput
           stateReply.shift()
         }
@@ -717,7 +717,7 @@ function runDevServer(host, port, protocol) {
                 if(stateReply.length >= 8) {
                   for(var i=0; i<9; i++) {
                     // Verify if the first signer is not redundant
-                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length-1]).metadata[1] && JSON.parse(stateReply[0]).metadata[0] <= JSON.parse(stateReply[stateReply.length-1]).metadata[0]) {
+                    if(JSON.parse(stateReply[0]).metadata[1] < JSON.parse(stateReply[stateReply.length-1]).metadata[1] && JSON.parse(stateReply[0]).metadata[2] <= JSON.parse(stateReply[stateReply.length-1]).metadata[2]) {
                       originState = JSON.parse(stateReply[0]).moveOutput
                       stateReply.shift()
                     }
