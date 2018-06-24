@@ -55,7 +55,7 @@ contract NujaBattle is Geometry, StateManager {
         uint8 playerNb;
         uint8 state;       // 0: offline, 1: waiting, 2: running
         mapping (uint8 => mapping (uint8 => uint)) buildings;
-        mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end
+        /* mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end */
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
     }
@@ -262,7 +262,7 @@ contract NujaBattle is Geometry, StateManager {
         for(uint8 i=0; i<maxPlayer; i++) {
 
             // Search randomly for not used position
-            do {
+            /* do {
               random = int(keccak256(random));
               if(random < 0) {
                   random *= -1;
@@ -273,12 +273,14 @@ contract NujaBattle is Geometry, StateManager {
                   random *= -1;
               }
               uint8 y = uint8(random%maxPlayer);
-            } while (servers[server].playersPosition[x][y] > 0);
+            } while (servers[server].playersPosition[x][y] > 0); */
 
             // Set the new position for the player
-            servers[server].playersPosition[x][y] = i+1;
-            servers[server].players[i].initialX = x;
-            servers[server].players[i].initialY = y;
+            //servers[server].playersPosition[x][y] = i+1;
+
+            // First version
+            servers[server].players[i].initialX = i;
+            servers[server].players[i].initialY = i;
         }
 
         // Start the server
@@ -393,7 +395,8 @@ contract NujaBattle is Geometry, StateManager {
         // Players
         for(i = 0; i<8; i++) {
             for(j = 0; j<8; j++) {
-                state[64+i*8+j] = servers[indexServer].playersPosition[i][j];
+                //state[64+i*8+j] = servers[indexServer].playersPosition[i][j];
+                state[64+i*8+j] = 0;
             }
         }
         // healths
@@ -407,6 +410,7 @@ contract NujaBattle is Geometry, StateManager {
         for(i = 0; i<servers[indexServer].playerMax; i++) {
             state[136+i] = servers[indexServer].players[i].initialX;
             state[144+i] = servers[indexServer].players[i].initialY;
+            state[64+servers[indexServer].players[i].initialX*8+servers[indexServer].players[i].initialY] = i+1;
         }
         for(i = servers[indexServer].playerMax; i<8; i++) {
             state[136+i] = 0;
@@ -541,25 +545,6 @@ contract NujaBattle is Geometry, StateManager {
 
     //////////////////////////////////////////////////////////////////
     // Match functions
-
-
-    function moveOwner(
-      uint[3] metadata,
-      uint[4] move,
-      uint[176] moveOutput,
-      bytes32 r,
-      bytes32 s,
-      uint8 v
-      ) public pure returns (address recovered) {
-
-        // Calculate the hash of the move
-        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
-
-        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = keccak256(prefix, hashedMove);
-
-        return ecrecover(msg, v, r, s);
-    }
 
     function nextTurn(
       uint indexServer,
@@ -722,15 +707,6 @@ contract NujaBattle is Geometry, StateManager {
         removePlayer(indexServer, winner);
         servers[indexServer].state = 1;
         servers[indexServer].currentMatchId = 0;
-
-        // Clear players position
-        for(uint8 i=0; i<1; i++) {
-          for(uint8 j=0; j<1; j++) {
-            if(servers[indexServer].playersPosition[i][j] > 0) {
-              servers[indexServer].playersPosition[i][j] = 0;
-            }
-          }
-        }
 
         // Winner get his money back
         servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);

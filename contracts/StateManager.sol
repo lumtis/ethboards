@@ -16,6 +16,25 @@ uint[8] weapon3
 
 contract StateManager {
 
+    function moveOwner(
+      uint[3] metadata,
+      uint[4] move,
+      uint[176] moveOutput,
+      bytes32 r,
+      bytes32 s,
+      uint8 v
+      ) public pure returns (address recovered) {
+
+        // Calculate the hash of the move
+        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
+
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 msg = keccak256(prefix, hashedMove);
+
+        return ecrecover(msg, v, r, s);
+    }
+
+
     // Building function
     function getBuilding(uint[176] state, uint8 x, uint8 y) internal pure returns (uint ret) {
         return state[x*8+y];
