@@ -2,15 +2,15 @@ import store from '../store'
 import Web3 from 'web3'
 
 var nujaBattleJson = require('../../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0'
+var nujaBattleAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
 var timeoutManagerJson = require('../../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '0xF12b5dd4EAD5F743C6BaA640B0216200e89B60Da'
+var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
 var nujaRegistryJson = require('../../build/contracts/NujaRegistry.json')
-var nujaRegistryAddress = '0x345cA3e014Aaf5dcA488057592ee47305D9B3e10'
+var nujaRegistryAddress = '0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e'
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
-var characterRegistryAddress = '0xf25186B5081Ff5cE73482AD761DB0eB0d25abfBF'
+var characterRegistryAddress = '0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5'
 var weaponRegistryJson = require('../../build/contracts/WeaponRegistry.json')
-var weaponRegistryAddress = '0x8f0483125FCb9aaAEFA9209D8E9d7b9C8B9Fb90F'
+var weaponRegistryAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
 function web3Initialized(results) {
