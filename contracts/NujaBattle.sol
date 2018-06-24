@@ -466,11 +466,22 @@ contract NujaBattle is Geometry, StateManager {
         require(p < servers[indexServer].playerMax);
         require(isAlive(moveInput, p));
 
+        uint8 xInitial;
+        uint8 yInitial;
+        (xInitial, yInitial) = getPosition(moveInput, p);
+
         if (idMove == 0) {
-            return move(p, xMove, yMove, moveInput);
+            // Move
+            require(distance(xMove, yMove, xInitial, yInitial) == 1);
+            return movePlayer(moveInput, p, xMove, yMove);
         }
         else if (idMove == 1) {
-            return attack(p, xMove, yMove, moveInput);
+            // Simple attack
+            require(distance(xMove, yMove, xInitial, yInitial) == 1);
+            uint opponent = getPlayer(moveInput, xMove, yMove);
+            require(opponent > 0);
+            opponent -= 1;
+            return damage(moveInput, opponent, 100);
         }
         else if (idMove == 2) {
             return exploreBuilding(p, moveInput);
@@ -484,28 +495,6 @@ contract NujaBattle is Geometry, StateManager {
         else {
             return moveInput;
         }
-    }
-
-    function move(uint p, uint8 x, uint8 y, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
-        uint8 xInitial;
-        uint8 yInitial;
-        (xInitial, yInitial) = getPosition(moveInput, p);
-        require(distance(x, y, xInitial, yInitial) == 1);
-
-        return movePlayer(moveInput, p, x, y);
-    }
-
-    function attack(uint8 p, uint8 x, uint8 y, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
-        uint8 xInitial;
-        uint8 yInitial;
-        (xInitial, yInitial) = getPosition(moveInput, p);
-        require(distance(x, y, xInitial, yInitial) == 1);
-
-        uint opponent = getPlayer(moveInput, x, y);
-        require(opponent > 0);
-        opponent -= 1;
-
-        return damage(moveInput, opponent, 20);
     }
 
     function exploreBuilding(uint8 p, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
@@ -734,9 +723,19 @@ contract NujaBattle is Geometry, StateManager {
         servers[indexServer].state = 1;
         servers[indexServer].currentMatchId = 0;
 
+        // Clear players position
+        for(uint8 i=0; i<1; i++) {
+          for(uint8 j=0; j<1; j++) {
+            if(servers[indexServer].playersPosition[i][j] > 0) {
+              servers[indexServer].playersPosition[i][j] = 0;
+            }
+          }
+        }
+
         // Winner get his money back
         servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
     }
+
 
     // Function for timeout manager
     function timeoutPlayer(uint matchId, address timeoutClaimer, uint timeoutTurn, uint8 timeoutPlayer) public fromTimeoutManager {
@@ -748,6 +747,19 @@ contract NujaBattle is Geometry, StateManager {
 
         // register timeout
         matchTimeoutTurns[matchId][timeoutTurn][timeoutPlayer] = true;
+
+        // If it was the last player, terminate the server
+        if(servers[serverMatch[matchId]-1].playerNb == 1) {
+
+            // Search for last alive player
+            /* for(uint8 i=0; i<servers[serverMatch[matchId]-1].playerMax; i++) {
+                if(deadPlayer[matchId][i] == true) {
+                  // Terminate the server
+                  terminateServer(serverMatch[matchId]-1, i);
+                  break;
+                }
+            } */
+        }
     }
 
     function isTimedout(uint matchId, uint turn, uint turnPlayer) public view returns (bool timedoutRet) {
