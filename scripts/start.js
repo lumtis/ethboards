@@ -45,11 +45,11 @@ var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn'
-const playerTurnPrefix = '_playerturn'
-const statePrefix = '_state'
-const killedPlayerPrefix = '_killedplayers'
-const nbTimeoutPrefix = '_nbtimeout'
+const turnPrefix = '_turn12'
+const playerTurnPrefix = '_playerturn12'
+const statePrefix = '_state12'
+const killedPlayerPrefix = '_killedplayers12'
+const nbTimeoutPrefix = '_nbtimeout12'
 
 
 redis.on("connect", function () {
@@ -270,7 +270,9 @@ function updateLastMoves(matchId, nbPlayer, cb) {
       if(isTimeout) {
         timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
           getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
-            if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[0])) {
+            if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[1])) {
+
+
 
               timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
                 timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
@@ -297,9 +299,9 @@ function updateLastMoves(matchId, nbPlayer, cb) {
 
                               // We pushed all missing moves, we update metadata and terminate
                               // Metadata is last missing move metadata
-                              redis.set(req.body.matchId + turnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (turnErr, turnReply){
+                              redis.set(matchId + turnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (turnErr, turnReply){
                                 // TODO: gestion erreur
-                                redis.set(req.body.matchId + playerTurnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (playerturnErr, playerturnReply){
+                                redis.set(matchId + playerTurnPrefix, parseInt(lastMovesMetadata.playerRet[lastMoves.nbRet-1]), function (playerturnErr, playerturnReply){
                                   // TODO: gestion erreur
                                   endCallback()
                                 })
