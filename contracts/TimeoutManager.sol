@@ -48,8 +48,8 @@ contract TimeoutManager {
     function TimeoutManager() public {
         owner = msg.sender;
         // 300 sec = 5 min
-        timeoutThreshold = 1200;
-        serverAddress = 0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0;
+        timeoutThreshold = 30;
+        serverAddress = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
     }
 
     function changeTimeoutThreshold(uint threshold) public onlyOwner {
@@ -162,9 +162,6 @@ contract TimeoutManager {
             lastMovesNb[metadata[0][0]] = 0;
         }
         else {
-            // Not the first turn
-            require(metadata[0][0] == metadata[0][0]-1);
-
             // Check if it is the first turn
             // During first turn not all alive player are required to be part of the signatures list
             if(metadata[0][1] == 0 && metadata[0][2] == 0) {
@@ -206,9 +203,11 @@ contract TimeoutManager {
 
                 // If not the last turn check the next turn is correctly the next player
                 uint[3] memory newMetadata = NujaBattle(serverAddress).nextTurn(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), metadata[i], moveOutput[i]);
-                require(newMetadata[0] == metadata[i+1][0]);
-                require(newMetadata[1] == metadata[i+1][1]);
-                require(newMetadata[2] == metadata[i+1][2]);
+                if(i < nbSignature-1) {
+                    require(newMetadata[0] == metadata[i+1][0]);
+                    require(newMetadata[1] == metadata[i+1][1]);
+                    require(newMetadata[2] == metadata[i+1][2]);
+                }
 
                 // Set lastMove to be sure state is shared
                 lastMoves[metadata[0][0]][i][0] = uint8(move[i][0]);
@@ -258,8 +257,6 @@ contract TimeoutManager {
         require(currentTimeoutTimestamp[metadata[0][0]] > 0);
         require(msg.sender == currentTimeoutPlayer[metadata[0][0]]);
         require(nbSignature > 0);
-        require(metadata[0][0] == metadata[0][0]);
-
 
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list

@@ -715,6 +715,8 @@ contract NujaBattle is Geometry, StateManager {
 
     // Function for timeout manager
     function timeoutPlayer(uint matchId, address timeoutClaimer, uint timeoutTurn, uint8 timeoutPlayer) public fromTimeoutManager {
+        require(serverMatch[matchId] > 0);
+
         // Claimer get money
         timeoutClaimer.transfer(servers[serverMatch[matchId]-1].moneyBag + cheatWarrant);
 
@@ -744,6 +746,6 @@ contract NujaBattle is Geometry, StateManager {
     function getPlayerAddress(uint matchId, uint turnPlayer) public view returns (address ownerRet) {
         require(serverMatch[matchId] > 0);
         require(uint8(turnPlayer) < servers[serverMatch[matchId]-1].playerMax);
-        servers[serverMatch[matchId]-1].players[uint8(turnPlayer)].owner;
+        return servers[serverMatch[matchId]-1].players[uint8(turnPlayer)].owner;
     }
 }
