@@ -183,21 +183,6 @@ class TimeoutInterface extends Component {
         metadata[0][0] = self.state.matchId.toString()
       }
 
-      // console.log('metadata')
-      // console.log(metadata)
-      // console.log('move')
-      // console.log(move)
-      // console.log('moveOutput')
-      // console.log(moveOutput)
-      // console.log('signatureRS')
-      // console.log(signatureRS)
-      // console.log('v')
-      // console.log(v)
-      // console.log('originState')
-      // console.log(originState)
-      // console.log('nbSignature')
-      // console.log(nbSignature)
-
       self.state.timeoutManager.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
@@ -312,7 +297,6 @@ class TimeoutInterface extends Component {
   }
 
   updateRemainingTime() {
-    console.log('Updating remaining time')
     if(this.state.remainingTime > 0) {
       var remaining = this.state.remainingTime
       remaining -= 1
@@ -349,7 +333,7 @@ class TimeoutInterface extends Component {
           // If we are the blamed player
 
           // Check if the turn has been played
-          if(actualTurn[0] > this.state.timeoutTurn || (actualTurn[0] == this.state.timeoutTurn && actualTurn[1] == this.state.timeoutPlayerTurn)) {
+          if(actualTurn[0] > this.state.timeoutTurn || (actualTurn[0] == this.state.timeoutTurn && actualTurn[1] > this.state.timeoutPlayerTurn)) {
             // Turn has been played
             content =
               <div style={{textAlign: 'center'}}>

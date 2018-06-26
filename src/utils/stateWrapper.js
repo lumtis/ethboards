@@ -118,7 +118,7 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
   var timeoutManager = store.getState().web3.timeoutManagerInstance
   if(timeoutManager != null) {
 
-    self.state.timeoutManager.methods.getLastMoves(id).call().then(function(lastMoves) {
+    timeoutManager.methods.getLastMoves(id).call().then(function(lastMoves) {
 
       // Check if it is the first turn
       if(lastMoves.nbRet == 0) {
@@ -146,8 +146,9 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
         )
       }
       else {
-        self.state.timeoutManager.methods.getLastMovesMetadata(id).call().then(function(lastMetadatas) {
+        timeoutManager.methods.getLastMovesMetadata(id).call().then(function(lastMetadatas) {
           // Get timeout informations to fill necessary parameters
+
           request.post(
             'http://localhost:3000/post/specificstate',
             { json:
