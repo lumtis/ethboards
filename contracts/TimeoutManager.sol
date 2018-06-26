@@ -299,9 +299,11 @@ contract TimeoutManager {
 
             // If not the last turn check the next turn is correctly the next player
             uint[3] memory newMetadata = NujaBattle(serverAddress).nextTurn(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), metadata[i], moveOutput[i]);
-            require(newMetadata[0] == metadata[i+1][0]);
-            require(newMetadata[1] == metadata[i+1][1]);
-            require(newMetadata[2] == metadata[i+1][2]);
+            if(i < nbSignature-1) {
+                require(newMetadata[0] == metadata[i+1][0]);
+                require(newMetadata[1] == metadata[i+1][1]);
+                require(newMetadata[2] == metadata[i+1][2]);
+            }
 
             // Set lastMove to be sure state is shared
             lastMoves[metadata[0][0]][i][0] = uint8(move[i][0]);
