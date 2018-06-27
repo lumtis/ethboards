@@ -255,7 +255,7 @@ contract TimeoutManager {
 
         // Verify there is pending timeout and sender is the blamed player
         require(currentTimeoutTimestamp[metadata[0][0]] > 0);
-        require(msg.sender == currentTimeoutPlayer[metadata[0][0]]);
+        require(NujaBattle(serverAddress).getIndexFromAddress(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), msg.sender) == currentTimeoutPlayer[metadata[0][0]]);
         require(nbSignature > 0);
 
         // Check if it is the first turn
