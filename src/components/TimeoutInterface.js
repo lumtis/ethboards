@@ -205,6 +205,8 @@ class TimeoutInterface extends Component {
     if (this.state.timeoutManager != null) {
       SW.getTimeoutState(self.state.matchId, self.state.timeoutTurn, self.state.timeoutPlayerTurn, function(timeoutState) {
 
+        console.log(timeoutState)
+
         if(timeoutState != null) {
 
           // Parameters
@@ -213,21 +215,21 @@ class TimeoutInterface extends Component {
           var moveOutput = []
           var signatureRS = []
           var v = []
-          var nbSignature = timeoutState.states.length
+          var nbSignature = timeoutState.state.length
 
 
           // Fill last state data
           var i = 0
-          while(i < timeoutState.states.length) {
+          while(i < timeoutState.state.length) {
 
-            metadata.push(timeoutState.states[i].metadata)
-            move.push(timeoutState.states[i].move)
-            moveOutput.push(timeoutState.states[i].moveOutput)
+            metadata.push(timeoutState.state[i].metadata)
+            move.push(timeoutState.state[i].move)
+            moveOutput.push(timeoutState.state[i].moveOutput)
 
-            var rHex = timeoutState.states[i].signature.slice(0, 66)
-            var sHex = '0x' + timeoutState.states[i].signature.slice(66, 130)
+            var rHex = timeoutState.state[i].signature.slice(0, 66)
+            var sHex = '0x' + timeoutState.state[i].signature.slice(66, 130)
             signatureRS.push([rHex, sHex])
-            var splittedSig = ethjs.fromRpcSig(timeoutState.states[i].signature)
+            var splittedSig = ethjs.fromRpcSig(timeoutState.state[i].signature)
             v.push(splittedSig.v)
 
             i++

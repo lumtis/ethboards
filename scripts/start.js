@@ -45,11 +45,11 @@ var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn12'
-const playerTurnPrefix = '_playerturn12'
-const statePrefix = '_state12'
-const killedPlayerPrefix = '_killedplayers12'
-const nbTimeoutPrefix = '_nbtimeout12'
+const turnPrefix = '_turn123'
+const playerTurnPrefix = '_playerturn123'
+const statePrefix = '_state123'
+const killedPlayerPrefix = '_killedplayers123'
+const nbTimeoutPrefix = '_nbtimeout123'
 
 
 redis.on("connect", function () {
@@ -644,6 +644,7 @@ function runDevServer(host, port, protocol) {
               // Get all states
               redis.lrange(req.body.matchId + statePrefix, 0, llenReply, function (stateErr, stateReply) {
                 // Search where states list start
+
                 var badInput = false
                 var i = 0
                 while(JSON.parse(stateReply[i]).metadata[1] != req.body.turnBegin || JSON.parse(stateReply[i]).metadata[2] != req.body.playerBegin) {
@@ -667,7 +668,7 @@ function runDevServer(host, port, protocol) {
                   // Get all the states
                   var maxStateNb = i+8
                   var states = []
-                  while(JSON.parse(stateReply[i]).metadata[1] < req.body.turnEnd || (JSON.parse(stateReply[i]).metadata[1] == req.body.turnEnd && JSON.parse(stateReply[i]).metadata[2] <= req.body.playerEnd)) {
+                  while(JSON.parse(stateReply[i]).metadata[1] < req.body.turnEnd || (JSON.parse(stateReply[i]).metadata[1] == req.body.turnEnd && JSON.parse(stateReply[i]).metadata[2] < req.body.playerEnd)) {
                     states.push(JSON.parse(stateReply[i]))
                     i++
                     if(i >= maxStateNb || i >= llenReply) {
@@ -675,9 +676,11 @@ function runDevServer(host, port, protocol) {
                       break
                     }
                   }
+                  if(JSON.parse(stateReply[i]).metadata[1] == req.body.turnEnd && JSON.parse(stateReply[i]).metadata[2] == req.body.playerEnd) {
+                    states.push(JSON.parse(stateReply[i]))
+                  }
 
                   if(!badInput) {
-
                     // Send response
                     var response = {}
                     response.state = states
