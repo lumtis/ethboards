@@ -179,7 +179,8 @@ class TimeoutInterface extends Component {
       }
 
       // If first turn, only metadata[0][0] has to hold the match id
-      if(lastStates == null) {
+      // If first turn therefore the first element of lastStates will not contains metadata
+      if(!('metadata' in lastStates[0])) {
         metadata[0][0] = self.state.matchId.toString()
       }
 
