@@ -101,14 +101,20 @@ class KillInterface extends Component {
         move.push(signaturesList[i].move.map(x => x.toString()))
         moveOutput.push(signaturesList[i].moveOutput.map(x => x.toString()))
 
-        var rHex = signaturesList[i].signature.slice(0, 66)
-        r.push(rHex)
-
-        var sHex = '0x' + signaturesList[i].signature.slice(66, 130)
-        s.push(sHex)
-
-        var splittedSig = ethjs.fromRpcSig(signaturesList[i].signature)
-        v.push(splittedSig.v)
+        // empty signature means the turn has been timed out, no signature needed
+        if(signaturesList[i].signature == '') {
+          r.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+          s.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+          v.push(0)
+        }
+        else {
+          var rHex = signaturesList[i].signature.slice(0, 66)
+          r.push(rHex)
+          var sHex = '0x' + signaturesList[i].signature.slice(66, 130)
+          s.push(sHex)
+          var splittedSig = ethjs.fromRpcSig(signaturesList[i].signature)
+          v.push(splittedSig.v)
+        }
       }
 
       // Fill empty value with junk data
@@ -116,8 +122,8 @@ class KillInterface extends Component {
         metadata.push(signaturesList[0].metadata)
         move.push(signaturesList[0].move)
         moveOutput.push(signaturesList[0].moveOutput)
-        r.push(signaturesList[0].signature.slice(0, 66))
-        s.push('0x' + signaturesList[0].signature.slice(66, 130))
+        r.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+        s.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
         v.push(0)
       }
 

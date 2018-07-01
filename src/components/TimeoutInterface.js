@@ -163,7 +163,7 @@ class TimeoutInterface extends Component {
         moveOutput.push(tmp)
         tmp = []
         for(j=0; j<2; j++) {
-          tmp.push('0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0')
+          tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
         }
         signatureRS.push(tmp)
         v.push('0')
@@ -253,7 +253,7 @@ class TimeoutInterface extends Component {
             moveOutput.push(tmp)
             tmp = []
             for(j=0; j<2; j++) {
-              tmp.push('0x8CdaF0CD259887258Bc13a92C0a6dA92698644C0')
+              tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
             }
             signatureRS.push(tmp)
             v.push('0')
