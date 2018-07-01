@@ -74,6 +74,7 @@ class ServerDashboard extends Component {
       account: store.getState().account.accountInstance,
       atLeastOneServer: false,
       serverState: 0,
+      playerNb: 0,
       serverSelected: -1,
       serverArray: [],
       weaponArray: [],
@@ -173,6 +174,9 @@ class ServerDashboard extends Component {
       if (self.state.nujaBattle != null) {
         self.state.nujaBattle.methods.getServerState(serverId).call().then(function(serverState) {
           self.setState({serverSelected: serverId, serverState: serverState})
+        })
+        self.state.nujaBattle.methods.getPlayerNb(serverId).call().then(function(playerNb) {
+          self.setState({playerNb: playerNb})
         })
       }
     }.bind(this)
@@ -487,12 +491,19 @@ class ServerDashboard extends Component {
             </div>
         }
         else if(this.state.serverState == 1) {
-          serverStateButton =
-            <div style={{float: 'right'}}>
-              <a onClick={this.changeServerState}>
-                <button className='buttonOffline'>Set offline</button>
-              </a>
-            </div>
+
+          // If players are already in the server we can put it offline
+          if(this.state.playerNb > 0) {
+            serverStateButton = <h3>Waiting for players</h3>
+          }
+          else {
+            serverStateButton =
+              <div style={{float: 'right'}}>
+                <a onClick={this.changeServerState}>
+                  <button className='buttonOffline'>Set offline</button>
+                </a>
+              </div>
+          }
         }
 
         // Interface for managing one server
