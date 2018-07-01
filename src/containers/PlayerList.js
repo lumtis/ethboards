@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import Player from '../components/Player'
 
 import store from '../store'
+var SW = require('../utils/stateWrapper')
 
 class PlayerList extends Component {
   constructor(props) {
@@ -43,9 +44,18 @@ class PlayerList extends Component {
   }
 
   render() {
+    var playerNotDead = []
+
+    for(var i=0; i<this.state.playerArray.length; i++) {
+      // Check player is not dead
+      if(SW.getPlayerHealth(i) > 0) {
+        playerNotDead.push(this.state.playerArray[i])
+      }
+    }
+
     return (
         <div className="row">
-          <div>{this.state.playerArray}</div>
+          <div>{playerNotDead}</div>
         </div>
     );
   }

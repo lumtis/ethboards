@@ -187,7 +187,7 @@ class TimeoutInterface extends Component {
       self.state.timeoutManager.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
-        gas: '1000000'
+        gas: '2000000'
       })
       .on('error', function(error){ console.log('ERROR: ' + error)})
       .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
@@ -205,8 +205,6 @@ class TimeoutInterface extends Component {
 
     if (this.state.timeoutManager != null) {
       SW.getTimeoutState(self.state.matchId, self.state.timeoutTurn, self.state.timeoutPlayerTurn, function(timeoutState) {
-
-        console.log(timeoutState)
 
         if(timeoutState != null) {
 

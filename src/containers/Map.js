@@ -5,6 +5,7 @@ import Tile from '../components/Tile'
 
 import store from '../store'
 import '../css/map.css'
+var SW = require('../utils/stateWrapper')
 
 var PubSub = require('pubsub-js')
 
@@ -98,6 +99,15 @@ class Map extends Component {
     var tiles = []
     var crosses = []
 
+    var playerNotDead = []
+
+    for(var i=0; i<this.state.playerArray.length; i++) {
+      // Check player is not dead
+      if(SW.getPlayerHealth(i) > 0) {
+        playerNotDead.push(this.state.playerArray[i])
+      }
+    }
+
     // Tilemap
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < columns; j++) {
@@ -123,6 +133,7 @@ class Map extends Component {
     }
 
     return (
+
       <div style={{marginLeft: '60px'}}>
         <h1>{this.state.mapName}</h1>
         <div style={{
@@ -131,7 +142,7 @@ class Map extends Component {
           position: 'absolute'
         }}>
           <div>{tiles}</div>
-          <div>{this.state.playerArray}</div>
+          <div>{playerNotDead}</div>
           <div>{crosses}</div>
         </div>
       </div>
