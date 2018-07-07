@@ -96,7 +96,7 @@ contract NujaBattle is Geometry, StateManager {
     ///////////////////////////////////////////////////////////////
     /// Administration functions
 
-    function setRegistries(address characterRegistry_, address weaponRegistry_, address timeoutRegistry_) public onlyOwner {
+    /* function setRegistries(address characterRegistry_, address weaponRegistry_, address timeoutRegistry_) public onlyOwner {
         require(!registryInitialized);
 
         characterRegistry = characterRegistry_;
@@ -104,7 +104,7 @@ contract NujaBattle is Geometry, StateManager {
         timeoutRegistry = timeoutRegistry_;
 
         registryInitialized = true;
-    }
+    } */
 
     /*
     function changeServerCreationFee(uint fee) public onlyOwner {
@@ -555,7 +555,7 @@ contract NujaBattle is Geometry, StateManager {
         // We skip dead player
         do {
             metadata[2]++;
-            if(uint(metadata[2]) >= servers[indexServer].playerNb) {
+            if(uint(metadata[2]) >= servers[indexServer].playerMax) {
                 metadata[2] = 0;
                 metadata[1]++;
             }
@@ -569,6 +569,14 @@ contract NujaBattle is Geometry, StateManager {
         require(newMetadata[0] == metadataNext[0]);
         require(newMetadata[1] == metadataNext[1]);
         require(newMetadata[2] == metadataNext[2]);
+    }
+
+
+    // Check depending on first and last metadata that every alive player has signed their turn
+    function verifyAllSigned(uint indexServer, uint[3] metadataFirst, uint[3] metadataLast, uint[176] moveOutput) internal view {
+        uint[3] memory newMetadata = nextTurn(indexServer, metadataLast, moveOutput);
+        require(newMetadata[0] == metadataFirst[0]);
+        require(newMetadata[1] > metadataFirst[1] && newMetadata[2] >= metadataFirst[2]);
     }
 
 
@@ -623,9 +631,6 @@ contract NujaBattle is Geometry, StateManager {
         if(metadata[0][1] == 0 && metadata[0][2] == 0) {
             originState = getInitialState(indexServer);
         }
-        else {
-            require(nbSignature == servers[indexServer].playerNb);
-        }
 
         // Verify the killer is the last player
         require(metadata[nbSignature-1][2] == killer);
@@ -666,9 +671,14 @@ contract NujaBattle is Geometry, StateManager {
             // Verify integrity
             require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
-            // If not the last turn check the next turn is correctly the next player
             if(i < nbSignature-1) {
+                // If not the last turn check the next turn is correctly the next player
                 verifyNextTurn(indexServer, metadata[i], metadata[i+1], moveOutput[i]);
+            }
+            else if(metadata[0][1] != 0 || metadata[0][2] != 0) {
+                // Last turn: we verified every alive player signed their turn
+                // Not necessary if the signature list begin from origin
+                verifyAllSigned(indexServer, metadata[0], metadata[i], moveOutput[i]);
             }
         }
 
