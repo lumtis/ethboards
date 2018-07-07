@@ -45,11 +45,11 @@ var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn123'
-const playerTurnPrefix = '_playerturn123'
-const statePrefix = '_state123'
-const killedPlayerPrefix = '_killedplayers123'
-const nbTimeoutPrefix = '_nbtimeout123'
+const turnPrefix = '_turn'
+const playerTurnPrefix = '_playerturn'
+const statePrefix = '_state'
+const killedPlayerPrefix = '_killedplayers'
+const nbTimeoutPrefix = '_nbtimeout'
 
 
 redis.on("connect", function () {
@@ -114,13 +114,14 @@ function updateTimeout(matchId, cb) {
         // Key does'nt exist, so number of timeout is 0
         actualNbTimeout = 0
       }
-      redis.get(matchId + turnPrefix, function (nbErr, nbReply) {
-        if(actualNbTimeout = -1) {
+      redis.get(matchId + nbTimeoutPrefix, function (nbErr, nbReply) {
+        if(actualNbTimeout == -1) {
           actualNbTimeout = nbReply
         }
 
         // Check if actual number is the same from contract
         timeoutManager.methods.getTimeoutPlayers(matchId).call().then(function(timeoutPlayers) {
+
           if(actualNbTimeout >= timeoutPlayers.nbTimeoutRet) {
             endCallback()
           }
@@ -143,6 +144,9 @@ function updateTimeout(matchId, cb) {
                   var actualLastTurnPlayer = JSON.parse(stateReply[0]).metadata[2]
 
                   if(actualLastTurn > timeoutTurn || (actualLastTurn == timeoutTurn && actualLastTurnPlayer >= timeoutTurnPlayer)) {
+                    console.log(actualLastTurn)
+                    console.log(actualLastTurnPlayer)
+                    console.log('removed')
                     redis.rpop(matchId + statePrefix, function (rpopErr, rpopReply) {
                       removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_)
                     })
@@ -191,8 +195,11 @@ function updateTimeout(matchId, cb) {
                             redis.set(matchId + playerTurnPrefix, timeoutPlayers.timeoutPlayerRet[actualNbTimeout], function (playerturnErr, playerturnReply){
                               // TODO: gestion erreur
 
-                              // Recall the function in case there are other timed ou turns
-                              updateTimeoutRecursive(endCallback)
+                              redis.set(matchId + nbTimeoutPrefix, actualNbTimeout+1, function (nbtimeoutErr, nbtimeoutReply){
+                                // TODO: gestion erreur
+                                // Recall the function in case there are other timed ou turns
+                                updateTimeoutRecursive(endCallback)
+                              })
                             })
                           })
                         }
@@ -204,6 +211,9 @@ function updateTimeout(matchId, cb) {
                 })
               }
               else {
+
+                console.log('Adding kill move')
+
                 // If not the first turn we get the last turn
                 redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
                   redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
@@ -234,8 +244,11 @@ function updateTimeout(matchId, cb) {
                             redis.set(matchId + playerTurnPrefix, timeoutPlayers.timeoutPlayerRet[actualNbTimeout], function (playerturnErr, playerturnReply){
                               // TODO: gestion erreur
 
-                              // Recall the function in case there are other timed ou turns
-                              updateTimeoutRecursive(endCallback)
+                              redis.set(matchId + nbTimeoutPrefix, actualNbTimeout+1, function (nbtimeoutErr, nbtimeoutReply){
+                                // TODO: gestion erreur
+                                // Recall the function in case there are other timed ou turns
+                                updateTimeoutRecursive(endCallback)
+                              })
                             })
                           })
                         }
@@ -262,17 +275,17 @@ function updateTimeout(matchId, cb) {
 // If a player has been timed out, remove eventual moves that has been played after
 function updateLastMoves(matchId, nbPlayer, cb) {
 
-  // Before anything update the list of state depending of timeout that occured
+  // Before anything else update the list of state depending of timeout that occured
   updateTimeout(matchId, function() {
+
 
     // Check if there are not shared moves
     timeoutManager.methods.isTimeout(matchId).call().then(function(isTimeout) {
       if(isTimeout) {
         timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
           getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
+
             if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[1])) {
-
-
 
               timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
                 timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
@@ -400,8 +413,6 @@ function pushKilledPlayer(matchId, killer, killed, turn) {
           break
         }
       }
-
-      console.log(stateReply)
 
       //Push the signatures to the players to kill list
       redis.rpush(matchId + killedPlayerPrefix, JSON.stringify({
