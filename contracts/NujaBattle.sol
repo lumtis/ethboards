@@ -1,3 +1,6 @@
+/*
+  Main contract for matchmaking
+*/
 pragma solidity ^0.4.2;
 
 import "./CharacterRegistry.sol";
@@ -19,7 +22,6 @@ contract NujaBattle is Geometry, StateManager {
     bool registryInitialized;
     uint serverCreationFee;
     uint cheatWarrant;
-
 
     ///////////////////////////////////////////////////////////////
     /// Modifiers
@@ -116,6 +118,7 @@ contract NujaBattle is Geometry, StateManager {
     }
      */
 
+    // Add server to the server list
     function addServer(string name, uint8 max, uint fee, uint moneyBag) public payable {
         require(max > 1 && max <= 8);
         require(msg.value == serverCreationFee);
@@ -141,7 +144,7 @@ contract NujaBattle is Geometry, StateManager {
         owner.transfer(msg.value);
     }
 
-    // Set the server online, player can then join it
+    // Set the server online, then players can join it
     function setServerOnline(uint indexServer) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
@@ -162,6 +165,7 @@ contract NujaBattle is Geometry, StateManager {
         servers[indexServer].state = 0;
     }
 
+    // Add list of buildings to the server
     function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint[10] weapon, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
@@ -181,6 +185,7 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
+    // Remove list of buildings from server
     function removeBuildingFromServer(uint indexServer, uint8[10] x, uint8[10] y, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
@@ -195,6 +200,7 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
+    // Owner of a character can add his character to the server
     function addPlayerToServer(uint character, uint server) public payable {
         require(server < serverNumber);
         require(servers[server].state == 1);
@@ -224,7 +230,8 @@ contract NujaBattle is Geometry, StateManager {
         servers[server].playerNb += 1;
     }
 
-
+    // Remove character from server
+    // No chracter id because it can be infered from owner address
     function removePlayerFromServer(uint server) public {
         require(server < serverNumber);
         require(servers[server].state == 1);
@@ -252,6 +259,7 @@ contract NujaBattle is Geometry, StateManager {
         servers[server].playerNb -= 1;
     }
 
+    // Start the server if it is full
     function startServer(uint server) public {
         require(server < serverNumber);
         require(servers[server].playerNb == servers[server].playerMax);
@@ -299,23 +307,28 @@ contract NujaBattle is Geometry, StateManager {
 
     // Servers informations
 
+    // Number of server
     function getServerNb() public view returns(uint nbRet) {
         return serverNumber;
     }
 
+    // Get the cheat warrant value
     function getCheatWarrant() public view returns(uint cheatWarrantRet) {
         return cheatWarrant;
     }
 
+    // Get the server creatin fee calue
     function getServerCreationFee() public view returns(uint serverCreationFeeRet) {
         return serverCreationFee;
     }
 
+    // Get name of a server
     function getServerName(uint indexServer) public view returns(string nameRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].name;
     }
 
+    // Get the id of a server from id of a match
     function getMatchServer(uint idMatch) public view returns(uint serverRet) {
         require(idMatch < matchNb);
 
@@ -325,6 +338,7 @@ contract NujaBattle is Geometry, StateManager {
         return serverId-1;
     }
 
+    // Get current id of the server's match
     function getServerCurrentMatch(uint indexServer) public view returns(uint matchRet) {
         require(indexServer < serverNumber);
 
@@ -334,31 +348,45 @@ contract NujaBattle is Geometry, StateManager {
         return matchId-1;
     }
 
+    // Get player max number from server
     function getPlayerMax(uint indexServer) public view returns(uint8 playerMaxRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].playerMax;
     }
 
+    // Get player number from server
+    // waitig players if not started yet
+    // alive players if server is running
     function getPlayerNb(uint indexServer) public view returns(uint8 playerNbRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].playerNb;
     }
 
+    // Get the state of the server
+    // 0: server offline
+    // 1: online but not started yet
+    // 2: online and running
     function getServerState(uint indexServer) public view returns(uint8 stateRet) {
         require(indexServer < serverNumber);
         return servers[indexServer].state;
     }
 
+    // Get some infos from server
     function getServerInfo(uint indexServer) public view returns(string nameRet, uint id, uint8 playerMaxRet, uint8 playerNbRet) {
         require(indexServer < serverNumber);
         return (servers[indexServer].name, servers[indexServer].id, servers[indexServer].playerMax, servers[indexServer].playerNb);
     }
 
+    // Get financial infos from server (fee to join, money bag for player)
     function getServerFinancial(uint indexServer) public view returns(uint feeRet, uint moneyBagRet) {
         require(indexServer < serverNumber);
         return(servers[indexServer].fee, servers[indexServer].moneyBag);
     }
 
+    // Get building code for position
+    // 0: no building
+    // 1: empty building
+    // n: building with weapon n-2
     function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint buildingRet) {
         require(indexServer < serverNumber);
         require(x < 8);
@@ -367,11 +395,12 @@ contract NujaBattle is Geometry, StateManager {
         return servers[indexServer].buildings[x][y];
     }
 
-
+    // Get the number of server owned by user
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {
         return serverUserNumber[user];
     }
 
+    // Get id of server from owner and index of owned server
     function getServerUserIndex(address user, uint index) public view returns(uint serverUserIndexRet) {
         require(index < serverUserNumber[user]);
 
@@ -381,6 +410,7 @@ contract NujaBattle is Geometry, StateManager {
 
     // Specific server information
 
+    // Get the initial state of server (considering building, players position etc)
     function getInitialState(uint indexServer) public view returns(uint[176] ret) {
         require(indexServer < serverNumber);
 
@@ -424,6 +454,7 @@ contract NujaBattle is Geometry, StateManager {
         return state;
     }
 
+    // Get user index in server from his address
     function getIndexFromAddress(uint indexServer, address ownerAddress) public view returns(uint8 indexRet) {
         require(indexServer < serverNumber);
         require(servers[indexServer].playerIndex[ownerAddress] > 0);
@@ -431,12 +462,14 @@ contract NujaBattle is Geometry, StateManager {
         return servers[indexServer].playerIndex[ownerAddress]-1;
     }
 
+    // Check if user is present in the server
     function isAddressInServer(uint indexServer, address ownerAddress) public view returns(bool isRet) {
         require(indexServer < serverNumber);
 
         return (servers[indexServer].playerIndex[ownerAddress] > 0);
     }
 
+    // Get Character index from server and player index
     function playerCharacter(uint indexServer, uint8 indexPlayer) public view returns(uint characterIndex) {
         require(indexServer < serverNumber);
         require(indexPlayer < servers[indexServer].playerMax);
@@ -444,6 +477,7 @@ contract NujaBattle is Geometry, StateManager {
         return (servers[indexServer].players[indexPlayer].characterIndex);
     }
 
+    // Get the current server from character
     function getCharacterServer(uint characterId) public view returns(uint serverId) {
         // Verify character exists
         CharacterRegistry reg = CharacterRegistry(characterRegistry);
@@ -546,6 +580,7 @@ contract NujaBattle is Geometry, StateManager {
     //////////////////////////////////////////////////////////////////
     // Match functions
 
+    // Get the next turn metadata from old metadata and move's output
     function nextTurn(
       uint indexServer,
       uint[3] metadata,
@@ -564,13 +599,13 @@ contract NujaBattle is Geometry, StateManager {
         return(metadata);
     }
 
+    // Verify if the given next metadata match the actual next metadata
     function verifyNextTurn(uint indexServer, uint[3] metadata, uint[3] metadataNext, uint[176] moveOutput) internal view {
         uint[3] memory newMetadata = nextTurn(indexServer, metadata, moveOutput);
         require(newMetadata[0] == metadataNext[0]);
         require(newMetadata[1] == metadataNext[1]);
         require(newMetadata[2] == metadataNext[2]);
     }
-
 
     // Check depending on first and last metadata that every alive player has signed their turn
     function verifyAllSigned(uint indexServer, uint[3] metadataFirst, uint[3] metadataLast, uint[176] moveOutput) internal view {
@@ -579,7 +614,7 @@ contract NujaBattle is Geometry, StateManager {
         require(newMetadata[1] > metadataFirst[1] && newMetadata[2] >= metadataFirst[2]);
     }
 
-
+    // Check if player is killed
     function isKilled(uint indexServer, uint8 p) public view returns (bool isRet) {
         require(indexServer < serverNumber);
         require(servers[indexServer].currentMatchId > 0);
@@ -587,7 +622,8 @@ contract NujaBattle is Geometry, StateManager {
         return deadPlayer[servers[indexServer].currentMatchId-1][p];
     }
 
-    // Useful for iterative function
+    // Get array of killed player
+    // Useful for iterative function in backend code
     function getKilledArray(uint indexServer) public view returns (bool[8] killedRet) {
         require(indexServer < serverNumber);
         require(servers[indexServer].currentMatchId > 0);
@@ -606,7 +642,8 @@ contract NujaBattle is Geometry, StateManager {
         return killedArray;
     }
 
-
+    // Tell to the contract that a player has been killed
+    // Only if this function is call, the player will be actually removed from server
     function killPlayer(
       uint indexServer,
       uint8 killer,
@@ -697,7 +734,7 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
-
+    // Remove player from server
     function removePlayer(uint indexServer, uint8 killed) internal {
         servers[indexServer].playerNb -= 1;
 
@@ -712,6 +749,7 @@ contract NujaBattle is Geometry, StateManager {
         characterServer[character] = 0;
     }
 
+    // Terminate the running server
     function terminateServer(uint indexServer, uint8 winner) internal {
         // Reset server
         removePlayer(indexServer, winner);
