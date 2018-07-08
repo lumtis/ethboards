@@ -2,7 +2,7 @@ pragma solidity ^0.4.2;
 
 import "./Nuja.sol";
 
-contract WaterNujak is Nuja {
+contract WaterNuja is Nuja {
     function getMetadata() public constant returns (string metadata) {
         return '/ipfs/QmR4zp6Bt6LTnAcFvBc1MuwL2xxQrk3ccFXGSxqgc7v6DD';
     }
