@@ -14,6 +14,7 @@ contract TimeoutManager {
 
     address owner;
     address serverAddress;
+    bool serverAddressSet;
     uint timeoutThreshold;
 
     // Information about the current timeout
@@ -49,7 +50,13 @@ contract TimeoutManager {
         owner = msg.sender;
         // 300 sec = 5 min
         timeoutThreshold = 30;
-        serverAddress = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
+        serverAddressSet = false;
+        serverAddress = address(0);
+    }
+
+    function setServerAddress(address serverAddress_) public onlyOwner {
+        serverAddress = serverAddress_;
+        serverAddressSet = true;
     }
 
     function changeTimeoutThreshold(uint threshold) public onlyOwner {
