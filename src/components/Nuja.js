@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
+import ipfsGet from '../utils/ipfsGet'
 
-var ipfsAPI = require('ipfs-api')
+
 var nujaJson = require('../../build/contracts/Nuja.json')
 
 
@@ -27,7 +28,7 @@ class Nuja extends Component {
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       web3: store.getState().web3.web3Instance,
       imageData: '',
-      description: '',
+      power: '',
       name: ''
     }
 
@@ -47,7 +48,6 @@ class Nuja extends Component {
 
   componentWillMount() {
     var self = this
-    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.nujaRegistry != null) {
       // Get ipfs data
@@ -55,15 +55,15 @@ class Nuja extends Component {
         var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
 
         nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-          ipfs.files.get(ipfsString + '/image.png', function (err, files) {
-            self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
+          ipfsGet(ipfsString + '/image.png', function(response) {
+            self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
           })
-          ipfs.files.get(ipfsString + '/name/default', function (err, files) {
-            self.setState({name: files[0].content.toString('utf8')})
+          ipfsGet(ipfsString + '/name/default', function(response) {
+            self.setState({name: response.toString('utf8')})
           })
-          ipfs.files.get(ipfsString + '/description/default', function (err, files) {
-            self.setState({description: files[0].content.toString('utf8')})
-          })
+          ipfsGet(ipfsString + '/power/default', function(response) {
+            self.setState({power: response.toString('utf8')})
+          })          
         })
       })
     }
@@ -78,7 +78,7 @@ class Nuja extends Component {
             <img src={this.state.imageData} alt="Nuja" style={{height: '115px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
-            <p>{this.state.description}</p>
+            <p>{this.state.power}</p>
           </div>
         </div>
       </div>

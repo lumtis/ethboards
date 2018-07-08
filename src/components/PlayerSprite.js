@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import Player from '../components/Player'
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
+import ipfsGet from '../utils/ipfsGet'
 
-var ipfsAPI = require('ipfs-api')
 var nujaJson = require('../../build/contracts/Nuja.json')
 var SW = require('../utils/stateWrapper')
 
@@ -42,7 +42,6 @@ class PlayerSprite extends Component {
 
   componentWillMount() {
     var self = this
-    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.nujaBattle != null) {
       if (self.state.characterRegistry != null) {
@@ -67,8 +66,8 @@ class PlayerSprite extends Component {
               self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
                 var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
                 nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-                  ipfs.files.get(ipfsString + '/sprite.gif', function (err, files) {
-                    self.setState({imageData: "data:image/gif;base64,"+imageConverter(files[0].content)})
+                  ipfsGet(ipfsString + '/sprite.git', function(response) {
+                    self.setState({imageData: "data:image/gif;base64,"+imageConverter(response)})
                   })
                 })
               })

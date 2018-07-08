@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import store from '../store'
 
-var ipfsAPI = require('ipfs-api')
 var weaponJson = require('../../build/contracts/Weapon.json')
+import ipfsGet from '../utils/ipfsGet'
 
 import imageConverter from '../utils/imageConverter'
 
@@ -27,7 +27,7 @@ class WeaponDesc extends Component {
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
       imageData: '',
       name: '',
-      description: ''
+      power: ''
     }
 
     store.subscribe(() => {
@@ -44,7 +44,6 @@ class WeaponDesc extends Component {
 
   componentWillMount() {
     var self = this
-    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.weaponRegistry != null) {
 
@@ -54,14 +53,14 @@ class WeaponDesc extends Component {
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
-            ipfs.files.get(ret + '/image.png', function (err, files) {
-              self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
+            ipfsGet(ipfsString + '/image.png', function(response) {
+              self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
             })
-            ipfs.files.get(ret + '/name/default', function (err, files) {
-              self.setState({name: files[0].content.toString('utf8')})
+            ipfsGet(ipfsString + '/name/default', function(response) {
+              self.setState({name: response.toString('utf8')})
             })
-            ipfs.files.get(ret + '/description/default', function (err, files) {
-              self.setState({description: files[0].content.toString('utf8')})
+            ipfsGet(ipfsString + '/power/default', function(response) {
+              self.setState({power: response.toString('utf8')})
             })
           });
         }
@@ -78,7 +77,7 @@ class WeaponDesc extends Component {
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>
-            <p>{this.state.description}</p>
+            <p>{this.state.power}</p>
           </div>
         </div>
       </div>

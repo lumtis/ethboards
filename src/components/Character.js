@@ -5,8 +5,8 @@
 import React, { Component } from 'react'
 import store from '../store'
 import imageConverter from '../utils/imageConverter'
+import ipfsGet from '../utils/ipfsGet'
 
-var ipfsAPI = require('ipfs-api')
 var nujaJson = require('../../build/contracts/Nuja.json')
 
 
@@ -52,7 +52,6 @@ class Character extends Component {
 
   componentWillMount() {
     var self = this
-    var ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001')
 
     if (self.state.characterRegistry != null) {
       if (self.state.nujaRegistry != null) {
@@ -68,12 +67,12 @@ class Character extends Component {
             var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
 
             nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-              ipfs.files.get(ipfsString + '/image.png', function (err, files) {
-                self.setState({imageData: "data:image/png;base64,"+imageConverter(files[0].content)})
-              })
-              ipfs.files.get(ipfsString + '/name/default', function (err, files) {
-                self.setState({name: files[0].content.toString('utf8')})
-              })
+              ipfsGet(ipfsString + '/image.png', function(response) {
+                self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
+              });
+              ipfsGet(ipfsString + '/name/default', function(response) {
+                self.setState({name: response.toString('utf8')})
+              });
             });
           });
 

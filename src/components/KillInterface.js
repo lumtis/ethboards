@@ -127,6 +127,30 @@ class KillInterface extends Component {
         v.push(0)
       }
 
+      // console.log('this.props.server')
+      // console.log(this.props.server)
+      // console.log('killer')
+      // console.log(killer)
+      // console.log('killed')
+      // console.log(killed)
+      // console.log('metadata')
+      // console.log(metadata)
+      // console.log('move')
+      // console.log(move)
+      // console.log('moveOutput')
+      // console.log(moveOutput)
+      // console.log('r')
+      // console.log(r)
+      // console.log('s')
+      // console.log(s)
+      // console.log('v')
+      // console.log(v)
+      // console.log('originState')
+      // console.log(originState)
+      // console.log('nbSignature')
+      // console.log(nbSignature)
+
+
       //Send transaction
       this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
         from: this.state.account.address,
