@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Sword is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmUdDzeAkV9ycXxSGrt6YviAMQAK3i2F2aBPNJASTtF1Uo';
+        return '/ipfs/QmRy5BpghvCjviPEDKUGJwU68AEozfUcYWdUqqQiDHQFwU';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

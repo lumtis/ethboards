@@ -4,7 +4,7 @@ import "./Nuja.sol";
 
 contract WaterNujak is Nuja {
     function getMetadata() public constant returns (string metadata) {
-        return '/ipfs/QmdmJRrtkH5R6aR2KPTQe2gcA7q9SzsvSq4MTumRTbDZEX';
+        return '/ipfs/QmR4zp6Bt6LTnAcFvBc1MuwL2xxQrk3ccFXGSxqgc7v6DD';
     }
 
     function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

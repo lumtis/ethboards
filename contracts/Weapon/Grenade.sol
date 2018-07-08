@@ -6,7 +6,7 @@ contract Grenade is Weapon {
 
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmRuvVtRLebZAtYqq1NaH7oGQEMrkKsWv3BEEw4UjLJc22';
+        return '/ipfs/QmWUHrPsJNB7wZNPHZKos4B1jqUMdwgvhDPf2ZPrrkuGof';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

@@ -4,7 +4,7 @@ import "./Nuja.sol";
 
 contract Bearjak is Nuja {
     function getMetadata() public constant returns (string metadata) {
-        return '/ipfs/QmUVnyX6JS2izsMsYJNfUbJkpRshkmFC4x3yzYx8WE9D6M';
+        return '/ipfs/QmZL1sZTGc4yFjioseKfRnqwXS8GihTqvu7vojbeHaaZBN';
     }
 
     function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

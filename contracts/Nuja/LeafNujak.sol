@@ -4,7 +4,7 @@ import "./Nuja.sol";
 
 contract LeafNujak is Nuja {
     function getMetadata() public constant returns (string metadata) {
-        return '/ipfs/QmWKBXqLef8ADhzdY1UmCcHyNPCsdb9w6LsWXgzBajJS1C';
+        return '/ipfs/QmYzq4dHKY5JAEH97ABjTJui8aVUsQmzWg525YCzDovHrY';
     }
 
     function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

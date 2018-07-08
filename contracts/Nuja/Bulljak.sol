@@ -4,7 +4,7 @@ import "./Nuja.sol";
 
 contract Bulljak is Nuja {
     function getMetadata() public constant returns (string metadata) {
-        return '/ipfs/QmY2Pt34b3xvSjDJ8nP91Yd6CVv9YugUDsY5Hv91JCHjBX';
+        return '/ipfs/QmWjzSvtyBvR5ZXGW9sKPSiSA44vQuoG6Sx1uELqJG9192';
     }
 
     function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {

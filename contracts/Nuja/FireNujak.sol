@@ -4,7 +4,7 @@ import "./Nuja.sol";
 
 contract FireNujak is Nuja {
     function getMetadata() public constant returns (string metadata) {
-        return '/ipfs/QmURVwyNPWG77VKphLfYVrLqiiyueN6c5Zyyo6ehkZnxYX';
+        return '/ipfs/QmW2dqjajrwEuN32sgAkhN5kWm53VR96NbZWzW98GkCy1p';
     }
 
     function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
