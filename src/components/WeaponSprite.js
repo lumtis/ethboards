@@ -71,7 +71,7 @@ class WeaponSprite extends Component {
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
-            ipfsGet(ipfsString + '/image.png', function(response) {
+            ipfsGet(ret + '/image.png', function(response) {
               self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
             })
           });

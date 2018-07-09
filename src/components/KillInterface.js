@@ -150,8 +150,7 @@ class KillInterface extends Component {
       // console.log('nbSignature')
       // console.log(nbSignature)
 
-
-      //Send transaction
+      // Send transaction
       this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
         from: this.state.account.address,
         gasPrice: 2000000000,

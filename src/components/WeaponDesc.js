@@ -53,13 +53,13 @@ class WeaponDesc extends Component {
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
-            ipfsGet(ipfsString + '/image.png', function(response) {
+            ipfsGet(ret + '/image.png', function(response) {
               self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
             })
-            ipfsGet(ipfsString + '/name/default', function(response) {
+            ipfsGet(ret + '/name/default', function(response) {
               self.setState({name: response.toString('utf8')})
             })
-            ipfsGet(ipfsString + '/power/default', function(response) {
+            ipfsGet(ret + '/power/default', function(response) {
               self.setState({power: response.toString('utf8')})
             })
           });

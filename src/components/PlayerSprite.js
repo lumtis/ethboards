@@ -66,7 +66,7 @@ class PlayerSprite extends Component {
               self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
                 var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
                 nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-                  ipfsGet(ipfsString + '/sprite.git', function(response) {
+                  ipfsGet(ipfsString + '/sprite.gif', function(response) {
                     self.setState({imageData: "data:image/gif;base64,"+imageConverter(response)})
                   })
                 })
