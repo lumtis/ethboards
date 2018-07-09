@@ -86,9 +86,9 @@ contract NujaBattle is Geometry, StateManager {
     function NujaBattle() public {
         owner = msg.sender;
         serverNumber = 0;
-        characterRegistry = address(0);
-        weaponRegistry = address(0);
-        timeoutRegistry = address(0);
+        characterRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
+        weaponRegistry = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
+        timeoutRegistry = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
         registryInitialized = false;
         serverCreationFee = 5 finney;
         cheatWarrant = 5 finney;
@@ -587,16 +587,21 @@ contract NujaBattle is Geometry, StateManager {
       uint[176] moveOutput
       ) public view returns (uint[3] metadataRet) {
 
+        uint[3] memory metadataTmp;
+        metadataTmp[0] = metadata[0];
+        metadataTmp[1] = metadata[1];
+        metadataTmp[2] = metadata[2];
+
         // We skip dead player
         do {
-            metadata[2]++;
-            if(uint(metadata[2]) >= servers[indexServer].playerMax) {
-                metadata[2] = 0;
-                metadata[1]++;
+            metadataTmp[2]++;
+            if(uint(metadataTmp[2]) >= servers[indexServer].playerMax) {
+                metadataTmp[2] = 0;
+                metadataTmp[1]++;
             }
-        } while (getHealth(moveOutput, metadata[2]) == 0);
+        } while (getHealth(moveOutput, metadataTmp[2]) == 0);
 
-        return(metadata);
+        return metadataTmp;
     }
 
     // Verify if the given next metadata match the actual next metadata
@@ -641,6 +646,7 @@ contract NujaBattle is Geometry, StateManager {
 
         return killedArray;
     }
+
 
     // Tell to the contract that a player has been killed
     // Only if this function is call, the player will be actually removed from server
@@ -712,7 +718,7 @@ contract NujaBattle is Geometry, StateManager {
                 // If not the last turn check the next turn is correctly the next player
                 verifyNextTurn(indexServer, metadata[i], metadata[i+1], moveOutput[i]);
             }
-            else if(metadata[0][1] != 0 || metadata[0][2] != 0) {
+            else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
                 // Last turn: we verified every alive player signed their turn
                 // Not necessary if the signature list begin from origin
                 verifyAllSigned(indexServer, metadata[0], metadata[i], moveOutput[i]);

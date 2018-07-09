@@ -174,9 +174,6 @@ contract TimeoutManager {
             if(metadata[0][1] == 0 && metadata[0][2] == 0) {
                 originState = NujaBattle(serverAddress).getInitialState(NujaBattle(serverAddress).getMatchServer(metadata[0][0]));
             }
-            else {
-                require(nbSignature == NujaBattle(serverAddress).getPlayerNb(NujaBattle(serverAddress).getMatchServer(metadata[0][0])));
-            }
 
             lastMovesNb[metadata[0][0]] = nbSignature;
 
@@ -214,6 +211,11 @@ contract TimeoutManager {
                     require(newMetadata[0] == metadata[i+1][0]);
                     require(newMetadata[1] == metadata[i+1][1]);
                     require(newMetadata[2] == metadata[i+1][2]);
+                }
+                else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
+                    // Last turn: we verified every alive player signed their turn
+                    // Not necessary if the signature list begin from origin
+                    require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);
                 }
 
                 // Set lastMove to be sure state is shared
@@ -270,9 +272,6 @@ contract TimeoutManager {
         if(metadata[0][1] == 0 && metadata[0][2] == 0) {
             originState = NujaBattle(serverAddress).getInitialState(NujaBattle(serverAddress).getMatchServer(metadata[0][0]));
         }
-        else {
-            require(nbSignature == NujaBattle(serverAddress).getPlayerNb(NujaBattle(serverAddress).getMatchServer(metadata[0][0])));
-        }
 
         lastMovesNb[metadata[0][0]] = nbSignature;
 
@@ -310,6 +309,11 @@ contract TimeoutManager {
                 require(newMetadata[0] == metadata[i+1][0]);
                 require(newMetadata[1] == metadata[i+1][1]);
                 require(newMetadata[2] == metadata[i+1][2]);
+            }
+            else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
+                // Last turn: we verified every alive player signed their turn
+                // Not necessary if the signature list begin from origin
+                require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);
             }
 
             // Set lastMove to be sure state is shared
