@@ -37,19 +37,19 @@ var ethjs = require('ethereumjs-util')
 
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var nujaBattleAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
+var timeoutManagerAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
 var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
 
 
-const turnPrefix = '_turn'
-const playerTurnPrefix = '_playerturn'
-const statePrefix = '_state'
-const killedPlayerPrefix = '_killedplayers'
-const nbTimeoutPrefix = '_nbtimeout'
+const turnPrefix = '_playerturn213'
+const playerTurnPrefix = '_playerturn213'
+const statePrefix = '_state213'
+const killedPlayerPrefix = '_killedplayers213'
+const nbTimeoutPrefix = '_nbtimeout213'
 
 
 redis.on("connect", function () {
@@ -844,6 +844,7 @@ function runDevServer(host, port, protocol) {
         var addrBuf = ethjs.pubToAddress(pubKey)
         var addr = ethjs.bufferToHex(addrBuf)
 
+        console.log(matchId)
         nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
 
           // We check the metadata are correct (it is the actual turn)
