@@ -1,9 +1,11 @@
 pragma solidity ^0.4.2;
 
-import "../Geometry.sol";
-import "../StateManager.sol";
+import "../BattleUtils.sol";
+
 
 contract Nuja is Geometry, StateManager {
+    address constant battleUtils = address(0);
+
     function getMetadata() public constant returns (string metadata);
 
     // Function called by server to use the Weapon

@@ -9,6 +9,6 @@ contract Jetpack is Weapon {
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
-        return movePlayer(moveInput, player, x, y);
+        return BattleUtils(battleUtils).movePlayer(moveInput, player, x, y);
     }
 }

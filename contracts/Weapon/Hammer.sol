@@ -9,14 +9,14 @@ contract Hammer is Weapon {
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
-        var (r_x, r_y) = getPosition(moveInput, player);
+        var (r_x, r_y) = BattleUtils(battleUtils).getPosition(moveInput, player);
 
         // Distance requirement
-        require(distance(x, y, r_x, r_y) == 1);
+        require(BattleUtils(battleUtils).distance(x, y, r_x, r_y) == 1);
 
         // Strike
-        uint opponent = getPlayer(moveInput, x, y);
+        uint opponent = BattleUtils(battleUtils).getPlayer(moveInput, x, y);
         require(opponent > 0);
-        return damage(moveInput, opponent-1, 50);
+        return BattleUtils(battleUtils).damage(moveInput, opponent-1, 50);
     }
 }

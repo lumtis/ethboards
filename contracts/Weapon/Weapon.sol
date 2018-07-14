@@ -1,9 +1,10 @@
 pragma solidity ^0.4.2;
 
-import "../Geometry.sol";
-import "../StateManager.sol";
+import "../BattleUtils.sol";
 
-contract Weapon is Geometry, StateManager {
+contract Weapon {
+    address constant battleUtils = address(0);
+
     // Must return ipfs hash
     // the repository must at least contain image.png and name/default
     function getMetadata() public pure returns (string metadata);
