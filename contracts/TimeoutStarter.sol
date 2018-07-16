@@ -2,20 +2,27 @@ pragma solidity ^0.4.2;
 
 
 import "./NujaBattle.sol";
-import "./StateManager.sol";
+import "./TimeoutStopper";
 
 
-contract TimeoutManager {
+contract TimeoutStarter {
 
     modifier onlyOwner {
         require(msg.sender == owner);
         _;
     }
 
+    modifier fromTimeoutStopper {
+        require(msg.sender == timeoutStopper);
+        _;
+    }
+
     address owner;
-    address serverAddress;
-    bool serverAddressSet;
+    address nujaBattle;
+    address serverManager;
+    address timeoutStopper;
     uint timeoutThreshold;
+    bool addressesSet;
 
     // Information about the current timeout
     mapping (uint => uint8) currentTimeoutPlayer;
@@ -46,17 +53,23 @@ contract TimeoutManager {
 
 
 
-    function TimeoutManager() public {
+    function TimeoutStarter() public {
         owner = msg.sender;
+        nujaBattle = address(0);
+        serverManager = address(0);
+        timeoutStopper = address(0);
+        addressesSet = false;
+
         // 300 sec = 5 min
         timeoutThreshold = 30;
-        serverAddressSet = false;
-        serverAddress = address(0);
     }
 
-    function setServerAddress(address serverAddress_) public onlyOwner {
-        serverAddress = serverAddress_;
-        serverAddressSet = true;
+    function setAddresses(address nujaBattle_, address timeoutStopper_) public onlyOwner {
+        require(!addressesSet);
+
+        nujaBattle = nujaBattle_;
+        timeoutStarter = timeoutStopper_;
+        addressesSet = true;
     }
 
     function changeTimeoutThreshold(uint threshold) public onlyOwner {
@@ -67,15 +80,40 @@ contract TimeoutManager {
         return timeoutThreshold;
     }
 
+
+    // Timeout infos
+
     function isTimeout(uint matchId) public view returns(bool isRet) {
         return (currentTimeoutTimestamp[matchId] > 0);
     }
 
     function timeoutInfos(uint matchId) public view returns(uint8 timeoutPlayerRet, uint timeoutTurnRet, uint timeoutTimestampRet, address timeoutClaimerRet) {
         require(isTimeout(matchId));
-
         return (currentTimeoutPlayer[matchId], currentTimeoutTurn[matchId], currentTimeoutTimestamp[matchId], currentTimeoutClaimer[matchId]);
     }
+
+    function getCurrentTimeoutPlayer(uint matchId) public view returns(uint8 timeoutPlayerRet) {
+        require(isTimeout(matchId));
+        return currentTimeoutPlayer[matchId];
+    }
+
+    function getCurrentTimeoutTurn(uint matchId) public view returns(uint timeoutTurnRet) {
+        require(isTimeout(matchId));
+        return currentTimeoutTurn[matchId];
+    }
+
+    function getCurrentTimeoutTimestamp(uint matchId) public view returns(uint timeoutTimestampRet) {
+        require(isTimeout(matchId));
+        return currentTimeoutTimestamp[matchId];
+    }
+
+    function getCurrentTimeoutClaimer(uint matchId) public view returns(address timeoutClaimerRet) {
+        require(isTimeout(matchId));
+        return currentTimeoutClaimer[matchId];
+    }
+
+
+    // Last moves functions
 
     function getLastMoves(uint matchId) public view returns(uint8[4][8] moveRet, uint8 nbRet) {
         require(isTimeout(matchId));
@@ -121,6 +159,9 @@ contract TimeoutManager {
         return (turn, player);
     }
 
+
+    // Timeout metadata
+
     function getTimeoutPlayers(uint matchId) public view returns(uint8 nbTimeoutRet, uint[8] timeoutTurnRet, uint8[8] timeoutPlayerRet) {
         uint[8] memory turns;
         uint8[8] memory players;
@@ -153,10 +194,10 @@ contract TimeoutManager {
       ) public {
 
         // Get contract instance
-        //NujaBattle NujaBattle(serverAddress) = NujaBattle(serverAddress);
+        //NujaBattle NujaBattle(nujaBattle) = NujaBattle(nujaBattle);
 
         // Verify caller is on the server
-        require(NujaBattle(serverAddress).isAddressInServer(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), msg.sender));
+        require(ServerManager(serverManager).isAddressInServer(ServerManager(serverManager).getMatchServer(metadata[0][0]), msg.sender));
 
         // Verify there is no pending timeout
         require(currentTimeoutTimestamp[metadata[0][0]] == 0);
@@ -172,7 +213,7 @@ contract TimeoutManager {
             // Check if it is the first turn
             // During first turn not all alive player are required to be part of the signatures list
             if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-                originState = NujaBattle(serverAddress).getInitialState(NujaBattle(serverAddress).getMatchServer(metadata[0][0]));
+                originState = ServerManager(serverManager).getInitialState(ServerManager(serverManager).getMatchServer(metadata[0][0]));
             }
 
             lastMovesNb[metadata[0][0]] = nbSignature;
@@ -181,24 +222,24 @@ contract TimeoutManager {
             for(uint8 i=0; i<nbSignature; i++) {
 
                 // Check if this turn has been timed out
-                if(NujaBattle(serverAddress).isTimedout(metadata[i][0], metadata[i][1], metadata[i][2])) {
+                if(NujaBattle(nujaBattle).isTimedout(metadata[i][0], metadata[i][1], metadata[i][2])) {
                     if(i == 0) {
-                        uint[176] memory simulatedTurn = NujaBattle(serverAddress).kill(originState, uint8(metadata[i][2]));
+                        uint[176] memory simulatedTurn = NujaBattle(nujaBattle).kill(originState, uint8(metadata[i][2]));
                     }
                     else {
-                        simulatedTurn = NujaBattle(serverAddress).kill(moveOutput[i-1], uint8(metadata[i][2]));
+                        simulatedTurn = NujaBattle(nujaBattle).kill(moveOutput[i-1], uint8(metadata[i][2]));
                     }
                 }
                 else {
                     // Verify that the move have been signed by the player
-                    require(NujaBattle(serverAddress).moveOwner(metadata[i], move[i], moveOutput[i], signatureRS[i][0], signatureRS[i][1], v[i]) == NujaBattle(serverAddress).getPlayerAddress(metadata[0][0], metadata[i][2]));
+                    require(NujaBattle(nujaBattle).moveOwner(metadata[i], move[i], moveOutput[i], signatureRS[i][0], signatureRS[i][1], v[i]) == ServerManager(serverManager).getAddressFromIndex(ServerManager(serverManager).getMatchServer(metadata[0][0]), uint8(metadata[i][2])));
 
                     // Simulate the turn and verify the simulated output is the given output
                     if(i == 0) {
-                        simulatedTurn = NujaBattle(serverAddress).simulate(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), originState);
+                        simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), originState);
                     }
                     else {
-                        simulatedTurn = NujaBattle(serverAddress).simulate(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveOutput[i-1]);
+                        simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveOutput[i-1]);
                     }
                 }
 
@@ -206,7 +247,7 @@ contract TimeoutManager {
                 require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
 
                 // If not the last turn check the next turn is correctly the next player
-                uint[3] memory newMetadata = NujaBattle(serverAddress).nextTurn(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), metadata[i], moveOutput[i]);
+                uint[3] memory newMetadata = NujaBattle(nujaBattle).nextTurn(ServerManager(serverManager).getMatchServer(metadata[0][0]), metadata[i], moveOutput[i]);
                 if(i < nbSignature-1) {
                     require(newMetadata[0] == metadata[i+1][0]);
                     require(newMetadata[1] == metadata[i+1][1]);
@@ -233,7 +274,7 @@ contract TimeoutManager {
             // Verify the caller is not the blamed player
             // This technique could be used by the called to kick himself
             // from the server and get back his cheat warrant
-            require(NujaBattle(serverAddress).getPlayerAddress(metadata[0][0], newMetadata[2]) != msg.sender);
+            require(ServerManager(serverManager).getAddressFromIndex(ServerManager(serverManager).getMatchServer(metadata[0][0]), uint8(newMetadata[2])) != msg.sender);
 
             // Set timeout attribute
             // Last metadata is last player
@@ -245,116 +286,48 @@ contract TimeoutManager {
         }
     }
 
-    // Called by playing player to stop the timeout against him
-    // He has to show he had played the turn
-    // The last turn will be incremented
-    // Only his signature is suficient (startTimeout imply last signature have been verified)
-    function stopTimeout(
-      uint[3][8] metadata,
-      uint[4][8] move,
-      uint[176][8] moveOutput,
-      bytes32[2][8] signatureRS,
-      uint8[8] v,
-      uint[176] originState,
-      uint8 nbSignature
-      ) public {
 
-        // Get contract instance
-        //NujaBattle NujaBattle(serverAddress) = NujaBattle(serverAddress);
-
-        // Verify there is pending timeout and sender is the blamed player
-        require(currentTimeoutTimestamp[metadata[0][0]] > 0);
-        require(NujaBattle(serverAddress).getIndexFromAddress(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), msg.sender) == currentTimeoutPlayer[metadata[0][0]]);
-        require(nbSignature > 0);
-
-        // Check if it is the first turn
-        // During first turn not all alive player are required to be part of the signatures list
-        if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            originState = NujaBattle(serverAddress).getInitialState(NujaBattle(serverAddress).getMatchServer(metadata[0][0]));
-        }
-
-        lastMovesNb[metadata[0][0]] = nbSignature;
-
-        // Verify all signatures
-        for(uint8 i=0; i<nbSignature; i++) {
-
-            // Check if this turn has been timed out
-            if(NujaBattle(serverAddress).isTimedout(metadata[i][0], metadata[i][1], metadata[i][2])) {
-                if(i == 0) {
-                    uint[176] memory simulatedTurn = NujaBattle(serverAddress).kill(originState, uint8(metadata[i][2]));
-                }
-                else {
-                    simulatedTurn = NujaBattle(serverAddress).kill(moveOutput[i-1], uint8(metadata[i][2]));
-                }
-            }
-            else {
-                // Verify that the move have been signed by the player
-                require(NujaBattle(serverAddress).moveOwner(metadata[i], move[i], moveOutput[i], signatureRS[i][0], signatureRS[i][1], v[i]) == NujaBattle(serverAddress).getPlayerAddress(metadata[0][0], metadata[i][2]));
-
-                // Simulate the turn and verify the simulated output is the given output
-                if(i == 0) {
-                    simulatedTurn = NujaBattle(serverAddress).simulate(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), originState);
-                }
-                else {
-                    simulatedTurn = NujaBattle(serverAddress).simulate(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveOutput[i-1]);
-                }
-            }
-
-            // Check integrity
-            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
-
-            // If not the last turn check the next turn is correctly the next player
-            uint[3] memory newMetadata = NujaBattle(serverAddress).nextTurn(NujaBattle(serverAddress).getMatchServer(metadata[0][0]), metadata[i], moveOutput[i]);
-            if(i < nbSignature-1) {
-                require(newMetadata[0] == metadata[i+1][0]);
-                require(newMetadata[1] == metadata[i+1][1]);
-                require(newMetadata[2] == metadata[i+1][2]);
-            }
-            else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
-                // Last turn: we verified every alive player signed their turn
-                // Not necessary if the signature list begin from origin
-                require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);
-            }
-
-            // Set lastMove to be sure state is shared
-            lastMoves[metadata[0][0]][i][0] = uint8(move[i][0]);
-            lastMoves[metadata[0][0]][i][1] = uint8(move[i][1]);
-            lastMoves[metadata[0][0]][i][2] = uint8(move[i][2]);
-            lastMoves[metadata[0][0]][i][3] = uint8(move[i][3]);
-            lastMovesTurn[metadata[0][0]][i] = metadata[i][1];
-            lastMovesPlayer[metadata[0][0]][i] = uint8(metadata[i][2]);
-            lastR[metadata[0][0]][i] = signatureRS[i][0];
-            lastS[metadata[0][0]][i] = signatureRS[i][1];
-            lastV[metadata[0][0]][i] = v[i];
-        }
-
-        // Set new value to timeout to avoid time out stressing
-        require(newMetadata[1] > currentTimeoutTurn[metadata[0][0]] || (newMetadata[1] == currentTimeoutTurn[metadata[0][0]] && newMetadata[2] >= currentTimeoutPlayer[metadata[0][0]]));
-        currentTimeoutPlayer[metadata[0][0]] = uint8(newMetadata[2]);
-        currentTimeoutTurn[metadata[0][0]] = newMetadata[1];
-        currentTimeoutTimestamp[metadata[0][0]] = 0;
+    // Write function for stop timeout
+    function addLastMove(
+      uint matchId,
+      uint8 lastMoveIndex,
+      uint8 lastMove1,
+      uint8 lastMove2,
+      uint8 lastMove3,
+      uint8 lastMove4,
+      uint turn,
+      uint8 player,
+      bytes32 r,
+      bytes32 s,
+      uint8 v
+      ) public fromTimeoutStopper {
+        lastMoves[matchId][lastMoveIndex][0] = lastMove1;
+        lastMoves[matchId][lastMoveIndex][1] = lastMove2;
+        lastMoves[matchId][lastMoveIndex][2] = lastMove3;
+        lastMoves[matchId][lastMoveIndex][3] = lastMove4;
+        lastMovesTurn[mmatchId][lastMoveIndex] = turn;
+        lastMovesPlayer[matchId][lastMoveIndex] = player;
+        lastR[matchId][lastMoveIndex] = r;
+        lastS[matchId][lastMoveIndex] = s;
+        lastV[matchId][lastMoveIndex] = v;
     }
 
+    function updateLastMoveNb(uint matchId, uint8 lastMoveNb_) public fromTimeoutStopper {
+        lastMovesNb[matchId] = lastMoveNb_;
+    }
 
-    // Called by anybody to confirm a timeout process
-    // The player hasn't played his turn in time, he's kicked
-    function confirmTimeout(uint matchId) public {
-        // Verify caller is on the server
-        require(NujaBattle(serverAddress).isAddressInServer(NujaBattle(serverAddress).getMatchServer(matchId), msg.sender));
-
-        // Verify timeout process is pending
-        require(currentTimeoutTimestamp[matchId] > 0);
-        require(now > currentTimeoutTimestamp[matchId] + timeoutThreshold);
-
-        // Call the necessary function in NujaBattle contract to manage fund, etc.
-        NujaBattle(serverAddress).timeoutPlayer(matchId, currentTimeoutClaimer[matchId], currentTimeoutTurn[matchId], currentTimeoutPlayer[matchId]);
-
-        /// Reset timeout
-        currentTimeoutTimestamp[matchId] = 0;
-
-        // Update timeout maps
+    function confirmTimeout(uint matchId) public fromTimeoutStopper {
         timeoutTurn[matchId][nbTimeout[matchId]] = currentTimeoutTurn[matchId];
         timeoutPlayer[matchId][nbTimeout[matchId]] = currentTimeoutPlayer[matchId];
         nbTimeout[matchId] += 1;
+    }
+
+    function resetTimeoutTimestamp(uint matchId) public fromTimeoutStopper {
+        currentTimeoutTimestamp[matchId] = 0;
+    }
+
+    function setCurrentTimeoutInfo(uint matchId, uint turn, uint8 player) public fromTimeoutStopper {
+        currentTimeoutPlayer[matchId] = player;
+        currentTimeoutTurn[matchId] = turn;
     }
 }
