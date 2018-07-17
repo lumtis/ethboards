@@ -28,6 +28,7 @@ class CharacterServers extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
       account: store.getState().account.accountInstance,
       serverArray: [],
@@ -36,6 +37,7 @@ class CharacterServers extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         characterRegistry: store.getState().web3.characterRegistryInstance,
         account: store.getState().account.accountInstance,
       });
@@ -49,18 +51,18 @@ class CharacterServers extends Component {
     var self = this
 
     if(self.state.account != null) {
-      if(self.state.nujaBattle != null) {
+      if(self.state.nujaBattle != null && self.state.serverManager != null) {
         if(self.state.characterRegistry != null) {
           self.state.characterRegistry.methods.balanceOf(self.state.account.address).call().then(function(characterNb) {
 
             for(var i = 0; i < characterNb; i++) {
               self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
                 self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
-                  self.state.nujaBattle.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
+                  self.state.serverManager.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
                     if(currentServerRet > 0) {
                       //Get the server infos
                       var currentServer = currentServerRet-1
-                      self.state.nujaBattle.methods.getServerInfo(currentServer).call().then(function(infos) {
+                      self.state.serverManager.methods.getServerInfo(currentServer).call().then(function(infos) {
 
                         var route = '/play/' + this.serverId.toString()
 

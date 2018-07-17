@@ -13,12 +13,14 @@ class MapInitial extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       mapName: 'undefined name',
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
       })
     })
   }
@@ -30,8 +32,8 @@ class MapInitial extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getServerName(self.props.server).call().then(function(name) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
+      self.state.serverManager.methods.getServerName(self.props.server).call().then(function(name) {
         self.setState({mapName: name})
       })
     }

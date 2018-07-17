@@ -31,12 +31,14 @@ class AllServers extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       serverArray: [],
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
       });
     });
   }
@@ -48,11 +50,11 @@ class AllServers extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.nujaBattle != null) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
 
-        self.state.nujaBattle.methods.getServerNb().call().then(function(serverNb) {
+        self.state.serverManager.methods.getServerNb().call().then(function(serverNb) {
           for (var i = 0; i < serverNb; i++) {
-            self.state.nujaBattle.methods.getServerInfo(i).call().then(function(infos) {
+            self.state.serverManager.methods.getServerInfo(i).call().then(function(infos) {
 
               var route = '/play/' + this.serverId.toString()
 

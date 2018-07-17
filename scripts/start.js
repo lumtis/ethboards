@@ -42,15 +42,11 @@ var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var serverManagerJson = require('../build/contracts/ServerManager.json')
 var serverManagerAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
-var serverManager = new web3.eth.Contract(serverManagerJson.abi, tserverManagerAddress)
+var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
 
 var timeoutStarterJson = require('../build/contracts/TimeoutStarter.json')
 var timeoutStarterAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
-
-var timeoutStopperJson = require('../build/contracts/TimeoutStopper.json')
-var timeoutStopperAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
-var timeoutStopper = new web3.eth.Contract(timeoutStopperJson.abi, timeoutStopperAddress)
 
 
 const turnPrefix = '_playerturn213'
@@ -175,8 +171,8 @@ function updateTimeout(matchId, cb) {
 
               if(timeoutPlayers.timeoutTurnRet[actualNbTimeout] == 0 && timeoutPlayers.timeoutPlayerRet[actualNbTimeout] == 0) {
                 // If it is the first turn to be timed out we use initialState
-                nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
-                  nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+                serverManager.methods.getMatchServer(matchId).call().then(function(serverId) {
+                  serverManager.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
 
                     // Kill the timed out player
                     nujaBattle.methods.kill(initialState, timeoutPlayers.timeoutPlayerRet[actualNbTimeout]).call({gas: '1000000'}).then(function(timedoutState) {
@@ -310,7 +306,7 @@ function updateLastMoves(matchId, nbPlayer, cb) {
                         }
 
                         // Push the missing signature
-                        nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+                        serverManager.methods.getMatchServer(matchId).call().then(function(serverId) {
                           var lastMoveOutput = lastState.moveOutput
 
                           // Define recursive function to push all missing moves
@@ -777,8 +773,8 @@ function runDevServer(host, port, protocol) {
           else {
 
             // Before getting the metadata we check if we need to updateLastMoves
-            nujaBattle.methods.getMatchServer(req.body.matchId).call().then(function(serverId) {
-              nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+            serverManager.methods.getMatchServer(req.body.matchId).call().then(function(serverId) {
+              serverManager.methods.getPlayerMax(serverId).call().then(function(playerMax) {
                 updateLastMoves(req.body.matchId, playerMax, function () {
 
                   // The match exist, we get metadata
@@ -853,25 +849,25 @@ function runDevServer(host, port, protocol) {
         var addr = ethjs.bufferToHex(addrBuf)
 
         console.log(matchId)
-        nujaBattle.methods.getMatchServer(matchId).call().then(function(serverId) {
+        serverManager.methods.getMatchServer(matchId).call().then(function(serverId) {
 
           // We check the metadata are correct (it is the actual turn)
-          nujaBattle.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+          serverManager.methods.getPlayerMax(serverId).call().then(function(playerMax) {
 
             getCurrentTurn(matchId, playerMax, function(actualTurn) {
               if(actualTurn.length > 0 && actualTurn[0] == turn && actualTurn[1] == playerTurn) {
 
                 // We check if the player is present on the server and it's his turn
-                nujaBattle.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
+                serverManager.methods.isAddressInServer(serverId, addr).call().then(function(isInServer) {
                   if(isInServer) {
-                    nujaBattle.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
+                    serverManager.methods.getIndexFromAddress(serverId, addr).call().then(function(indexPlayer) {
                       if(indexPlayer == playerTurn) {
 
                         // We check that the turn is not cheated by simulating it
                         if(turn == 0 && playerTurn == 0){
 
                           // First turn, we simulate from initialState
-                          nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+                          serverManager.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
                             nujaBattle.methods.simulate(serverId, playerTurn, req.body.move[0], req.body.move[1], req.body.move[2], req.body.move[3], initialState).call({gas: '1000000'}).then(function(simulatedOutput){
                               // WARNING HAS THEY HAVE THE SAME FORMAT ?
                               // Comparing hashed

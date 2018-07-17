@@ -15,6 +15,7 @@ class Tile extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       buildingCode: 0,
       isHovering: false
     }
@@ -22,6 +23,7 @@ class Tile extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
       })
     })
   }
@@ -38,8 +40,8 @@ class Tile extends Component {
 
     // If we want the initial buidling, we read the smart contract
     if(self.props.initial) {
-      if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.getServerBuilding(self.props.server, self.props.x, self.props.y).call().then(function(buildingRet) {
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
+        self.state.serverManager.methods.getServerBuilding(self.props.server, self.props.x, self.props.y).call().then(function(buildingRet) {
           self.setState({buildingCode: buildingRet})
         })
       }

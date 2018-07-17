@@ -11,12 +11,14 @@ class PlayerList extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       playerArray: [],
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
       });
     });
   }
@@ -27,11 +29,11 @@ class PlayerList extends Component {
 
   componentWillMount() {
     var self = this
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(nb) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
+      self.state.serverManager.methods.getPlayerMax(self.props.server).call().then(function(nb) {
         // For each player, retreive informations
         for (var i = 0; i < nb; i++) {
-          self.state.nujaBattle.methods.playerCharacter(self.props.server, i).call().then(function(characterIndex) {
+          self.state.serverManager.methods.playerCharacter(self.props.server, i).call().then(function(characterIndex) {
 
             // Pushing in player array the new player
             var playerArrayTmp = self.state.playerArray

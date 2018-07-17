@@ -29,6 +29,7 @@ class TimeoutInterface extends Component {
       timeoutPlayerTurn: 0,
       account: store.getState().account.accountInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       timeoutStarter: store.getState().web3.timeoutStarterInstance,
       timeoutStopper: store.getState().web3.timeoutStopperInstance,
     }
@@ -37,6 +38,7 @@ class TimeoutInterface extends Component {
       this.setState({
         account: store.getState().account.accountInstance,
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         timeoutStarter: store.getState().web3.timeoutStarterInstance,
         timeoutStopper: store.getState().web3.timeoutStopperInstance,
       })
@@ -53,19 +55,19 @@ class TimeoutInterface extends Component {
     var self = this
 
     // Get the current match
-    if(self.state.nujaBattle != null && self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
+    if(self.state.nujaBattle != null && self.state.serverManager != null && self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
 
       // Get server player max
-      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
+      self.state.serverManager.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
         self.setState({playerMax: playerMax})
       })
-      self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+      self.state.serverManager.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
         self.setState({playerIndex: playerIndex})
       })
 
-      self.state.nujaBattle.methods.getServerState(self.props.server).call().then(function(serverState) {
+      self.state.serverManager.methods.getServerState(self.props.server).call().then(function(serverState) {
         if(serverState == 2) {
-          self.state.nujaBattle.methods.getServerCurrentMatch(self.props.server).call().then(function(matchId) {
+          self.state.serverManager.methods.getServerCurrentMatch(self.props.server).call().then(function(matchId) {
             self.setState({matchId: matchId, running: true})
 
 

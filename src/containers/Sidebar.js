@@ -33,6 +33,7 @@ class Sidebar extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       account: store.getState().account.accountInstance,
       inServer: false,
       characterId: -1,
@@ -44,6 +45,7 @@ class Sidebar extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         account: store.getState().account.accountInstance
       });
     });
@@ -59,12 +61,12 @@ class Sidebar extends Component {
 
     // Verify if user is on the server
     if (self.state.account != null) {
-      if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.isAddressInServer(props.server, self.state.account.address).call().then(function(isRet) {
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
+        self.state.serverManager.methods.isAddressInServer(props.server, self.state.account.address).call().then(function(isRet) {
           // If the user is on the server, we need to retreive the character id
           if(isRet) {
-            self.state.nujaBattle.methods.getIndexFromAddress(props.server, self.state.account.address).call().then(function(indexUser) {
-              self.state.nujaBattle.methods.playerCharacter(props.server, indexUser).call().then(function(characterIndex) {
+            self.state.serverManager.methods.getIndexFromAddress(props.server, self.state.account.address).call().then(function(indexUser) {
+              self.state.serverManager.methods.playerCharacter(props.server, indexUser).call().then(function(characterIndex) {
                 self.setState({characterId: parseInt(characterIndex)})
               })
             })
@@ -74,7 +76,7 @@ class Sidebar extends Component {
 
         // Check if the server is ready
         if(parseInt(props.serverState) == 1) {
-          self.state.nujaBattle.methods.getServerInfo(props.server).call().then(function(infoRet) {
+          self.state.serverManager.methods.getServerInfo(props.server).call().then(function(infoRet) {
             if(infoRet.playerMaxRet == infoRet.playerNbRet) {
               self.setState({serverReady: true})
             }
@@ -107,8 +109,8 @@ class Sidebar extends Component {
   quitServer(e) {
     var self = this;
     if (self.state.account != null) {
-      if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.removePlayerFromServer(self.props.server).send({
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
+        self.state.serverManager.methods.removePlayerFromServer(self.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
           gas: 200000
@@ -128,8 +130,8 @@ class Sidebar extends Component {
   startServer(e) {
     var self = this;
     if (self.state.account != null) {
-      if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.startServer(this.props.server).send({
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
+        self.state.serverManager.methods.startServer(this.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
           gas: 1000000

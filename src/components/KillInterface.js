@@ -16,6 +16,7 @@ class KillInterface extends Component {
       playerToKill: null,
       playerIndex: 0,
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       account: store.getState().account.accountInstance,
       web3: store.getState().web3.web3Instance,
     }
@@ -23,6 +24,7 @@ class KillInterface extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         account: store.getState().account.accountInstance,
         web3: store.getState().web3.web3Instance,
       })
@@ -37,16 +39,16 @@ class KillInterface extends Component {
     var self = this
 
     // Get the index of our player
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
+      self.state.serverManager.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
         self.setState({playerIndex: playerIndex})
       })
     }
 
     // Get the id of the match
-    self.state.nujaBattle.methods.getServerState(self.props.server).call().then(function(serverState) {
+    self.state.serverManager.methods.getServerState(self.props.server).call().then(function(serverState) {
       if(serverState == 2) {
-        self.state.nujaBattle.methods.getServerCurrentMatch(self.props.server).call().then(function(matchId) {
+        self.state.serverManager.methods.getServerCurrentMatch(self.props.server).call().then(function(matchId) {
 
           // Get list of killed player
           request.post(
@@ -92,8 +94,7 @@ class KillInterface extends Component {
       var metadata = []
       var move = []
       var moveOutput = []
-      var r = []
-      var s = []
+      var signatureRS = []
       var v = []
 
       for(var i=0; i<nbSignature; i++) {
@@ -103,15 +104,14 @@ class KillInterface extends Component {
 
         // empty signature means the turn has been timed out, no signature needed
         if(signaturesList[i].signature == '') {
-          r.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
-          s.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+          signatureRS.push(['0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723', '0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723'])
           v.push(0)
         }
         else {
           var rHex = signaturesList[i].signature.slice(0, 66)
-          r.push(rHex)
           var sHex = '0x' + signaturesList[i].signature.slice(66, 130)
-          s.push(sHex)
+          signatureRS.push([rHex,sHex])
+
           var splittedSig = ethjs.fromRpcSig(signaturesList[i].signature)
           v.push(splittedSig.v)
         }
@@ -122,8 +122,7 @@ class KillInterface extends Component {
         metadata.push(signaturesList[0].metadata)
         move.push(signaturesList[0].move)
         moveOutput.push(signaturesList[0].moveOutput)
-        r.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
-        s.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+        signatureRS.push(['0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723', '0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723'])
         v.push(0)
       }
 
@@ -151,7 +150,7 @@ class KillInterface extends Component {
       // console.log(nbSignature)
 
       // Send transaction
-      this.state.nujaBattle.methods.killPlayer(this.props.server, killer, killed, metadata, move, moveOutput, r, s, v, originState, nbSignature).send({
+      this.state.nujaBattle.methods.killPlayer(this.props.server, [killer,killed], metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
         from: this.state.account.address,
         gasPrice: 2000000000,
         gas: '1000000'

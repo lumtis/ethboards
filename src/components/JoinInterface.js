@@ -24,6 +24,7 @@ class JoinInterface extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
       account: store.getState().account.accountInstance,
       characterArray: [],
@@ -32,6 +33,7 @@ class JoinInterface extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         characterRegistry: store.getState().web3.characterRegistryInstance,
         account: store.getState().account.accountInstance,
         serverFee: 0,
@@ -56,7 +58,7 @@ class JoinInterface extends Component {
             for(var i = 0; i < characterNb; i++) {
               self.state.characterRegistry.methods.tokenOfOwnerByIndex(self.state.account.address, i).call().then(function(characterIndex) {
                 self.state.characterRegistry.methods.getCharacterInfo(characterIndex).call().then(function(infoRet) {
-                  self.state.nujaBattle.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
+                  self.state.serverManager.methods.getCharacterServer(characterIndex).call().then(function(currentServerRet) {
                     if(currentServerRet == 0) {
 
                       // Get a random color for background
@@ -87,7 +89,7 @@ class JoinInterface extends Component {
         })
 
         // Get contract cheat warrant
-        self.state.nujaBattle.methods.getCheatWarrant().call().then(function(cheatWarrant) {
+        self.state.serverManager.methods.getCheatWarrant().call().then(function(cheatWarrant) {
             self.setState({cheatWarrant: cheatWarrant})
         })
       }
@@ -98,7 +100,7 @@ class JoinInterface extends Component {
     return function(e) {
       // Join the server
       if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addPlayerToServer(characterId, this.props.server).send({
+        this.state.serverManager.methods.addPlayerToServer(characterId, this.props.server).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
           value: parseInt(this.state.serverFee) + parseInt(this.state.serverMoneyBag) + parseInt(this.state.cheatWarrant)

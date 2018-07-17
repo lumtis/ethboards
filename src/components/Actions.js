@@ -38,12 +38,14 @@ class Actions extends Component {
       playerIndex: -1,
       playerMax: 0,
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       account: store.getState().account.accountInstance,
     }
 
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         account: store.getState().account.accountInstance,
       });
     });
@@ -57,11 +59,11 @@ class Actions extends Component {
     var self = this
 
     // necessary informations from server
-    if (self.state.nujaBattle != null) {
-      self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
+      self.state.serverManager.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
         self.setState({playerMax: playerMax})
       })
-      self.state.nujaBattle.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
+      self.state.serverManager.methods.getIndexFromAddress(self.props.server, self.state.account.address).call().then(function(playerIndex) {
         self.setState({playerIndex: playerIndex})
       })
     }
@@ -205,7 +207,7 @@ class Actions extends Component {
   command(playMove, x, y) {
     var self = this
 
-    if (self.state.nujaBattle != null) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
 
       // Simulate the turn to get move output
       self.state.nujaBattle.methods.simulate(self.props.server, self.state.playerIndex, playMove, x, y, self.state.selectedWeapon, SW.getCurrentState()).call({gas: '1000000'}).then(function(moveOutput) {

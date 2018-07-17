@@ -17,10 +17,10 @@ exports.updateServer = function(id) {
 
         if(metadataBody[1] == -1) {
           // If playerturn == -1 the match has not started yet, we get the initial state
-          var nujaBattle = store.getState().web3.nujaBattleInstance
-          if(nujaBattle != null) {
-            nujaBattle.methods.getMatchServer(id).call().then(function(serverId) {
-              nujaBattle.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+          var serverManager = store.getState().web3.serverManagerInstance
+          if(serverManager != null) {
+            serverManager.methods.getMatchServer(id).call().then(function(serverId) {
+              serverManager.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
                 var initialStateFormatted = [{
                   moveOutput: initialState
                 }]

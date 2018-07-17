@@ -17,6 +17,7 @@ class Play extends Component {
 
     this.state = {
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       serverState: 0,
       server: 0,
     }
@@ -24,6 +25,7 @@ class Play extends Component {
     store.subscribe(() => {
       this.setState({
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
       })
     })
   }
@@ -39,12 +41,12 @@ class Play extends Component {
     if (isNaN(serverId) == false) {
 
       // Get the id of the current match
-      if (self.state.nujaBattle != null) {
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
 
-        self.state.nujaBattle.methods.getServerState(parseInt(serverId)).call().then(function(serverState) {
+        self.state.serverManager.methods.getServerState(parseInt(serverId)).call().then(function(serverState) {
 
           if(serverState == 2) {
-            self.state.nujaBattle.methods.getServerCurrentMatch(parseInt(serverId)).call().then(function(matchId) {
+            self.state.serverManager.methods.getServerCurrentMatch(parseInt(serverId)).call().then(function(matchId) {
               SW.updateServer(matchId)
             })
           }

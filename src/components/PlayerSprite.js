@@ -19,6 +19,7 @@ class PlayerSprite extends Component {
     this.state = {
       web3: store.getState().web3.web3Instance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
       number: 0,
@@ -30,6 +31,7 @@ class PlayerSprite extends Component {
       this.setState({
         web3: store.getState().web3.web3Instance,
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         nujaRegistry: store.getState().web3.nujaRegistryInstance,
         characterRegistry: store.getState().web3.characterRegistryInstance,
       });
@@ -43,16 +45,16 @@ class PlayerSprite extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.nujaBattle != null) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
       if (self.state.characterRegistry != null) {
 
         self.state.characterRegistry.methods.getCharacterInfo(self.props.index).call().then(function(characterInfo) {
           // Retrieve server info
-          self.state.nujaBattle.methods.getCharacterServer(self.props.index).call().then(function(currentServerRet) {
+          self.state.serverManager.methods.getCharacterServer(self.props.index).call().then(function(currentServerRet) {
             if(currentServerRet > 0) {
               var currentServer = currentServerRet-1
 
-              self.state.nujaBattle.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
+              self.state.serverManager.methods.getIndexFromAddress(currentServer, characterInfo.ownerRet).call().then(function(playerIndex) {
                 self.setState({
                   number: playerIndex,
                 })

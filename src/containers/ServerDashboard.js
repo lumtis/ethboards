@@ -71,6 +71,7 @@ class ServerDashboard extends Component {
     this.state = {
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
+      serverManager: store.getState().web3.serverManagerInstance,
       account: store.getState().account.accountInstance,
       atLeastOneServer: false,
       serverState: 0,
@@ -93,6 +94,7 @@ class ServerDashboard extends Component {
       this.setState({
         weaponRegistry: store.getState().web3.weaponRegistryInstance,
         nujaBattle: store.getState().web3.nujaBattleInstance,
+        serverManager: store.getState().web3.serverManagerInstance,
         account: store.getState().account.accountInstance
       })
     })
@@ -105,10 +107,10 @@ class ServerDashboard extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.nujaBattle != null) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
 
       // Get all the servers of the user
-      self.state.nujaBattle.methods.getServerUserNumber(self.state.account.address).call().then(function(serverNb) {
+      self.state.serverManager.methods.getServerUserNumber(self.state.account.address).call().then(function(serverNb) {
 
         // Enable this to be able to check the server
         if(serverNb > 0) {
@@ -117,8 +119,8 @@ class ServerDashboard extends Component {
 
         for (var i = 0; i < serverNb; i++) {
           // For each server we add the button
-          self.state.nujaBattle.methods.getServerUserIndex(self.state.account.address, i).call().then(function(serverIndex) {
-            self.state.nujaBattle.methods.getServerName(serverIndex).call().then(function(serverName) {
+          self.state.serverManager.methods.getServerUserIndex(self.state.account.address, i).call().then(function(serverIndex) {
+            self.state.serverManager.methods.getServerName(serverIndex).call().then(function(serverName) {
 
               // Get a random color for background
               var ranIndex = Math.floor((Math.random() * flatColorList.length))
@@ -141,7 +143,7 @@ class ServerDashboard extends Component {
       })
 
       // Get server creation fee
-      self.state.nujaBattle.methods.getServerCreationFee().call().then(function(serverCreationFee) {
+      self.state.serverManager.methods.getServerCreationFee().call().then(function(serverCreationFee) {
           self.setState({serverCreationFee: serverCreationFee})
       })
     }
@@ -171,11 +173,11 @@ class ServerDashboard extends Component {
       var self = this
 
       // Get the state of the server
-      if (self.state.nujaBattle != null) {
-        self.state.nujaBattle.methods.getServerState(serverId).call().then(function(serverState) {
+      if (self.state.nujaBattle != null && self.state.serverManager != null) {
+        self.state.serverManager.methods.getServerState(serverId).call().then(function(serverState) {
           self.setState({serverSelected: serverId, serverState: serverState})
         })
-        self.state.nujaBattle.methods.getPlayerNb(serverId).call().then(function(playerNb) {
+        self.state.serverManager.methods.getPlayerNb(serverId).call().then(function(playerNb) {
           self.setState({playerNb: playerNb})
         })
       }
@@ -196,7 +198,7 @@ class ServerDashboard extends Component {
     else if(slot >= 2 && slot <= 10) {
       // Add the server
       if (this.state.nujaBattle != null) {
-        this.state.nujaBattle.methods.addServer(name, slot, fee, moneybag).send({
+        this.state.serverManager.methods.addServer(name, slot, fee, moneybag).send({
           from: this.state.account.address,
           gasPrice: 2000000000,
           value: this.state.serverCreationFee
@@ -222,7 +224,7 @@ class ServerDashboard extends Component {
     // Add buildings to the server
     if (this.state.nujaBattle != null) {
       if(this.state.serverSelected >= 0) {
-        this.state.nujaBattle.methods.addBuildingToServer(
+        this.state.serverManager.methods.addBuildingToServer(
           this.state.serverSelected,
           this.state.addBuildingX,
           this.state.addBuildingY,
@@ -291,7 +293,7 @@ class ServerDashboard extends Component {
     // Remove the server
     if (this.state.nujaBattle != null) {
       if(this.state.serverSelected >= 0) {
-        this.state.nujaBattle.methods.removeBuildingFromServer(
+        this.state.serverManager.methods.removeBuildingFromServer(
           this.state.serverSelected,
           this.state.removeBuildingX,
           this.state.removeBuildingY,
@@ -346,11 +348,11 @@ class ServerDashboard extends Component {
     e.preventDefault();
     var self = this
 
-    if (self.state.nujaBattle != null) {
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
       if(self.state.serverState == 0) {
 
         // If server is offline, we set it online
-        self.state.nujaBattle.methods.setServerOnline(self.state.serverSelected).send({
+        self.state.serverManager.methods.setServerOnline(self.state.serverSelected).send({
           from: self.state.account.address,
           gasPrice: 2000000000,
         })
@@ -365,7 +367,7 @@ class ServerDashboard extends Component {
       else if (self.state.serverState == 1) {
 
         // If server is online, we set it offline
-        self.state.nujaBattle.methods.setServerOffline(self.state.serverSelected).send({
+        self.state.serverManager.methods.setServerOffline(self.state.serverSelected).send({
           from: self.state.account.address,
           gasPrice: 2000000000,
         })
