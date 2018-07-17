@@ -2,7 +2,7 @@ pragma solidity ^0.4.2;
 
 
 import "./NujaBattle.sol";
-import "./TimeoutStopper";
+import "./TimeoutStopper.sol";
 
 
 contract TimeoutStarter {
@@ -68,7 +68,7 @@ contract TimeoutStarter {
         require(!addressesSet);
 
         nujaBattle = nujaBattle_;
-        timeoutStarter = timeoutStopper_;
+        timeoutStopper = timeoutStopper_;
         addressesSet = true;
     }
 
@@ -287,30 +287,42 @@ contract TimeoutStarter {
     }
 
 
-    // Write function for stop timeout
+    // Write function for timeoutStopper
     function addLastMove(
       uint matchId,
       uint8 lastMoveIndex,
       uint8 lastMove1,
       uint8 lastMove2,
       uint8 lastMove3,
-      uint8 lastMove4,
-      uint turn,
-      uint8 player,
-      bytes32 r,
-      bytes32 s,
-      uint8 v
+      uint8 lastMove4
       ) public fromTimeoutStopper {
         lastMoves[matchId][lastMoveIndex][0] = lastMove1;
         lastMoves[matchId][lastMoveIndex][1] = lastMove2;
         lastMoves[matchId][lastMoveIndex][2] = lastMove3;
         lastMoves[matchId][lastMoveIndex][3] = lastMove4;
-        lastMovesTurn[mmatchId][lastMoveIndex] = turn;
-        lastMovesPlayer[matchId][lastMoveIndex] = player;
+    }
+    function addLastMoveSignature(
+      uint matchId,
+      uint8 lastMoveIndex,
+      bytes32 r,
+      bytes32 s,
+      uint8 v
+      ) public fromTimeoutStopper {
         lastR[matchId][lastMoveIndex] = r;
         lastS[matchId][lastMoveIndex] = s;
         lastV[matchId][lastMoveIndex] = v;
     }
+    function addLastMoveMetadata(
+      uint matchId,
+      uint8 lastMoveIndex,
+      uint turn,
+      uint8 player
+      ) public fromTimeoutStopper {
+        lastMovesTurn[matchId][lastMoveIndex] = turn;
+        lastMovesPlayer[matchId][lastMoveIndex] = player;
+    }
+
+
 
     function updateLastMoveNb(uint matchId, uint8 lastMoveNb_) public fromTimeoutStopper {
         lastMovesNb[matchId] = lastMoveNb_;

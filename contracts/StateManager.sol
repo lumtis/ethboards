@@ -68,7 +68,7 @@ contract StateManager {
     }
 
     // Health function
-    function getHealth(uint[176] state, uint p) internal pure returns (uint ret) {
+    function getHealth(uint[176] state, uint p) public pure returns (uint ret) {
         return state[128+p];
     }
     function damage(uint[176] state, uint p, uint nb) internal pure returns(uint[176] ret) {
