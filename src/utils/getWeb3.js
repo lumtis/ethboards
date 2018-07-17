@@ -42,15 +42,24 @@ function getWeb3() {
 
     // Get contracts
     var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
-    var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
+    var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
+
+    var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
+    var timeoutStopper = new web3.eth.Contract(timeoutStopperJson.abi, timeoutStopperAddress)
+
     var nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
     var characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
     var weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
 
     results = {
       web3Instance: web3,
+
       nujaBattleInstance: nujaBattle,
-      timeoutManagerInstance: timeoutManager,
+      serverManagerInstance: serverManager,
+
+      timeoutStarterInstance: timeoutStarter,
+      timeoutStopperInstance: timeoutStopper,
+
       nujaRegistryInstance: nujaRegistry,
       characterRegistryInstance: characterRegistry,
       weaponRegistryInstance: weaponRegistry
@@ -69,16 +78,25 @@ function getWeb3() {
     web3 = new Web3(provider)
 
     // Get contracts
-    nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
-    timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
-    nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
-    characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
-    weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
+    var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
+    var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
+
+    var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
+    var timeoutStopper = new web3.eth.Contract(timeoutStopperJson.abi, timeoutStopperAddress)
+
+    var nujaRegistry = new web3.eth.Contract(nujaRegistryJson.abi, nujaRegistryAddress)
+    var characterRegistry = new web3.eth.Contract(characterRegistryJson.abi, characterRegistryAddress)
+    var weaponRegistry = new web3.eth.Contract(weaponRegistryJson.abi, weaponRegistryAddress)
 
     results = {
       web3Instance: web3,
+
       nujaBattleInstance: nujaBattle,
-      timeoutManagerInstance: timeoutManager,
+      serverManagerInstance: serverManager,
+
+      timeoutStarterInstance: timeoutStarter,
+      timeoutStopperInstance: timeoutStopper,
+
       nujaRegistryInstance: nujaRegistry,
       characterRegistryInstance: characterRegistry,
       weaponRegistryInstance: weaponRegistry

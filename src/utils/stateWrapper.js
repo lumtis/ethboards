@@ -115,10 +115,10 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
 
   // Get the turn to begin with
   // TODO: add gas to 100000
-  var timeoutManager = store.getState().web3.timeoutManagerInstance
-  if(timeoutManager != null) {
+  var timeoutStarter = store.getState().web3.timeoutStarterInstance
+  if(timeoutStarter != null) {
 
-    timeoutManager.methods.getLastMoves(id).call().then(function(lastMoves) {
+    timeoutStarter.methods.getLastMoves(id).call().then(function(lastMoves) {
 
       // Check if it is the first turn
       if(lastMoves.nbRet == 0) {
@@ -146,7 +146,7 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
         )
       }
       else {
-        timeoutManager.methods.getLastMovesMetadata(id).call().then(function(lastMetadatas) {
+        timeoutStarter.methods.getLastMovesMetadata(id).call().then(function(lastMetadatas) {
           // Get timeout informations to fill necessary parameters
 
           request.post(

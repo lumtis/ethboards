@@ -29,14 +29,16 @@ class TimeoutInterface extends Component {
       timeoutPlayerTurn: 0,
       account: store.getState().account.accountInstance,
       nujaBattle: store.getState().web3.nujaBattleInstance,
-      timeoutManager: store.getState().web3.timeoutManagerInstance,
+      timeoutStarter: store.getState().web3.timeoutStarterInstance,
+      timeoutStopper: store.getState().web3.timeoutStopperInstance,
     }
 
     store.subscribe(() => {
       this.setState({
         account: store.getState().account.accountInstance,
         nujaBattle: store.getState().web3.nujaBattleInstance,
-        timeoutManager: store.getState().web3.timeoutManagerInstance,
+        timeoutStarter: store.getState().web3.timeoutStarterInstance,
+        timeoutStopper: store.getState().web3.timeoutStopperInstance,
       })
     })
   }
@@ -51,7 +53,7 @@ class TimeoutInterface extends Component {
     var self = this
 
     // Get the current match
-    if(self.state.nujaBattle != null && self.state.timeoutManager != null) {
+    if(self.state.nujaBattle != null && self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
 
       // Get server player max
       self.state.nujaBattle.methods.getPlayerMax(self.props.server).call().then(function(playerMax) {
@@ -68,9 +70,9 @@ class TimeoutInterface extends Component {
 
 
             // Check if pending timeout
-            self.state.timeoutManager.methods.isTimeout(matchId).call().then(function(isTimeout) {
+            self.state.timeoutStarter.methods.isTimeout(matchId).call().then(function(isTimeout) {
               if(isTimeout) {
-                self.state.timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+                self.state.timeoutStarter.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
                   // Set timeout info
                   self.setState({
                     timeoutBlamed: timeoutInfo.timeoutPlayerRet,
@@ -79,7 +81,7 @@ class TimeoutInterface extends Component {
                   })
 
                   // Compute remaining time
-                  self.state.timeoutManager.methods.getTimeoutThreshold().call().then(function(timeoutThreshold) {
+                  self.state.timeoutStarter.methods.getTimeoutThreshold().call().then(function(timeoutThreshold) {
 
                       var currentTimestamp = new Date().getTime() / 1000
                       var endTimestamp = parseInt(timeoutThreshold) + parseInt(timeoutInfo.timeoutTimestampRet)
@@ -120,7 +122,7 @@ class TimeoutInterface extends Component {
     var v = []
     var nbSignature = 0
 
-    if (self.state.timeoutManager != null) {
+    if (self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
       var lastStates = SW.getLastStates()
 
       // Fill last state data
@@ -184,7 +186,7 @@ class TimeoutInterface extends Component {
         metadata[0][0] = self.state.matchId.toString()
       }
 
-      self.state.timeoutManager.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
+      self.state.timeoutStarter.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
         gas: '2000000'
@@ -203,7 +205,7 @@ class TimeoutInterface extends Component {
     e.preventDefault()
     var self = this
 
-    if (this.state.timeoutManager != null) {
+    if (self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
       SW.getTimeoutState(self.state.matchId, self.state.timeoutTurn, self.state.timeoutPlayerTurn, function(timeoutState) {
 
         if(timeoutState != null) {
@@ -259,7 +261,7 @@ class TimeoutInterface extends Component {
             v.push('0')
           }
 
-          self.state.timeoutManager.methods.stopTimeout(metadata, move, moveOutput, signatureRS, v, timeoutState.originState, nbSignature).send({
+          self.state.timeoutStopper.methods.stopTimeout(metadata, move, moveOutput, signatureRS, v, timeoutState.originState, nbSignature).send({
             from: self.state.account.address,
             gasPrice: 2000000000,
             gas: '1000000'
@@ -281,8 +283,8 @@ class TimeoutInterface extends Component {
     e.preventDefault()
     var self = this
 
-    if(self.state.timeoutManager != null) {
-      self.state.timeoutManager.methods.confirmTimeout(self.state.matchId).send({
+    if(self.state.timeoutStarter != null && self.state.timeoutStopper != null) {
+      self.state.timeoutStopper.methods.confirmTimeout(self.state.matchId).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
         gas: '1000000'

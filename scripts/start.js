@@ -40,9 +40,17 @@ var nujaBattleJson = require('../build/contracts/NujaBattle.json')
 var nujaBattleAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
-var timeoutManagerJson = require('../build/contracts/TimeoutManager.json')
-var timeoutManagerAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
-var timeoutManager = new web3.eth.Contract(timeoutManagerJson.abi, timeoutManagerAddress)
+var serverManagerJson = require('../build/contracts/ServerManager.json')
+var serverManagerAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var serverManager = new web3.eth.Contract(serverManagerJson.abi, tserverManagerAddress)
+
+var timeoutStarterJson = require('../build/contracts/TimeoutStarter.json')
+var timeoutStarterAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
+
+var timeoutStopperJson = require('../build/contracts/TimeoutStopper.json')
+var timeoutStopperAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var timeoutStopper = new web3.eth.Contract(timeoutStopperJson.abi, timeoutStopperAddress)
 
 
 const turnPrefix = '_playerturn213'
@@ -120,7 +128,7 @@ function updateTimeout(matchId, cb) {
         }
 
         // Check if actual number is the same from contract
-        timeoutManager.methods.getTimeoutPlayers(matchId).call().then(function(timeoutPlayers) {
+        timeoutStarter.methods.getTimeoutPlayers(matchId).call().then(function(timeoutPlayers) {
 
           if(actualNbTimeout >= timeoutPlayers.nbTimeoutRet) {
             endCallback()
@@ -280,16 +288,16 @@ function updateLastMoves(matchId, nbPlayer, cb) {
 
 
     // Check if there are not shared moves
-    timeoutManager.methods.isTimeout(matchId).call().then(function(isTimeout) {
+    timeoutStarter.methods.isTimeout(matchId).call().then(function(isTimeout) {
       if(isTimeout) {
-        timeoutManager.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
+        timeoutStarter.methods.timeoutInfos(matchId).call().then(function(timeoutInfo) {
           getCurrentTurn(matchId, nbPlayer, function(actualTurn) {
 
             if(timeoutInfo.timeoutTurnRet > actualTurn[0] || (timeoutInfo.timeoutTurnRet == actualTurn[0] && timeoutInfo.timeoutPlayerRet > actualTurn[1])) {
 
-              timeoutManager.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
-                timeoutManager.methods.getLastMoves(matchId).call().then(function(lastMoves) {
-                  timeoutManager.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
+              timeoutStarter.methods.getLastMovesMetadata(matchId).call().then(function(lastMovesMetadata) {
+                timeoutStarter.methods.getLastMoves(matchId).call().then(function(lastMoves) {
+                  timeoutStarter.methods.getLastMovesSignature(matchId).call().then(function(lastMovesSignature) {
                     // We get the last state to check missing moves
                     redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
                       redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
