@@ -211,8 +211,7 @@ class TimeoutInterface extends Component {
         if(timeoutState != null) {
 
           // Parameters
-          var metadata = []
-          var move = []
+          var metadataAndMove = []
           var moveOutput = []
           var signatureRS = []
           var v = []
@@ -223,8 +222,7 @@ class TimeoutInterface extends Component {
           var i = 0
           while(i < timeoutState.state.length) {
 
-            metadata.push(timeoutState.state[i].metadata)
-            move.push(timeoutState.state[i].move)
+            metadataAndMove.push(timeoutState.state[i].metadata.concat(timeoutState.state[i].move))
             moveOutput.push(timeoutState.state[i].moveOutput)
 
             var rHex = timeoutState.state[i].signature.slice(0, 66)
@@ -239,15 +237,10 @@ class TimeoutInterface extends Component {
           // Fill the remaining parameters with junk data
           for(; i<8; i++) {
             var tmp = []
-            for(var j=0; j<3; j++) {
+            for(var j=0; j<7; j++) {
               tmp.push('0')
             }
-            metadata.push(tmp)
-            tmp = []
-            for(j=0; j<4; j++) {
-              tmp.push('0')
-            }
-            move.push(tmp)
+            metadataAndMove.push(tmp)
             tmp = []
             for(j=0; j<176; j++) {
               tmp.push('0')
@@ -261,7 +254,10 @@ class TimeoutInterface extends Component {
             v.push('0')
           }
 
-          self.state.timeoutStopper.methods.stopTimeout(metadata, move, moveOutput, signatureRS, v, timeoutState.originState, nbSignature).send({
+          // originState at the end of moveOutput
+          moveOutput.push(timeoutState.originState)
+
+          self.state.timeoutStopper.methods.stopTimeout(metadataAndMove, moveOutput, signatureRS, v, nbSignature).send({
             from: self.state.account.address,
             gasPrice: 2000000000,
             gas: '1000000'

@@ -92,8 +92,8 @@ contract TimeoutStopper {
     // The last turn will be incremented
     // Only his signature is suficient (startTimeout imply last signature have been verified)
     function stopTimeout(
-      uint[7][8] metadataAndMove,
-      uint[176][9] moveOutput,
+      uint[7][8] metadataAndMove,   // metadata[3] and move[4] merged to avoid stack too deep error
+      uint[176][9] moveOutput,      // originState is set as last element of moveOutput to avoid stack too deep error
       bytes32[2][8] signatureRS,
       uint8[8] v,
       /* uint[176] originState, */
