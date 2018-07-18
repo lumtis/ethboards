@@ -37,23 +37,23 @@ var ethjs = require('ethereumjs-util')
 
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
+var nujaBattleAddress = '0x59fd4bfa1A29c0cE1dc80E5BB48Ee6Cc5b1650c1'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var serverManagerJson = require('../build/contracts/ServerManager.json')
-var serverManagerAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var serverManagerAddress = '0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5'
 var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
 
 var timeoutStarterJson = require('../build/contracts/TimeoutStarter.json')
-var timeoutStarterAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var timeoutStarterAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
 
 
-const turnPrefix = '_playerturn213'
-const playerTurnPrefix = '_playerturn213'
-const statePrefix = '_state213'
-const killedPlayerPrefix = '_killedplayers213'
-const nbTimeoutPrefix = '_nbtimeout213'
+const turnPrefix = '_playerturn3124'
+const playerTurnPrefix = '_playerturn3124'
+const statePrefix = '_state3124'
+const killedPlayerPrefix = '_killedplayers3124'
+const nbTimeoutPrefix = '_nbtimeout3124'
 
 
 redis.on("connect", function () {
