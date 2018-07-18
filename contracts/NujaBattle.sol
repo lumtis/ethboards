@@ -28,7 +28,6 @@ contract NujaBattle is Geometry, StateManager {
         _;
     }
 
-
     // Give for a given match the turn that have been timed out
     mapping (uint => mapping (uint => mapping (uint => bool))) matchTimeoutTurns;
     mapping (uint => mapping (uint8 => bool)) deadPlayer;
@@ -37,10 +36,10 @@ contract NujaBattle is Geometry, StateManager {
     ///////////////////////////////////////////////////////////////
 
     function NujaBattle() public {
-        characterRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
-        weaponRegistry = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
-        timeoutStopper = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
-        serverManager = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
+        characterRegistry = 0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6;
+        weaponRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
+        serverManager = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
+        timeoutStopper = 0xa0b452f5fEd1C60899fC7A7965BB54A520569b08;
     }
 
 
@@ -283,11 +282,11 @@ contract NujaBattle is Geometry, StateManager {
         // Kill the player
         ServerManager(serverManager).removePlayer(indexServer, killerAndKilled[1]);
 
-        // Get the fund of the killed
-        ServerManager(serverManager).getAddressFromIndex(indexServer, killerAndKilled[0]).transfer(ServerManager(serverManager).getServerMoneyBag(indexServer));
-
-        // The killed has not cheat, he get his warrant back
-        ServerManager(serverManager).getAddressFromIndex(indexServer, killerAndKilled[1]).transfer(ServerManager(serverManager).getCheatWarrant());
+        // Transfer fund to players when a player is killed
+        // Killer receive money bag from killed
+        // Killed get his cheat warrant back
+        ServerManager(serverManager).nujaBattleTransfer(ServerManager(serverManager).getAddressFromIndex(indexServer, killerAndKilled[0]), ServerManager(serverManager).getServerMoneyBag(indexServer));
+        ServerManager(serverManager).nujaBattleTransfer(ServerManager(serverManager).getAddressFromIndex(indexServer, killerAndKilled[1]), ServerManager(serverManager).getCheatWarrant());
 
         // If it was the last player, terminate the server
         if(ServerManager(serverManager).getPlayerNb(indexServer) == 1) {
@@ -300,8 +299,9 @@ contract NujaBattle is Geometry, StateManager {
     function timeoutPlayer(uint matchId, address timeoutClaimer, uint timeoutTurn, uint8 timeoutPlayer) public fromTimeoutStopper {
         uint server = ServerManager(serverManager).getMatchServer(matchId);
 
-        // Claimer get money
-        timeoutClaimer.transfer(ServerManager(serverManager).getServerMoneyBag(server) + ServerManager(serverManager).getCheatWarrant());
+        // Transfer fund to players when a player is timed out
+        // Timeout claimer receive money bag and cheat warrant from timed out
+        ServerManager(serverManager).nujaBattleTransfer(timeoutClaimer, ServerManager(serverManager).getServerMoneyBag(server) + ServerManager(serverManager).getCheatWarrant());
 
         // Set player to dead
         deadPlayer[matchId][timeoutPlayer] = true;

@@ -22,6 +22,7 @@ contract ServerManager is Geometry, StateManager {
     address nujaBattle;
     uint serverCreationFee;
     uint cheatWarrant;
+    bool addressesSet;
 
     ///////////////////////////////////////////////////////////////
     /// Modifiers
@@ -83,15 +84,23 @@ contract ServerManager is Geometry, StateManager {
     function ServerManager() public {
         owner = msg.sender;
         serverNumber = 0;
-        characterRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
-        weaponRegistry = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
+        characterRegistry = 0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6;
+        weaponRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
+        nujaBattle = address(0);
         serverCreationFee = 5 finney;
         cheatWarrant = 5 finney;
         matchNb= 0;
+        addressesSet = false;
     }
 
     ///////////////////////////////////////////////////////////////
     /// Administration functions
+
+    function setAddresses(address nujaBattle_) public onlyOwner {
+        require(addressesSet == false);
+        nujaBattle = nujaBattle_;
+        addressesSet = true;
+    }
 
 
     function changeServerCreationFee(uint fee) public onlyOwner {
@@ -489,5 +498,10 @@ contract ServerManager is Geometry, StateManager {
 
         // Winner get his money back
         servers[indexServer].players[winner].owner.transfer(servers[indexServer].moneyBag + cheatWarrant);
+    }
+
+    // Transfer of fund approved by nuja battle smart contract
+    function nujaBattleTransfer(address addr, uint amount) public fromNujaBattle {
+        addr.transfer(amount);
     }
 }
