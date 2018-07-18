@@ -50,7 +50,7 @@ class Play extends Component {
               SW.updateServer(matchId)
             })
           }
-          self.setState({server: parseInt(serverId), serverState: serverState})
+          self.setState({server: parseInt(serverId), serverState: parseInt(serverState)})
         })
       }
     }
@@ -58,7 +58,6 @@ class Play extends Component {
 
   render() {
     if(this.state.serverState == 0) {
-
       // No map as server is offline
       return (
         <div>

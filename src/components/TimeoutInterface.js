@@ -138,11 +138,25 @@ class TimeoutInterface extends Component {
           move.push(lastStates[i].move)
           moveOutput.push(lastStates[i].moveOutput)
 
-          var rHex = lastStates[i].signature.slice(0, 66)
-          var sHex = '0x' + lastStates[i].signature.slice(66, 130)
-          signatureRS.push([rHex, sHex])
-          var splittedSig = ethjs.fromRpcSig(lastStates[i].signature)
-          v.push(splittedSig.v)
+          console.log(i)
+          console.log()
+
+          if(lastStates[i].signature.length == 0) {
+            // Timed out turn, junk data for signature
+            tmp = []
+            for(j=0; j<2; j++) {
+              tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+            }
+            signatureRS.push(tmp)
+            v.push('0')
+          }
+          else {
+            var rHex = lastStates[i].signature.slice(0, 66)
+            var sHex = '0x' + lastStates[i].signature.slice(66, 130)
+            signatureRS.push([rHex, sHex])
+            var splittedSig = ethjs.fromRpcSig(lastStates[i].signature)
+            v.push(splittedSig.v)
+          }
 
           i++
         }
@@ -227,11 +241,22 @@ class TimeoutInterface extends Component {
             metadataAndMove.push(timeoutState.state[i].metadata.concat(timeoutState.state[i].move))
             moveOutput.push(timeoutState.state[i].moveOutput)
 
-            var rHex = timeoutState.state[i].signature.slice(0, 66)
-            var sHex = '0x' + timeoutState.state[i].signature.slice(66, 130)
-            signatureRS.push([rHex, sHex])
-            var splittedSig = ethjs.fromRpcSig(timeoutState.state[i].signature)
-            v.push(splittedSig.v)
+            if(timeoutState.state[i].signature.length == 0) {
+              // Timed out turn, junk data for signature
+              tmp = []
+              for(j=0; j<2; j++) {
+                tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
+              }
+              signatureRS.push(tmp)
+              v.push('0')
+            }
+            else {
+              var rHex = timeoutState.state[i].signature.slice(0, 66)
+              var sHex = '0x' + timeoutState.state[i].signature.slice(66, 130)
+              signatureRS.push([rHex, sHex])
+              var splittedSig = ethjs.fromRpcSig(timeoutState.state[i].signature)
+              v.push(splittedSig.v)
+            }
 
             i++
           }
