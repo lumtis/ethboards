@@ -84,8 +84,11 @@ class JoinInterface extends Component {
         }
 
         // Get server financial infos
-        self.state.nujaBattle.methods.getServerFinancial(this.props.server).call().then(function(financial) {
-            self.setState({serverFee: financial.feeRet, serverMoneyBag: financial.moneyBagRet})
+        self.state.serverManager.methods.getServerFee(this.props.server).call().then(function(fee) {
+            self.setState({serverFee: fee})
+        })
+        self.state.serverManager.methods.getServerMoneyBag(this.props.server).call().then(function(moneyBag) {
+            self.setState({serverMoneyBag: moneyBag})
         })
 
         // Get contract cheat warrant

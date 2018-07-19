@@ -57,9 +57,12 @@ class Play extends Component {
   }
 
   render() {
+
+    var content = null
+
     if(this.state.serverState == 0) {
       // No map as server is offline
-      return (
+      content =
         <div>
           <Bar style={{paddingRight:'10px'}} />
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
@@ -74,11 +77,10 @@ class Play extends Component {
             </div>
           </div>
         </div>
-      )
     }
     else if(this.state.serverState == 1) {
       // Initial map without player list
-      return (
+      content =
         <div>
           <Bar style={{paddingRight:'10px'}} />
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
@@ -95,12 +97,11 @@ class Play extends Component {
             </div>
           </div>
         </div>
-      )
     }
     else {
 
       // State channel map and player list
-      return (
+      content =
         <div>
           <Bar style={{paddingRight:'10px'}} />
           <div className="col-md-4" style={{paddingLeft:0, paddingRight:0}}>
@@ -121,8 +122,9 @@ class Play extends Component {
             </div>
           </div>
         </div>
-      )
     }
+
+    return(content)
   }
 }
 
