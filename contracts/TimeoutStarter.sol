@@ -256,7 +256,7 @@ contract TimeoutStarter {
                 else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
                     // Last turn: we verified every alive player signed their turn
                     // Not necessary if the signature list begin from origin
-                    require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);
+                    require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);   // TOAST
                 }
 
                 // Set lastMove to be sure state is shared
@@ -278,7 +278,7 @@ contract TimeoutStarter {
 
             // Set timeout attribute
             // Last metadata is last player
-            require(newMetadata[1] > currentTimeoutTurn[metadata[0][0]] || (newMetadata[1] == currentTimeoutTurn[metadata[0][0]] && newMetadata[2] >= currentTimeoutPlayer[metadata[0][0]]));
+            require(newMetadata[1] > currentTimeoutTurn[metadata[0][0]] || (newMetadata[1] == currentTimeoutTurn[metadata[0][0]] && newMetadata[2] >= currentTimeoutPlayer[metadata[0][0]]));   // TOAST
             currentTimeoutPlayer[metadata[0][0]] = uint8(newMetadata[2]);
             currentTimeoutTurn[metadata[0][0]] = newMetadata[1];
             currentTimeoutTimestamp[metadata[0][0]] = now;

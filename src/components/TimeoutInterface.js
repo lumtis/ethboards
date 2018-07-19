@@ -287,7 +287,7 @@ class TimeoutInterface extends Component {
           self.state.timeoutStopper.methods.stopTimeout(metadataAndMove, moveOutput, signatureRS, v, nbSignature).send({
             from: self.state.account.address,
             gasPrice: 2000000000,
-            gas: '1000000'
+            gas: '2000000'
           })
           .on('error', function(error){ console.log('ERROR: ' + error)})
           .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})

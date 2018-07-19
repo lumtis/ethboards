@@ -49,11 +49,11 @@ var timeoutStarterAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
 
 
-const turnPrefix = '_playerturn3124'
-const playerTurnPrefix = '_playerturn3124'
-const statePrefix = '_state3124'
-const killedPlayerPrefix = '_killedplayers3124'
-const nbTimeoutPrefix = '_nbtimeout3124'
+const turnPrefix =                  '_turn11'
+const playerTurnPrefix =      '_playerturn11'
+const statePrefix =                '_state11'
+const killedPlayerPrefix = '_killedplayers11'
+const nbTimeoutPrefix =        '_nbtimeout11'
 
 
 redis.on("connect", function () {
@@ -134,6 +134,7 @@ function updateTimeout(matchId, cb) {
 
             // Recursive function to remove all moves ahead the timeout
             function removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_) {
+
               // Get the last state
               redis.llen(matchId + statePrefix, function (llenErr, llenReply) {
 
@@ -141,26 +142,27 @@ function updateTimeout(matchId, cb) {
                   // No remaining turn so no turn ahead
                   endCallback_()
                 }
+                else {
+                  redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
+                    // Check with the metadata if the moves is ahead
+                    var actualLastTurn = JSON.parse(stateReply[0]).metadata[1]
+                    var actualLastTurnPlayer = JSON.parse(stateReply[0]).metadata[2]
 
-                redis.lrange(matchId + statePrefix, -1, llenReply, function (stateErr, stateReply) {
-                  // Check with the metadata if the moves is ahead
-                  var actualLastTurn = JSON.parse(stateReply[0]).metadata[1]
-                  var actualLastTurnPlayer = JSON.parse(stateReply[0]).metadata[2]
+                    if(actualLastTurn > timeoutTurn || (actualLastTurn == timeoutTurn && actualLastTurnPlayer >= timeoutTurnPlayer)) {
+                      console.log(actualLastTurn)
+                      console.log(actualLastTurnPlayer)
+                      console.log('removed')
+                      redis.rpop(matchId + statePrefix, function (rpopErr, rpopReply) {
+                        removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_)
+                      })
+                    }
+                    else {
+                      // All moves were removed
+                      endCallback_()
+                    }
+                  })
+                }
 
-                  if(actualLastTurn > timeoutTurn || (actualLastTurn == timeoutTurn && actualLastTurnPlayer >= timeoutTurnPlayer)) {
-                    console.log(actualLastTurn)
-                    console.log(actualLastTurnPlayer)
-                    console.log('removed')
-                    redis.rpop(matchId + statePrefix, function (rpopErr, rpopReply) {
-                      removeMovesAheadTimeout(timeoutTurn, timeoutTurnPlayer, endCallback_)
-                    })
-                  }
-                  else {
-                    // All moves were removed
-                    endCallback_()
-                  }
-
-                })
               })
             }
 
@@ -173,6 +175,8 @@ function updateTimeout(matchId, cb) {
                 // If it is the first turn to be timed out we use initialState
                 serverManager.methods.getMatchServer(matchId).call().then(function(serverId) {
                   serverManager.methods.getInitialState(serverId).call({gas: '1000000'}).then(function(initialState) {
+
+                    // BUGS
 
                     // Kill the timed out player
                     nujaBattle.methods.kill(initialState, timeoutPlayers.timeoutPlayerRet[actualNbTimeout]).call({gas: '1000000'}).then(function(timedoutState) {
@@ -764,18 +768,18 @@ function runDevServer(host, port, protocol) {
       // Get the current metadata (turn, player's turn) of a match
       app.post("/post/currentmetadata", bodyParser.json(), function(req, res){
 
-        // We first check if the key exists
-        redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
-          if(existsReply == 0) {
-            // If the key doesn't exist, then the match doesn't exist or has not started yet
-            res.send([0, -1])
-          }
-          else {
+        // Before getting the metadata we check if we need to updateLastMoves
+        serverManager.methods.getMatchServer(req.body.matchId).call().then(function(serverId) {
+          serverManager.methods.getPlayerMax(serverId).call().then(function(playerMax) {
+            updateLastMoves(req.body.matchId, playerMax, function () {
 
-            // Before getting the metadata we check if we need to updateLastMoves
-            serverManager.methods.getMatchServer(req.body.matchId).call().then(function(serverId) {
-              serverManager.methods.getPlayerMax(serverId).call().then(function(playerMax) {
-                updateLastMoves(req.body.matchId, playerMax, function () {
+              // We first check if the key exists
+              redis.exists(req.body.matchId + turnPrefix, function (existsErr, existsReply){
+                if(existsReply == 0) {
+                  // If the key doesn't exist, then the match doesn't exist or has not started yet
+                  res.send([0, -1])
+                }
+                else {
 
                   // The match exist, we get metadata
                   redis.get(req.body.matchId + turnPrefix, function (turnErr, turnReply) {
@@ -792,12 +796,13 @@ function runDevServer(host, port, protocol) {
                     }
                   })
 
-                })
+                }
               })
-            })
 
-          }
+            })
+          })
         })
+
       })
 
       // Get the list of player to kill
