@@ -113,7 +113,10 @@ contract NujaBattle is Geometry, StateManager {
 
         // Call the weapon function
         Weapon w = Weapon(weaponAddress);
-        return w.use(x, y, p, moveInput);
+        uint[176] memory tmp = w.use(x, y, p, moveInput);
+
+        // Remove weapon after use
+        return removeWeapon(tmp, p, index);
     }
 
     function usePower(uint indexServer, uint8 p, uint8 x, uint8 y, uint[176] moveInput) internal view returns (uint[176] moveOutput) {

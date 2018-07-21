@@ -158,6 +158,7 @@ contract StateManager {
         // Other weapon reindexation
         for(uint8 i=index+1; i<3; i++) {
             state[152+p+(i-1)*8] = state[152+p+i*8];
+            state[152+p+i*8] = 0;
         }
 
         return state;
