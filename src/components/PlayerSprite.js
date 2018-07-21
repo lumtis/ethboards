@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import Player from '../components/Player'
 import store from '../store'
-import imageConverter from '../utils/imageConverter'
 import ipfsGet from '../utils/ipfsGet'
 
 var nujaJson = require('../../build/contracts/Nuja.json')

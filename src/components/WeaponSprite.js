@@ -5,7 +5,6 @@ var weaponJson = require('../../build/contracts/Weapon.json')
 
 import WeaponDesc from '../components/WeaponDesc'
 
-import imageConverter from '../utils/imageConverter'
 import ipfsGet from '../utils/ipfsGet'
 
 class DescSpawner extends Component {

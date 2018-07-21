@@ -4,7 +4,6 @@ import store from '../store'
 var weaponJson = require('../../build/contracts/Weapon.json')
 import ipfsGet from '../utils/ipfsGet'
 
-import imageConverter from '../utils/imageConverter'
 
 
 const infoStyle = {
