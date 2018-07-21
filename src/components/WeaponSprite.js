@@ -44,7 +44,7 @@ class WeaponSprite extends Component {
     this.state = {
       web3: store.getState().web3.web3Instance,
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
-      imageData: '',
+      imageLink: '',
       isHovering: false,
     }
 
@@ -71,9 +71,7 @@ class WeaponSprite extends Component {
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
-            ipfsGet(ret + '/image.png', function(response) {
-              self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
-            })
+            self.setState({imageLink: 'https://ipfs.infura.io' + ret + '/image.png'})
           });
         }
       })
@@ -92,7 +90,7 @@ class WeaponSprite extends Component {
     if (this.state.isHovering) {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-          <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
+          <img src={this.state.imageLink} alt="Nuja" style={{width:'100%'}}></img>
             <DescSpawner weaponIndex={this.props.weaponIndex} />
         </div>
       );
@@ -100,7 +98,7 @@ class WeaponSprite extends Component {
     else {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-          <img src={this.state.imageData} alt="Nuja" style={{width:'100%'}}></img>
+          <img src={this.state.imageLink} alt="Nuja" style={{width:'100%'}}></img>
         </div>
       );
     }

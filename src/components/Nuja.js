@@ -27,7 +27,7 @@ class Nuja extends Component {
     this.state = {
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       web3: store.getState().web3.web3Instance,
-      imageData: '',
+      imageLink: '',
       power: '',
       name: ''
     }
@@ -55,15 +55,13 @@ class Nuja extends Component {
         var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
 
         nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-          ipfsGet(ipfsString + '/image.png', function(response) {
-            self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
-          })
+          self.setState({imageLink: 'https://ipfs.infura.io' + ipfsString + '/image.png'})
           ipfsGet(ipfsString + '/name/default', function(response) {
             self.setState({name: response.toString('utf8')})
           })
           ipfsGet(ipfsString + '/power/default', function(response) {
             self.setState({power: response.toString('utf8')})
-          })          
+          })
         })
       })
     }
@@ -75,7 +73,7 @@ class Nuja extends Component {
         <h1>{this.state.name}</h1>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
-            <img src={this.state.imageData} alt="Nuja" style={{height: '115px'}}></img>
+            <img src={this.state.imageLink} alt="Nuja" style={{height: '115px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.power}</p>

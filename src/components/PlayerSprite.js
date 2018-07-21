@@ -23,7 +23,7 @@ class PlayerSprite extends Component {
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       characterRegistry: store.getState().web3.characterRegistryInstance,
       number: 0,
-      imageData: '',
+      imageLink: '',
       isHovering: false
     }
 
@@ -68,9 +68,7 @@ class PlayerSprite extends Component {
               self.state.nujaRegistry.methods.getContract(characterNuja).call().then(function(addressRet) {
                 var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
                 nujaContract.methods.getMetadata().call().then(function(ipfsString) {
-                  ipfsGet(ipfsString + '/sprite.gif', function(response) {
-                    self.setState({imageData: "data:image/gif;base64,"+imageConverter(response)})
-                  })
+                  self.setState({imageLink: 'https://ipfs.infura.io' + ipfsString + '/sprite.gif'})
                 })
               })
             }
@@ -108,7 +106,7 @@ class PlayerSprite extends Component {
     else {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-          <img src={this.state.imageData} alt="Nuja" style={{
+          <img src={this.state.imageLink} alt="Nuja" style={{
             width: '32px',
             position: 'absolute',
             top: offsetY+'px',

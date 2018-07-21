@@ -25,7 +25,7 @@ class WeaponDesc extends Component {
     this.state = {
       web3: store.getState().web3.web3Instance,
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
-      imageData: '',
+      imageLink: '',
       name: '',
       power: ''
     }
@@ -53,9 +53,7 @@ class WeaponDesc extends Component {
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
-            ipfsGet(ret + '/image.png', function(response) {
-              self.setState({imageData: "data:image/png;base64,"+imageConverter(response)})
-            })
+            self.setState({imageLink: 'https://ipfs.infura.io' + ret + '/image.png'})
             ipfsGet(ret + '/name/default', function(response) {
               self.setState({name: response.toString('utf8')})
             })
@@ -73,7 +71,7 @@ class WeaponDesc extends Component {
       <div style={infoStyle}>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
-            <img src={this.state.imageData} alt="Nuja" style={{width: '100px'}}></img>
+            <img src={this.state.imageLink} alt="Nuja" style={{width: '100px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>
