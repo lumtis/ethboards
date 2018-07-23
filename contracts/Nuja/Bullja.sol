@@ -54,6 +54,9 @@ contract Bullja is Nuja {
             if (opponent > 0) {
                 return damage(tmp, opponent-1, 30);
             }
+            else {
+                return tmp;
+            }
         }
         else {
             return tmp;
