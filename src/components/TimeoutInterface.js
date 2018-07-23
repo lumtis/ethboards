@@ -202,7 +202,7 @@ class TimeoutInterface extends Component {
         metadata[0][0] = self.state.matchId.toString()
       }
 
-      self.state.timeoutStarter.methods.startTimeout(metadata, move, moveOutput, signatureRS, v, originState, nbSignature).send({
+      self.state.timeoutStarter.methods.startTimeout(metadata, move, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
         gas: '2000000'
@@ -281,10 +281,7 @@ class TimeoutInterface extends Component {
             v.push('0')
           }
 
-          // originState at the end of moveOutput
-          moveOutput.push(timeoutState.originState)
-
-          self.state.timeoutStopper.methods.stopTimeout(metadataAndMove, moveOutput, signatureRS, v, nbSignature).send({
+          self.state.timeoutStopper.methods.stopTimeout(metadataAndMove, signatureRS, v, timeoutState.originState, nbSignature).send({
             from: self.state.account.address,
             gasPrice: 2000000000,
             gas: '2000000'
