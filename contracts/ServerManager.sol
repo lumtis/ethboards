@@ -58,7 +58,7 @@ contract ServerManager is Geometry, StateManager {
         uint8 playerMax;
         uint8 playerNb;
         uint8 state;       // 0: offline, 1: waiting, 2: running
-        mapping (uint8 => mapping (uint8 => uint)) buildings;
+        mapping (uint8 => mapping (uint8 => uint8)) buildings;
         /* mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end */
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
@@ -160,7 +160,7 @@ contract ServerManager is Geometry, StateManager {
     }
 
     // Add list of buildings to the server
-    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint[10] weapon, uint8 nbBuilding) public {
+    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint8[10] weapon, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
@@ -367,7 +367,7 @@ contract ServerManager is Geometry, StateManager {
     // 0: no building
     // 1: empty building
     // n: building with weapon n-2
-    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint buildingRet) {
+    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 buildingRet) {
         require(indexServer < serverNumber);
         require(x < 8);
         require(y < 8);
@@ -391,10 +391,10 @@ contract ServerManager is Geometry, StateManager {
     // Specific server information
 
     // Get the initial state of server (considering building, players position etc)
-    function getInitialState(uint indexServer) public view returns(uint[176] ret) {
+    function getInitialState(uint indexServer) public view returns(uint8[176] ret) {
         require(indexServer < serverNumber);
 
-        uint[176] memory state;
+        uint8[176] memory state;
 
         // Buildings
         for(uint8 i = 0; i<8; i++) {

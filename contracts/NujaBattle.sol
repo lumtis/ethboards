@@ -53,7 +53,7 @@ contract NujaBattle is Geometry, StateManager {
     // 3: Weapon
     // 4: Nuja power
     // 5: Idle
-    function simulate(uint indexServer, uint8 p, uint8 idMove, uint8 xMove, uint8 yMove, uint8 indexWeapon, uint[176] moveInput) public view returns (uint[176] moveOutput) {
+    function simulate(uint indexServer, uint8 p, uint8 idMove, uint8 xMove, uint8 yMove, uint8 indexWeapon, uint8[176] moveInput) public view returns (uint8[176] moveOutput) {
         require(idMove < 6);
         require(xMove < 8 && yMove < 8);
         require(p < ServerManager(serverManager).getPlayerMax(indexServer));
@@ -71,7 +71,7 @@ contract NujaBattle is Geometry, StateManager {
         else if (idMove == 1) {
             // Simple attack
             require(distance(xMove, yMove, xInitial, yInitial) == 1);
-            uint opponent = getPlayer(moveInput, xMove, yMove);
+            uint8 opponent = getPlayer(moveInput, xMove, yMove);
             require(opponent > 0);
             opponent -= 1;
             return damage(moveInput, opponent, 100);
@@ -90,22 +90,22 @@ contract NujaBattle is Geometry, StateManager {
         }
     }
 
-    function exploreBuilding(uint8 p, uint[176] moveInput) internal pure returns (uint[176] moveOutput) {
+    function exploreBuilding(uint8 p, uint8[176] moveInput) internal pure returns (uint8[176] moveOutput) {
         uint8 xInitial;
         uint8 yInitial;
         (xInitial, yInitial) = getPosition(moveInput, p);
-        uint buildingCode = getBuilding(moveInput, xInitial, yInitial);
+        uint8 buildingCode = getBuilding(moveInput, xInitial, yInitial);
 
         // Add the weapon
         require(buildingCode > 1);
-        uint[176] memory tmp = addWeapon(moveInput, p, buildingCode-2);
+        uint8[176] memory tmp = addWeapon(moveInput, p, buildingCode-2);
 
         // Set building as explored
         return setBuilding(tmp, xInitial, yInitial, 1);
     }
 
-    function useWeapon(uint8 p, uint8 x, uint8 y, uint8 index, uint[176] moveInput) internal view returns (uint[176] moveOutput) {
-        uint weaponId = getWeapon(moveInput, p, index);
+    function useWeapon(uint8 p, uint8 x, uint8 y, uint8 index, uint8[176] moveInput) internal view returns (uint8[176] moveOutput) {
+        uint8 weaponId = getWeapon(moveInput, p, index);
 
         // Get weapon contract
         WeaponRegistry weaponReg = WeaponRegistry(weaponRegistry);
@@ -113,13 +113,13 @@ contract NujaBattle is Geometry, StateManager {
 
         // Call the weapon function
         Weapon w = Weapon(weaponAddress);
-        uint[176] memory tmp = w.use(x, y, p, moveInput);
+        uint8[176] memory tmp = w.use(x, y, p, moveInput);
 
         // Remove weapon after use
         return removeWeapon(tmp, p, index);
     }
 
-    function usePower(uint indexServer, uint8 p, uint8 x, uint8 y, uint[176] moveInput) internal view returns (uint[176] moveOutput) {
+    function usePower(uint indexServer, uint8 p, uint8 x, uint8 y, uint8[176] moveInput) internal view returns (uint8[176] moveOutput) {
         CharacterRegistry characterContract = CharacterRegistry(characterRegistry);
         uint characterIndex = ServerManager(serverManager).playerCharacter(indexServer, p);
         var r_nuja = characterContract.getCharacterNuja(characterIndex);
@@ -142,7 +142,7 @@ contract NujaBattle is Geometry, StateManager {
     function nextTurn(
       uint indexServer,
       uint[3] metadata,
-      uint[176] moveOutput
+      uint8[176] moveOutput
       ) public view returns (uint[3] metadataRet) {
 
         uint[3] memory metadataTmp;
@@ -155,17 +155,17 @@ contract NujaBattle is Geometry, StateManager {
         // We skip dead player
         do {
             metadataTmp[2]++;
-            if(uint(metadataTmp[2]) >= playerMax) {
+            if(metadataTmp[2] >= playerMax) {
                 metadataTmp[2] = 0;
                 metadataTmp[1]++;
             }
-        } while (getHealth(moveOutput, metadataTmp[2]) == 0);
+        } while (getHealth(moveOutput, uint8(metadataTmp[2])) == 0);
 
         return metadataTmp;
     }
 
     // Verify if the given next metadata match the actual next metadata
-    function verifyNextTurn(uint indexServer, uint[3] metadata, uint[3] metadataNext, uint[176] moveOutput) internal view {
+    function verifyNextTurn(uint indexServer, uint[3] metadata, uint[3] metadataNext, uint8[176] moveOutput) internal view {
         uint[3] memory newMetadata = nextTurn(indexServer, metadata, moveOutput);
         require(newMetadata[0] == metadataNext[0]);
         require(newMetadata[1] == metadataNext[1]);
@@ -173,7 +173,7 @@ contract NujaBattle is Geometry, StateManager {
     }
 
     // Check depending on first and last metadata that every alive player has signed their turn
-    function verifyAllSigned(uint indexServer, uint[3] metadataFirst, uint[3] metadataLast, uint[176] moveOutput) internal view {
+    function verifyAllSigned(uint indexServer, uint[3] metadataFirst, uint[3] metadataLast, uint8[176] moveOutput) internal view {
         uint[3] memory newMetadata = nextTurn(indexServer, metadataLast, moveOutput);
         require(newMetadata[0] == metadataFirst[0]);
         require(newMetadata[1] > metadataFirst[1] && newMetadata[2] >= metadataFirst[2]);
@@ -212,10 +212,9 @@ contract NujaBattle is Geometry, StateManager {
       uint8[2] killerAndKilled, // First element represents killer and second the killed: we use this trik to avoid stack too deep error
       uint[3][8] metadata,
       uint[4][8] move,
-      uint[176][8] moveOutput,
       bytes32[2][8] signatureRS,
       uint8[8] v,
-      uint[176] originState,
+      uint8[176] moveInput,
       uint8 nbSignature
       ) public {
         require(nbSignature > 0);
@@ -226,56 +225,60 @@ contract NujaBattle is Geometry, StateManager {
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list
         if(metadata[0][1] == 0 && metadata[0][2] == 0) {
-            originState = ServerManager(serverManager).getInitialState(indexServer);
+            moveInput = ServerManager(serverManager).getInitialState(indexServer);
         }
 
         // Verify the killer is the last player
         require(metadata[nbSignature-1][2] == killerAndKilled[0]);
 
-        // Verify the killed has been actually killed in the last turn
-        if(nbSignature == 1) {
-            require(isAlive(originState, killerAndKilled[1]) && !(isAlive(moveOutput[0], killerAndKilled[1])));
-        }
-        else {
-            require(isAlive(moveOutput[nbSignature-2], killerAndKilled[1]) && !(isAlive(moveOutput[nbSignature-1], killerAndKilled[1])));
-        }
+        // Verify the player is originally alive
+        require(isAlive(moveInput, killerAndKilled[1]));
 
         // Verify all signatures
         for(uint8 i=0; i<nbSignature; i++) {
 
             // Check if this turn has been timed out
             if(matchTimeoutTurns[metadata[i][0]][metadata[i][1]][metadata[i][2]]) {
+                // If the turn has been timed out no need to verify move owner
                 if(i == 0) {
-                    uint[176] memory simulatedTurn = kill(originState, uint8(metadata[i][2]));
+                    uint8[176] memory simulatedTurn = kill(moveInput, uint8(metadata[i][2]));
                 }
                 else {
-                    simulatedTurn = kill(moveOutput[i-1], uint8(metadata[i][2]));
+                    simulatedTurn = kill(simulatedTurn, uint8(metadata[i][2]));
                 }
             }
             else {
-                // Verify that the move have been signed by the player
-                require(moveOwner(metadata[i], move[i], moveOutput[i], signatureRS[i][0], signatureRS[i][1], v[i]) == ServerManager(serverManager).getAddressFromIndex(indexServer, uint8(metadata[i][2])));
-
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
-                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), originState);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveInput);
                 }
                 else {
-                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), moveOutput[i-1]);
+                    simulatedTurn = simulate(indexServer, uint8(metadata[i][2]), uint8(move[i][0]), uint8(move[i][1]), uint8(move[i][2]), uint8(move[i][3]), simulatedTurn);
                 }
+
+                // Verify that the move have been signed by the player
+                require(moveOwner(metadata[i], move[i], simulatedTurn, signatureRS[i][0], signatureRS[i][1], v[i]) == ServerManager(serverManager).getAddressFromIndex(indexServer, uint8(metadata[i][2])));
             }
 
-            // Verify integrity
-            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
-
+            // Vertify metadata integrity
             if(i < nbSignature-1) {
                 // If not the last turn check the next turn is correctly the next player
-                verifyNextTurn(indexServer, metadata[i], metadata[i+1], moveOutput[i]);
+                verifyNextTurn(indexServer, metadata[i], metadata[i+1], simulatedTurn);
             }
             else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
                 // Last turn: we verified every alive player signed their turn
                 // Not necessary if the signature list begin from origin
-                verifyAllSigned(indexServer, metadata[0], metadata[i], moveOutput[i]);
+                verifyAllSigned(indexServer, metadata[0], metadata[i], simulatedTurn);
+            }
+
+            // Verify the killed has been actually killed in the last turn
+            if(i < nbSignature-1) {
+                // If it was not the last turn, the player should still be alive
+                require(isAlive(simulatedTurn, killerAndKilled[1]));
+            }
+            else {
+                // Otherwise he must be dead
+                require(!(isAlive(simulatedTurn, killerAndKilled[1])));
             }
         }
 

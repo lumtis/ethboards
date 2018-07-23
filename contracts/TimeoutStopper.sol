@@ -35,7 +35,7 @@ contract TimeoutStopper {
     // We have recreated this function specifically for this contract beacause metadata and move are merged together
     function moveOwner(
       uint[7] metadataAndMove,
-      uint[176] moveOutput,
+      uint8[176] moveOutput,
       bytes32 r,
       bytes32 s,
       uint8 v
@@ -52,11 +52,15 @@ contract TimeoutStopper {
             move[i-3] = metadataAndMove[i];
         }
 
-        // Calculate the hash of the move
-        bytes32 hashedMove = keccak256(metadata, move, moveOutput);
+        // Convert to uint for keccak256 function
+        uint[176] memory moveOutputUint;
+        for(i=0; i<176; i++) {
+          moveOutputUint[i] = uint(moveOutput[i]);
+        }
 
+        // Calculate the hash of the move
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = keccak256(prefix, hashedMove);
+        bytes32 msg = keccak256(prefix, keccak256(metadata, move, moveOutputUint));
 
         return ecrecover(msg, v, r, s);
     }
@@ -64,7 +68,7 @@ contract TimeoutStopper {
     function nextTurn(
       uint indexServer,
       uint[7] metadataAndMove,
-      uint[176] moveOutput
+      uint8[176] moveOutput
       ) public view returns (uint[3] metadataRet) {
 
         uint[3] memory metadataTmp;
@@ -81,7 +85,7 @@ contract TimeoutStopper {
                 metadataTmp[2] = 0;
                 metadataTmp[1]++;
             }
-        } while (NujaBattle(nujaBattle).getHealth(moveOutput, metadataTmp[2]) == 0);
+        } while (NujaBattle(nujaBattle).getHealth(moveOutput, uint8(metadataTmp[2])) == 0);
 
         return metadataTmp;
     }
@@ -93,15 +97,11 @@ contract TimeoutStopper {
     // Only his signature is suficient (startTimeout imply last signature have been verified)
     function stopTimeout(
       uint[7][8] metadataAndMove,   // metadata[3] and move[4] merged to avoid stack too deep error
-      uint[176][9] moveOutput,      // originState is set as last element of moveOutput to avoid stack too deep error
       bytes32[2][8] signatureRS,
       uint8[8] v,
-      /* uint[176] originState, */
+      uint8[176] moveInput,
       uint8 nbSignature
       ) public {
-
-        // Get contract instance
-        //NujaBattle NujaBattle(nujaBattle) = NujaBattle(nujaBattle);
 
         // Verify there is pending timeout and sender is the blamed player
         require(TimeoutStarter(timeoutStarter).isTimeout(metadataAndMove[0][0]));
@@ -111,7 +111,7 @@ contract TimeoutStopper {
         // Check if it is the first turn
         // During first turn not all alive player are required to be part of the signatures list
         if(metadataAndMove[0][1] == 0 && metadataAndMove[0][2] == 0) {
-            moveOutput[8] = ServerManager(serverManager).getInitialState(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]));
+            moveInput = ServerManager(serverManager).getInitialState(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]));
         }
 
         TimeoutStarter(timeoutStarter).updateLastMoveNb(metadataAndMove[0][0], nbSignature);
@@ -122,30 +122,27 @@ contract TimeoutStopper {
             // Check if this turn has been timed out
             if(NujaBattle(nujaBattle).isTimedout(metadataAndMove[i][0], metadataAndMove[i][1], metadataAndMove[i][2])) {
                 if(i == 0) {
-                    uint[176] memory simulatedTurn = NujaBattle(nujaBattle).kill(moveOutput[8], uint8(metadataAndMove[i][2]));
+                    uint8[176] memory simulatedTurn = NujaBattle(nujaBattle).kill(moveInput, uint8(metadataAndMove[i][2]));
                 }
                 else {
-                    simulatedTurn = NujaBattle(nujaBattle).kill(moveOutput[i-1], uint8(metadataAndMove[i][2]));
+                    simulatedTurn = NujaBattle(nujaBattle).kill(simulatedTurn, uint8(metadataAndMove[i][2]));
                 }
             }
             else {
-                // Verify that the move have been signed by the player
-                require(moveOwner(metadataAndMove[i], moveOutput[i], signatureRS[i][0], signatureRS[i][1], v[i]) == ServerManager(serverManager).getAddressFromIndex(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2])));
-
                 // Simulate the turn and verify the simulated output is the given output
                 if(i == 0) {
-                    simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2]), uint8(metadataAndMove[i][3]), uint8(metadataAndMove[i][4]), uint8(metadataAndMove[i][5]), uint8(metadataAndMove[i][6]), moveOutput[8]);
+                    simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2]), uint8(metadataAndMove[i][3]), uint8(metadataAndMove[i][4]), uint8(metadataAndMove[i][5]), uint8(metadataAndMove[i][6]), moveInput);
                 }
                 else {
-                    simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2]), uint8(metadataAndMove[i][3]), uint8(metadataAndMove[i][4]), uint8(metadataAndMove[i][5]), uint8(metadataAndMove[i][6]), moveOutput[i-1]);
+                    simulatedTurn = NujaBattle(nujaBattle).simulate(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2]), uint8(metadataAndMove[i][3]), uint8(metadataAndMove[i][4]), uint8(metadataAndMove[i][5]), uint8(metadataAndMove[i][6]), simulatedTurn);
                 }
+
+                // Verify that the move have been signed by the player
+                require(moveOwner(metadataAndMove[i], simulatedTurn, signatureRS[i][0], signatureRS[i][1], v[i]) == ServerManager(serverManager).getAddressFromIndex(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), uint8(metadataAndMove[i][2])));
             }
 
-            // Check integrity
-            require(keccak256(simulatedTurn) == keccak256(moveOutput[i]));
-
             // If not the last turn check the next turn is correctly the next player
-            uint[3] memory newMetadata = nextTurn(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), metadataAndMove[i], moveOutput[i]);
+            uint[3] memory newMetadata = nextTurn(ServerManager(serverManager).getMatchServer(metadataAndMove[0][0]), metadataAndMove[i], simulatedTurn);
             if(i < nbSignature-1) {
                 require(newMetadata[0] == metadataAndMove[i+1][0]);
                 require(newMetadata[1] == metadataAndMove[i+1][1]);

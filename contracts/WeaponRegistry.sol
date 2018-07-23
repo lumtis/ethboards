@@ -13,7 +13,7 @@ contract WeaponRegistry {
     ///////////////////////////////////////////////////////////////
     /// Attributes
     address owner;
-    uint weaponNumber;
+    uint8 weaponNumber;
     address[] weaponArray;
 
     ///////////////////////////////////////////////////////////////
@@ -28,11 +28,13 @@ contract WeaponRegistry {
     /// Admin functions
 
     function addWeapon(address weaponContract) public onlyOwner {
+        // Weapons max number
+        require(weaponNumber <= 250);
         weaponArray.push(weaponContract);
         weaponNumber += 1;
     }
 
-    function getContract(uint256 index) public constant returns (address contractRet) {
+    function getContract(uint8 index) public constant returns (address contractRet) {
         require(index < weaponNumber);
 
         return weaponArray[index];
@@ -43,7 +45,7 @@ contract WeaponRegistry {
         return owner;
     }
 
-    function getWeaponNumber() public view returns(uint ret) {
+    function getWeaponNumber() public view returns(uint8 ret) {
         return weaponNumber;
     }
 }
