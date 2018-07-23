@@ -7,13 +7,13 @@ contract Bullja is Nuja {
         return '/ipfs/QmWjzSvtyBvR5ZXGW9sKPSiSA44vQuoG6Sx1uELqJG9192';
     }
 
-    function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
+    function power(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
         var (r_x, r_y) =  getPosition(moveInput, player);
 
         // Distance requirement
         require(distance(x, y, r_x, r_y) == 1);
 
-        uint[176] memory tmp = moveInput;
+        uint8[176] memory tmp = moveInput;
 
         // Move
         tmp = movePlayer(tmp, player, x, y);
@@ -50,7 +50,7 @@ contract Bullja is Nuja {
         }
 
         if (striked) {
-            uint opponent = getPlayer(moveInput, strikedX, strikedY);
+            uint8 opponent = getPlayer(moveInput, strikedX, strikedY);
             if (opponent > 0) {
                 return damage(tmp, opponent-1, 30);
             }

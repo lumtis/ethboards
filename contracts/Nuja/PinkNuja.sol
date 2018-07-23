@@ -7,7 +7,7 @@ contract PinkNuja is Nuja {
         return '/ipfs/QmZiem1UUpJJUQkn9GhYyewh2AFNdTufoMapfctR4dR9rP';
     }
 
-    function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
+    function power(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
 
     }
 }

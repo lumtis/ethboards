@@ -8,7 +8,7 @@ contract Jetpack is Weapon {
         return '/ipfs/Qmf26cKX5Wkw1LmG3vrT6A3FGTB4Hh6M5pXu8y48KDF58J';
     }
 
-    function use(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput) {
+    function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
         return movePlayer(moveInput, player, x, y);
     }
 }

@@ -7,5 +7,5 @@ contract Nuja is Geometry, StateManager {
     function getMetadata() public constant returns (string metadata);
 
     // Function called by server to use the Weapon
-    function power(uint8 x, uint8 y, uint8 player, uint[176] moveInput) public view returns(uint[176] moveOutput);
+    function power(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput);
 }
