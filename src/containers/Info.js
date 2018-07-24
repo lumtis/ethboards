@@ -67,15 +67,15 @@ class Info extends Component {
     return (
       <div style={{overflowX: 'hidden'}}>
         <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-          <h1>No ICO bullshit</h1>
-          <h1>No collectible bullshit</h1>
-          <h1>Just a fucking awesome game</h1>
+          <h1>Lorem ipsum dolor sit amet</h1>
+          <h1>Vivamus et quam eros</h1>
+          <h1>Suspendisse a augue neque</h1>
         </div>
         <div className="row" style={{padding: '30px'}}>
           <div className="col-md-12" style={{textAlign: 'center'}}>
             <div style={infoStyle2}>
-              <h1>Cryptos are dead</h1>
-              <p>test</p>
+              <h1>Nulla ornare maximus consectetu</h1>
+              <p>Maecenas nulla eros, fringilla vitae finibus non, fermentum blandit augue. Ut mollis sodales pretium. Phasellus sed arcu pellentesque</p>
             </div>
           </div>
         </div>
@@ -85,16 +85,16 @@ class Info extends Component {
           </div>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Epic battles</h1>
-              <p>test</p>
+              <h1>Etiam ac efficitur massa, sit amet</h1>
+              <p>Nulla vehicula quam vitae molestie pharetra. Nam fermentum accumsan lectus, vel venenatis enim tincidunt quis. Ut sed diam et augue viverra porta et a tellus. Sed et sem a dolor tempus iaculis ut sit amet velit</p>
             </div>
           </div>
         </div>
         <div className="row" style={{padding: '30px'}}>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Get rare nuja</h1>
-              <p>test</p>
+              <h1>Nam placerat ligula augue, et imperdiet</h1>
+              <p>Mauris odio nisi, tristique at molestie in, dignissim sed velit. Vestibulum et neque a velit tincidunt congue. Nam in posuere leo. Nullam a turpis sed elit rutrum </p>
             </div>
           </div>
           <div className="col-md-6">
@@ -107,8 +107,8 @@ class Info extends Component {
           </div>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Destructive weapons</h1>
-              <p>test</p>
+              <h1>Nullam ullamcorper fringilla neque</h1>
+              <p>Nunc sodales efficitur ipsum, posuere eleifend felis condimentum ac. Nullam dictum ipsum id erat hendrerit mollis. Phasellus sed dui ut enim commodo mollis</p>
             </div>
           </div>
         </div>
