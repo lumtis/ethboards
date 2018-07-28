@@ -18,45 +18,45 @@ contract Grenade is Weapon {
         uint8 d = distance(x, y, r_x, r_y);
         require(d > 0 && d < 4);
 
-        uint8[176] memory tmp = moveInput;
+        moveOutput = moveInput;
 
-        uint8 opponent = getPlayer(tmp, x-1, y-1);
+        uint8 opponent = getPlayer(moveOutput, x-1, y-1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x, y-1);
+        opponent = getPlayer(moveOutput, x, y-1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x+1, y-1);
+        opponent = getPlayer(moveOutput, x+1, y-1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x-1, y);
+        opponent = getPlayer(moveOutput, x-1, y);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x, y);
+        opponent = getPlayer(moveOutput, x, y);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 50); // Center player takes more damage
+            moveOutput = damage(moveOutput, opponent-1, 50); // Center player takes more damage
         }
-        opponent = getPlayer(tmp, x+1, y);
+        opponent = getPlayer(moveOutput, x+1, y);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x-1, y+1);
+        opponent = getPlayer(moveOutput, x-1, y+1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x, y+1);
+        opponent = getPlayer(moveOutput, x, y+1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
-        opponent = getPlayer(tmp, x+1, y+1);
+        opponent = getPlayer(moveOutput, x+1, y+1);
         if (opponent > 0) {
-            tmp = damage(tmp, opponent-1, 30);
+            moveOutput = damage(moveOutput, opponent-1, 30);
         }
 
-        return tmp;
+        return moveOutput;
     }
 }

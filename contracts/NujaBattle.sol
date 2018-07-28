@@ -74,7 +74,7 @@ contract NujaBattle is Geometry, StateManager {
             uint8 opponent = getPlayer(moveInput, xMove, yMove);
             require(opponent > 0);
             opponent -= 1;
-            return damage(moveInput, opponent, 100);
+            return damage(moveInput, opponent, 20);
         }
         else if (idMove == 2) {
             return exploreBuilding(p, moveInput);
@@ -98,10 +98,10 @@ contract NujaBattle is Geometry, StateManager {
 
         // Add the weapon
         require(buildingCode > 1);
-        uint8[176] memory tmp = addWeapon(moveInput, p, buildingCode-2);
+        moveOutput = addWeapon(moveInput, p, buildingCode-2);
 
         // Set building as explored
-        return setBuilding(tmp, xInitial, yInitial, 1);
+        return setBuilding(moveOutput, xInitial, yInitial, 1);
     }
 
     function useWeapon(uint8 p, uint8 x, uint8 y, uint8 index, uint8[176] moveInput) internal view returns (uint8[176] moveOutput) {
@@ -113,10 +113,10 @@ contract NujaBattle is Geometry, StateManager {
 
         // Call the weapon function
         Weapon w = Weapon(weaponAddress);
-        uint8[176] memory tmp = w.use(x, y, p, moveInput);
+        moveOutput = w.use(x, y, p, moveInput);
 
         // Remove weapon after use
-        return removeWeapon(tmp, p, index);
+        return removeWeapon(moveOutput, p, index);
     }
 
     function usePower(uint indexServer, uint8 p, uint8 x, uint8 y, uint8[176] moveInput) internal view returns (uint8[176] moveOutput) {
@@ -145,23 +145,22 @@ contract NujaBattle is Geometry, StateManager {
       uint8[176] moveOutput
       ) public view returns (uint[3] metadataRet) {
 
-        uint[3] memory metadataTmp;
-        metadataTmp[0] = metadata[0];
-        metadataTmp[1] = metadata[1];
-        metadataTmp[2] = metadata[2];
+        metadataRet[0] = metadata[0];
+        metadataRet[1] = metadata[1];
+        metadataRet[2] = metadata[2];
 
         uint8 playerMax = ServerManager(serverManager).getPlayerMax(indexServer);
 
         // We skip dead player
         do {
-            metadataTmp[2]++;
-            if(metadataTmp[2] >= playerMax) {
-                metadataTmp[2] = 0;
-                metadataTmp[1]++;
+            metadataRet[2]++;
+            if(metadataRet[2] >= playerMax) {
+                metadataRet[2] = 0;
+                metadataRet[1]++;
             }
-        } while (getHealth(moveOutput, uint8(metadataTmp[2])) == 0);
+        } while (getHealth(moveOutput, uint8(metadataRet[2])) == 0);
 
-        return metadataTmp;
+        return metadataRet;
     }
 
     // Verify if the given next metadata match the actual next metadata
@@ -190,18 +189,17 @@ contract NujaBattle is Geometry, StateManager {
     function getKilledArray(uint indexServer) public view returns (bool[8] killedRet) {
 
         uint currentMatch = ServerManager(serverManager).getServerCurrentMatch(indexServer);
-        bool[8] memory killedArray;
-
+        
         for(uint8 i=0; i<8; i++) {
             if(deadPlayer[currentMatch][i]) {
-                killedArray[i] = true;
+                killedRet[i] = true;
             }
             else {
-                killedArray[i] = false;
+                killedRet[i] = false;
             }
         }
 
-        return killedArray;
+        return killedRet;
     }
 
 

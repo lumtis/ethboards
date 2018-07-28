@@ -308,20 +308,20 @@ contract ServerManager is Geometry, StateManager {
     function getMatchServer(uint idMatch) public view returns(uint serverRet) {
         require(idMatch < matchNb);
 
-        uint serverId = serverMatch[idMatch];
-        require(serverId>0);
+        serverRet = serverMatch[idMatch];
+        require(serverRet>0);
 
-        return serverId-1;
+        return serverRet-1;
     }
 
     // Get current id of the server's match
     function getServerCurrentMatch(uint indexServer) public view returns(uint matchRet) {
         require(indexServer < serverNumber);
 
-        uint matchId = servers[indexServer].currentMatchId;
-        require(matchId>0);
+        matchRet = servers[indexServer].currentMatchId;
+        require(matchRet>0);
 
-        return matchId-1;
+        return matchRet-1;
     }
 
     // Get player max number from server
@@ -394,44 +394,41 @@ contract ServerManager is Geometry, StateManager {
     function getInitialState(uint indexServer) public view returns(uint8[176] ret) {
         require(indexServer < serverNumber);
 
-        uint8[176] memory state;
-
         // Buildings
         for(uint8 i = 0; i<8; i++) {
             for(uint8 j = 0; j<8; j++) {
-                state[i*8+j] = servers[indexServer].buildings[i][j];
+                ret[i*8+j] = servers[indexServer].buildings[i][j];
             }
         }
         // Players
         for(i = 0; i<8; i++) {
             for(j = 0; j<8; j++) {
-                //state[64+i*8+j] = servers[indexServer].playersPosition[i][j];
-                state[64+i*8+j] = 0;
+                ret[64+i*8+j] = 0;
             }
         }
         // healths
         for(i = 0; i<servers[indexServer].playerMax; i++) {
-            state[128+i] = 100;
+            ret[128+i] = 100;
         }
         for(i = servers[indexServer].playerMax; i<8; i++) {
-            state[128+i] = 0;
+            ret[128+i] = 0;
         }
         // Positions
         for(i = 0; i<servers[indexServer].playerMax; i++) {
-            state[136+i] = servers[indexServer].players[i].initialX;
-            state[144+i] = servers[indexServer].players[i].initialY;
-            state[64+servers[indexServer].players[i].initialX*8+servers[indexServer].players[i].initialY] = i+1;
+            ret[136+i] = servers[indexServer].players[i].initialX;
+            ret[144+i] = servers[indexServer].players[i].initialY;
+            ret[64+servers[indexServer].players[i].initialX*8+servers[indexServer].players[i].initialY] = i+1;
         }
         for(i = servers[indexServer].playerMax; i<8; i++) {
-            state[136+i] = 0;
-            state[144+i] = 0;
+            ret[136+i] = 0;
+            ret[144+i] = 0;
         }
         // Weapons
         for(i = 0; i<24; i++) {
-            state[152+i] = 0;
+            ret[152+i] = 0;
         }
 
-        return state;
+        return ret;
     }
 
     // Get user index in server from his address

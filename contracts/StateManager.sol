@@ -4,14 +4,14 @@ Implements useful functions to get information from the state array
 
 /*
 State:
-uint[64] buildings
-uint[64] players,
-uint[8] healths,
-uint[8] xPositions,
-uint[8] yPositions,
-uint[8] weapon1,
-uint[8] weapon2,
-uint[8] weapon3
+uint8[64] buildings
+uint8[64] players,
+uint8[8] healths,
+uint8[8] xPositions,
+uint8[8] yPositions,
+uint8[8] weapon1,
+uint8[8] weapon2,
+uint8[8] weapon3
 */
 
 contract StateManager {

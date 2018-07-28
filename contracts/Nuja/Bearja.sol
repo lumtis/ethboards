@@ -12,11 +12,11 @@ contract Bearja is Nuja {
 
         require(x == r_x && y == r_y);
 
-        uint8[176] memory tmp = moveInput;
+        moveOutput = moveInput;
 
         for(uint8 i=0; i<8; i++) {
-            tmp = damage(tmp, i, 5);
+            moveOutput = damage(moveOutput, i, 5);
         }
-        return tmp;
+        return moveOutput;
     }
 }

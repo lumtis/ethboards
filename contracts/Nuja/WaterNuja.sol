@@ -11,59 +11,59 @@ contract WaterNuja is Nuja {
         var (r_x, r_y) = getPosition(moveInput, player);
         require(x == r_x && y == r_y);
 
-        uint8[176] memory tmp = moveInput;
+        moveOutput = moveInput;
 
         if(y > 0) {
             if(x > 0) {
-                uint8 opponent = getPlayer(tmp, x-1, y-1);
+                uint8 opponent = getPlayer(moveOutput, x-1, y-1);
                 if (opponent > 0) {
-                    tmp = damage(tmp, opponent-1, 10);
+                    moveOutput = damage(moveOutput, opponent-1, 10);
                 }
             }
-            opponent = getPlayer(tmp, x, y-1);
+            opponent = getPlayer(moveOutput, x, y-1);
             if (opponent > 0) {
-                tmp = damage(tmp, opponent-1, 10);
+                moveOutput = damage(moveOutput, opponent-1, 10);
             }
             if(x < 7) {
-                opponent = getPlayer(tmp, x+1, y-1);
+                opponent = getPlayer(moveOutput, x+1, y-1);
                 if (opponent > 0) {
-                    tmp = damage(tmp, opponent-1, 10);
+                    moveOutput = damage(moveOutput, opponent-1, 10);
                 }
             }
         }
 
         if(x > 0) {
-            opponent = getPlayer(tmp, x-1, y);
+            opponent = getPlayer(moveOutput, x-1, y);
             if (opponent > 0) {
-                tmp = damage(tmp, opponent-1, 10);
+                moveOutput = damage(moveOutput, opponent-1, 10);
             }
         }
         if(x < 7){
-            opponent = getPlayer(tmp, x+1, y);
+            opponent = getPlayer(moveOutput, x+1, y);
             if (opponent > 0) {
-                tmp = damage(tmp, opponent-1, 10);
+                moveOutput = damage(moveOutput, opponent-1, 10);
             }
         }
 
         if(y < 7) {
             if(x > 0) {
-                opponent = getPlayer(tmp, x-1, y+1);
+                opponent = getPlayer(moveOutput, x-1, y+1);
                 if (opponent > 0) {
-                    tmp = damage(tmp, opponent-1, 10);
+                    moveOutput = damage(moveOutput, opponent-1, 10);
                 }
             }
-            opponent = getPlayer(tmp, x, y+1);
+            opponent = getPlayer(moveOutput, x, y+1);
             if (opponent > 0) {
-                tmp = damage(tmp, opponent-1, 10);
+                moveOutput = damage(moveOutput, opponent-1, 10);
             }
             if(x < 7) {
-                opponent = getPlayer(tmp, x+1, y+1);
+                opponent = getPlayer(moveOutput, x+1, y+1);
                 if (opponent > 0) {
-                    tmp = damage(tmp, opponent-1, 10);
+                    moveOutput = damage(moveOutput, opponent-1, 10);
                 }
             }
         }
 
-        return tmp;
+        return moveOutput;
     }
 }

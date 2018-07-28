@@ -13,10 +13,10 @@ contract Bullja is Nuja {
         // Distance requirement
         require(distance(x, y, r_x, r_y) == 1);
 
-        uint8[176] memory tmp = moveInput;
+        moveOutput = moveInput;
 
         // Move
-        tmp = movePlayer(tmp, player, x, y);
+        moveOutput = movePlayer(moveOutput, player, x, y);
 
         bool striked = true;
         uint8 strikedX = 0;
@@ -52,14 +52,14 @@ contract Bullja is Nuja {
         if (striked) {
             uint8 opponent = getPlayer(moveInput, strikedX, strikedY);
             if (opponent > 0) {
-                return damage(tmp, opponent-1, 30);
+                return damage(moveOutput, opponent-1, 30);
             }
             else {
-                return tmp;
+                return moveOutput;
             }
         }
         else {
-            return tmp;
+            return moveOutput;
         }
     }
 }

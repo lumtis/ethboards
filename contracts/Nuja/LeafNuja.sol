@@ -17,7 +17,7 @@ contract LeafNuja is Nuja {
         uint8 opponent = getPlayer(moveInput, x, y);
         require(opponent > 0);
 
-        uint8[176] memory tmp = damage(moveInput, opponent-1, 20);
-        return restore(tmp, player, 10);
+        moveOutput = damage(moveInput, opponent-1, 20);
+        return restore(moveOutput, player, 10);
     }
 }

@@ -118,67 +118,56 @@ contract TimeoutStarter {
     function getLastMoves(uint matchId) public view returns(uint8[4][8] moveRet, uint8 nbRet) {
         require(isTimeout(matchId));
 
-        uint8[4][8] memory ret;
-
         for(uint8 i; i<8; i++) {
             for(uint8 j; j<4; j++) {
-                ret[i][j] = lastMoves[matchId][i][j];
+                moveRet[i][j] = lastMoves[matchId][i][j];
             }
         }
 
-        return (ret, lastMovesNb[matchId]);
+        return (moveRet, lastMovesNb[matchId]);
     }
 
     function getLastMovesSignature(uint matchId) public view returns(bytes32[8] lastRRet, bytes32[8] lastSRet, uint8[8] lastVRet) {
         require(isTimeout(matchId));
 
-        bytes32[8] memory Rret;
-        bytes32[8] memory Sret;
-        uint8[8] memory Vret;
-
         for(uint8 i; i<8; i++) {
-            Rret[i] = lastR[matchId][i];
-            Sret[i] = lastS[matchId][i];
-            Vret[i] = lastV[matchId][i];
+            lastRRet[i] = lastR[matchId][i];
+            lastSRet[i] = lastS[matchId][i];
+            lastVRet[i] = lastV[matchId][i];
         }
 
-        return (Rret, Sret, Vret);
+        return (lastRRet, lastSRet, lastVRet);
     }
 
     function getLastMovesMetadata(uint matchId) public view returns(uint[8] turnRet, uint8[8] playerRet) {
         require(isTimeout(matchId));
 
-        uint[8] memory turn;
-        uint8[8] memory player;
-
         for(uint8 i; i<8; i++) {
-            turn[i] = lastMovesTurn[matchId][i];
-            player[i] = lastMovesPlayer[matchId][i];
+            turnRet[i] = lastMovesTurn[matchId][i];
+            playerRet[i] = lastMovesPlayer[matchId][i];
         }
 
-        return (turn, player);
+        return (turnRet, playerRet);
     }
 
 
     // Timeout metadata
 
     function getTimeoutPlayers(uint matchId) public view returns(uint8 nbTimeoutRet, uint[8] timeoutTurnRet, uint8[8] timeoutPlayerRet) {
-        uint[8] memory turns;
-        uint8[8] memory players;
 
         // Fill turn and player turn
         for(uint8 i=0; i<nbTimeout[matchId]; i++) {
-            turns[i] = timeoutTurn[matchId][i];
-            players[i] = timeoutPlayer[matchId][i];
+            timeoutTurnRet[i] = timeoutTurn[matchId][i];
+            timeoutPlayerRet[i] = timeoutPlayer[matchId][i];
         }
 
         // Fill remaining data
         for(;i<8;i++) {
-            turns[i] = 0;
-            players[i] = 0;
+            timeoutTurnRet[i] = 0;
+            timeoutPlayerRet[i] = 0;
         }
 
-        return (nbTimeout[matchId], turns, players);
+        return (nbTimeout[matchId], timeoutTurnRet, timeoutPlayerRet);
     }
 
 

@@ -71,23 +71,23 @@ contract TimeoutStopper {
       uint8[176] moveOutput
       ) public view returns (uint[3] metadataRet) {
 
-        uint[3] memory metadataTmp;
-        metadataTmp[0] = metadataAndMove[0];
-        metadataTmp[1] = metadataAndMove[1];
-        metadataTmp[2] = metadataAndMove[2];
+        // Initialisation
+        metadataRet[0] = metadataAndMove[0];
+        metadataRet[1] = metadataAndMove[1];
+        metadataRet[2] = metadataAndMove[2];
 
         uint8 playerMax = ServerManager(serverManager).getPlayerMax(indexServer);
 
         // We skip dead player
         do {
-            metadataTmp[2]++;
-            if(uint(metadataTmp[2]) >= playerMax) {
-                metadataTmp[2] = 0;
-                metadataTmp[1]++;
+            metadataRet[2]++;
+            if(uint(metadataRet[2]) >= playerMax) {
+                metadataRet[2] = 0;
+                metadataRet[1]++;
             }
-        } while (NujaBattle(nujaBattle).getHealth(moveOutput, uint8(metadataTmp[2])) == 0);
+        } while (NujaBattle(nujaBattle).getHealth(moveOutput, uint8(metadataRet[2])) == 0);
 
-        return metadataTmp;
+        return metadataRet;
     }
 
 
