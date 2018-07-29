@@ -119,7 +119,6 @@ class TimeoutInterface extends Component {
     // Parameters
     var metadata = []
     var move = []
-    var moveOutput = []
     var signatureRS = []
     var v = []
     var nbSignature = 0
@@ -136,7 +135,6 @@ class TimeoutInterface extends Component {
 
           metadata.push(lastStates[i].metadata)
           move.push(lastStates[i].move)
-          moveOutput.push(lastStates[i].moveOutput)
 
           console.log(i)
           console.log()
@@ -174,11 +172,6 @@ class TimeoutInterface extends Component {
           tmp.push('0')
         }
         move.push(tmp)
-        tmp = []
-        for(j=0; j<176; j++) {
-          tmp.push('0')
-        }
-        moveOutput.push(tmp)
         tmp = []
         for(j=0; j<2; j++) {
           tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')
@@ -228,7 +221,6 @@ class TimeoutInterface extends Component {
 
           // Parameters
           var metadataAndMove = []
-          var moveOutput = []
           var signatureRS = []
           var v = []
           var nbSignature = timeoutState.state.length
@@ -239,7 +231,6 @@ class TimeoutInterface extends Component {
           while(i < timeoutState.state.length) {
 
             metadataAndMove.push(timeoutState.state[i].metadata.concat(timeoutState.state[i].move))
-            moveOutput.push(timeoutState.state[i].moveOutput)
 
             if(timeoutState.state[i].signature.length == 0) {
               // Timed out turn, junk data for signature
@@ -268,11 +259,6 @@ class TimeoutInterface extends Component {
               tmp.push('0')
             }
             metadataAndMove.push(tmp)
-            tmp = []
-            for(j=0; j<176; j++) {
-              tmp.push('0')
-            }
-            moveOutput.push(tmp)
             tmp = []
             for(j=0; j<2; j++) {
               tmp.push('0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723')

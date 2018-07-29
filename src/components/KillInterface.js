@@ -93,14 +93,12 @@ class KillInterface extends Component {
 
       var metadata = []
       var move = []
-      var moveOutput = []
       var signatureRS = []
       var v = []
 
       for(var i=0; i<nbSignature; i++) {
         metadata.push(signaturesList[i].metadata.map(x => x.toString()))
         move.push(signaturesList[i].move.map(x => x.toString()))
-        moveOutput.push(signaturesList[i].moveOutput.map(x => x.toString()))
 
         // empty signature means the turn has been timed out, no signature needed
         if(signaturesList[i].signature == '') {
@@ -121,33 +119,10 @@ class KillInterface extends Component {
       for(; i<8; i++) {
         metadata.push(signaturesList[0].metadata)
         move.push(signaturesList[0].move)
-        moveOutput.push(signaturesList[0].moveOutput)
         signatureRS.push(['0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723', '0x50402d24bf1f5de1cd884e55bf6cc9146f871c1c36e731e17a17d34e1ca58723'])
         v.push(0)
       }
 
-      // console.log('this.props.server')
-      // console.log(this.props.server)
-      // console.log('killer')
-      // console.log(killer)
-      // console.log('killed')
-      // console.log(killed)
-      // console.log('metadata')
-      // console.log(metadata)
-      // console.log('move')
-      // console.log(move)
-      // console.log('moveOutput')
-      // console.log(moveOutput)
-      // console.log('r')
-      // console.log(r)
-      // console.log('s')
-      // console.log(s)
-      // console.log('v')
-      // console.log(v)
-      // console.log('originState')
-      // console.log(originState)
-      // console.log('nbSignature')
-      // console.log(nbSignature)
 
       // Send transaction
       this.state.nujaBattle.methods.killPlayer(this.props.server, [killer,killed], metadata, move, signatureRS, v, originState, nbSignature).send({
