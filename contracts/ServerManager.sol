@@ -48,6 +48,11 @@ contract ServerManager is Geometry, StateManager {
         uint8 initialY;
     }
 
+    struct Building {
+        uint8 weapon;
+        string name;
+    }
+
     struct Server {
         uint id;
         string name;
@@ -58,8 +63,7 @@ contract ServerManager is Geometry, StateManager {
         uint8 playerMax;
         uint8 playerNb;
         uint8 state;       // 0: offline, 1: waiting, 2: running
-        mapping (uint8 => mapping (uint8 => uint8)) buildings;
-        /* mapping (uint8 => mapping (uint8 => uint)) playersPosition;   // TODO: Clear player position at match end */
+        mapping (uint8 => Building) buildings;
         mapping (uint8 => Player) players;
         mapping (address => uint8) playerIndex;   // Warning: offset
     }
@@ -160,7 +164,7 @@ contract ServerManager is Geometry, StateManager {
     }
 
     // Add list of buildings to the server
-    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint8[10] weapon, uint8 nbBuilding) public {
+    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint8[10] weapon, string name, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
@@ -169,13 +173,14 @@ contract ServerManager is Geometry, StateManager {
         // Add building
         for(uint8 i=0; i<nbBuilding; i++) {
             require(x[i] < 8 && y[i] < 8);
-            require(servers[indexServer].buildings[x[i]][y[i]] == 0);
+            require(servers[indexServer].buildings[x[i]*8+y[i]].weapon == 0);
 
             // Verify weapon exists
             WeaponRegistry reg = WeaponRegistry(weaponRegistry);
             require(weapon[i] < reg.getWeaponNumber());
 
-            servers[indexServer].buildings[x[i]][y[i]] = 2 + weapon[i];
+            servers[indexServer].buildings[x[i]*8+y[i]].weapon = 2 + weapon[i];
+            servers[indexServer].buildings[x[i]*8+y[i]].name = name;
         }
     }
 
@@ -189,8 +194,8 @@ contract ServerManager is Geometry, StateManager {
         // Add building
         for(uint8 i=0; i<nbBuilding; i++) {
             require(x[i] < 8 && y[i] < 8);
-            require(servers[indexServer].buildings[x[i]][y[i]] > 0);
-            servers[indexServer].buildings[x[i]][y[i]] = 0;
+            require(servers[indexServer].buildings[x[i]*8+y[i]].weapon > 0);
+            servers[indexServer].buildings[x[i]*8+y[i]].weapon = 0;
         }
     }
 
@@ -367,12 +372,12 @@ contract ServerManager is Geometry, StateManager {
     // 0: no building
     // 1: empty building
     // n: building with weapon n-2
-    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 buildingRet) {
+    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 buildingRet, string nameRet) {
         require(indexServer < serverNumber);
         require(x < 8);
         require(y < 8);
 
-        return servers[indexServer].buildings[x][y];
+        return (servers[indexServer].buildings[x*8+y].weapon, servers[indexServer].buildings[x*8+y].name);
     }
 
     // Get the number of server owned by user
@@ -397,7 +402,7 @@ contract ServerManager is Geometry, StateManager {
         // Buildings
         for(uint8 i = 0; i<8; i++) {
             for(uint8 j = 0; j<8; j++) {
-                ret[i*8+j] = servers[indexServer].buildings[i][j];
+                ret[i*8+j] = servers[indexServer].buildings[i*8+j].weapon;
             }
         }
         // Players
