@@ -26,6 +26,7 @@ class Nuja extends Component {
     this.state = {
       nujaRegistry: store.getState().web3.nujaRegistryInstance,
       web3: store.getState().web3.web3Instance,
+      contractLink: '',
       imageLink: '',
       power: '',
       name: ''
@@ -52,6 +53,7 @@ class Nuja extends Component {
       // Get ipfs data
       self.state.nujaRegistry.methods.getContract(self.props.nujaIndex).call().then(function(addressRet) {
         var nujaContract = new self.state.web3.eth.Contract(nujaJson.abi, addressRet)
+        self.setState({contractLink: 'https://ropsten.etherscan.io/address/' + addressRet})
 
         nujaContract.methods.getMetadata().call().then(function(ipfsString) {
           self.setState({imageLink: 'https://ipfs.infura.io' + ipfsString + '/image.png'})
@@ -76,6 +78,7 @@ class Nuja extends Component {
           </div>
           <div className="col-md-6" style={{}}>
             <p>{this.state.power}</p>
+            <a href={this.state.contractLink}>contract</a>
           </div>
         </div>
       </div>
