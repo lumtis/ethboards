@@ -59,6 +59,7 @@ class ServerDashboard extends Component {
     this.addNewBuilding = this.addNewBuilding.bind(this)
     this.updateAddBuildingXForm = this.updateAddBuildingXForm.bind(this)
     this.updateAddBuildingYForm = this.updateAddBuildingYForm.bind(this)
+    this.updateAddBuildingNameForm = this.updateAddBuildingNameForm.bind(this)
     this.addWeapon = this.addWeapon.bind(this)
 
     this.removeBuildings = this.removeBuildings.bind(this)
@@ -84,6 +85,7 @@ class ServerDashboard extends Component {
       addBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       addBuildingY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       addBuildingWeapon: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      addBuildingName: ['', '', '', '', '', '', '', '', '', '']
 
       removeBuildingNb: 1,
       removeBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -229,6 +231,7 @@ class ServerDashboard extends Component {
           this.state.addBuildingX,
           this.state.addBuildingY,
           this.state.addBuildingWeapon,
+          this.state.addBuildingName,
           this.state.addBuildingNb
         ).send({
           from: this.state.account.address,
@@ -272,6 +275,16 @@ class ServerDashboard extends Component {
       var addBuildingYTmp = this.state.addBuildingY
       addBuildingYTmp[index] = parseInt(e.target.value)
       this.setState({addBuildingY: addBuildingYTmp})
+    }.bind(this)
+  }
+  updateAddBuildingNameForm(index) {
+    return function(e) {
+      e.preventDefault();
+
+      // Changing the addBuildingName array
+      var addBuildingNameTmp = this.state.addBuildingName
+      addBuildingNameTmp[index] = e.target.value
+      this.setState({addBuildingName: addBuildingNameTmp})
     }.bind(this)
   }
   addWeapon(idWeapon) {
@@ -410,6 +423,9 @@ class ServerDashboard extends Component {
                 </div>
                 <div className="col-md-4">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingY[i].toString()} onChange={this.updateAddBuildingYForm(i)} />
+                </div>
+                <div className="col-md-4">
+                  <input type="text" style={inputStyleBuilding} value={this.state.addBuildingName[i].toString()} onChange={this.updateAddBuildingNameForm(i)} />
                 </div>
                 <div className="col-md-4">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingWeapon[i]} />

@@ -17,6 +17,7 @@ class Tile extends Component {
       nujaBattle: store.getState().web3.nujaBattleInstance,
       serverManager: store.getState().web3.serverManagerInstance,
       buildingCode: 0,
+      buildingName: '',
       isHovering: false
     }
 
@@ -42,7 +43,7 @@ class Tile extends Component {
     if(self.props.initial) {
       if (self.state.nujaBattle != null && self.state.serverManager != null) {
         self.state.serverManager.methods.getServerBuilding(self.props.server, self.props.x, self.props.y).call().then(function(buildingRet) {
-          self.setState({buildingCode: buildingRet})
+          self.setState({buildingCode: buildingRet.weaponRet, buildingName: buildingRet.nameRet})
         })
       }
     }
@@ -76,7 +77,7 @@ class Tile extends Component {
 
       // If mouse hovering, we show buidling description
       if (this.state.isHovering) {
-        desc = <BuildingDesc index={building} x={this.props.x} y={this.props.y}/>
+        desc = <BuildingDesc index={building} name={this.state.buildingName}/>
       }
 
       field =

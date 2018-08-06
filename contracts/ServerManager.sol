@@ -50,7 +50,7 @@ contract ServerManager is Geometry, StateManager {
 
     struct Building {
         uint8 weapon;
-        string name;
+        bytes32 name;
     }
 
     struct Server {
@@ -164,7 +164,7 @@ contract ServerManager is Geometry, StateManager {
     }
 
     // Add list of buildings to the server
-    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint8[10] weapon, string name, uint8 nbBuilding) public {
+    function addBuildingToServer(uint indexServer, uint8[10] x, uint8[10] y, uint8[10] weapon, bytes32[10] name, uint8 nbBuilding) public {
         require(indexServer < serverNumber);
         require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
@@ -180,7 +180,7 @@ contract ServerManager is Geometry, StateManager {
             require(weapon[i] < reg.getWeaponNumber());
 
             servers[indexServer].buildings[x[i]*8+y[i]].weapon = 2 + weapon[i];
-            servers[indexServer].buildings[x[i]*8+y[i]].name = name;
+            servers[indexServer].buildings[x[i]*8+y[i]].name = name[i];
         }
     }
 
@@ -372,7 +372,7 @@ contract ServerManager is Geometry, StateManager {
     // 0: no building
     // 1: empty building
     // n: building with weapon n-2
-    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 buildingRet, string nameRet) {
+    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 weaponRet, bytes32 nameRet) {
         require(indexServer < serverNumber);
         require(x < 8);
         require(y < 8);

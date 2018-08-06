@@ -26,8 +26,7 @@ class BuildingDesc extends Component {
 
   static defaultProps = {
     index: 0,
-    x: 0,
-    y: 0
+    name: ''
   }
 
   render() {
@@ -49,7 +48,7 @@ class BuildingDesc extends Component {
 
       return (
         <div style={infoStyle}>
-          <h1>{buidlingName}</h1>
+          <h1>{this.props.name}</h1>
           <div className="row" style={{padding: '10px'}}>
             <div className="col-md-6">
               <img src="/images/tileCity1.png" alt="Nuja" style={{
