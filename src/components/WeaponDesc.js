@@ -24,6 +24,7 @@ class WeaponDesc extends Component {
     this.state = {
       web3: store.getState().web3.web3Instance,
       weaponRegistry: store.getState().web3.weaponRegistryInstance,
+      contractLink: '',
       imageLink: '',
       name: '',
       power: ''
@@ -49,6 +50,7 @@ class WeaponDesc extends Component {
       // Get the contract address
       self.state.weaponRegistry.methods.getContract(this.props.weaponIndex).call().then(function(addressRet) {
         var weaponContract = new self.state.web3.eth.Contract(weaponJson.abi, addressRet)
+        self.setState({contractLink: 'https://ropsten.etherscan.io/address/' + addressRet})
 
         if (weaponContract != null) {
           weaponContract.methods.getMetadata().call().then(function(ret) {
@@ -75,6 +77,7 @@ class WeaponDesc extends Component {
           <div className="col-md-6" style={{}}>
             <p>{this.state.name}</p>
             <p>{this.state.power}</p>
+            <a href={this.state.contractLink}>contract</a>
           </div>
         </div>
       </div>

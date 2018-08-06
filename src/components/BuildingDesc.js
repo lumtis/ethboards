@@ -3,28 +3,6 @@ import React, { Component } from 'react'
 import WeaponSprite from '../components/WeaponSprite'
 
 
-var prefixList = [
-  'Dra',
-  'Cro',
-  'Li',
-  'Blu',
-  'Re',
-  'Fre',
-  'Fla',
-  'Col'
-]
-
-var suffixList = [
-  'da',
-  'mar',
-  'land',
-  'dya',
-  'co',
-  'kir',
-  'meck',
-  'mir'
-]
-
 const infoStyle = {
   position: 'relative',
   padding: '20px',
@@ -53,7 +31,6 @@ class BuildingDesc extends Component {
   }
 
   render() {
-    var buidlingName = prefixList[this.props.x] + suffixList[this.props.y]
 
     if(this.props.index == 0) {
       return(null)

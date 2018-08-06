@@ -112,6 +112,27 @@ class Info extends Component {
             </div>
           </div>
         </div>
+        <div className="row" style={{padding: '30px'}}>
+          <div className="col-md-12" style={{textAlign: 'center'}}>
+            <div style={infoStyle2}>
+              <h1>Smart Contracts</h1>
+              <a href='https://ropsten.etherscan.io/address/0x752C514aB45F6Bf7238f99d5A2Cc102CA985c039'>Nuja Battle</a>
+              <p>Provides functions to simulate turn and validate killed player</p>
+              <a href='https://ropsten.etherscan.io/address/0x0dE6988Ad4681eEA6712456951894e04A7ea039a'>Timeout starter</a>
+              <p>Provides functions to start a timeout process for a given match</p>
+              <a href='https://ropsten.etherscan.io/address/0x4B24396F04fA44d9c51737383F8ef45D2EF32237'>Timeout stopper</a>
+              <p>Provides functions to stop or confirm a timeout process for a given match</p>
+              <a href='https://ropsten.etherscan.io/address/0xd36ffF44d424245F41fA88f7Fc78fbd65e6359Ab'>Server Manager</a>
+              <p>Manages servers, allows players to join servers and start them</p>
+              <a href='https://ropsten.etherscan.io/address/0x1F398717e4218936512d8750f3b6aDe3E00B2d37'>Character Registry</a>
+              <p>ERC 721 contract for characters</p>
+              <a href='https://ropsten.etherscan.io/address/0x752C514aB45F6Bf7238f99d5A2Cc102CA985c039'>Nuja Registry</a>
+              <p>Model for characters, register nuja contracts</p>
+              <a href='https://ropsten.etherscan.io/address/0xB80359772114388ed502bc1eC2e1a6cEB45FCdD4'>Weapon Registry</a>
+              <p>Register weapon contracts</p>
+            </div>
+          </div>
+        </div>
         <Footer />
       </div>
     );
