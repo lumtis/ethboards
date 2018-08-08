@@ -3,6 +3,7 @@ import Particles from 'react-particles-js';
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 import Info from '../containers/Info'
+import Start from '../components/Start'
 
 import '../css/oswald.css'
 import '../css/open-sans.css'
@@ -58,6 +59,7 @@ class Welcome extends Component {
           </div>
         </div>
         <div style={{position:'absolute', marginTop:'100vh'}} >
+          <Start />
           <Info />
         </div>
       </div>
