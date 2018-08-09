@@ -267,9 +267,16 @@ contract ServerManager is Geometry, StateManager {
         int random = int(keccak256(block.timestamp));
         for(uint8 i=0; i<maxPlayer; i++) {
 
-            // First version
-            servers[server].players[i].initialX = i;
-            servers[server].players[i].initialY = i;
+            // Unique horizontale position
+            servers[server].players[i].initialX = (3*i+5)%8;
+
+            // Random vertical position
+            random = int(keccak256(random));
+            if(random < 0) {
+                random *= -1;
+            }
+            uint8 y = uint8(random%maxPlayer);
+            servers[server].players[i].initialY = y;
         }
 
         // Start the server
