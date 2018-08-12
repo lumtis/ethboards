@@ -40,13 +40,19 @@ class Tile extends Component {
     var self = this
 
     // If we want the initial buidling, we read the smart contract
-    if(self.props.initial) {
-      if (self.state.nujaBattle != null && self.state.serverManager != null) {
-        self.state.serverManager.methods.getServerBuilding(self.props.server, self.props.x, self.props.y).call().then(function(buildingRet) {
-          self.setState({buildingCode: buildingRet.weaponRet, buildingName: buildingRet.nameRet})
+    if (self.state.nujaBattle != null && self.state.serverManager != null) {
+      if(self.props.initial) {
+        self.state.serverManager.methods.getServerBuildingWeapon(self.props.server, self.props.x, self.props.y).call().then(function(buildingWeaponRet) {
+          self.setState({buildingCode: buildingWeaponRet})
         })
       }
+      // Get the name of the building
+      self.state.serverManager.methods.getServerBuildingName(self.props.server, self.props.x, self.props.y).call().then(function(buildingNameRet) {
+        var buildingNameTmp = store.getState().web3.web3Instance.utils.toAscii(buildingNameRet)
+        self.setState({buildingName: buildingNameTmp})
+      })
     }
+
   }
 
   // Event functions to render description

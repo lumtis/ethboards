@@ -3,6 +3,7 @@ import store from '../store'
 import MapInitial from '../containers/MapInitial'
 import WeaponSprite from '../components/WeaponSprite'
 import Bar from '../components/Bar'
+import InfoSpawn from '../components/InfoSpawn'
 
 import '../css/serverdashboard.css'
 
@@ -48,6 +49,17 @@ const chooseStyle = {
   height: '65px',
 };
 
+
+// Const for info spawn
+
+var infoFee = "Server fee is the amout the player will have to pay to you to join the server. \
+This amount can be 0"
+
+var infoMoneyBag = "Moneybag is the amount the player will have to bet when entering the server. \
+If the player get killed, he lost his moneybag. \
+If the play kills another player, he get killed's moneybag"
+
+
 class ServerDashboard extends Component {
   constructor(props) {
     super(props)
@@ -85,7 +97,7 @@ class ServerDashboard extends Component {
       addBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       addBuildingY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       addBuildingWeapon: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      addBuildingName: ['', '', '', '', '', '', '', '', '', '']
+      addBuildingName: ['', '', '', '', '', '', '', '', '', ''],
 
       removeBuildingNb: 1,
       removeBuildingX: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -226,12 +238,25 @@ class ServerDashboard extends Component {
     // Add buildings to the server
     if (this.state.nujaBattle != null) {
       if(this.state.serverSelected >= 0) {
+
+        // Convert building name to hex
+        var web3 = store.getState().web3.web3Instance
+        var buildNameHex = []
+        for(var i=0; i<this.state.addBuildingName.length; i++){
+          if(this.state.addBuildingName[i] == '') {
+            buildNameHex.push('0x0000000000000000000000000000000000000000000000000000000000000000')
+          }
+          else {
+            buildNameHex.push(web3.utils.utf8ToHex(this.state.addBuildingName[i]))
+          }
+        }
+
         this.state.serverManager.methods.addBuildingToServer(
           this.state.serverSelected,
           this.state.addBuildingX,
           this.state.addBuildingY,
           this.state.addBuildingWeapon,
-          this.state.addBuildingName,
+          buildNameHex,
           this.state.addBuildingNb
         ).send({
           from: this.state.account.address,
@@ -418,16 +443,16 @@ class ServerDashboard extends Component {
           for(var i = 0; i<this.state.addBuildingNb; i++) {
             addBuildingFormList.push(
               <div key={i}>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingX[i].toString()} onChange={this.updateAddBuildingXForm(i)} />
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingY[i].toString()} onChange={this.updateAddBuildingYForm(i)} />
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingName[i].toString()} onChange={this.updateAddBuildingNameForm(i)} />
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <input type="text" style={inputStyleBuilding} value={this.state.addBuildingWeapon[i]} />
                 </div>
               </div>
@@ -437,13 +462,16 @@ class ServerDashboard extends Component {
           <div>
             <h1 style={{marginBottom: '20px', marginTop: '0px'}}>Add buildings</h1>
             <div className="row">
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <h3 style={{fontSize: '12px'}}>X</h3>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <h3 style={{fontSize: '12px'}}>Y</h3>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
+                <h3 style={{fontSize: '12px'}}>Name</h3>
+              </div>
+              <div className="col-md-3">
                 <h3 style={{fontSize: '12px'}}>Weapon ID</h3>
               </div>
               {addBuildingFormList}
@@ -569,13 +597,20 @@ class ServerDashboard extends Component {
                   <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->10)" type="text"/>
                 </div>
                 <div className="form-group">
-                  <input className="form-control" style={inputStyle} ref="fee" placeholder="Server fee (finney)" type="text"/>
+                  <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                    <input className="form-control" style={inputStyle} ref="fee" placeholder="Server fee (finney)" type="text"/>
+                  </div>
+                  <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                    <InfoSpawn infoContent={infoFee} />
+                  </div>
                 </div>
                 <div className="form-group">
-                  <input className="form-control" style={inputStyle} ref="moneybag" placeholder="Money bag(finney)" type="text"/>
-                </div>
-                <div className="form-group">
-                  <h3 style={{fontSize: '14px'}}>Server creation fee: {this.state.serverCreationFee/1000000000000000000} ETH</h3>
+                  <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                    <input className="form-control" style={inputStyle} ref="moneybag" placeholder="Money bag(finney)" type="text"/>
+                  </div>
+                  <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                    <InfoSpawn infoContent={infoMoneyBag} />
+                  </div>
                 </div>
                 <div className="form-group">
                   <button className='button' style={{margin:'20px'}}><i className="fa fa-arrow-right"><input style={{visibility:'hidden', position:'absolute'}} type="submit" ref="submit" value=''/></i></button>
@@ -599,5 +634,9 @@ class ServerDashboard extends Component {
     )
   }
 }
+
+// <div className="form-group">
+//   <h3 style={{fontSize: '14px', margin:'20px'}}>Server creation fee: {this.state.serverCreationFee/1000000000000000000} ETH</h3>
+// </div>
 
 export default ServerDashboard

@@ -106,7 +106,6 @@ contract ServerManager is Geometry, StateManager {
         addressesSet = true;
     }
 
-
     function changeServerCreationFee(uint fee) public onlyOwner {
         serverCreationFee = fee * 1 finney;
     }
@@ -114,7 +113,6 @@ contract ServerManager is Geometry, StateManager {
     function changeCheatWarrant(uint warrant) public onlyOwner {
         cheatWarrant = warrant * 1 finney;
     }
-
 
     // Add server to the server list
     function addServer(string name, uint8 max, uint fee, uint moneyBag) public payable {
@@ -375,17 +373,26 @@ contract ServerManager is Geometry, StateManager {
         return servers[indexServer].moneyBag;
     }
 
-    // Get building code for position
+    // Get building weapon code for position
     // 0: no building
     // 1: empty building
     // n: building with weapon n-2
-    function getServerBuilding(uint indexServer, uint8 x, uint8 y) public view returns(uint8 weaponRet, bytes32 nameRet) {
+    function getServerBuildingWeapon(uint indexServer, uint8 x, uint8 y) public view returns(uint8 weaponRet) {
         require(indexServer < serverNumber);
         require(x < 8);
         require(y < 8);
 
-        return (servers[indexServer].buildings[x*8+y].weapon, servers[indexServer].buildings[x*8+y].name);
+        return servers[indexServer].buildings[x*8+y].weapon;
     }
+
+    function getServerBuildingName(uint indexServer, uint8 x, uint8 y) public view returns(bytes32 nameRet) {
+        require(indexServer < serverNumber);
+        require(x < 8);
+        require(y < 8);
+
+        return servers[indexServer].buildings[x*8+y].name;
+    }
+
 
     // Get the number of server owned by user
     function getServerUserNumber(address user) public view returns(uint serverUserNumberRet) {
