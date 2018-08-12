@@ -251,6 +251,9 @@ class Actions extends Component {
         move.push(y)
         move.push(self.state.selectedWeapon)
 
+        // Remove the crosses
+        PubSub.publish('CROSSES', 'remove');
+
         // Pushing the signature to the server
         SW.pushSignature(SW.getCurrentMatch(), metadata, move, moveOutput)
       })

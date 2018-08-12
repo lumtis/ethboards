@@ -52,7 +52,7 @@ class Play extends Component {
             self.state.serverManager.methods.getServerCurrentMatch(parseInt(serverId)).call().then(function(matchId) {
               SW.updateServer(matchId)
               self.setState({matchId: parseInt(matchId)})
-              setTimeout(this.updateServerLoop, 1000)
+              setTimeout(self.updateServerLoop, 1000)
             })
           }
           self.setState({server: parseInt(serverId), serverState: parseInt(serverState)})
@@ -64,7 +64,7 @@ class Play extends Component {
   // Loop to periodically check if server has been updated
   updateServerLoop() {
     SW.updateServer(this.state.matchId)
-    setTimeout(this.updateServerLoop, 1000)
+    setTimeout(this.updateServerLoop, 2000)
   }
 
 
