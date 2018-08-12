@@ -65,19 +65,11 @@ class Info extends Component {
 
   render() {
     return (
-      <div style={{overflowX: 'hidden'}}>
+      <div style={{overflowX: 'hidden', marginTop: '100px'}}>
         <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-          <h1>Lorem ipsum dolor sit amet</h1>
-          <h1>Vivamus et quam eros</h1>
-          <h1>Suspendisse a augue neque</h1>
-        </div>
-        <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-12" style={{textAlign: 'center'}}>
-            <div style={infoStyle2}>
-              <h1>Nulla ornare maximus consectetu</h1>
-              <p>Maecenas nulla eros, fringilla vitae finibus non, fermentum blandit augue. Ut mollis sodales pretium. Phasellus sed arcu pellentesque</p>
-            </div>
-          </div>
+          <h1>Crypto collectibles</h1>
+          <h1>Battle royale game</h1>
+          <h1>Offchain transactions</h1>
         </div>
         <div className="row" style={{padding: '30px'}}>
           <div className="col-md-6">
@@ -85,16 +77,17 @@ class Info extends Component {
           </div>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Etiam ac efficitur massa, sit amet</h1>
-              <p>Nulla vehicula quam vitae molestie pharetra. Nam fermentum accumsan lectus, vel venenatis enim tincidunt quis. Ut sed diam et augue viverra porta et a tellus. Sed et sem a dolor tempus iaculis ut sit amet velit</p>
+              <h1>Battle royale</h1>
+              <p>NujaBattle is a crypto collectible. Nuja you collect can fight each other in a battle royale style game. 2 to 8 players fight on a 8x8 arena. The last one win the game.</p>
+              <p>Each nuja you collect has their own power and weapons are spread all around the map.</p>
             </div>
           </div>
         </div>
         <div className="row" style={{padding: '30px'}}>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Nam placerat ligula augue, et imperdiet</h1>
-              <p>Mauris odio nisi, tristique at molestie in, dignissim sed velit. Vestibulum et neque a velit tincidunt congue. Nam in posuere leo. Nullam a turpis sed elit rutrum </p>
+              <h1>Create your own server</h1>
+              <p>Servers can be created by anyone, you can create your own map with an intuitive interface. You can also set server fees on your server to earn money when people play on you server.</p>
             </div>
           </div>
           <div className="col-md-6">
@@ -107,12 +100,26 @@ class Info extends Component {
           </div>
           <div className="col-md-6">
             <div style={infoStyle}>
-              <h1>Nullam ullamcorper fringilla neque</h1>
-              <p>Nunc sodales efficitur ipsum, posuere eleifend felis condimentum ac. Nullam dictum ipsum id erat hendrerit mollis. Phasellus sed dui ut enim commodo mollis</p>
+              <h1>Nearly no fee</h1>
+              <p>The game is backed by a multiplayer state channel. Once you join the game, every move is processed offchain and therefore you have no fee to pay or transaction delay</p>
+              <p>Transactions to the blockchain are done when you manage servers and when you have to commit the death of a player to the blockchain.</p>
             </div>
           </div>
         </div>
-        <div className="row" style={{padding: '30px'}}>
+        <div className="row" style={{padding: '10px'}}>
+          <div className="col-md-12">
+            <div style={infoStyle2}>
+              <h1>Important</h1>
+              <p>The dapp is currently under beta testing. All contract are deployed on Ropsten. Rinkeby version will eventually be released.</p>
+              <p>Only starter are currently available but new nujas and weapons will be released on a regular basis.</p>
+              <p>The game will also be implemented for humanity.cards, another dapp with real human as character. The dapp is already deployed on the mainnet and available below.</p>
+              <div style={{textAlign: 'center'}}>
+                <a href="http://humanity.cards"><img style={{marginTop: '50px', marginBottom: '50px'}} border="0" alt="humanitycards" src="/images/humanitycard.png" width="500px" /></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="row" style={{padding: '10px'}}>
           <div className="col-md-12" style={{textAlign: 'center'}}>
             <div style={infoStyle2}>
               <h1>Smart Contracts</h1>

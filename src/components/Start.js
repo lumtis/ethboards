@@ -126,9 +126,9 @@ class Start extends Component {
     }
 
     return(
-      <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+      <div style={{textAlign: 'center'}}>
         <div>
-          <h1>Your address: {this.state.account.address}</h1>
+          <h1 style={{marginTop: '80px'}}>Your address: {this.state.account.address}</h1>
         </div>
         <div>
           {chooseStarter}
