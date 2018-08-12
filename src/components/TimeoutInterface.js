@@ -1,12 +1,25 @@
 import React, { Component } from 'react'
 
+import InfoSpawn from '../components/InfoSpawn'
+
 import store from '../store'
 import '../css/timeoutinterface.css'
 
 var ethjs = require('ethereumjs-util')
 
-
 var SW = require('../utils/stateWrapper')
+
+
+var infoStart = "A timeout process will be launch against the current turn player. \
+The player will have to play his turn within several minutes. \
+The message is sent to the blockchain therefore there will be delay for the timeout process to start."
+
+var infoStop = "You are obliged to commit you turn to the blockchain or else players will be able to kick you even if you have played your turn. \
+The message is sent to the blockchain therefore there will be delay for the timeout process to stop."
+
+var infoConfirm = "Blamed player have not played or commited his turn to the blockchain. \
+This button will kick him. \
+The message is sent to the blockchain therefore there will be delay for the timeout process to be confirmed."
 
 
 class TimeoutInterface extends Component {
@@ -333,7 +346,12 @@ class TimeoutInterface extends Component {
         if(actualTurn[1] != this.state.playerIndex) {
           content =
             <div style={{textAlign: 'center'}}>
-              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.startTimeout} className="buttonTimeout">Start timeout</button>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.startTimeout} className="buttonTimeout">Start timeout</button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoStart} />
+              </div>
             </div>
         }
       }
@@ -347,7 +365,12 @@ class TimeoutInterface extends Component {
             content =
               <div style={{textAlign: 'center'}}>
                 <h3>Time out process has been launched</h3>
-                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.stopTimeout} className="buttonTimeout">Stop time out process</button>
+                <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                  <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.stopTimeout} className="buttonTimeout">Stop time out process</button>
+                </div>
+                <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                  <InfoSpawn infoContent={infoStop} />
+                </div>
               </div>
           }
           else
@@ -383,7 +406,12 @@ class TimeoutInterface extends Component {
             content =
               <div style={{textAlign: 'center'}}>
                 <h3>Time out</h3>
-                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.confirmTimeout} className="buttonTimeout">Kick the player</button>
+                <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                  <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.confirmTimeout} className="buttonTimeout">Kick the player</button>
+                </div>
+                <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                  <InfoSpawn infoContent={infoConfirm} />
+                </div>
               </div>
           }
         }

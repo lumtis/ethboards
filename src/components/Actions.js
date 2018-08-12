@@ -10,9 +10,36 @@ import '../css/actions.css'
 import WeaponSprite from '../components/WeaponSprite'
 import KillInterface from '../components/KillInterface'
 import TimeoutInterface from '../components/TimeoutInterface'
+import InfoSpawn from '../components/InfoSpawn'
+
 
 var PubSub = require('pubsub-js')
 var SW = require('../utils/stateWrapper')
+
+
+// Const for info spawn
+var infoMove = "Moves to a neighbouring square. \
+When clicking this button, crosses will appear on the map to show where the action can be perfomed. \
+Click on a cross to validate the action. Some little delay may happen"
+
+var infoAttack = "Attacks a neighbouring ennemy (30 damages). \
+When clicking this button, crosses will appear on the map to show where the action can be perfomed. \
+Click on a cross to validate the action. Some little delay may happen"
+
+var infoExplore = "If you are in a building, you get the weapon inside the building. \
+The building will then be empty"
+
+var infoPower = "Performs the power of your character. \
+When clicking this button, crosses will appear on the map to show where the action can be perfomed. \
+Click on a cross to validate the action. Some little delay may happen"
+
+var infoWeapon = "Performs the power of the selected weapon. \
+Then the weapon will be consumed. \
+When clicking on a weapon, crosses will appear on the map to show where the action can be perfomed. \
+Click on a cross to validate the action. Some little delay may happen"
+
+var infoIdle = "Do nothing for this turn"
+
 
 
 class Actions extends Component {
@@ -285,13 +312,43 @@ class Actions extends Component {
           <div style={{padding: '2px'}}>
             <h3>Your turn !</h3>
             <div style={{textAlign: 'center'}}>
-              <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.moveButton} className="buttonExplore">Move <i className="fa fa-arrows-alt"></i></button>
-              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.attackButton} className="buttonExplore">Attack <i className="fa fa-gavel"></i></button>
-              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.exploreBuildingButton} className="buttonExplore">Explore <i className="fa fa-building"></i></button>
-              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.powerButton} className="buttonExplore">Power <i className="fa fa-star"></i></button>
-              <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.idleButton} className="buttonExplore">Sleep <i className="fa fa-bed"></i></button>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '20px', marginBottom: '10px'}} onClick={this.moveButton} className="buttonExplore">Move <i className="fa fa-arrows-alt"></i></button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoMove} />
+              </div>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.attackButton} className="buttonExplore">Attack <i className="fa fa-gavel"></i></button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoAttack} />
+              </div>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.exploreBuildingButton} className="buttonExplore">Explore <i className="fa fa-building"></i></button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoExplore} />
+              </div>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.powerButton} className="buttonExplore">Power <i className="fa fa-star"></i></button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoPower} />
+              </div>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <button style={{marginTop: '10px', marginBottom: '10px'}} onClick={this.idleButton} className="buttonExplore">Sleep <i className="fa fa-bed"></i></button>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoIdle} />
+              </div>
             </div>
-            <h3>Weapons:</h3>
+            <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+              <h3>Weapons:</h3>
+            </div>
+            <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+              <InfoSpawn infoContent={infoWeapon} />
+            </div>
             <div className="row" style={{marginTop: '20px', marginBottom: '20px'}}>
               <div>{weaponArray}</div>
             </div>

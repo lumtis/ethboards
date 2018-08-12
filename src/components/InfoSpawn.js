@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 
 
 const infoStyle = {
-  position: 'absolute',
+  top: '60px',
+  left: '10px',
+  position: 'fixed',
   padding: '20px',
   width: '400px',
   minHeight: '100px',
-  backgroundColor: 'rgba(240, 240, 240, 0.7)',
+  backgroundColor: 'rgba(240, 240, 240, 0.9)',
   marginRight: 'auto',
   marginLeft: 'auto',
   marginBottom: '20px',

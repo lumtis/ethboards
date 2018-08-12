@@ -16,7 +16,12 @@ var inputStyle = {
   border: 0,
   textAlign: 'center',
   marginBottom: '20px'
-};
+}
+
+const playButton = {
+    position: 'absolute',
+    transform:'translate(-60px, 0px)'
+}
 
 
 class Start extends Component {
@@ -85,7 +90,7 @@ class Start extends Component {
     if(!this.state.starterClaimed) {
       // Form to choose a starter
       chooseStarter =
-        <div>
+        <div className="row">
           <div style={{textAlign: 'center', marginBottom: '20px'}}>
             <h1>Choose your starter</h1>
             <h1>Nickname:</h1>
@@ -121,14 +126,14 @@ class Start extends Component {
     }
 
     return(
-      <div>
-        <div style={{textAlign: 'center'}}>
-          <h3>Your address: {this.state.account.address}</h3>
+      <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+        <div>
+          <h1>Your address: {this.state.account.address}</h1>
         </div>
-        <div className="row">
+        <div>
           {chooseStarter}
         </div>
-        <div style={{textAlign: 'center'}}>
+        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
           <Link to="/play/0"><button className="button" style={playButton}>Go</button></Link>
         </div>
       </div>

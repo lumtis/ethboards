@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import store from '../store'
-
+import InfoSpawn from '../components/InfoSpawn'
 
 var flatColorList = [
   '#55efc4',
@@ -16,6 +16,29 @@ const chooseStyle = {
   width: '100%',
   height: '65px',
 };
+
+
+// Const for info spawn
+
+var infoJoin = "Select one of your character below to join the server. \
+After joining the server, your character will no longer be available to join another server. \
+Once the server is full, a button will appear to start the server. \
+Any player can start the server"
+
+var infoFee = "Server fee is the amout you have to pay to the server creator to join the server. \
+This amount can be 0"
+
+var infoMoneyBag = "Moneybag is the amount you have to bet to enter the server. \
+If you get killed, you lost the moneybag. \
+If you kill another player, you get killed's moneybag"
+
+var infoCheatWarrant = "The cheat warrant is a deposit you make when entering the server. \
+Your get your cheat warrant back when you quit normally the match. \
+If you get kicked because of a time out process you lose your cheat warrant"
+
+
+
+
 
 
 class JoinInterface extends Component {
@@ -123,10 +146,30 @@ class JoinInterface extends Component {
   render() {
     return (
       <div>
-        <h3 style={{marginTop: '30px'}}>Join the server :</h3>
-        <h3 style={{fontSize: '12px'}}>Fee : {this.state.serverFee/1000000000000000000} ETH</h3>
-        <h3 style={{fontSize: '12px'}}>Money Bag : {this.state.serverMoneyBag/1000000000000000000} ETH</h3>
-        <h3 style={{fontSize: '12px'}}>Cheat Warrant : {this.state.cheatWarrant/1000000000000000000} ETH</h3>
+        <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+          <h3 style={{marginTop: '30px'}}>Join the server :</h3>
+        </div>
+        <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+          <InfoSpawn infoContent={infoJoin} />
+        </div>
+        <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+          <h3 style={{fontSize: '12px'}}>Fee : {this.state.serverFee/1000000000000000000} ETH</h3>
+        </div>
+        <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+          <InfoSpawn infoContent={infoFee} />
+        </div>
+        <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+          <h3 style={{fontSize: '12px'}}>Money Bag : {this.state.serverMoneyBag/1000000000000000000} ETH</h3>
+        </div>
+        <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+          <InfoSpawn infoContent={infoMoneyBag} />
+        </div>
+        <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+          <h3 style={{fontSize: '12px'}}>Cheat Warrant : {this.state.cheatWarrant/1000000000000000000} ETH</h3>
+        </div>
+        <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+          <InfoSpawn infoContent={infoCheatWarrant} />
+        </div>
         <div style={{marginTop: '20px'}} className="row">
           {this.state.characterArray}
         </div>

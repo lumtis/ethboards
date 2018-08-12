@@ -19,6 +19,7 @@ var flatColorList = [
 var inputStyle = {
   width: '80%',
   margin: '0 auto',
+  marginBottom: '20px',
   backgroundColor: 'rgba(236, 236, 236, 0.6)',
   borderRadius: 0,
   border: 0
@@ -57,8 +58,14 @@ This amount can be 0"
 
 var infoMoneyBag = "Moneybag is the amount the player will have to bet when entering the server. \
 If the player get killed, he lost his moneybag. \
-If the play kills another player, he get killed's moneybag"
+If the player kills another player, he get killed's moneybag"
 
+var infoSetOnline = "When your server is ready, you can set it online. \
+Then players will be able to join it. \
+You will not be able to add or remove buildings once server is online. \
+Server can t be set offline as long as user are playing or waiting on it."
+
+var infoSetOffline = "Once offline, no user will be able to join the server again."
 
 class ServerDashboard extends Component {
   constructor(props) {
@@ -531,9 +538,14 @@ class ServerDashboard extends Component {
         if(this.state.serverState == 0) {
           serverStateButton =
             <div style={{float: 'right'}}>
-              <a onClick={this.changeServerState}>
-                <button className='buttonOnline'>Set online</button>
-              </a>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoSetOnline} />
+              </div>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <a onClick={this.changeServerState}>
+                  <button className='buttonOnline'>Set online</button>
+                </a>
+              </div>
             </div>
         }
         else if(this.state.serverState == 1) {
@@ -545,9 +557,14 @@ class ServerDashboard extends Component {
           else {
             serverStateButton =
               <div style={{float: 'right'}}>
-                <a onClick={this.changeServerState}>
-                  <button className='buttonOffline'>Set offline</button>
-                </a>
+                <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                  <InfoSpawn infoContent={infoSetOffline} />
+                </div>
+                <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                  <a onClick={this.changeServerState}>
+                    <button className='buttonOffline'>Set offline</button>
+                  </a>
+                </div>
               </div>
           }
         }

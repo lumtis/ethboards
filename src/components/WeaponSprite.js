@@ -21,8 +21,6 @@ class DescSpawner extends Component {
 
     return (
       <div style={{
-        // top: this.props.position.y-100+'px',   TODO: Maybe change this ?
-        // left: this.props.position.x+100+'px',
         top: '10px',
         left: '10px',
         position: 'fixed',
@@ -90,7 +88,7 @@ class WeaponSprite extends Component {
       return (
         <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
           <img src={this.state.imageLink} alt="Nuja" style={{width:'100%'}}></img>
-            <DescSpawner weaponIndex={this.props.weaponIndex} />
+          <DescSpawner weaponIndex={this.props.weaponIndex} />
         </div>
       );
     }

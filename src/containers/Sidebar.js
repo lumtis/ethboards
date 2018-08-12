@@ -5,6 +5,7 @@ import Actions from '../components/Actions'
 import AllServers from '../components/AllServers'
 import CharacterServers from '../components/CharacterServers'
 import JoinInterface from '../components/JoinInterface'
+import InfoSpawn from '../components/InfoSpawn'
 
 import store from '../store'
 import '../css/sidebar.css'
@@ -20,6 +21,8 @@ var inputStyle = {
   border: 0
 };
 
+
+var infoStart = "Once the server is started, you will not be able to leave until you win or get killed"
 
 class Sidebar extends Component {
   constructor(props) {
@@ -209,9 +212,14 @@ class Sidebar extends Component {
           buttonStartServer =
             <div style={{textAlign: 'center', marginBottom: '20px'}}>
               <h3>Server is full</h3>
-              <a onClick={this.startServer}>
-                <button className='buttonServer'>start the server</button>
-              </a>
+              <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>
+                <a onClick={this.startServer}>
+                  <button className='buttonServer'>start the server</button>
+                </a>
+              </div>
+              <div className="col-md-1" style={{paddingRight:0, paddingLeft:0}}>
+                <InfoSpawn infoContent={infoStart} />
+              </div>
             </div>
         }
 

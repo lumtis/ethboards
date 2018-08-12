@@ -5,7 +5,6 @@ var weaponJson = require('../../build/contracts/Weapon.json')
 import ipfsGet from '../utils/ipfsGet'
 
 
-
 const infoStyle = {
   padding: '20px',
   width: '400px',

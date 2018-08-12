@@ -11,12 +11,6 @@ import '../css/pure-min.css'
 import '../App.css'
 
 
-const playButton = {
-    position: 'absolute',
-    top: '40%',
-    transform:'translate(-60px, 0px)'
-}
-
 class Welcome extends Component {
   constructor(props) {
     super(props)
@@ -54,9 +48,6 @@ class Welcome extends Component {
           style={{position: 'absolute'}}/>
 
           <img src="/images/title.png" alt="Nuja" style={{width: '100%', bottom: 0, position: 'absolute'}}></img>
-          <div style={{textAlign: 'center'}}>
-            <Link to="/play/0"><button className="button" style={playButton}>Play</button></Link>
-          </div>
         </div>
         <div style={{position:'absolute', marginTop:'100vh'}} >
           <Start />
