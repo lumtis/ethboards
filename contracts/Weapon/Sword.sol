@@ -53,7 +53,7 @@ contract Sword is Weapon {
         if (striked) {
             uint8 opponent = getPlayer(moveInput, strikedX, strikedY);
             if (opponent > 0) {
-                return damage(moveOutput, opponent-1, 30);
+                return damage(moveOutput, opponent-1, 40);
             }
             else {
                 return moveOutput;

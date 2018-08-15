@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Hammer is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/Qmf3VEccfWk5xgym1PFnamjce4NmrgT2A9c28YN6MFmxgK';
+        return '/ipfs/';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
@@ -17,6 +17,6 @@ contract Hammer is Weapon {
         // Strike
         uint8 opponent = getPlayer(moveInput, x, y);
         require(opponent > 0);
-        return damage(moveInput, opponent-1, 50);
+        return damage(moveInput, opponent-1, 60);
     }
 }

@@ -74,7 +74,7 @@ contract NujaBattle is Geometry, StateManager {
             uint8 opponent = getPlayer(moveInput, xMove, yMove);
             require(opponent > 0);
             opponent -= 1;
-            return damage(moveInput, opponent, 20);
+            return damage(moveInput, opponent, 30);
         }
         else if (idMove == 2) {
             return exploreBuilding(p, moveInput);
@@ -189,7 +189,7 @@ contract NujaBattle is Geometry, StateManager {
     function getKilledArray(uint indexServer) public view returns (bool[8] killedRet) {
 
         uint currentMatch = ServerManager(serverManager).getServerCurrentMatch(indexServer);
-        
+
         for(uint8 i=0; i<8; i++) {
             if(deadPlayer[currentMatch][i]) {
                 killedRet[i] = true;

@@ -21,6 +21,6 @@ contract Sniper is Weapon {
         uint8 opponent = getPlayer(moveInput, x, y);
 
         require(opponent > 0);
-        return damage(moveInput, opponent-1, 80);
+        return damage(moveInput, opponent-1, 60);
     }
 }

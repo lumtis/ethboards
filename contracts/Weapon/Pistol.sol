@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Pistol is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmPHfBcmbSm9VDTKX5MCzrX4zQCyePaWrnWpGR5B7s5P9L';
+        return '/ipfs/';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
@@ -18,6 +18,6 @@ contract Pistol is Weapon {
         // Strike
         uint8 opponent = getPlayer(moveInput, x, y);
         require(opponent > 0);
-        return damage(moveInput, opponent-1, 20);
+        return damage(moveInput, opponent-1, 30);
     }
 }
