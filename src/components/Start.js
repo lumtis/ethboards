@@ -50,10 +50,12 @@ class Start extends Component {
   componentWillMount() {
     var self = this
 
-    if (self.state.characterRegistry != null) {
-      self.state.characterRegistry.methods.isStarterClaimed(self.state.account.address).call().then(function(starterClaimed) {
-        self.setState({starterClaimed: starterClaimed})
-      })
+    if(self.state.account != null) {
+      if (self.state.characterRegistry != null) {
+        self.state.characterRegistry.methods.isStarterClaimed(self.state.account.address).call().then(function(starterClaimed) {
+          self.setState({starterClaimed: starterClaimed})
+        })
+      }
     }
   }
 
@@ -125,10 +127,17 @@ class Start extends Component {
         </div>
     }
 
+    if(this.state.account == null) {
+      var addressDiv = <h1 style={{marginTop: '80px'}}>Please install Metamask and go to Ropsten</h1>
+    }
+    else {
+      addressDiv = <h1 style={{marginTop: '80px'}}>Your address: {this.state.account.address}</h1>
+    }
+
     return(
       <div style={{textAlign: 'center'}}>
         <div>
-          <h1 style={{marginTop: '80px'}}>Your address: {this.state.account.address}</h1>
+          {addressDiv}
         </div>
         <div>
           {chooseStarter}
