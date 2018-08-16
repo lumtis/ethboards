@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Missile is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/';
+        return '/ipfs/QmRaJc9YGo4wyh2tPsKnWzLR4QhHKoxZprbh16HAexS2XG';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {

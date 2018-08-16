@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Knife is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/';
+        return '/ipfs/QmY5r17oUwXPa5CgDRroXru7MDHk5HwuyLprAMziDaDGCY';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {

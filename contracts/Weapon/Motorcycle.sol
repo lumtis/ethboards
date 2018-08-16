@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Motorcycle is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/Qmf26cKX5Wkw1LmG3vrT6A3FGTB4Hh6M5pXu8y48KDF58J';
+        return '/ipfs/QmZ62SBEeVcFFdR5DZREzTFYoAuhH5VsZQudBfHY1qni18';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {

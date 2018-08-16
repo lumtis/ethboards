@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Sniper is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/QmdPavz3brQLWyuNd97v8anNtggm95CBn63K5GA57RkpiK';
+        return '/ipfs/QmTPotHmbFigkJgV4NgWng7QaoX6fCSbaEd3TJinuck5Re';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {

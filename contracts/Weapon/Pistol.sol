@@ -5,7 +5,7 @@ import "./Weapon.sol";
 contract Pistol is Weapon {
 
     function getMetadata() public pure returns (string metadata) {
-        return '/ipfs/';
+        return '/ipfs/QmPjwEYHUX7SCPjR3pfr1MzSkSE3355P1uv5jy3DQPEMJi';
     }
 
     function use(uint8 x, uint8 y, uint8 player, uint8[176] moveInput) public view returns(uint8[176] moveOutput) {
