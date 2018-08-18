@@ -140,25 +140,23 @@ contract ServerManager is Geometry, StateManager {
         owner.transfer(msg.value);
     }
 
-    // Set the server online, then players can join it
-    function setServerOnline(uint indexServer) public {
+    // Set the server online if server offline and offline if server online
+    function changeServerState(uint indexServer) public {
         require(indexServer < serverNumber);
-        require(servers[indexServer].state == 0);
         require(servers[indexServer].owner == msg.sender);
 
-        servers[indexServer].state = 1;
-    }
-
-    // Set the server offline
-    function setServerOffline(uint indexServer) public {
-        require(indexServer < serverNumber);
-        require(servers[indexServer].state == 1);
-        require(servers[indexServer].owner == msg.sender);
-
-        // If player has already joined the server, it can't be offline
-        require(servers[indexServer].playerNb == 0);
-
-        servers[indexServer].state = 0;
+        if(servers[indexServer].state == 0) {
+            servers[indexServer].state = 1;
+        }
+        else if(servers[indexServer].state == 1) {
+            // If player has already joined the server, it can't be offline
+            require(servers[indexServer].playerNb == 0);
+            servers[indexServer].state = 0;
+        }
+        else {
+            // A match is running on the server, the state cannot be changed
+            revert();
+        }
     }
 
     // Add list of buildings to the server
@@ -273,7 +271,7 @@ contract ServerManager is Geometry, StateManager {
             if(random < 0) {
                 random *= -1;
             }
-            uint8 y = uint8(random%maxPlayer);
+            uint8 y = uint8(random%8);
             servers[server].players[i].initialY = y;
         }
 

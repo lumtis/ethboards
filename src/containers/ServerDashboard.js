@@ -397,7 +397,7 @@ class ServerDashboard extends Component {
       if(self.state.serverState == 0) {
 
         // If server is offline, we set it online
-        self.state.serverManager.methods.setServerOnline(self.state.serverSelected).send({
+        self.state.serverManager.methods.changeServerState(self.state.serverSelected).send({
           from: self.state.account.address,
           gasPrice: 2000000000,
         })
@@ -412,7 +412,7 @@ class ServerDashboard extends Component {
       else if (self.state.serverState == 1) {
 
         // If server is online, we set it offline
-        self.state.serverManager.methods.setServerOffline(self.state.serverSelected).send({
+        self.state.serverManager.methods.changeServerState(self.state.serverSelected).send({
           from: self.state.account.address,
           gasPrice: 2000000000,
         })
