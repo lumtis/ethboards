@@ -33,7 +33,7 @@ contract CharacterRegistry is ERC721 {
     ///////////////////////////////////////////////////////////////
     /// Constants
 
-    string constant NAME = "NujakToken";
+    string constant NAME = "NujaToken";
     string constant SYMBOL = "NJT";
 
     ///////////////////////////////////////////////////////////////
