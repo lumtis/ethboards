@@ -26,7 +26,8 @@ class WeaponDesc extends Component {
       contractLink: '',
       imageLink: '',
       name: '',
-      power: ''
+      power: '',
+      description: ''
     }
 
     store.subscribe(() => {
@@ -60,6 +61,9 @@ class WeaponDesc extends Component {
             ipfsGet(ret + '/power/default', function(response) {
               self.setState({power: response.toString('utf8')})
             })
+            ipfsGet(ret + '/description/default', function(response) {
+              self.setState({description: response.toString('utf8')})
+            })
           });
         }
       })
@@ -71,10 +75,13 @@ class WeaponDesc extends Component {
       <div style={infoStyle}>
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-6" style={{}}>
+            <h1>{this.state.name}</h1>
             <img src={this.state.imageLink} alt="Nuja" style={{width: '100px'}}></img>
           </div>
           <div className="col-md-6" style={{}}>
-            <p>{this.state.name}</p>
+            <h3>Description</h3>
+            <p>{this.state.description}</p>
+            <h3>Power</h3>
             <p>{this.state.power}</p>
             <a href={this.state.contractLink}>contract</a>
           </div>
