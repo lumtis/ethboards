@@ -11,6 +11,6 @@ contract Healthpack is Weapon {
         var (r_x, r_y) = getPosition(moveInput, player);
         require(x == r_x && y == r_y);
 
-        return restore(moveOutput, player, 60);
+        return restore(moveInput, player, 60);
     }
 }

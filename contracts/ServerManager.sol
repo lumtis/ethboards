@@ -263,7 +263,7 @@ contract ServerManager is Geometry, StateManager {
         int random = int(keccak256(block.timestamp));
         for(uint8 i=0; i<maxPlayer; i++) {
 
-            // Unique horizontale position
+            /* // Unique horizontale position
             servers[server].players[i].initialX = (3*i+5)%8;
 
             // Random vertical position
@@ -272,7 +272,9 @@ contract ServerManager is Geometry, StateManager {
                 random *= -1;
             }
             uint8 y = uint8(random%8);
-            servers[server].players[i].initialY = y;
+            servers[server].players[i].initialY = y; */
+            servers[server].players[i].initialX = i;
+            servers[server].players[i].initialY = i;
         }
 
         // Start the server
@@ -508,6 +510,7 @@ contract ServerManager is Geometry, StateManager {
         // Reset server
         removePlayer(indexServer, winner);
         servers[indexServer].state = 1;
+        serverMatch[servers[indexServer].currentMatchId-1] = 0;
         servers[indexServer].currentMatchId = 0;
 
         // Winner get his money back

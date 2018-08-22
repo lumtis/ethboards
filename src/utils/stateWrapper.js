@@ -80,7 +80,6 @@ exports.pushSignature = function(id, metadata, move, moveOutput) {
       {t: 'uint[]', v: move},
       {t: 'uint[]', v: moveOutput},
     ), account.address).then(function(sig) {
-
       // Send signature to server
       request.post(
         'http://localhost:3000/post/pushsignature',

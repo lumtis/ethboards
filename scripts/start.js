@@ -49,11 +49,11 @@ var timeoutStarterAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
 
 
-const turnPrefix =                  '_turn4'
-const playerTurnPrefix =      '_playerturn4'
-const statePrefix =                '_state4'
-const killedPlayerPrefix = '_killedplayers4'
-const nbTimeoutPrefix =        '_nbtimeout4'
+const turnPrefix =                  '_turn'
+const playerTurnPrefix =      '_playerturn'
+const statePrefix =                '_state'
+const killedPlayerPrefix = '_killedplayers'
+const nbTimeoutPrefix =        '_nbtimeout'
 
 
 redis.on("connect", function () {

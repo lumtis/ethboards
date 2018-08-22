@@ -175,7 +175,7 @@ contract NujaBattle is Geometry, StateManager {
     function verifyAllSigned(uint indexServer, uint[3] metadataFirst, uint[3] metadataLast, uint8[176] moveOutput) internal view {
         uint[3] memory newMetadata = nextTurn(indexServer, metadataLast, moveOutput);
         require(newMetadata[0] == metadataFirst[0]);
-        require(newMetadata[1] > metadataFirst[1] && newMetadata[2] >= metadataFirst[2]);
+        require((newMetadata[1] == (metadataFirst[1]+1) && newMetadata[2] >= metadataFirst[2]) || (newMetadata[1] > metadataFirst[1]+1));
     }
 
     // Check if player is killed
