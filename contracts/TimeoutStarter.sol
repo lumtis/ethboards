@@ -241,7 +241,7 @@ contract TimeoutStarter {
                 else if(metadata[0][1] > 0 || metadata[0][2] > 0) {
                     // Last turn: we verified every alive player signed their turn
                     // Not necessary if the signature list begin from origin
-                    require(newMetadata[1] > metadata[0][1] && newMetadata[2] >= metadata[0][2]);
+                    require((newMetadata[1] == (metadata[0][1] + 1) && newMetadata[2] >= metadata[0][2]) || (newMetadata[1] > (metadata[0][1] + 1)));
                 }
 
                 // Set lastMove to be sure state is shared
