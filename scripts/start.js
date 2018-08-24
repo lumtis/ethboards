@@ -30,22 +30,22 @@ var Web3 = require('web3')
 var RedisClient = require('redis')
 
 var redis = RedisClient.createClient(6379, '127.0.0.1')
-var provider = new Web3.providers.HttpProvider('http://localhost:8545')
+var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/KKgWWlE5KNDx1nLnoVtq')
 var web3 = new Web3(provider)
 
 var ethjs = require('ethereumjs-util')
 
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x59fd4bfa1A29c0cE1dc80E5BB48Ee6Cc5b1650c1'
+var nujaBattleAddress = '0x39DC2821d53d7fF7fB446C4dD96365516114d94E'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var serverManagerJson = require('../build/contracts/ServerManager.json')
-var serverManagerAddress = '0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5'
+var serverManagerAddress = '0x83516d9D121d5015a78D54249faBE64f16B23a85'
 var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
 
 var timeoutStarterJson = require('../build/contracts/TimeoutStarter.json')
-var timeoutStarterAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
+var timeoutStarterAddress = '0x7067a41eE498246f04675c360bd37DA161AAEFCD'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
 
 
