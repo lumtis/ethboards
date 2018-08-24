@@ -3,14 +3,14 @@
 */
 pragma solidity ^0.4.2;
 
-import "./CharacterRegistry.sol";
-import "./NujaRegistry.sol";
-import "./Nuja/Nuja.sol";
-import "./WeaponRegistry.sol";
-import "./Weapon/Weapon.sol";
-import "./Geometry.sol";
-import "./StateManager.sol";
-import "./NujaBattle.sol";
+import "CharacterRegistry.sol";
+import "NujaRegistry.sol";
+import "Nuja.sol";
+import "WeaponRegistry.sol";
+import "Weapon.sol";
+import "Geometry.sol";
+import "StateManager.sol";
+import "NujaBattle.sol";
 
 
 contract ServerManager is Geometry, StateManager {
@@ -88,8 +88,8 @@ contract ServerManager is Geometry, StateManager {
     function ServerManager() public {
         owner = msg.sender;
         serverNumber = 0;
-        characterRegistry = 0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6;
-        weaponRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
+        characterRegistry = address(0);
+        weaponRegistry = address(0);
         nujaBattle = address(0);
         serverCreationFee = 5 finney;
         cheatWarrant = 5 finney;
@@ -262,8 +262,7 @@ contract ServerManager is Geometry, StateManager {
         uint8 maxPlayer = servers[server].playerMax;
         int random = int(keccak256(block.timestamp));
         for(uint8 i=0; i<maxPlayer; i++) {
-
-            /* // Unique horizontale position
+            // Unique horizontale position
             servers[server].players[i].initialX = (3*i+5)%8;
 
             // Random vertical position
@@ -272,9 +271,9 @@ contract ServerManager is Geometry, StateManager {
                 random *= -1;
             }
             uint8 y = uint8(random%8);
-            servers[server].players[i].initialY = y; */
-            servers[server].players[i].initialX = i;
-            servers[server].players[i].initialY = i;
+            servers[server].players[i].initialY = y;
+            /* servers[server].players[i].initialX = i;
+            servers[server].players[i].initialY = i; */
         }
 
         // Start the server

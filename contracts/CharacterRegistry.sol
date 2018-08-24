@@ -1,7 +1,7 @@
 pragma solidity ^0.4.2;
 
-import "./NujaRegistry.sol";
-import "./ERC721.sol";
+import "NujaRegistry.sol";
+import "ERC721.sol";
 
 contract CharacterRegistry is ERC721 {
 
@@ -56,7 +56,7 @@ contract CharacterRegistry is ERC721 {
     /// Constructor
 
     function CharacterRegistry() public {
-        nujaRegistry = 0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4;
+        nujaRegistry = address(0);
         owner = msg.sender;
         characterNumber = 0;
     }

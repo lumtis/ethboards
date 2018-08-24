@@ -3,14 +3,14 @@
 */
 pragma solidity ^0.4.2;
 
-import "./CharacterRegistry.sol";
-import "./NujaRegistry.sol";
-import "./Nuja/Nuja.sol";
-import "./WeaponRegistry.sol";
-import "./Weapon/Weapon.sol";
-import "./Geometry.sol";
-import "./StateManager.sol";
-import "./ServerManager.sol";
+import "CharacterRegistry.sol";
+import "NujaRegistry.sol";
+import "Nuja.sol";
+import "WeaponRegistry.sol";
+import "Weapon.sol";
+import "Geometry.sol";
+import "StateManager.sol";
+import "ServerManager.sol";
 
 contract NujaBattle is Geometry, StateManager {
 
@@ -36,10 +36,10 @@ contract NujaBattle is Geometry, StateManager {
     ///////////////////////////////////////////////////////////////
 
     function NujaBattle() public {
-        characterRegistry = 0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6;
-        weaponRegistry = 0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e;
-        serverManager = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
-        timeoutStopper = 0xa0b452f5fEd1C60899fC7A7965BB54A520569b08;
+        characterRegistry = address(0);
+        weaponRegistry = address(0);
+        serverManager = address(0);
+        timeoutStopper = address(0);
     }
 
 

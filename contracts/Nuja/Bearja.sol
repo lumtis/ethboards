@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./Nuja.sol";
+import "Nuja.sol";
 
 contract Bearja is Nuja {
     function getMetadata() public constant returns (string metadata) {

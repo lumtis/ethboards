@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-import "./Weapon.sol";
+import "Weapon.sol";
 
 contract Healthpack is Weapon {
     function getMetadata() public pure returns (string metadata) {
