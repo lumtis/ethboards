@@ -52,7 +52,7 @@ class KillInterface extends Component {
 
           // Get list of killed player
           request.post(
-            'http://localhost:3000/post/currentkilledplayers',
+            'http://nujabattle.com/post/currentkilledplayers',
             { json: { matchId: matchId } },
             function (killedPlayerError, killedPlayerResponse, killedPlayerBody) {
               if (!killedPlayerError && killedPlayerResponse.statusCode == 200) {

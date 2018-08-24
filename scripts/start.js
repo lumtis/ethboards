@@ -29,7 +29,7 @@ var isInteractive = process.stdout.isTTY;
 var Web3 = require('web3')
 var RedisClient = require('redis')
 
-var redis = RedisClient.createClient(6379, '127.0.0.1')
+var redis = RedisClient.createClient(6379, 'nujabattle.7hoy4k.0001.euw1.cache.amazonaws.com')
 var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/KKgWWlE5KNDx1nLnoVtq')
 var web3 = new Web3(provider)
 
