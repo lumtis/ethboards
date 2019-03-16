@@ -211,7 +211,7 @@ class TimeoutInterface extends Component {
       self.state.timeoutStarter.methods.startTimeout(metadata, move, signatureRS, v, originState, nbSignature).send({
         from: self.state.account.address,
         gasPrice: 2000000000,
-        gas: '2000000'
+        gas: '3000000'
       })
       .on('error', function(error){ console.log('ERROR: ' + error)})
       .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})
@@ -289,7 +289,7 @@ class TimeoutInterface extends Component {
           self.state.timeoutStopper.methods.stopTimeout(metadata, move, signatureRS, v, timeoutState.originState, nbSignature).send({
             from: self.state.account.address,
             gasPrice: 2000000000,
-            gas: '2000000'
+            gas: '3000000'
           })
           .on('error', function(error){ console.log('ERROR: ' + error)})
           .on('transactionHash', function(transactionHash){ console.log('transactionHash: ' + transactionHash)})

@@ -10,7 +10,7 @@ exports.updateServer = function(id) {
 
   // Get the metadata of the state
   request.post(
-    'http://localhost:3000/post/currentmetadata',
+    'http://nujabattle.com/post/currentmetadata',
     { json: { matchId: id } },
     function (metadataError, metadataResponse, metadataBody) {
       if (!metadataError && metadataResponse.statusCode == 200) {
@@ -40,7 +40,7 @@ exports.updateServer = function(id) {
         else {
           // The match started, we can get the state from redis
           request.post(
-            'http://localhost:3000/post/currentstate',
+            'http://nujabattle.com/post/currentstate',
             { json: { matchId: id } },
             function (stateError, stateResponse, stateBody) {
               if (!stateError && stateResponse.statusCode == 200) {
@@ -82,7 +82,7 @@ exports.pushSignature = function(id, metadata, move, moveOutput) {
     ), account.address).then(function(sig) {
       // Send signature to server
       request.post(
-        'http://localhost:3000/post/pushsignature',
+        'http://nujabattle.com/post/pushsignature',
         { json:
           {
             matchId: id,
@@ -123,7 +123,7 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
       if(lastMoves.nbRet == 0) {
         // Get timeout informations to fill necessary parameters
         request.post(
-          'http://localhost:3000/post/specificstate',
+          'http://nujabattle.com/post/specificstate',
           { json:
             {
               matchId: id,
@@ -149,7 +149,7 @@ exports.getTimeoutState = function(id, timeoutTurn, timeoutPlayerTurn, cb) {
           // Get timeout informations to fill necessary parameters
 
           request.post(
-            'http://localhost:3000/post/specificstate',
+            'http://nujabattle.com/post/specificstate',
             { json:
               {
                 matchId: id,

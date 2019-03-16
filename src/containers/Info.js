@@ -67,8 +67,8 @@ class Info extends Component {
     return (
       <div style={{overflowX: 'hidden', marginTop: '100px'}}>
         <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-          <h1>Crypto collectibles</h1>
-          <h1>Battle royale game</h1>
+          <h1>Collectibles</h1>
+          <h1>Battle royale</h1>
           <h1>Offchain transactions</h1>
         </div>
         <div className="row" style={{padding: '30px'}}>
@@ -110,8 +110,8 @@ class Info extends Component {
           <div className="col-md-12">
             <div style={infoStyle2}>
               <h1>Important</h1>
-              <p>The dapp is currently under beta testing. All contract are deployed on Ropsten. Rinkeby version will eventually be released.</p>
-              <p>Only starter are currently available but new nujas and weapons will be released on a regular basis.</p>
+              <p>The dapp is currently under beta testing. All contract are deployed on Ropsten.</p>
+              <p>Only starters are currently available. New nujas and weapons will eventually be released but this website is mostly a proof of concept for a, state channel backed, multiplayer arena game.</p>
               <p>The game will also be implemented for humanity.cards, another dapp with real human as character. The dapp is already deployed on the mainnet and available below.</p>
               <div style={{textAlign: 'center'}}>
                 <a href="http://humanity.cards"><img style={{marginTop: '50px', marginBottom: '50px'}} border="0" alt="humanitycards" src="/images/humanitycard.png" width="500px" /></a>
@@ -122,20 +122,21 @@ class Info extends Component {
         <div className="row" style={{padding: '10px'}}>
           <div className="col-md-12" style={{textAlign: 'center'}}>
             <div style={infoStyle2}>
-              <h1>Smart Contracts</h1>
-              <a href='https://ropsten.etherscan.io/address/0x752C514aB45F6Bf7238f99d5A2Cc102CA985c039'>Nuja Battle</a>
-              <p>Provides functions to simulate turn and validate killed player</p>
-              <a href='https://ropsten.etherscan.io/address/0x0dE6988Ad4681eEA6712456951894e04A7ea039a'>Timeout starter</a>
-              <p>Provides functions to start a timeout process for a given match</p>
-              <a href='https://ropsten.etherscan.io/address/0x4B24396F04fA44d9c51737383F8ef45D2EF32237'>Timeout stopper</a>
-              <p>Provides functions to stop or confirm a timeout process for a given match</p>
-              <a href='https://ropsten.etherscan.io/address/0xd36ffF44d424245F41fA88f7Fc78fbd65e6359Ab'>Server Manager</a>
+              <h1>Main Smart Contract</h1>
+              <a href='https://ropsten.etherscan.io/address/0x9B546a09ce476Ca22093572B4cC9859737835718'>Server Manager</a>
               <p>Manages servers, allows players to join servers and start them</p>
-              <a href='https://ropsten.etherscan.io/address/0x1F398717e4218936512d8750f3b6aDe3E00B2d37'>Character Registry</a>
+              <h1>Other Smart Contracts</h1>
+              <a href='https://ropsten.etherscan.io/address/0x68EFc525c39103F8803F4C3b673eaC23BC731E8e'>Nuja Battle</a>
+              <p>Provides functions to simulate turn and validate killed player</p>
+              <a href='https://ropsten.etherscan.io/address/0x3B56d10b800DDD9aC6371bC30745FED9F13Bc112'>Timeout starter</a>
+              <p>Provides functions to start a timeout process for a given match</p>
+              <a href='https://ropsten.etherscan.io/address/0x5ad3268897d14974b2806196CcDb7ca947c9AAD2'>Timeout stopper</a>
+              <p>Provides functions to stop or confirm a timeout process for a given match</p>
+              <a href='https://ropsten.etherscan.io/address/0x462893f08BbaED3319a44E613E57e5257b0E5037'>Character Registry</a>
               <p>ERC 721 contract for characters</p>
-              <a href='https://ropsten.etherscan.io/address/0x752C514aB45F6Bf7238f99d5A2Cc102CA985c039'>Nuja Registry</a>
+              <a href='https://ropsten.etherscan.io/address/0x796826c8adEB80A5091CEe9199D551ccB0bd3f18'>Nuja Registry</a>
               <p>Model for characters, register nuja contracts</p>
-              <a href='https://ropsten.etherscan.io/address/0xB80359772114388ed502bc1eC2e1a6cEB45FCdD4'>Weapon Registry</a>
+              <a href='https://ropsten.etherscan.io/address/0xDF480F0D91C0867A0de18DA793486287A22c2243'>Weapon Registry</a>
               <p>Register weapon contracts</p>
             </div>
           </div>

@@ -78,6 +78,8 @@
     "redux": "^3.7.2",
     "redux-persist": "^5.4.0",
     "redux-thunk": "^2.2.0",
+    "sha3": "^1.2.2",
+    "solc": "^0.4.23",
     "web3": "^1.0.0-beta.30",
     "web3-bzz": "^1.0.0-beta.26",
     "web3-eth-personal": "^1.0.0-beta.34",

@@ -2,25 +2,25 @@ import store from '../store'
 import Web3 from 'web3'
 
 var nujaBattleJson = require('../../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x59fd4bfa1A29c0cE1dc80E5BB48Ee6Cc5b1650c1'
+var nujaBattleAddress = '0x68EFc525c39103F8803F4C3b673eaC23BC731E8e'
 
 var serverManagerJson = require('../../build/contracts/ServerManager.json')
-var serverManagerAddress = '0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5'
+var serverManagerAddress = '0x9B546a09ce476Ca22093572B4cC9859737835718'
 
 var timeoutStarterJson = require('../../build/contracts/TimeoutStarter.json')
-var timeoutStarterAddress = '0x9f8C0484e696a86b049259583a31dE467Fd53966'
+var timeoutStarterAddress = '0x3B56d10b800DDD9aC6371bC30745FED9F13Bc112'
 
 var timeoutStopperJson = require('../../build/contracts/TimeoutStopper.json')
-var timeoutStopperAddress = '0xa0b452f5fEd1C60899fC7A7965BB54A520569b08'
+var timeoutStopperAddress = '0x5ad3268897d14974b2806196CcDb7ca947c9AAD2'
 
 var nujaRegistryJson = require('../../build/contracts/NujaRegistry.json')
-var nujaRegistryAddress = '0xD47Dc3Ab397b949C8e544076958c911eb3c6aab4'
+var nujaRegistryAddress = '0x796826c8adEB80A5091CEe9199D551ccB0bd3f18'
 
 var characterRegistryJson = require('../../build/contracts/CharacterRegistry.json')
-var characterRegistryAddress = '0x3e6e5e80f340789b1d58ef49B4d6ea42A4e846D6'
+var characterRegistryAddress = '0x462893f08BbaED3319a44E613E57e5257b0E5037'
 
 var weaponRegistryJson = require('../../build/contracts/WeaponRegistry.json')
-var weaponRegistryAddress = '0x89e6CB10Ee706752F83E19b6C9d74487D0A8DD1e'
+var weaponRegistryAddress = '0xDF480F0D91C0867A0de18DA793486287A22c2243'
 
 
 export const WEB3_INITIALIZED = 'WEB3_INITIALIZED'
@@ -74,7 +74,7 @@ function getWeb3() {
     // Fallback to localhost if no web3 injection. We've configured this to
     // use the development console's port by default.
     // var provider = new Web3.providers.HttpProvider('http://localhost:8545')
-    var provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/KKgWWlE5KNDx1nLnoVtq')
+    var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/KKgWWlE5KNDx1nLnoVtq')
     web3 = new Web3(provider)
 
     // Get contracts

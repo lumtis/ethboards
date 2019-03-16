@@ -58,7 +58,7 @@ class NujaPage extends Component {
     var infoNuja =
       <div style={infoStyle}>
         <h1>Nuja</h1>
-        <p>All information about nuja</p>
+        <p>All informations about nuja.</p>
       </div>
 
     return(

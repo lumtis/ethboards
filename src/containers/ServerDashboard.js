@@ -216,7 +216,7 @@ class ServerDashboard extends Component {
     if (!name) {
       alert('name must not be empty')
     }
-    else if(slot >= 2 && slot <= 10) {
+    else if(slot >= 2 && slot <= 8) {
       // Add the server
       if (this.state.nujaBattle != null) {
         this.state.serverManager.methods.addServer(name, slot, fee, moneybag).send({
@@ -234,7 +234,7 @@ class ServerDashboard extends Component {
       }
     }
     else {
-      alert('Invalid slot number (must be 2-10)')
+      alert('Invalid slot number (must be 2-8)')
     }
   }
 
@@ -611,7 +611,7 @@ class ServerDashboard extends Component {
                   <input className="form-control" style={inputStyle} ref="servername" placeholder="Name" type="text"/>
                 </div>
                 <div className="form-group">
-                  <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->10)" type="text"/>
+                  <input className="form-control" style={inputStyle} ref="slot" placeholder="Slot number (2->8)" type="text"/>
                 </div>
                 <div className="form-group">
                   <div className="col-md-11" style={{paddingRight:0, paddingLeft:0}}>

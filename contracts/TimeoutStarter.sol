@@ -1,8 +1,8 @@
 pragma solidity ^0.4.2;
 
 
-import "./NujaBattle.sol";
-import "./TimeoutStopper.sol";
+import "NujaBattle.sol";
+import "TimeoutStopper.sol";
 
 
 contract TimeoutStarter {
@@ -55,7 +55,7 @@ contract TimeoutStarter {
 
     function TimeoutStarter() public {
         owner = msg.sender;
-        serverManager = 0x4D336660b3c7267e3aFDd4275ccfFF5B30D697E5;
+        serverManager = 0x9B546a09ce476Ca22093572B4cC9859737835718;
         nujaBattle = address(0);
         timeoutStopper = address(0);
         addressesSet = false;

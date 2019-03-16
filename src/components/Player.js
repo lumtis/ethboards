@@ -113,7 +113,7 @@ class Player extends Component {
     var health = SW.getPlayerHealth(this.state.number)
 
     var weaponArray = []
-    var weapons = SW.getPlayerWeapons(this.props.index)
+    var weapons = SW.getPlayerWeapons(this.state.number)
 
     for (var i = 0; i < weapons.length; i++) {
       weaponArray.push(<div key={i} className="col-md-3"><WeaponSprite weaponIndex={weapons[i]}/></div>)
