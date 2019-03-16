@@ -55,7 +55,7 @@ contract TimeoutStarter {
 
     function TimeoutStarter() public {
         owner = msg.sender;
-        serverManager = address(0);
+        serverManager = 0x9B546a09ce476Ca22093572B4cC9859737835718;
         nujaBattle = address(0);
         timeoutStopper = address(0);
         addressesSet = false;

@@ -56,7 +56,7 @@ contract CharacterRegistry is ERC721 {
     /// Constructor
 
     function CharacterRegistry() public {
-        nujaRegistry = address(0);
+        nujaRegistry = 0x796826c8adEB80A5091CEe9199D551ccB0bd3f18;
         owner = msg.sender;
         characterNumber = 0;
     }

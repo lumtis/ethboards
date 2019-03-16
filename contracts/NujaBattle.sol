@@ -36,10 +36,10 @@ contract NujaBattle is Geometry, StateManager {
     ///////////////////////////////////////////////////////////////
 
     function NujaBattle() public {
-        characterRegistry = address(0);
-        weaponRegistry = address(0);
-        serverManager = address(0);
-        timeoutStopper = address(0);
+        characterRegistry = 0x462893f08BbaED3319a44E613E57e5257b0E5037;
+        weaponRegistry = 0xDF480F0D91C0867A0de18DA793486287A22c2243;
+        serverManager = 0x9B546a09ce476Ca22093572B4cC9859737835718;
+        timeoutStopper = 0x5ad3268897d14974b2806196CcDb7ca947c9AAD2;
     }
 
 

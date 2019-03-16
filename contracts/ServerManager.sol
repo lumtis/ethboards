@@ -88,8 +88,8 @@ contract ServerManager is Geometry, StateManager {
     function ServerManager() public {
         owner = msg.sender;
         serverNumber = 0;
-        characterRegistry = address(0);
-        weaponRegistry = address(0);
+        characterRegistry = 0x462893f08BbaED3319a44E613E57e5257b0E5037;
+        weaponRegistry = 0xDF480F0D91C0867A0de18DA793486287A22c2243;
         nujaBattle = address(0);
         serverCreationFee = 5 finney;
         cheatWarrant = 5 finney;
@@ -106,11 +106,8 @@ contract ServerManager is Geometry, StateManager {
         addressesSet = true;
     }
 
-    function changeServerCreationFee(uint fee) public onlyOwner {
+    function changeFeeAndCheatWarrant(uint fee, uint warrant) public onlyOwner {
         serverCreationFee = fee * 1 finney;
-    }
-
-    function changeCheatWarrant(uint warrant) public onlyOwner {
         cheatWarrant = warrant * 1 finney;
     }
 

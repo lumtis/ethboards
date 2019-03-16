@@ -37,15 +37,15 @@ var ethjs = require('ethereumjs-util')
 
 // Creating contract
 var nujaBattleJson = require('../build/contracts/NujaBattle.json')
-var nujaBattleAddress = '0x39DC2821d53d7fF7fB446C4dD96365516114d94E'
+var nujaBattleAddress = '0x68EFc525c39103F8803F4C3b673eaC23BC731E8e'
 var nujaBattle = new web3.eth.Contract(nujaBattleJson.abi, nujaBattleAddress)
 
 var serverManagerJson = require('../build/contracts/ServerManager.json')
-var serverManagerAddress = '0x83516d9D121d5015a78D54249faBE64f16B23a85'
+var serverManagerAddress = '0x9B546a09ce476Ca22093572B4cC9859737835718'
 var serverManager = new web3.eth.Contract(serverManagerJson.abi, serverManagerAddress)
 
 var timeoutStarterJson = require('../build/contracts/TimeoutStarter.json')
-var timeoutStarterAddress = '0x7067a41eE498246f04675c360bd37DA161AAEFCD'
+var timeoutStarterAddress = '0x3B56d10b800DDD9aC6371bC30745FED9F13Bc112'
 var timeoutStarter = new web3.eth.Contract(timeoutStarterJson.abi, timeoutStarterAddress)
 
 

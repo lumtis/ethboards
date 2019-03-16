@@ -55,7 +55,7 @@ class WeaponPage extends Component {
     var infoWeapon =
       <div style={infoStyle}>
         <h1>Weapon</h1>
-        <p>With weapons, you can do lot of things</p>
+        <p>Weapons are special items that can be used during a match. Weapons can be found inside buildings.</p>
       </div>
 
     return(
