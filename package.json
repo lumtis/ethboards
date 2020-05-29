@@ -40,6 +40,7 @@
     "recursive-readdir": "2.1.0",
     "strip-ansi": "3.0.1",
     "style-loader": "0.13.1",
+    "truffle": "^5.1.23",
     "truffle-contract": "^3.0.0",
     "truffle-solidity-loader": "0.0.8",
     "url-loader": "0.5.7",
@@ -88,6 +89,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "build:truffle": "truffle build",
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {
