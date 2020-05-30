@@ -8,11 +8,10 @@ import "NujaRegistry.sol";
 import "Nuja.sol";
 import "WeaponRegistry.sol";
 import "Weapon.sol";
-import "Geometry.sol";
 import "StateManager.sol";
 import "ServerManager.sol";
 
-contract NujaBattle is Geometry, StateManager {
+contract TokenClash is StateManager {
 
     // General values
     address characterRegistry;
