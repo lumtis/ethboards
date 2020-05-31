@@ -25,9 +25,9 @@ library StateController {
 
     // Get from a turn set (nonce, move, input state) the owner of the turn
     function turnOwner(
+      uint8[121] state,
       uint[3] nonce,
       uint8[4] move,
-      uint8[121] inState,
       bytes32 r,
       bytes32 s,
       uint8 v
@@ -35,8 +35,8 @@ library StateController {
 
         // Convert to uint for keccak256 function
         uint[61] memory inStateUint;
-        for(uint8 i = 0; i < 61; i++) {
-          inStateUint[i] = uint(inState[i]);
+        for(uint8 i = 0; i < 121; i++) {
+          inStateUint[i] = uint(state[i]);
         }
 
         // Calculate the hash of the move
@@ -84,12 +84,15 @@ library StateController {
         uint8 pawnNb = getPawnNumber(state);
         for (uint8 i = 0; i < pawnNb; i++) {
             if (state[1+i] > 0 && state[41+i] == x && state[81+i] == y) {
-                // Increment because 0 means no pawn
                 return int8(i);
             }
         }
 
         return -1;
+    }
+
+    function noPawnAt(uint8[121] state, uint8 x, uint y)  public pure returns (bool) {
+        return getPawnAt(state, x, y) == -1;
     }
 
     /**

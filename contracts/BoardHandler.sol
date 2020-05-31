@@ -15,7 +15,7 @@ contract BoardHandler {
     */
     event BoardCreated(
         address indexed creator,
-        uint boardId
+        uint indexed boardId
     );
 
     /**
@@ -65,6 +65,7 @@ contract BoardHandler {
 
     struct Board {
         uint id;
+        address boardContract;
         address creator;
         string name;
         bool deployed;
@@ -79,21 +80,29 @@ contract BoardHandler {
 
     uint boardNumber;
     Board[] boards;
+    address tokenClash;
 
     ///////////////////////////////////////////////////////////////
 
-    function init() public initializer {
+    modifier fromTokenClash {
+        require(msg.sender == tokenClash, "The function must be called by Token Clash contract");
+        _;
+    }
+
+    function init(address tokenClashAddress) public initializer {
         boardNumber = 0;
+        tokenClash = tokenClashAddress;
     }
 
     ///////////////////////////////////////////////////////////////
     /// Board administration
 
     // Create a new board
-    function createBoard(string name) public {
+    function createBoard(string name, address boardContract) public {
         // Create the board
         Board memory newBoard;
         newBoard.id = boardNumber;
+        newBoard.boardContract = boardContract;
         newBoard.creator = msg.sender;
         newBoard.name = name;
         newBoard.deployed = false;
@@ -196,16 +205,25 @@ contract BoardHandler {
         }
     }
 
-    // TODO: Define the winnner
-    function finishGame(uint boardId, uint gameId) public {
+    // TODO: Add tokenclash administration right
+    // TODO: Add callback when win
+    function finishGame(uint boardId, uint gameId, uint8 winner) public fromTokenClash {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
         require(!boards[boardId].games.over, "The game is already over");
+        require(winner < 2, "The winner doesn't exist");
+
+        address winnerAddress;
+        if (winner == 0) {
+            winnerAddress = boards[boardId].games[gameId].playerA;
+        } else {
+            winnerAddress = boards[boardId].games[gameId].playerB;
+        }
 
         emit GameFinished(
             boards[boardId].games[gameId].playerA,
             boards[boardId].games[gameId].playerB,
-            boards[boardId].games[gameId].playerA,
+            winnerAddress,
             boardId,
             gameId
         );
@@ -213,11 +231,16 @@ contract BoardHandler {
     }
 
     ///////////////////////////////////////////////////////////////
-    /// Information
+    /// Board information
 
     // Number of board
     function getBoardNumber() public view returns(uint) {
         return boardNumber;
+    }
+
+    function getBoardContractAddress(uint boardId) public view returns(address) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        return boards[boardId].boardContract;
     }
 
     // Check if a board is deployed
@@ -233,21 +256,38 @@ contract BoardHandler {
     }
 
     // Get the number of pawn type in the board
-    function getBoardPawnTypeNb(uint boardId) public view returns(string) {
+    function getBoardPawnTypeNumber(uint boardId) public view returns(uint8) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].pawnTypeNumber;
     }
 
     // Get the address of a pawn type
-    function getBoardPawnTypeAddress(uint boardId, uint8 pawnType) public view returns(string) {
+    function getBoardPawnTypeContract(uint boardId, uint8 pawnType) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(pawnType < boards[boardId].pawnTypeNumber, "The pawn type doesn't exist");
 
         return boards[boardId].pawnTypeAddress(pawnType);
     }
 
+    // Get the number of pawn
+    function getBoardPawnNumber(uint boardId) public view returns(uint8) {
+        require(boardId < boardNumber, "The board doesn't exist");
+
+        return boards[boardId].pawnNumber;
+    }
+
+    // Get the contract of pawn
+    function getBoardPawnTypeContractFromPawnIndex(uint boardId, uint8 pawnIndex) public view returns(address) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        require(pawnIndex < boards[boardId].pawnNumber, "The pawn doesn't exist");
+
+        uint8 pawnType = boards[boardId].pawnPosition[pawnIndex].pawnType;
+
+        return boards[boardId].pawnTypeAddress(pawnType);
+    }
+
     // Get the initial state of the board
-    function getInitialState(uint boardId) public view returns(uint8[121] state) {
+    function getInitialState(uint boardId) public view returns(uint8[121]) {
         require(boardId < boardNumber, "The board doesn't exist");
 
         // Pawn number
@@ -263,5 +303,36 @@ contract BoardHandler {
         }
 
         return state;
+    }
+
+    ///////////////////////////////////////////////////////////////
+    /// Game information
+
+    function getGameNumber(uint boardId) public view returns(uint) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        return boards[boardId].gameCount;
+    }
+
+    function isGameOver(uint boardId, uint gameId) public view returns(bool) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        require(gameId < boards[boardId].gameCount, "The game doesn't exist");
+
+        return boards[boardId].games[gameId].over;
+    }
+
+    function getGamePlayerAddress(uint boardId, uint gameId, uint turnNumber) public view returns(address) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        require(gameId < boards[boardId].gameCount, "The game doesn't exist");
+
+        address playerAddress;
+
+        // Every even turn are played by player A while every odd turn are played by player B
+        if (turnNumber % 2 == 0) {
+            playerAddress = boards[boardId].games[gameId].playerA;
+        } else {
+            playerAddress = boards[boardId].games[gameId].playerB;
+        }
+
+        return playerAddress;
     }
 }
