@@ -63,5 +63,8 @@ typings/
 # OS
 .DS_Store
 
-#Ganache
+# Ganache
 .ganache
+
+# COntracts builds
+build/
