@@ -1,7 +1,5 @@
 function ipfsGet(aUrl, aCallback) {
-
-
-  var anHttpRequest = new XMLHttpRequest();
+  const anHttpRequest = new XMLHttpRequest();
   anHttpRequest.onreadystatechange = function() {
     if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
       aCallback(anHttpRequest.responseText);

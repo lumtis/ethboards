@@ -50,6 +50,7 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "drizzle": "^1.4.0",
     "ethereumjs-util": "^5.2.0",
     "jsonfile": "^4.0.0",
