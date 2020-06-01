@@ -62,3 +62,6 @@ typings/
 
 # OS
 .DS_Store
+
+#Ganache
+.ganache
