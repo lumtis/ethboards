@@ -1,7 +1,7 @@
-pragma solidity 0.5.12;
+pragma solidity 0.5.16;
 
 interface Pawn {
-    function getMetadata() external view returns (string metadata);
+    function getMetadata() external view returns (string memory);
     function getMoveNumber() external view returns(uint8);
     function performMove(
         uint8 player,
@@ -9,6 +9,6 @@ interface Pawn {
         uint8 moveType,
         uint8 x,
         uint8 y,
-        uint8[121] state
-    ) external view returns(uint8[121]);
+        uint8[121] calldata state
+    ) external view returns(uint8[121] memory);
 }

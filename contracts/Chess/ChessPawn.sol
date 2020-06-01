@@ -1,4 +1,4 @@
-pragma solidity 0.5.12;
+pragma solidity 0.5.16;
 
 import "../StateController.sol";
 
@@ -17,7 +17,7 @@ contract ChessPawn {
     function isFoe(
         uint8 player,
         uint8 pawn
-    ) external view returns(bool) {
+    ) internal pure returns(bool) {
         if (player == 0) {
             if (pawn > 5) {
                 return true;

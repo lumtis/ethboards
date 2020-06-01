@@ -1,7 +1,4 @@
-/*
-  Main contract for matchmaking
-*/
-pragma solidity 0.5.12;
+pragma solidity 0.5.16;
 
 contract BoardHandler {
 
@@ -15,7 +12,7 @@ contract BoardHandler {
     */
     event BoardCreated(
         address indexed creator,
-        uint indexed boardId
+        uint boardId
     );
 
     /**
@@ -23,7 +20,7 @@ contract BoardHandler {
     * @param playerA The player A of the game
     * @param playerB The player B of the game
     * @param boardId The id of the board
-    * @param game The id of the game
+    * @param gameId The id of the game
     */
     event GameStarted(
         address indexed playerA,
@@ -38,7 +35,7 @@ contract BoardHandler {
     * @param playerB The player B of the game
     * @param winner The winner of the game
     * @param boardId The id of the board
-    * @param game The id of the game
+    * @param gameId The id of the game
     */
     event GameFinished(
         address indexed playerA,
@@ -74,7 +71,7 @@ contract BoardHandler {
         mapping (uint8 => address) pawnTypeAddress;
         mapping (uint8 => PawnPosition) pawnPosition;
         uint gameCount;
-        mapping (uint8 => Game) games;
+        mapping (uint => Game) games;
         address waitingPlayer;
     }
 
@@ -85,11 +82,11 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
 
     modifier fromTokenClash {
-        require(msg.sender == tokenClash, "The function must be called by Token Clash contract");
+        require(msg.sender == tokenClash, "The function must be called by the Token Clash contract");
         _;
     }
 
-    function init(address tokenClashAddress) public initializer {
+    constructor(address tokenClashAddress) public {
         boardNumber = 0;
         tokenClash = tokenClashAddress;
     }
@@ -98,7 +95,7 @@ contract BoardHandler {
     /// Board administration
 
     // Create a new board
-    function createBoard(string name, address boardContract) public {
+    function createBoard(string memory name, address boardContract) public {
         // Create the board
         Board memory newBoard;
         newBoard.id = boardNumber;
@@ -127,8 +124,14 @@ contract BoardHandler {
         boards[boardId].pawnTypeNumber += 1;
     }
 
-    // Add list of pawn to the board
-    function addPawnsToBoard(uint boardId, uint8[10] x, uint8[10] y, uint8[10] pawnType, uint8 nbPawn) public {
+    // Add list of pawns to the board
+    function addPawnsToBoard(
+        uint boardId,
+        uint8[10] memory x,
+        uint8[10] memory y,
+        uint8[10] memory pawnType,
+        uint8 nbPawn
+    ) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
         require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
@@ -138,7 +141,7 @@ contract BoardHandler {
         // Add pawns
         for (uint8 i = 0; i < nbPawn; i++) {
             require(x[i] < 8 && y[i] < 8, "The pawn position is out of bound");
-            require(pawnType < boards[boardId].pawnTypeNumber, "The pawn doesn't exist");
+            require(pawnType[i] < boards[boardId].pawnTypeNumber, "The pawn doesn't exist");
 
             PawnPosition memory newPawn;
             newPawn.pawnType = pawnType[i];
@@ -161,7 +164,7 @@ contract BoardHandler {
     }
 
     // Deploy a board
-    // Once deployed, no pawn can be added to the board anymore and game an be started from the board
+    // Once deployed, no pawn can be added to the board anymore and game can be started from the board
     function deployBoard(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
@@ -205,12 +208,13 @@ contract BoardHandler {
         }
     }
 
-    // TODO: Add tokenclash administration right
+    // Finish a game
+    // This function can only be called by the TokenClash contract, this contract ensure the winner is legit
     // TODO: Add callback when win
     function finishGame(uint boardId, uint gameId, uint8 winner) public fromTokenClash {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
-        require(!boards[boardId].games.over, "The game is already over");
+        require(!boards[boardId].games[gameId].over, "The game is already over");
         require(winner < 2, "The winner doesn't exist");
 
         address winnerAddress;
@@ -250,7 +254,7 @@ contract BoardHandler {
     }
 
     // Get the name of the board
-    function getBoardName(uint boardId) public view returns(string) {
+    function getBoardName(uint boardId) public view returns(string memory) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].name;
     }
@@ -266,7 +270,7 @@ contract BoardHandler {
         require(boardId < boardNumber, "The board doesn't exist");
         require(pawnType < boards[boardId].pawnTypeNumber, "The pawn type doesn't exist");
 
-        return boards[boardId].pawnTypeAddress(pawnType);
+        return boards[boardId].pawnTypeAddress[pawnType];
     }
 
     // Get the number of pawn
@@ -283,23 +287,23 @@ contract BoardHandler {
 
         uint8 pawnType = boards[boardId].pawnPosition[pawnIndex].pawnType;
 
-        return boards[boardId].pawnTypeAddress(pawnType);
+        return boards[boardId].pawnTypeAddress[pawnType];
     }
 
     // Get the initial state of the board
-    function getInitialState(uint boardId) public view returns(uint8[121]) {
+    function getInitialState(uint boardId) public view returns(uint8[121] memory state) {
         require(boardId < boardNumber, "The board doesn't exist");
 
         // Pawn number
         state[0] = boards[boardId].pawnNumber;
 
-        for(i = 0; i<boards[boardId].pawnNumber; i++) {
+        for(uint8 i = 0; i<boards[boardId].pawnNumber; i++) {
              // Pawn type
-            state[1+i] = boards[boardId].PawnPosition[i].pawnType;
+            state[1+i] = boards[boardId].pawnPosition[i].pawnType;
             // Pawn x position
-            state[41+i] = boards[boardId].PawnPosition[i].x;
+            state[41+i] = boards[boardId].pawnPosition[i].x;
             // Pawn y position
-            state[81+i] = boards[boardId].PawnPosition[i].y;
+            state[81+i] = boards[boardId].pawnPosition[i].y;
         }
 
         return state;

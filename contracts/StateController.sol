@@ -1,4 +1,4 @@
-pragma solidity 0.5.12;
+pragma solidity 0.5.16;
 
 /*
 State:
@@ -25,9 +25,9 @@ library StateController {
 
     // Get from a turn set (nonce, move, input state) the owner of the turn
     function turnOwner(
-      uint8[121] state,
-      uint[3] nonce,
-      uint8[4] move,
+      uint8[121] memory state,
+      uint[3] memory nonce,
+      uint8[4] memory move,
       bytes32 r,
       bytes32 s,
       uint8 v
@@ -41,9 +41,9 @@ library StateController {
 
         // Calculate the hash of the move
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 msg = keccak256(prefix, keccak256(nonce, move, inStateUint));
+        bytes32 message = keccak256(abi.encodePacked(prefix, keccak256(abi.encodePacked(nonce, move, inStateUint))));
 
-        return ecrecover(msg, v, r, s);
+        return ecrecover(message, v, r, s);
     }
 
     /**
@@ -51,12 +51,12 @@ library StateController {
     */
 
     // Get the initial number of pawn
-    function getPawnNumber(uint8[121] state) public pure returns (uint8) {
+    function getPawnNumber(uint8[121] memory state) public pure returns (uint8) {
         return state[0];
     }
 
     // Get the position of a specific pawn
-    function getPawnPosition(uint8[121] state, uint8 pawn) public pure returns (uint8, uint8) {
+    function getPawnPosition(uint8[121] memory state, uint8 pawn) public pure returns (uint8, uint8) {
         // Require the pawn exist
         require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
@@ -65,7 +65,7 @@ library StateController {
     }
 
     // Get the type of the pawn
-    function getPawnType(uint8[121] state, uint8 pawn) public pure returns (uint8) {
+    function getPawnType(uint8[121] memory state, uint8 pawn) public pure returns (uint8) {
         // Require the pawn exist
         require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
@@ -73,14 +73,14 @@ library StateController {
         return state[1+pawn]-1;
     }
 
-    function isAlive(uint8[121] state, uint8 pawn) public pure returns (bool) {
+    function isAlive(uint8[121] memory state, uint8 pawn) public pure returns (bool) {
         // Require the pawn exist
         require(pawn < state[0], "Pawn doesn't exist");
         return state[1+pawn] > 0;
     }
 
     // Get the pawn id in a position
-    function getPawnAt(uint8[121] state, uint8 x, uint y) public pure returns (int8) {
+    function getPawnAt(uint8[121] memory state, uint8 x, uint y) public pure returns (int8) {
         uint8 pawnNb = getPawnNumber(state);
         for (uint8 i = 0; i < pawnNb; i++) {
             if (state[1+i] > 0 && state[41+i] == x && state[81+i] == y) {
@@ -91,7 +91,7 @@ library StateController {
         return -1;
     }
 
-    function noPawnAt(uint8[121] state, uint8 x, uint y)  public pure returns (bool) {
+    function noPawnAt(uint8[121] memory state, uint8 x, uint y)  public pure returns (bool) {
         return getPawnAt(state, x, y) == -1;
     }
 
@@ -100,7 +100,7 @@ library StateController {
     */
 
     // Move a pawn
-    function movePawn(uint8[121] state, uint8 pawn, uint8 x, uint8 y) public pure returns (uint8[121]) {
+    function movePawn(uint8[121] memory state, uint8 pawn, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
         require(pawn < state[0], "Pawn doesn't exist");
@@ -114,7 +114,7 @@ library StateController {
     }
 
     // Remove a pawn
-    function removePawn(uint8[121] state, uint8 pawn) public pure returns (uint8[121]) {
+    function removePawn(uint8[121] memory state, uint8 pawn) public pure returns (uint8[121] memory) {
         require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
 
@@ -124,7 +124,7 @@ library StateController {
     }
 
     // Respawn a pawn
-    function respawnPawn(uint8[121] state, uint8 pawn, uint8 pawnType, uint8 x, uint8 y) public pure returns (uint8[121]) {
+    function respawnPawn(uint8[121] memory state, uint8 pawn, uint8 pawnType, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
         require(pawn < state[0], "Pawn doesn't exist");
