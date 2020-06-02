@@ -1,0 +1,20 @@
+.navcell {
+  width: 120px;
+}
+
+.navlink {
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  color: #F0F0F0;
+}
+
+.navlink:hover {
+  color: #5C6A79;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.addressStyle {
+  float: right;
+  font-family: 'Oswald', 'Arial Narrow', sans-serif;
+  color: #5C6A79;
+}
