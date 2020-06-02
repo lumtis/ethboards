@@ -1,24 +1,38 @@
-import { browserHistory } from 'react-router'
-import { createStore, applyMiddleware, compose } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import { routerMiddleware } from 'react-router-redux'
-import reducer from './reducer'
+import { generateStore } from 'drizzle'
 
-/**
- * Contains store for redux
- **/
+// Contract artifacts
+const tokenClash = require('../../build/contracts/TokenClash.json')
+const boardHandler = require('../../build/contracts/BoardHandler.json')
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const routingMiddleware = routerMiddleware(browserHistory)
+// Contracts
+const contracts = [
+  tokenClash,
+  boardHandler
+]
 
-const store = createStore(
-  reducer,
-  composeEnhancers(
-    applyMiddleware(
-      thunkMiddleware,
-      routingMiddleware
-    )
-  )
-)
+// Metamask provider
+let provider = null
+if (typeof window.ethereum !== 'undefined') {
+  // Ethereum user detected. You can now use the provider.
+  provider = window['ethereum'];
+}
 
-export default store
+const drizzleOptions = {
+  contracts,
+  events: {
+    BoardHandler: [
+      'BoardCreated',
+      'GameStarted',
+      'GameFinished'
+    ]
+  },
+  web3: {
+    provider,
+  }
+}
+
+const store = generateStore({
+  drizzleOptions,
+ })
+ 
+ export default store
