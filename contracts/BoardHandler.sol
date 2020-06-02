@@ -12,7 +12,8 @@ contract BoardHandler {
     */
     event BoardCreated(
         address indexed creator,
-        uint boardId
+        uint indexed boardId,
+        string name
     );
 
     /**
@@ -101,7 +102,6 @@ contract BoardHandler {
         newBoard.id = boardNumber;
         newBoard.boardContract = boardContract;
         newBoard.creator = msg.sender;
-        newBoard.name = name;
         newBoard.deployed = false;
         newBoard.pawnTypeNumber = 0;
         newBoard.pawnNumber = 0;
@@ -109,7 +109,7 @@ contract BoardHandler {
         newBoard.waitingPlayer = address(0);
         boards.push(newBoard);
 
-        emit BoardCreated(msg.sender, boardNumber);
+        emit BoardCreated(msg.sender, boardNumber, name);
         boardNumber += 1;
     }
 
@@ -251,12 +251,6 @@ contract BoardHandler {
     function isDeployed(uint boardId) public view returns(bool) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].deployed;
-    }
-
-    // Get the name of the board
-    function getBoardName(uint boardId) public view returns(string memory) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        return boards[boardId].name;
     }
 
     // Get the number of pawn type in the board
