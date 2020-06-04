@@ -10,7 +10,6 @@ const footerStyle = {
   backgroundColor: '#424242',
   color: 'white',
   textAlign: 'center',
-  marginTop: '30px',
 };
 
 const linkStyle = {
