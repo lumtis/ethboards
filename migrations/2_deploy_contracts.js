@@ -22,8 +22,24 @@ module.exports = async (deployer) => {
   const whitePawn = await deployer.deploy(WhitePawn);
   const blackPawn = await deployer.deploy(BlackPawn);
 
-  // Create the chess board
+  // Create the chess board and pawns
   await boardHandler.createBoard("Chess", chessBoard.address);
   await boardHandler.addPawnTypeToBoard(0, whitePawn.address);
   await boardHandler.addPawnTypeToBoard(0, blackPawn.address);
+
+  // Place pawns on the chess board
+  await boardHandler.addPawnsToBoard(
+    0,
+    [0,1,2,3,4,5,6,7,0,0],
+    [1,1,1,1,1,1,1,1,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    8
+  );
+  await boardHandler.addPawnsToBoard(
+    0,
+    [0,1,2,3,4,5,6,7,0,0],
+    [6,6,6,6,6,6,6,6,0,0],
+    [1,1,1,1,1,1,1,1,0,0],
+    8
+  );
 };
