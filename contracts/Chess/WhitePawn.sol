@@ -8,7 +8,7 @@ contract WhitePawn is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external view returns (string memory etadata) {
-        return '/ipfs/QmZL1sZTGc4yFjioseKfRnqwXS8GihTqvu7vojbeHaaZBN';
+        return '/ipfs/QmaWxfYRrwRdoNnyn9zdGgcE7hDZZsm1c4nYkjsv4EXqtE';
     }
     function getMoveNumber() external view returns(uint8) {
         return 1;
