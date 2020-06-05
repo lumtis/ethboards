@@ -78,18 +78,18 @@ contract BoardHandler {
 
     uint boardNumber;
     Board[] boards;
-    address tokenClash;
+    address ethBoards;
 
     ///////////////////////////////////////////////////////////////
 
-    modifier fromTokenClash {
-        require(msg.sender == tokenClash, "The function must be called by the Token Clash contract");
+    modifier fromEthBoards {
+        require(msg.sender == ethBoards, "The function must be called by the ethboards contract");
         _;
     }
 
-    constructor(address tokenClashAddress) public {
+    constructor(address ethBoardsAddress) public {
         boardNumber = 0;
-        tokenClash = tokenClashAddress;
+        ethBoards = ethBoardsAddress;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -209,9 +209,9 @@ contract BoardHandler {
     }
 
     // Finish a game
-    // This function can only be called by the TokenClash contract, this contract ensure the winner is legit
+    // This function can only be called by the ethBoards contract, this contract ensure the winner is legit
     // TODO: Add callback when win
-    function finishGame(uint boardId, uint gameId, uint8 winner) public fromTokenClash {
+    function finishGame(uint boardId, uint gameId, uint8 winner) public fromEthBoards {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
         require(!boards[boardId].games[gameId].over, "The game is already over");
@@ -293,7 +293,7 @@ contract BoardHandler {
 
         for(uint8 i = 0; i<boards[boardId].pawnNumber; i++) {
              // Pawn type
-            state[1+i] = boards[boardId].pawnPosition[i].pawnType;
+            state[1+i] = boards[boardId].pawnPosition[i].pawnType+1;
             // Pawn x position
             state[41+i] = boards[boardId].pawnPosition[i].x;
             // Pawn y position
