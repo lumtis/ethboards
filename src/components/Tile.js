@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { DrizzleContext } from "@drizzle/react-plugin"
 
 import store from '../store'
-import { getPawnType, getPawnAt } from '../utlis/stateUtils'
+import { getPawnType, getPawnAt } from '../utils/stateUtils'
 
 import PawnSprite from '../components/PawnSprite'
 

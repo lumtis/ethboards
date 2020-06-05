@@ -1,4 +1,4 @@
-const TokenClash = artifacts.require("./TokenClash.sol");
+const EthBoards = artifacts.require("./EthBoards.sol");
 const BoardHandler = artifacts.require("./BoardHandler.sol");
 const StateController =  artifacts.require("./StateController.sol");
 const ChessBoard =  artifacts.require("./Board/ChessBoard.sol");
@@ -8,14 +8,14 @@ const BlackPawn =  artifacts.require("./Board/BlackPawn.sol");
 module.exports = async (deployer) => {
   // Deploy libraries
   await deployer.deploy(StateController);
-  deployer.link(StateController, TokenClash);
+  deployer.link(StateController, EthBoards);
   deployer.link(StateController, ChessBoard);
   deployer.link(StateController, WhitePawn);
   deployer.link(StateController, BlackPawn);
 
   // Deploy contracts
-  const tokenClash = await deployer.deploy(TokenClash);
-  const boardHandler = await deployer.deploy(BoardHandler, tokenClash.address);
+  const ethBoards = await deployer.deploy(EthBoards);
+  const boardHandler = await deployer.deploy(BoardHandler, ethBoards.address);
 
   // Deploy chess contracts
   const chessBoard = await deployer.deploy(ChessBoard);

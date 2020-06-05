@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import store from '../store'
-import { getPawnType, getPawnAt } from '../utlis/stateUtils'
+import { getPawnType, getPawnAt } from '../utils/stateUtils'
 
 import Pawn from '../artifacts/Pawn.json'
 
