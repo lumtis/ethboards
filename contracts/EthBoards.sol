@@ -5,7 +5,7 @@ import "./BoardHandler.sol";
 import "./Pawn.sol";
 import "./StateController.sol";
 
-contract TokenClash {
+contract EthBoards {
     using StateController for uint8[121];
 
     // Simulate the turn from the board, user's move and input state
