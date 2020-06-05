@@ -1,123 +1,65 @@
 import React, { Component } from 'react'
+import { DrizzleContext } from "@drizzle/react-plugin"
 
-import BuildingDesc from '../components/BuildingDesc'
 import store from '../store'
+import { getPawnType, getPawnAt } from '../utils/stateUtils'
 
-var SW = require('../utils/stateWrapper')
-
+import PawnSprite from '../components/PawnSprite'
 
 class Tile extends Component {
   constructor(props) {
     super(props)
 
-    this.handleMouseHover = this.handleMouseHover.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
-
     this.state = {
-      nujaBattle: store.getState().web3.nujaBattleInstance,
-      serverManager: store.getState().web3.serverManagerInstance,
-      buildingCode: 0,
-      buildingName: '',
-      isHovering: false
+      boardState: store.getState().game.boardState,
     }
 
     store.subscribe(() => {
       this.setState({
-        nujaBattle: store.getState().web3.nujaBattleInstance,
-        serverManager: store.getState().web3.serverManagerInstance,
+        boardState: store.getState().game.boardState,
       })
     })
   }
 
   static defaultProps = {
-    server: 0,
     x: 0,
     y: 0,
-    initial: true       // Initial: render initial building state
-  }
-
-  componentWillMount() {
-    var self = this
-
-    // If we want the initial buidling, we read the smart contract
-    if (self.state.nujaBattle != null && self.state.serverManager != null) {
-      if(self.props.initial) {
-        self.state.serverManager.methods.getServerBuildingWeapon(self.props.server, self.props.x, self.props.y).call().then(function(buildingWeaponRet) {
-          self.setState({buildingCode: buildingWeaponRet})
-        })
-      }
-      // Get the name of the building
-      self.state.serverManager.methods.getServerBuildingName(self.props.server, self.props.x, self.props.y).call().then(function(buildingNameRet) {
-        var buildingNameTmp = store.getState().web3.web3Instance.utils.toAscii(buildingNameRet)
-        self.setState({buildingName: buildingNameTmp})
-      })
-    }
-
-  }
-
-  // Event functions to render description
-  handleMouseHover() {
-    this.setState({isHovering: true});
-  }
-
-  handleMouseLeave() {
-    this.setState({isHovering: false});
   }
 
   render() {
-    var offsetX = this.props.x*64
-    var offsetY = this.props.y*64
-    var desc = <div></div>
+    const {x, y} = this.props
+    const {boardState} = this.state
+    const offsetX = x*64
+    const offsetY = y*64
 
-    if(this.props.initial) {
-      var building = this.state.buildingCode
+    // Get the image to show for the cell
+    let imageFile = "/assets/board/greycell.png"
+    if (((this.props.x+this.props.y) % 2) === 0) {
+        imageFile = "/assets/board/whitecell.png"
     }
-    else {
-      building = SW.getBuilding(this.props.x, this.props.y)
-    }
 
-    var field = <img alt="Nuja"></img>
-
-    // If there is a building
-    if(building > 0) {
-
-      // If mouse hovering, we show buidling description
-      if (this.state.isHovering) {
-        desc = <BuildingDesc index={building} name={this.state.buildingName}/>
-      }
-
-      field =
-      <div onMouseEnter={this.handleMouseHover} onMouseLeave={this.handleMouseLeave}>
-        <img src="/images/tileCity1.png" alt="Nuja" style={{
-          width: '64px',
-          position: 'absolute',
-          top: offsetY+'px',
-          left: offsetX+'px'
-        }}></img>
-        <div style={{
-          width: '350px',
-          position: 'absolute',
-          top: offsetY+100+'px',
-          left: offsetX-64+'px'
+    // Check if a pawn is present in the cell
+    let pawnSprite = null
+    const pawn = getPawnAt(boardState, x, y)
+    if (pawn !== -1) {
+      pawnSprite = <DrizzleContext.Consumer>
+        { drizzleContext => {
+            return <PawnSprite pawn={pawn} x={offsetX} y={offsetY} drizzleContext={drizzleContext}/>
         }}
-        >{desc}</div>
-      </div>
+      </DrizzleContext.Consumer>
     }
-    else {
 
-      // Simple field
-      field =
-      <img src="/images/tile.png" alt="Nuja" style={{
-        width: '64px',
-        position: 'absolute',
-        top: offsetY+'px',
-        left: offsetX+'px'
-      }}></img>
-    }
+    const cell = <img src={imageFile} alt="Cell" style={{
+      width: '64px',
+      position: 'absolute',
+      top: offsetY+'px',
+      left: offsetX+'px'
+    }}></img>
 
     return (
       <div>
-        {field}
+        {cell}
+        {pawnSprite}
       </div>
     )
   }

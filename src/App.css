@@ -3,25 +3,22 @@
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
-  /* background:url(/images/bg.png) repeat; */
-  /* background-color: #364F6B; */
-  background-color: #323232;
+  background-color: #eeeeee;
   height: 100%;
   width: 100%;
 }
 h1, h2 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #ecf0f1;
-  text-shadow:2px 2px #8559A5;
+  color: #393e46;
 }
 
 h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #ecf0f1;
+  color: #393e46;
 }
 
-.welcomeWrapper {
-  background:url(/images/vaporbg.jpg) top right no-repeat fixed;
+.backgroundWrapper {
+  background:url(/assets/background.png) top right no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -30,7 +27,6 @@ h3 {
   backgroundSize: "100% 100%";
 }
 
-
 .button {
     font-size: 30px;
     font-weight: lighter;
@@ -38,18 +34,17 @@ h3 {
     height:60px;
     border-width: 3px;
     border-style: solid;
-    border-color: #E0E0E0;
-    border-radius: 100px;
-    color: #E0E0E0;
+    border-color: #222831;
+    color: #222831;
     background-color: rgba(0, 0, 0, 0);
 }
 
 .button:hover {
-    color: #EAA1E8;
-    border-color: #EAA1E8;
+    color: #00adb5;
+    border-color: #00adb5;
 }
 
 .button:active {
-    color: #BA71B8;
-    border-color: #BA71B8;
+    color: #00adb5;
+    border-color: #00adb5;
 }
