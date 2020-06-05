@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import Presentation from '../components/Presentation'
 import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
 
 import '../css/oswald.css'
 import '../css/open-sans.css'
@@ -29,8 +28,7 @@ class HomePage extends Component {
         <div style={{
             position:'absolute'
         }} >
-          <Navbar />
-          <img src="/assets/tokenclash/title.png" alt="tokenclash" style={{
+          <img src="/assets/general/title.png" alt="ethboards" style={{
               display: 'block',
               marginLeft: '10%',
               marginTop: '20px',

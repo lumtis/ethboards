@@ -7,7 +7,7 @@ const footerStyle = {
   fontSize: '16px',
   height: '100px',
   width: '100%',
-  backgroundColor: '#424242',
+  backgroundColor: '#393e46',
   color: 'white',
   textAlign: 'center',
 };
@@ -75,7 +75,7 @@ class Footer extends Component {
     return (
       <div style={footerStyle}>
         <div style={{padding: '31px'}}>
-          <p>© 2020: tokenclash | <button style={{backgroundColor: '#424242', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button></p>
+          <p>© 2020: ethboards | <button style={{backgroundColor: '#424242', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button></p>
         </div>
       </div>
     );

@@ -5,13 +5,13 @@ import App from './App'
 import { Drizzle } from "drizzle";
 
 // Contract artifacts
-import tokenClash from './artifacts/TokenClash.json'
-import boardHandler from './artifacts/BoardHandler.json'
+import EthBoards from './artifacts/EthBoards.json'
+import BoardHandler from './artifacts/BoardHandler.json'
 
 // Contracts
 const contracts = [
-  tokenClash,
-  boardHandler
+  EthBoards,
+  BoardHandler
 ]
 
 // Metamask provider

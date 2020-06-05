@@ -3,18 +3,18 @@
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
-  background-color: rgba(240, 240, 240, 1);
+  background-color: #eeeeee;
   height: 100%;
   width: 100%;
 }
 h1, h2 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #424242;
+  color: #393e46;
 }
 
 h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  color: #424242;
+  color: #393e46;
 }
 
 .button {

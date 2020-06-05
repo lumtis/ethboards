@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import store from './store'
+import HomePage from './pages/HomePage'
+import BoardListPage from './pages/BoardListPage'
+import BoardPage from './pages/BoardPage'
 
-import Home from './containers/Home'
+import { DrizzleContext } from '@drizzle/react-plugin'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -19,13 +21,17 @@ class App extends Component {
   }
 
   render() {
-    return (
+    return (   
       <div>
-        <Router>
-          <div>
-            <Route exact path="/" component={Home}/>
-          </div>
-        </Router>
+        <DrizzleContext.Provider drizzle={this.props.drizzle}>
+          <Router>
+            <div>
+              <Route exact path="/" component={HomePage}/>
+              <Route exact path="/board" component={BoardListPage}/>
+              <Route path="/board/:boardId" component={BoardPage}/>
+            </div>
+          </Router>
+        </DrizzleContext.Provider>
       </div>
     );
   }
