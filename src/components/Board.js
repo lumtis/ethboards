@@ -32,7 +32,7 @@ class Board extends Component {
           position: 'absolute',
           borderStyle: 'solid',
           borderWidth: '5px',
-          borderColor: '#654321'
+          borderColor: '#222831'
         }}>
           <div>{tiles}</div>
         </div>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Link } from 'react-router-dom'
 
 import Presentation from '../components/Presentation'
 import Footer from '../components/Footer'
@@ -25,15 +26,23 @@ class HomePage extends Component {
   render() {
     return (
       <div>
-        <div style={{
+        <div className="backgroundWrapper" style={{
             position:'absolute'
         }} >
           <img src="/assets/general/title.png" alt="ethboards" style={{
               display: 'block',
-              marginLeft: '10%',
-              marginTop: '20px',
+              marginLeft: '60px',
+              marginTop: '60px',
               width: '40%',
           }}></img>
+          <div style={{textAlign: 'center', marginTop: '200px', marginBottom: '50px'}}>
+            <h1>A simple platform to create games on Ethereum</h1>
+          </div>
+          <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+            <Link to="/board/"><button className="button">Test it</button></Link>
+          </div>
+        </div>
+        <div style={{position:'absolute', marginTop:'100vh'}} >
           <Presentation />
           <Footer />
         </div>

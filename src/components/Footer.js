@@ -39,7 +39,7 @@ class Footer extends Component {
     var informationDiv =
     <div style={{height: '400px', overflowY: 'scroll'}}>
       <h3>1. Terms</h3>
-      <p>By accessing the website at http://nujabattle.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site.YOU SHOULD BE AT LEAST 18 YEARS OF AGE TO ACCESS THE SITE. IF YOU DISAGREE WITH ALL OF THE PROVISION OF THESE TERMS, DO NOT LOG INTO AND/OR USE THE SITE.</p>
+      <p>By accessing the website at http://ethboards.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site.YOU SHOULD BE AT LEAST 18 YEARS OF AGE TO ACCESS THE SITE. IF YOU DISAGREE WITH ALL OF THE PROVISION OF THESE TERMS, DO NOT LOG INTO AND/OR USE THE SITE.</p>
 
       <h3>2. Use License</h3>
       <p>Permission is granted to temporarily download one copy of the materials (information or software) on Humanity Cards' website for personal, non-commercial transitory viewing only.</p>
@@ -75,7 +75,7 @@ class Footer extends Component {
     return (
       <div style={footerStyle}>
         <div style={{padding: '31px'}}>
-          <p>© 2020: ethboards | <button style={{backgroundColor: '#424242', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button></p>
+          <p>© 2020: ethboards | <button style={{backgroundColor: '#393e46', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button></p>
         </div>
       </div>
     );

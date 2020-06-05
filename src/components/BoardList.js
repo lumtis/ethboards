@@ -30,7 +30,6 @@ class BoardList extends Component {
           }
         })
 
-        console.log(boards)
         this.setState({boards})
       }
     }
