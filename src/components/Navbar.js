@@ -9,13 +9,15 @@ class Navbar extends Component {
 
     return (
       <div>
-        <nav style={{backgroundColor: '#cccccc', position: 'relative', width: '100%', zIndex: 1}}>
-         <img src="/assets/general/title.png" alt="ethboards" style={{
-                width: '200px',
-                marginLeft: '10px',
-                marginTop: '10px',
-                float: 'left'
-          }}></img>
+        <nav style={{backgroundColor: 'rgba(200, 200, 200, 0.5)', position: 'relative', width: '100%', zIndex: 1}}>
+          <Link to="/">
+            <img src="/assets/general/title.png" alt="ethboards" style={{
+                  width: '200px',
+                  marginLeft: '10px',
+                  marginTop: '10px',
+                  float: 'left'
+            }}></img>
+          </Link>
           <div className="container-fluid">
             <ul className="nav navbar-nav" style={{marginLeft: '20px'}}>
               <li className="navcell">

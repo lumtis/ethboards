@@ -6,7 +6,11 @@ import store from '../store'
 import Board from '../components/Board'
 import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
+import PawnBar from '../components/PawnBar'
+import JoinBox from '../components/JoinBox'
+import CurrentGames from '../components/CurrentGames'
 
+import '../App.css'
 
 class BoardPageComp extends Component {
   constructor(props) {
@@ -29,7 +33,7 @@ class BoardPageComp extends Component {
           const initialState = await drizzle.contracts.BoardHandler.methods.getInitialState(boardId).call()
           // Send the new state to redux
           store.dispatch({
-            type: 'NEW_GAMESTATE', 
+            type: 'NEW_BOARDSTATE', 
             payload: {
                 newState: initialState,
                 boardId
@@ -37,7 +41,7 @@ class BoardPageComp extends Component {
           })
         } catch (err) {
           store.dispatch({
-            type: 'RESET_GAMESTATE', 
+            type: 'RESET_STATE', 
           })
         }
 
@@ -47,15 +51,36 @@ class BoardPageComp extends Component {
 
   render() {
     const {initialized} = this.state
+    const {drizzleContext} = this.props
 
     if (!initialized) {
         return <Loading />
     }
 
     return(
-      <div>
+      <div className="backgroundWrapper" style={{
+        position:'fixed'
+      }} >
         <Navbar />
-        <Board />
+        <div className="row">
+          <div className="col-md-8">
+
+            <div className="container-fluid" style={{overflowY: 'scroll', height: '100vh', paddingLeft:0, paddingRight:0}}>
+              <div className="row" style={{padding: '30px'}}>
+                <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
+                  <Board />
+                </div>
+                <div className="col-md-12" style={{width:'100%', top:'570px', marginBottom: '100px'}}>
+                  <JoinBox drizzleContext={drizzleContext}/>
+                  <CurrentGames drizzleContext={drizzleContext}/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <PawnBar drizzleContext={drizzleContext} />
+          </div>
+        </div>
       </div>
     )
   }

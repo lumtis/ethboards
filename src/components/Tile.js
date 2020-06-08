@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import { DrizzleContext } from "@drizzle/react-plugin"
 
 import store from '../store'
-import { getPawnType, getPawnAt } from '../utils/stateUtils'
+import { getPawnAt } from '../utils/stateUtils'
 
 import PawnSprite from '../components/PawnSprite'
+import Cross from '../components/Cross'
 
 class Tile extends Component {
   constructor(props) {
@@ -12,11 +13,15 @@ class Tile extends Component {
 
     this.state = {
       boardState: store.getState().game.boardState,
+      gameId: store.getState().game.gameId,
+      crosses: store.getState().game.crosses,
     }
 
     store.subscribe(() => {
       this.setState({
         boardState: store.getState().game.boardState,
+        gameId: store.getState().game.gameId,
+        crosses: store.getState().game.crosses,
       })
     })
   }
@@ -28,9 +33,15 @@ class Tile extends Component {
 
   render() {
     const {x, y} = this.props
-    const {boardState} = this.state
+    const {boardState, crosses} = this.state
     const offsetX = x*64
     const offsetY = y*64
+
+    // Determine if a cross must be drawn
+    let cross = null
+    if (crosses[x*8+y]) {
+      cross = <Cross x={offsetX} y={offsetY} />
+    }    
 
     // Get the image to show for the cell
     let imageFile = "/assets/board/greycell.png"
@@ -60,6 +71,7 @@ class Tile extends Component {
       <div>
         {cell}
         {pawnSprite}
+        {cross}
       </div>
     )
   }
