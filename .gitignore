@@ -67,5 +67,6 @@ typings/
 # Ganache
 .ganache
 
-# COntracts builds
+# Contracts builds
 build/
+src/artifacts
