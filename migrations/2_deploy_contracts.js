@@ -5,7 +5,7 @@ const ChessBoard =  artifacts.require("./Board/ChessBoard.sol");
 const WhitePawn =  artifacts.require("./Board/WhitePawn.sol");
 const BlackPawn =  artifacts.require("./Board/BlackPawn.sol");
 
-module.exports = async (deployer) => {
+module.exports = async (deployer, network, accounts) => {
   // Deploy libraries
   await deployer.deploy(StateController);
   deployer.link(StateController, EthBoards);
@@ -42,4 +42,11 @@ module.exports = async (deployer) => {
     [1,1,1,1,1,1,1,1,0,0],
     8
   );
+
+  // Deploy the board
+  await boardHandler.deployBoard(0);
+
+  // Start the first game
+  await boardHandler.joinGame(0, {from: accounts[0]})
+  await boardHandler.joinGame(0, {from: accounts[1]})
 };
