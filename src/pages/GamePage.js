@@ -7,12 +7,10 @@ import Board from '../components/Board'
 import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
 import PawnBar from '../components/PawnBar'
-import JoinBox from '../components/JoinBox'
-import CurrentGames from '../components/CurrentGames'
 
 import '../App.css'
 
-class BoardPageComp extends Component {
+class GamePageComp extends Component {
   constructor(props) {
     super(props)
 
@@ -23,20 +21,29 @@ class BoardPageComp extends Component {
 
   async componentDidMount () {
     // Request the initial state of the board from the smart contract
-    const {boardId, drizzleContext} = this.props
+    const {boardId, gameId, drizzleContext} = this.props
 
     if (drizzleContext.initialized) {
         // Call the getInitialState method
-        const {drizzle} = drizzleContext
+        const {drizzle, drizzleState} = drizzleContext
 
         try {
           const initialState = await drizzle.contracts.BoardHandler.methods.getInitialState(boardId).call()
+          
+          const playerIndex = await drizzle.contracts.BoardHandler.methods.getGamePlayerIndex(
+            boardId,
+            gameId,
+            drizzleState.accounts[0]
+          ).call()
+          
           // Send the new state to redux
           store.dispatch({
-            type: 'NEW_BOARDSTATE', 
+            type: 'NEW_GAMESTATE', 
             payload: {
                 newState: initialState,
-                boardId
+                boardId,
+                gameId,
+                playerIndex
             }
           })
         } catch (err) {
@@ -71,8 +78,6 @@ class BoardPageComp extends Component {
                   <Board />
                 </div>
                 <div className="col-md-12" style={{width:'100%', top:'570px', marginBottom: '100px'}}>
-                  <JoinBox drizzleContext={drizzleContext}/>
-                  <CurrentGames drizzleContext={drizzleContext}/>
                 </div>
               </div>
             </div>
@@ -87,7 +92,7 @@ class BoardPageComp extends Component {
 }
 
 // Drizzle consumer
-class BoardPage extends Component {
+class GamePage extends Component {
     render() {
         return(
             <DrizzleContext.Consumer>
@@ -96,7 +101,11 @@ class BoardPage extends Component {
                 if(!initialized) {
                     return <Loading />
                 } else {
-                    return <BoardPageComp drizzleContext={drizzleContext} boardId={this.props.match.params.boardId} />
+                    return <GamePageComp 
+                      drizzleContext={drizzleContext} 
+                      boardId={this.props.match.params.boardId} 
+                      gameId={this.props.match.params.gameId} 
+                    />
                 }
               }
             }
@@ -105,7 +114,7 @@ class BoardPage extends Component {
     }
 }
 
-export default BoardPage
+export default GamePage
 
 
 

@@ -52,7 +52,7 @@ contract WhitePawn is Pawn, ChessPawn {
             } else {
                 revert("Impossible move");
             }
-        } else if (x == oldX && y == 1 && y == oldY + 2) {
+        } else if (x == oldX && oldY == 1 && y == oldY + 2) {
             // Starting move
             require(state.noPawnAt(x, y), "A pawn is already present");
             require(state.noPawnAt(x, y-1), "A pawn is on the road");

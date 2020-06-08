@@ -27,6 +27,7 @@ class Board extends Component {
       <div style={{marginLeft: '60px'}}>
         <h1>{this.state.mapName}</h1>
         <div style={{
+          marginLeft: '50px',
           height: '522px',
           width: '522px',
           position: 'absolute',

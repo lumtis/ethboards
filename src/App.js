@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import BoardListPage from './pages/BoardListPage'
 import BoardPage from './pages/BoardPage'
+import GamePage from './pages/GamePage'
 
 import { DrizzleContext } from '@drizzle/react-plugin'
 
@@ -28,7 +29,8 @@ class App extends Component {
             <div>
               <Route exact path="/" component={HomePage}/>
               <Route exact path="/board" component={BoardListPage}/>
-              <Route path="/board/:boardId" component={BoardPage}/>
+              <Route exact path="/board/:boardId" component={BoardPage}/>
+              <Route exact path="/board/:boardId/game/:gameId" component={GamePage}/>
             </div>
           </Router>
         </DrizzleContext.Provider>

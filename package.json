@@ -37,6 +37,8 @@
     "build:truffle": "truffle compile",
     "deploy": "truffle migrate",
     "test": "node scripts/test.js --env=jsdom",
+    "clean": "rm -rf build",
+    "clean:artifact": "rm -rf src/artifacts",
     "clean:ganache": "rm -rf .ganache",
     "import:truffle": "cp -r build/contracts src/artifacts"
   },

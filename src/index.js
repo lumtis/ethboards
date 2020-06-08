@@ -26,6 +26,7 @@ const drizzleOptions = {
   events: {
     BoardHandler: [
       'BoardCreated',
+      'PawnTypeAdded',
       'GameStarted',
       'GameFinished'
     ]

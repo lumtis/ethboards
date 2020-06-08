@@ -17,6 +17,16 @@ contract BoardHandler {
     );
 
     /**
+    * Emitted when a new pawn type is added to a board
+    * @param boardId The id of the board
+    * @param pawnTypeContract The address of the contract of the pawn type
+    */
+    event PawnTypeAdded(
+        uint indexed boardId,
+        address pawnTypeContract
+    );
+
+    /**
     * Emitted when a new game is started
     * @param playerA The player A of the game
     * @param playerB The player B of the game
@@ -26,7 +36,7 @@ contract BoardHandler {
     event GameStarted(
         address indexed playerA,
         address indexed playerB,
-        uint boardId,
+        uint indexed boardId,
         uint gameId
     );
 
@@ -118,10 +128,12 @@ contract BoardHandler {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
         require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
-        require(boards[boardId].pawnTypeNumber < 200, "You can add maximum 200 pawn types in a board");
+        require(boards[boardId].pawnTypeNumber < 250, "You can add maximum 250 pawn types in a board");
 
         boards[boardId].pawnTypeAddress[boards[boardId].pawnTypeNumber] = pawnTypeAddress;
         boards[boardId].pawnTypeNumber += 1;
+
+        emit PawnTypeAdded(boardId, pawnTypeAddress);
     }
 
     // Add list of pawns to the board
@@ -311,6 +323,16 @@ contract BoardHandler {
         return boards[boardId].gameCount;
     }
 
+    function isWaitingPlayer(uint boardId) public view returns(bool isWaiting, address waitingPlayer) {
+        require(boardId < boardNumber, "The board doesn't exist");
+
+        isWaiting = true;
+        if (boards[boardId].waitingPlayer == address(0)) {
+            isWaiting = false;
+        }
+        return (isWaiting, boards[boardId].waitingPlayer);
+    }
+
     function isGameOver(uint boardId, uint gameId) public view returns(bool) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -332,5 +354,18 @@ contract BoardHandler {
         }
 
         return playerAddress;
+    }
+
+    function getGamePlayerIndex(uint boardId, uint gameId, address playerAddress) public view returns(int) {
+        require(boardId < boardNumber, "The board doesn't exist");
+        require(gameId < boards[boardId].gameCount, "The game doesn't exist");
+
+        if (playerAddress == boards[boardId].games[gameId].playerA) {
+            return 0;
+        } else if (playerAddress == boards[boardId].games[gameId].playerB) {
+            return 1;
+        }
+
+        return -1;
     }
 }

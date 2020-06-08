@@ -28,10 +28,7 @@ h3 {
 }
 
 .button {
-    font-size: 30px;
     font-weight: lighter;
-    width:120px;
-    height:60px;
     border-width: 3px;
     border-style: solid;
     border-color: #222831;
