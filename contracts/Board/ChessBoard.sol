@@ -10,7 +10,7 @@ contract ChessBoard is Board {
     function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool) {
         if (player == 0) {
             // The player is A therefore the black king must be kill
-            return !state.isAlive(6);
+            return !state.isAlive(1);
         } else {
             // White king must be killed
             return !state.isAlive(0);

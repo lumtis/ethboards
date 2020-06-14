@@ -10,7 +10,7 @@ contract BlackPawn is Pawn, ChessPawn {
     function getMetadata() external view returns (string memory metadata) {
         return '/ipfs/QmWfWiNo2rPcz7Jikj2EBrqpJYYzYP2Pae9jsvUJcDa1CL';
     }
-    function getMoveNumber() external view returns(uint8) {
+    function getMoveNumber() external pure returns(uint8) {
         return 1;
     }
 
@@ -21,9 +21,9 @@ contract BlackPawn is Pawn, ChessPawn {
         uint8 x,
         uint8 y,
         uint8[121] calldata state
-    ) external view returns(uint8[121] memory outState) {
+    ) external pure returns(uint8[121] memory outState) {
         require(moveType == 0, "Pawn contains only one move");
-        require(!isFoe(player, pawn), "Player can't move a black pawn");
+        require(!isFoe(state, player, pawn), "Player can't move a black pawn");
 
         (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
 
@@ -37,17 +37,17 @@ contract BlackPawn is Pawn, ChessPawn {
                 // Attack right
                 int8 presentPawn = state.getPawnAt(x, y);
                 require(presentPawn != -1, "No pawn present");
-                require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+                require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
-                outState = state.movePawn(pawn, x, y);
+                outState = outState.movePawn(pawn, x, y);
 
             } else if (x >= 0 && x == oldX - 1) {
                 // Attack left
                 int8 presentPawn = state.getPawnAt(x, y);
                 require(presentPawn != -1, "No pawn present");
-                require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+                require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
-                outState = state.movePawn(pawn, x, y);
+                outState = outState.movePawn(pawn, x, y);
 
             } else {
                 revert("Impossible move");

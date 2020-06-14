@@ -15,21 +15,28 @@ contract ChessPawn {
     using StateController for uint8[121];
 
     function isFoe(
+        uint8[121] memory state,
         uint8 player,
         uint8 pawn
     ) internal pure returns(bool) {
+        uint8 pawnType = state.getPawnType(pawn);
+
         if (player == 0) {
-            if (pawn > 5) {
+            if (pawnType > 5) {
                 return true;
             } else {
                 return false;
             }
         } else {
-            if (pawn < 6) {
+            if (pawnType < 6) {
                 return true;
             } else {
                 return false;
             }
         }
+    }
+
+    function abs(int8 a) internal pure returns (uint8) {
+        return a < 0 ? (uint8)(-a) : (uint8)(a);
     }
 }

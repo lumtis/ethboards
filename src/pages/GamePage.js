@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { DrizzleContext } from "@drizzle/react-plugin"
 
 import store from '../store'
+import {getTurn, getState} from '../utils/stateChannelUtils'
 
 import Board from '../components/Board'
 import Loading from '../components/Loading'
@@ -28,24 +29,30 @@ class GamePageComp extends Component {
         const {drizzle, drizzleState} = drizzleContext
 
         try {
-          const initialState = await drizzle.contracts.BoardHandler.methods.getInitialState(boardId).call()
-          
-          const playerIndex = await drizzle.contracts.BoardHandler.methods.getGamePlayerIndex(
-            boardId,
-            gameId,
-            drizzleState.accounts[0]
-          ).call()
-          
-          // Send the new state to redux
-          store.dispatch({
-            type: 'NEW_GAMESTATE', 
-            payload: {
-                newState: initialState,
-                boardId,
-                gameId,
-                playerIndex
-            }
-          })
+          // Get the state from the state channel server
+          const state = await getState(boardId, gameId)
+          const turn = await getTurn(boardId, gameId)
+
+          // Verify the state returned exist
+          if (state && turn !== -1) {
+            const playerIndex = await drizzle.contracts.BoardHandler.methods.getGamePlayerIndex(
+              boardId,
+              gameId,
+              drizzleState.accounts[0]
+            ).call()
+
+            // Send the new state to redux
+            store.dispatch({
+              type: 'NEW_GAMESTATE', 
+              payload: {
+                  newState: state,
+                  boardId,
+                  gameId,
+                  playerIndex,
+                  turn,
+              }
+            })
+          }
         } catch (err) {
           store.dispatch({
             type: 'RESET_STATE', 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@chainsafe/truffle-plugin-abigen": "^0.0.1",
     "ganache-cli": "^6.9.1",
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",
@@ -14,6 +15,7 @@
     "@drizzle/react-components": "^1.5.1",
     "@drizzle/react-plugin": "^1.5.1",
     "@drizzle/store": "^1.5.1",
+    "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "drizzle": "^1.4.0",
     "ethereumjs-util": "^5.2.0",
@@ -35,6 +37,7 @@
     "start:ganache": "./scripts/ganache.sh",
     "build": "react-scripts build",
     "build:truffle": "truffle compile",
+    "build:abi": "truffle run abigen BoardHandler EthBoards",
     "deploy": "truffle migrate",
     "test": "node scripts/test.js --env=jsdom",
     "clean": "rm -rf build",

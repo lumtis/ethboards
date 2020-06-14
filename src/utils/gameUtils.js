@@ -14,3 +14,19 @@ exports.testSimulate = async (drizzle, boardId, player, move, state) => {
         return null
     }
 }
+
+exports.performSimulate = async (drizzle, boardId, player, move, state) => {
+    try {
+        return await drizzle.contracts.EthBoards.methods.simulate(
+            drizzle.contracts.BoardHandler.options.address,
+            boardId,
+            player,
+            move,
+            state
+        ).call()
+    } catch (err) {
+        return null
+    }
+}
+
+
