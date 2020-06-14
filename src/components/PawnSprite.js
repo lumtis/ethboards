@@ -93,6 +93,7 @@ class PawnSprite extends Component {
                 type: 'DISPLAY_CROSSES', 
                 payload: {
                     crosses: crossesToAdd,
+                    selectedPawn: pawn
                 }
             })
         }

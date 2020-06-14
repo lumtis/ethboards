@@ -40,7 +40,11 @@ class Tile extends Component {
     // Determine if a cross must be drawn
     let cross = null
     if (crosses[x*8+y]) {
-      cross = <Cross x={offsetX} y={offsetY} />
+      cross = <DrizzleContext.Consumer>
+        { drizzleContext => {
+            return <Cross x={x} y={y} drizzleContext={drizzleContext}/>
+        }}
+      </DrizzleContext.Consumer>
     }    
 
     // Get the image to show for the cell

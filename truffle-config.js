@@ -8,5 +8,8 @@ module.exports = {
       gasPrice: 2000000000,
       from: '0x49a1FE8F759aa7F738E8eDe3d10E8601F76a113c'
     }
-  }
+  },
+  plugins: [
+    "@chainsafe/truffle-plugin-abigen"
+  ]
 };

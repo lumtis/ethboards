@@ -4,7 +4,9 @@ const initialState = {
     boardId: 0,
     gameId: -1,
     playerIndex: -1,
-    crosses: {}
+    crosses: {},
+    selectedPawn: 0,
+    turn: 0
 }
 
 const gameReducer = (state = initialState, action) => {
@@ -29,9 +31,10 @@ const gameReducer = (state = initialState, action) => {
     if (newState.length === 121) {
       return Object.assign({}, state, {
         boardState: newState,
-        boardId: action.payload.boardId,
-        gameId: action.payload.gameId,
-        playerIndex: action.payload.playerIndex
+        boardId: action.payload.boardId || state.boardId,
+        gameId: action.payload.gameId || state.gameId,
+        playerIndex: action.payload.playerIndex || state.playerIndex,
+        turn: action.payload.turn,
       })
     }
   }
@@ -45,9 +48,11 @@ const gameReducer = (state = initialState, action) => {
   if (action.type === 'DISPLAY_CROSSES')
   {
     const crosses = action.payload.crosses
+    const selectedPawn = action.payload.selectedPawn
 
     return Object.assign({}, state, {
-      crosses: crosses,
+      crosses,
+      selectedPawn,
     })
   }
   if (action.type === 'RESET_CROSSES')
