@@ -32,4 +32,8 @@ contract ChessPawn {
             }
         }
     }
+
+    function abs(int8 a) internal pure returns (uint8) {
+        return a < 0 ? (uint8)(-a) : (uint8)(a);
+    }
 }
