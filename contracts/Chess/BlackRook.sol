@@ -23,7 +23,7 @@ contract BlackRook is Pawn, ChessPawn {
         uint8[121] calldata state
     ) external pure returns(uint8[121] memory outState) {
         require(moveType == 0, "Pawn contains only one move");
-        require(!isFoe(player, pawn), "Player can't move a black pawn");
+        require(!isFoe(state, player, pawn), "Player can't move a black pawn");
         require(x<8 || y<8, "Move out of bound");
 
         // Get old positions
@@ -37,6 +37,7 @@ contract BlackRook is Pawn, ChessPawn {
             int8 i = int8(oldY);
             int8 incrementY;
             oldY < y ? incrementY = 1 : incrementY = -1;
+            i += incrementY;
             while (uint8(i)!=y) {
                 require(state.noPawnAt(x, uint8(i)), "Pawn on the road");
                 i += incrementY;
@@ -46,6 +47,7 @@ contract BlackRook is Pawn, ChessPawn {
             int8 i = int8(oldX);
             int8 incrementX;
             oldX < x ? incrementX = 1 : incrementX = -1;
+            i += incrementX;
             while (uint8(i)!=x) {
                 require(state.noPawnAt(uint8(i), y), "Pawn on the road");
                 i += incrementX;
@@ -58,7 +60,7 @@ contract BlackRook is Pawn, ChessPawn {
         // If a foe is present in the destination, kill it
         int8 presentPawn = state.getPawnAt(x, y);
         if (presentPawn != -1) {
-            require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+            require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
             outState = state.removePawn(uint8(presentPawn));
             outState = outState.movePawn(pawn, x, y);
         } else {

@@ -23,12 +23,12 @@ contract BlackKnight is Pawn, ChessPawn {
         uint8[121] calldata state
     ) external pure returns(uint8[121] memory outState) {
         require(moveType == 0, "Pawn contains only one move");
-        require(!isFoe(player, pawn), "Player can't move a black pawn");
+        require(!isFoe(state, player, pawn), "Player can't move a black pawn");
         require(x<8 || y<8, "Move out of bound");
 
         // Get old positions
         (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
-        
+
         // Check all possible position
         require(
             (x==oldX+1 && y==oldY+2) ||
@@ -45,7 +45,7 @@ contract BlackKnight is Pawn, ChessPawn {
         // If a foe is present in the destination, kill it
         int8 presentPawn = state.getPawnAt(x, y);
         if (presentPawn != -1) {
-            require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+            require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
             outState = state.removePawn(uint8(presentPawn));
             outState = outState.movePawn(pawn, x, y);
         } else {

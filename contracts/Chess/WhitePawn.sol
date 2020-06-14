@@ -23,7 +23,7 @@ contract WhitePawn is Pawn, ChessPawn {
         uint8[121] calldata state
     ) external pure returns(uint8[121] memory outState) {
         require(moveType == 0, "Pawn contains only one move");
-        require(!isFoe(player, pawn), "Player can't move a white pawn");
+        require(!isFoe(state, player, pawn), "Player can't move a white pawn");
 
         (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
 
@@ -37,7 +37,7 @@ contract WhitePawn is Pawn, ChessPawn {
                 // Attack right
                 int8 presentPawn = state.getPawnAt(x, y);
                 require(presentPawn != -1, "No pawn present");
-                require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+                require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
                 outState = state.movePawn(pawn, x, y);
 
@@ -45,7 +45,7 @@ contract WhitePawn is Pawn, ChessPawn {
                 // Attack left
                 int8 presentPawn = state.getPawnAt(x, y);
                 require(presentPawn != -1, "No pawn present");
-                require(isFoe(player, uint8(presentPawn)), "The pawn present is not a foe");
+                require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
                 outState = state.movePawn(pawn, x, y);
 
