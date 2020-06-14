@@ -32,7 +32,7 @@ class Cross extends Component {
                 type: 'NEW_GAMESTATE', 
                 payload: {
                     newState: response.newState,
-                    turn: response.newState,
+                    turn: response.newTurn,
                 }
             })
         }

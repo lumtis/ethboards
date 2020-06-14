@@ -56,6 +56,7 @@ class Tile extends Component {
     // Check if a pawn is present in the cell
     let pawnSprite = null
     const pawn = getPawnAt(boardState, x, y)
+
     if (pawn !== -1) {
       pawnSprite = <DrizzleContext.Consumer>
         { drizzleContext => {
