@@ -16,7 +16,7 @@ The user provides his own smart contracts that determine the pawn's behavior in 
 ## State channel
 
 The games are automatically made fast and cheap to play through the use of state channels.
-A server store into a database all the state transitions for each game.
+A server stores into a database all the state transitions for each game.
 The state transitions are signed and are used when a player claim victory.
 
 The server for the state channels storage can be found here: https://github.com/ltacker/ethboards-statechannels
