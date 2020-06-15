@@ -8,6 +8,7 @@ import Board from '../components/Board'
 import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
 import PawnBar from '../components/PawnBar'
+import GameOptions from '../components/GameOptions'
 
 import '../App.css'
 
@@ -48,7 +49,7 @@ class GamePageComp extends Component {
                   newState: state,
                   boardId,
                   gameId,
-                  playerIndex,
+                  playerIndex: parseInt(playerIndex),
                   turn,
               }
             })
@@ -85,6 +86,7 @@ class GamePageComp extends Component {
                   <Board />
                 </div>
                 <div className="col-md-12" style={{width:'100%', top:'570px', marginBottom: '100px'}}>
+                  <GameOptions drizzleContext={drizzleContext} />
                 </div>
               </div>
             </div>

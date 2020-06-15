@@ -9,7 +9,7 @@ exports.getTurn = async (boardId, gameId) => {
 
     try {
         const response = await axios.get(request)
-        return parseInt(response)
+        return parseInt(response.data)
     } catch(error) {
         console.log(error)
         return -1
