@@ -28,7 +28,7 @@ exports.getState = async (boardId, gameId) => {
     }
 }
 
-exports.sendMove = async (boardId, gameId, move) => {
+exports.sendMove = async (boardId, gameId, move, rsv) => {
     try {
         const response = await axios.post(
             stateChannelServer + '/newmove', 
@@ -36,6 +36,9 @@ exports.sendMove = async (boardId, gameId, move) => {
                 boardid: boardId,
                 gameid: gameId,
                 move,
+                r: Array.from(rsv.r),
+                s: Array.from(rsv.s),
+                v: rsv.v,
             },
         )
         return {

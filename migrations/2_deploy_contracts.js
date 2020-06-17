@@ -77,31 +77,31 @@ module.exports = async (deployer, network, accounts) => {
   await boardHandler.addPawnsToBoard(
     0,
     [3,3,0,1,2,3,4,5,6,7],
-    [0,7,1,1,1,1,1,1,1,1],
+    [3,4,1,1,1,1,1,1,1,1],
     [5,11,0,0,0,0,0,0,0,0],
     10
   );
-  await boardHandler.addPawnsToBoard(
-    0,
-    [0,1,2,4,6,7,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
-    [1,2,3,4,2,1,0,0,0],
-    7
-  );
-  await boardHandler.addPawnsToBoard(
-    0,
-    [0,1,2,3,4,5,6,7,0,0],
-    [6,6,6,6,6,6,6,6,0,0],
-    [6,6,6,6,6,6,6,6,0,0],
-    8
-  );
-  await boardHandler.addPawnsToBoard(
-    0,
-    [0,1,2,4,5,6,7,0,0,0],
-    [7,7,7,7,7,7,7,0,0,0],
-    [7,8,9,10,9,8,7,0,0,0],
-    7
-  );
+  // await boardHandler.addPawnsToBoard(
+  //   0,
+  //   [0,1,2,4,5,6,7,0,0,0],
+  //   [0,0,0,0,0,0,0,0,0,0],
+  //   [1,2,3,4,3,2,1,0,0,0],
+  //   7
+  // );
+  // await boardHandler.addPawnsToBoard(
+  //   0,
+  //   [0,1,2,3,4,5,6,7,0,0],
+  //   [6,6,6,6,6,6,6,6,0,0],
+  //   [6,6,6,6,6,6,6,6,0,0],
+  //   8
+  // );
+  // await boardHandler.addPawnsToBoard(
+  //   0,
+  //   [0,1,2,4,5,6,7,0,0,0],
+  //   [7,7,7,7,7,7,7,0,0,0],
+  //   [7,8,9,10,9,8,7,0,0,0],
+  //   7
+  // );
 
   // Deploy the board
   await boardHandler.deployBoard(0);
