@@ -31,6 +31,33 @@ contract EthBoards {
         return pawn.performMove(player, move[0], move[1], move[2], move[3], state);
     }
 
+    // Get from a turn set (nonce, move, input state) the address of the signer
+    function getTurnSignatureAddress(
+      uint8[121] memory state,
+      uint[3] memory nonce,
+      uint8[4] memory move,
+      bytes32 r,
+      bytes32 s,
+      uint8 v
+      ) public pure returns (address recovered) {
+
+        // Convert to uint for keccak256 function
+        uint[121] memory inStateUint;
+        for(uint8 i = 0; i < 121; i++) {
+          inStateUint[i] = uint(state[i]);
+        }
+        uint[4] memory moveUint;
+        for(uint8 i = 0; i < 4; i++) {
+          moveUint[i] = uint(move[i]);
+        }
+
+        // Calculate the hash of the move
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 message = keccak256(abi.encodePacked(prefix, keccak256(abi.encodePacked(nonce, moveUint, inStateUint))));
+
+        return ecrecover(message, v, r, s);
+    }
+
     // Test the victory of the board and call the terminate the game if victory
     function claimVictory(
         address boardHandlerAddress,
@@ -69,7 +96,8 @@ contract EthBoards {
         // Check each turn has been signed by the correct player
         // And retrieve the final state
         for (uint8 i = 0; i < 2; i++) {
-            require(currentState.turnOwner(
+            require(getTurnSignatureAddress(
+                    currentState,
                     nonce,
                     move[i],
                     r[i],

@@ -19,6 +19,7 @@
     "dotenv": "^8.2.0",
     "drizzle": "^1.4.0",
     "ethereumjs-util": "^5.2.0",
+    "ethjs": "^0.4.0",
     "jsonfile": "^4.0.0",
     "pubsub-js": "^1.6.0",
     "react": "^16.13.1",
