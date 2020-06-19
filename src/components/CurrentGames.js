@@ -20,6 +20,7 @@ class CurrentGames extends Component {
     })
   }
 
+  // TODO: Optmize thus functionality
   async componentDidMount() {
     const {boardId} = this.state
     const {drizzleContext} = this.props
@@ -58,14 +59,9 @@ class CurrentGames extends Component {
             const link = '/board/' + rawEvent.returnValues.boardId + '/game/' + rawEvent.returnValues.gameId
 
             return <tr>
-                <td>{rawEvent.returnValues.gameId}</td>
+                <td><Link to={link}>{rawEvent.returnValues.gameId}</Link></td>
                 <td style={{fontSize:'10px'}}>{rawEvent.returnValues.playerA}</td>
                 <td style={{fontSize:'10px'}}>{rawEvent.returnValues.playerB}</td>
-                <th>
-                    <Link to={link}>
-                        <button className="button" style={buttontyle}>></button>
-                    </Link>
-                </th>
             </tr>
           })
   
@@ -79,13 +75,12 @@ class CurrentGames extends Component {
 
     return(
       <div style={boxStyle}>
-        <h1>Your current games:</h1>
-        <table style={{width:'100%'}}>
+        <h1>Your games:</h1>
+        <table style={{width:'100%', borderSpacing: '40px'}}>
             <tr>
                 <th>Game ID</th>
                 <th>Player A</th>
                 <th>Player B</th>
-                <th></th>
             </tr>
             {games}
         </table>
@@ -103,9 +98,9 @@ const boxStyle = {
 }
 
 const buttontyle = {
-    width: '50px',
-    height: '30px',
-    fontSize: '18px',
+    width: '40px',
+    height: '20px',
+    fontSize: '10px',
 }
 
 export default CurrentGames
