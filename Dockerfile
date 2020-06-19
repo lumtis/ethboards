@@ -9,8 +9,8 @@ RUN yarn global add node-gyp
 RUN yarn
 
 # Copy sources
-COPY public ./
-COPY src ./
+ADD public /app/public
+ADD src /app/src
 
 # Port and command
 EXPOSE 3000
