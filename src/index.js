@@ -8,6 +8,8 @@ import { Drizzle } from "drizzle";
 import EthBoards from './artifacts/EthBoards.json'
 import BoardHandler from './artifacts/BoardHandler.json'
 
+require('dotenv').config()
+
 // Contracts
 const contracts = [
   EthBoards,
@@ -33,10 +35,10 @@ const drizzleOptions = {
   },
   web3: {
     customProvider: provider,
-    fallback: {
-      type: "ws",
-      url: "ws://127.0.0.1:8545",
-    }
+    // fallback: {
+    //   type: "ws",
+    //   url: "ws://127.0.0.1:8545",
+    // }
   }
 }
 

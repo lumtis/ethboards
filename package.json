@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "@chainsafe/truffle-plugin-abigen": "^0.0.1",
+    "@truffle/hdwallet-provider": "^1.0.35",
     "ganache-cli": "^6.9.1",
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",

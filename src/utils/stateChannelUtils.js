@@ -2,7 +2,7 @@
  * Communication with the state channel server
  */
 const axios = require('axios');
-const stateChannelServer = 'http://localhost:8546'
+const stateChannelServer = process.env.STATECHANNELS_SERVER_URL
 
 exports.getTurn = async (boardId, gameId) => {
     const request = stateChannelServer + '/turn?boardId=' + boardId + '&gameId=' + gameId
