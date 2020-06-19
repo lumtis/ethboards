@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Link } from 'react-router-dom'
+
 
 class BoardList extends Component {
   constructor(props) {
@@ -37,16 +39,27 @@ class BoardList extends Component {
 
   render() {
     const {boards} = this.state
-    
     const boardsUI = boards.map(board =>
         <div key={board.id} className="col-md-4">
-            <p>{board.name}</p>
+            <Link to={'/board/' + board.id}>
+              <img src="/assets/general/logo1.png" alt="Board" style={{
+                width: '50%',
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: 'auto'
+              }}></img>
+              <h1 style={{
+                textAlign:'center',
+                marginTop: '40px'
+              }}>{board.name}</h1>
+            </Link>
         </div>
     )
 
     return(
       <div>
-        <div className="row" style={{marginTop: '30px'}}>
+        <h1 style={{marginTop: '30px', marginLeft: '50px'}}>Available boards:</h1>
+        <div className="row" style={{marginTop: '20px', padding: '50px'}}>
           {boardsUI}
         </div>
       </div>
@@ -56,28 +69,3 @@ class BoardList extends Component {
 
 export default BoardList
 
-
-// TODO: Remove this
-// debug
-// const boards = [
-//     {
-//         id:0,
-//         name:'Chess'
-//     },
-//     {
-//         id:1,
-//         name:'Draughts'
-//     }, 
-//     {
-//         id:2,
-//         name:'Toast'
-//     }, 
-//     {
-//         id:3,
-//         name:'Nuja'
-//     }, 
-//     {
-//         id:4,
-//         name:'Haha'
-//     }, 
-// ]

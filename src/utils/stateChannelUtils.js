@@ -28,6 +28,18 @@ exports.getState = async (boardId, gameId) => {
     }
 }
 
+exports.getLatestStateSignature = async (boardId, gameId) => {
+    const request = stateChannelServer + '/statesignature?boardId=' + boardId + '&gameId=' + gameId
+
+    try {
+        const response = await axios.get(request)
+        return response.data
+    } catch(error) {
+        console.log(error)
+        return {}
+    }
+}
+
 exports.sendMove = async (boardId, gameId, move, rsv) => {
     try {
         const response = await axios.post(
