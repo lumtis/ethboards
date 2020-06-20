@@ -4,7 +4,7 @@ exports.ipfsGet = (aUrl, aCallback) => {
       if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
         aCallback(anHttpRequest.responseText);
     }
-    anHttpRequest.open( "GET", 'http://127.0.0.1:8080' + aUrl, true );
+    anHttpRequest.open( "GET", process.env.REACT_APP_IPFS_URL + aUrl, true );
     anHttpRequest.send( null );
 }
     

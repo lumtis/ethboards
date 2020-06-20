@@ -6,7 +6,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 const footerStyle = {
   fontSize: '16px',
   height: '100px',
-  width: '100%',
+  width: '100vw',
   backgroundColor: '#393e46',
   color: 'white',
   textAlign: 'center',

@@ -31,9 +31,9 @@ const gameReducer = (state = initialState, action) => {
     if (newState.length === 121) {
       return Object.assign({}, state, {
         boardState: newState,
-        boardId: action.payload.boardId || state.boardId,
-        gameId: action.payload.gameId || state.gameId,
-        playerIndex: action.payload.playerIndex || state.playerIndex,
+        boardId: action.payload.boardId !== undefined ? action.payload.boardId : state.boardId,
+        gameId: action.payload.gameId !== undefined ? action.payload.gameId : state.gameId,
+        playerIndex: action.payload.playerIndex !== undefined ? action.payload.playerIndex : state.playerIndex,
         turn: action.payload.turn,
       })
     }

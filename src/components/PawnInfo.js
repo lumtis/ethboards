@@ -32,7 +32,7 @@ class PawnInfo extends Component {
         const ipfsPath = await drizzle.contracts[pawnAddress].methods.getMetadata().call()
         if (ipfsPath) {
             this.setState({
-                imageLink: 'http://127.0.0.1:8080' + ipfsPath + '/image.png'
+                imageLink: process.env.REACT_APP_IPFS_URL + ipfsPath + '/image.png'
             })
     
             // Get the name

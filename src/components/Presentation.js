@@ -13,19 +13,28 @@ class Presentation extends Component {
     return (
       <div>
         <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-6">
+          <div className="col-md-8">
+            <img src="/assets/docs/SmartContracts1.png" alt="" style={{
+                display: 'block',
+                width: '100%',
+            }}></img>
           </div>
-          <div className="col-md-6">
-            <h1>Backed by a state channel</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <div className="col-md-4">
+            <h1>Smart contract platform</h1>
+            <p>The smart contract platform provides smart contracts to handle 8x8 boards and simulate game turns that occur on this board.</p>
+            <p>The user provides his own smart contracts that determine the pawn's behavior in the game. He also provides a smart contract that determines when a player wins the game.</p>
           </div>
         </div>
         <div className="row" style={{padding: '30px'}}>
-          <div className="col-md-6">
-            <h1>Create your own rules with smart contrats</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <div className="col-md-4">
+            <h1>State channel</h1>
+            <p>The games are automatically made fast and cheap to play through the use of state channels. A server stores into a database all the state transitions for each game. The state transitions are signed and are used when a player claim victory.</p>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-8">
+            <img src="/assets/docs/StateChannel1.png" alt="" style={{
+                display: 'block',
+                width: '100%',
+              }}></img>
           </div>
         </div>
       </div>

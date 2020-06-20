@@ -23,29 +23,6 @@ uint8 y
 */
 library StateController {
 
-    // Get from a turn set (nonce, move, input state) the owner of the turn
-    function turnOwner(
-      uint8[121] memory state,
-      uint[3] memory nonce,
-      uint8[4] memory move,
-      bytes32 r,
-      bytes32 s,
-      uint8 v
-      ) public pure returns (address recovered) {
-
-        // Convert to uint for keccak256 function
-        uint[61] memory inStateUint;
-        for(uint8 i = 0; i < 121; i++) {
-          inStateUint[i] = uint(state[i]);
-        }
-
-        // Calculate the hash of the move
-        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
-        bytes32 message = keccak256(abi.encodePacked(prefix, keccak256(abi.encodePacked(nonce, move, inStateUint))));
-
-        return ecrecover(message, v, r, s);
-    }
-
     /**
     * State observation utilitary function
     */

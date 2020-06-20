@@ -58,8 +58,12 @@ class PawnBar extends Component {
       const {pawnInfos} = this.state
     
       return (
-        <div style={{backgroundColor: 'rgba(126, 126, 126, 0.5)', height: '100vh', overflowY: 'scroll'}}>
-          <div style={{marginTop: '20px', padding: '20px'}}>
+        <div style={{
+          backgroundColor: 'rgba(126, 126, 126, 0.5)',
+          height: '100vh',
+          overflowY: 'scroll',
+        }}>
+          <div style={{marginTop: '20px', marginBottom: '40px', padding: '20px'}}>
               {pawnInfos}
           </div>
         </div>

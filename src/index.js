@@ -33,10 +33,10 @@ const drizzleOptions = {
   },
   web3: {
     customProvider: provider,
-    fallback: {
-      type: "ws",
-      url: "ws://127.0.0.1:8545",
-    }
+    // fallback: {
+    //   type: "ws",
+    //   url: "ws://127.0.0.1:8545",
+    // }
   }
 }
 

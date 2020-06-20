@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "@chainsafe/truffle-plugin-abigen": "^0.0.1",
+    "@truffle/hdwallet-provider": "^1.0.35",
     "ganache-cli": "^6.9.1",
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",
@@ -16,9 +17,9 @@
     "@drizzle/react-plugin": "^1.5.1",
     "@drizzle/store": "^1.5.1",
     "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
     "drizzle": "^1.4.0",
     "ethereumjs-util": "^5.2.0",
+    "ethjs": "^0.4.0",
     "jsonfile": "^4.0.0",
     "pubsub-js": "^1.6.0",
     "react": "^16.13.1",
