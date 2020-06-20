@@ -52,8 +52,6 @@ class CurrentGames extends Component {
 
         const events = eventsPlayerA.concat(eventsPlayerB)
 
-        console.log(events)
-
         if (events.length) {
           const games = events.map(rawEvent => {
             const link = '/board/' + rawEvent.returnValues.boardId + '/game/' + rawEvent.returnValues.gameId

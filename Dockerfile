@@ -9,6 +9,7 @@ RUN yarn global add node-gyp
 RUN yarn
 
 # Copy sources
+ADD .env /app/.env
 ADD public /app/public
 ADD src /app/src
 

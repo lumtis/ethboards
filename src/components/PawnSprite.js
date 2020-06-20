@@ -41,7 +41,7 @@ class PawnSprite extends Component {
 
         // Get the metadata
         const ipfsPath = await drizzle.contracts[pawnAddress].methods.getMetadata().call()
-        this.setState({spriteLink: process.env.IPFS_URL + ipfsPath + '/image.png'})
+        this.setState({spriteLink: process.env.REACT_APP_IPFS_URL + ipfsPath + '/image.png'})
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -67,7 +67,7 @@ class PawnSprite extends Component {
     
             // Get the metadata
             const ipfsPath = await drizzle.contracts[pawnAddress].methods.getMetadata().call()
-            this.setState({spriteLink: process.env.IPFS_URL + ipfsPath + '/image.png'})
+            this.setState({spriteLink: process.env.REACT_APP_IPFS_URL + ipfsPath + '/image.png'})
         }     
     }
 

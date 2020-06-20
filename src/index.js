@@ -8,8 +8,6 @@ import { Drizzle } from "drizzle";
 import EthBoards from './artifacts/EthBoards.json'
 import BoardHandler from './artifacts/BoardHandler.json'
 
-require('dotenv').config()
-
 // Contracts
 const contracts = [
   EthBoards,

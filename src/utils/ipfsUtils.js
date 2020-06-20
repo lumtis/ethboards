@@ -4,7 +4,7 @@ exports.ipfsGet = (aUrl, aCallback) => {
       if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
         aCallback(anHttpRequest.responseText);
     }
-    anHttpRequest.open( "GET", process.env.IPFS_URL + aUrl, true );
+    anHttpRequest.open( "GET", process.env.REACT_APP_IPFS_URL + aUrl, true );
     anHttpRequest.send( null );
 }
     

@@ -183,7 +183,6 @@ class GameOptions extends Component {
   render() {
     const {playerIndex, turn, isVictorious, isOpponentVictorious, isFinished} = this.state
     let content = null
-
     if (isFinished) {
       content = <div>
         <h1>Game finished</h1>
