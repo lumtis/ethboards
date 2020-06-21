@@ -147,9 +147,6 @@ class GameOptions extends Component {
     // Get the state signature from the state channel server
     const latestSignatureState = await getLatestStateSignature(boardId, gameId)
 
-    console.log('Signature')
-    console.log(latestSignatureState)
-
     // Send a claimVictory transation to the smart contract
     drizzle.contracts.EthBoards.methods.claimVictory(
       drizzle.contracts.BoardHandler.options.address,

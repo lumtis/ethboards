@@ -4,7 +4,7 @@
 const axios = require('axios');
 const stateChannelServer = process.env.REACT_APP_STATECHANNELS_SERVER_URL
 
-exports.getTurn = async (boardId, gameId) => {
+export const getTurn = async (boardId, gameId) => {
     const request = stateChannelServer + '/turn?boardId=' + boardId + '&gameId=' + gameId
 
     try {
@@ -16,7 +16,7 @@ exports.getTurn = async (boardId, gameId) => {
     }
 }
 
-exports.getState = async (boardId, gameId) => {
+export const getState = async (boardId, gameId) => {
     const request = stateChannelServer + '/state?boardId=' + boardId + '&gameId=' + gameId
 
     try {
@@ -28,7 +28,7 @@ exports.getState = async (boardId, gameId) => {
     }
 }
 
-exports.getLatestStateSignature = async (boardId, gameId) => {
+export const getLatestStateSignature = async (boardId, gameId) => {
     const request = stateChannelServer + '/statesignature?boardId=' + boardId + '&gameId=' + gameId
 
     try {
@@ -40,7 +40,7 @@ exports.getLatestStateSignature = async (boardId, gameId) => {
     }
 }
 
-exports.sendMove = async (boardId, gameId, move, rsv) => {
+export const sendMove = async (boardId, gameId, move, rsv) => {
     try {
         const response = await axios.post(
             stateChannelServer + '/newmove', 

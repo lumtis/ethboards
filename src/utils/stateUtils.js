@@ -2,27 +2,27 @@
  * Contain utility function to parse the state
  */
 
-exports.getPawnNumber = (state) => {
+export const getPawnNumber = (state) => {
     return parseInt(state[0])
 }
 
-exports.getPawnPosition = (state, pawn) => {
+export const getPawnPosition = (state, pawn) => {
     return {
         x: parseInt(state[41+pawn]),
         y: parseInt(state[81+pawn])
     }
 }
 
-exports.getPawnType = (state, pawn) => {
+export const getPawnType = (state, pawn) => {
     return parseInt(state[1+pawn])-1
 }
 
-exports.isAlive = (state, pawn) => {
+export const isAlive = (state, pawn) => {
     return parseInt(state[1+pawn]) > 0
 }
 
 // Get the pawn id in a position
-exports.getPawnAt = (state, x, y) => {
+export const getPawnAt = (state, x, y) => {
     const pawnNb = parseInt(state[0])
     for (let i = 0; i < pawnNb; i++) {
         if (parseInt(state[1+i]) > 0 && parseInt(state[41+i]) === x && parseInt(state[81+i]) === y) {
