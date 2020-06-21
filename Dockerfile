@@ -9,10 +9,17 @@ RUN yarn global add node-gyp
 RUN yarn
 
 # Copy sources
-ADD .env /app/.env
 ADD public /app/public
 ADD src /app/src
 
+# Configuration
+ADD .env.production /app/.env.production
+
+# Build sources
+RUN yarn build
+
+ENV PORT 5000
+
 # Port and command
-EXPOSE 3000
-CMD [ "yarn", "start" ]
+EXPOSE 5000
+CMD [ "yarn", "serve" ]
