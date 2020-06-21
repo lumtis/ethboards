@@ -8,6 +8,7 @@
     "ganache-cli": "^6.9.1",
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",
+    "serve": "^11.3.2",
     "truffle": "^5.1.28",
     "truffle-contract": "^3.0.0",
     "truffle-solidity-loader": "0.0.8"
@@ -36,7 +37,8 @@
   "scripts": {
     "start": "react-scripts start",
     "start:ganache": "./scripts/ganache.sh",
-    "build": "react-scripts build",
+    "build": "react-scripts build -h",
+    "serve": "serve -s build",
     "build:truffle": "truffle compile",
     "build:abi": "truffle run abigen BoardHandler EthBoards",
     "deploy": "truffle migrate",
