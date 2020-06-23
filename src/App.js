@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage'
 import BoardListPage from './pages/BoardListPage'
 import BoardPage from './pages/BoardPage'
 import GamePage from './pages/GamePage'
+import LightPaper from './pages/LightPaper'
+import CreateBoardPage from './pages/CreateBoardPage'
 
 import { DrizzleContext } from '@drizzle/react-plugin'
 
@@ -28,6 +30,8 @@ class App extends Component {
           <Router>
             <div>
               <Route exact path="/" component={HomePage}/>
+              <Route exact path="/lightpaper" component={LightPaper}/>
+              <Route exact path="/createboard" component={CreateBoardPage}/>
               <Route exact path="/board" component={BoardListPage}/>
               <Route exact path="/board/:boardId" component={BoardPage}/>
               <Route exact path="/board/:boardId/game/:gameId" component={GamePage}/>

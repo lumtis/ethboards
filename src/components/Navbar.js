@@ -21,10 +21,13 @@ class Navbar extends Component {
           <div className="container-fluid">
             <ul className="nav navbar-nav" style={{marginLeft: '20px'}}>
               <li className="navcell">
-                <Link to="/board" style={{color: '#393e46', textAlign: 'center'}}>join game</Link>
+                <Link to="/board" style={{color: '#393e46', textAlign: 'center'}}>Join Game</Link>
               </li>
               <li className="navcell">
-                <Link to="/board" style={{color: '#393e46', textAlign: 'center'}}>create board</Link>
+                <Link to="/createboard" style={{color: '#393e46', textAlign: 'center'}}>Create Board</Link>
+              </li>
+              <li className="navcell">
+                <Link to="/lightpaper" style={{color: '#393e46', textAlign: 'center'}}>Light Paper</Link>
               </li>
             </ul>
             {/* <div className="addressStyle" style={{

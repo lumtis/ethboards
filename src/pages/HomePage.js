@@ -39,17 +39,17 @@ class HomePage extends Component {
             <h1>A simple platform to create games on Ethereum</h1>
           </div>
           <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-            <Link to="/board/"><button className="button" style={{
-              width: '120px',
+            <Link to="/lightpaper/"><button className="button" style={{
+              width: '240px',
               height: '60px',
               fontSize: '30px',
-            }}>Test it</button></Link>
+            }}>Light Paper</button></Link>
           </div>
         </div>
-        <div style={{position:'absolute', marginTop:'100vh'}} >
+        {/* <div style={{position:'absolute', marginTop:'100vh'}} >
           <Presentation />
           <Footer />
-        </div>
+        </div> */}
       </div>
     );
   }

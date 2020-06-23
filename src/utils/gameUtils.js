@@ -9,6 +9,7 @@ export const testSimulate = async (drizzle, boardId, player, move, state) => {
             move,
             state
         ).call()
+
         return [move[2], move[3]]
     } catch (err) {
         return null
