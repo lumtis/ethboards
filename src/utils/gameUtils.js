@@ -1,6 +1,6 @@
 // Test if a simulation work
 // Return false if the smart contract method reverts
-exports.testSimulate = async (drizzle, boardId, player, move, state) => {
+export const testSimulate = async (drizzle, boardId, player, move, state) => {
     try {
         await drizzle.contracts.EthBoards.methods.simulate(
             drizzle.contracts.BoardHandler.options.address,
@@ -9,13 +9,14 @@ exports.testSimulate = async (drizzle, boardId, player, move, state) => {
             move,
             state
         ).call()
+
         return [move[2], move[3]]
     } catch (err) {
         return null
     }
 }
 
-exports.performSimulate = async (drizzle, boardId, player, move, state) => {
+export const performSimulate = async (drizzle, boardId, player, move, state) => {
     try {
         return await drizzle.contracts.EthBoards.methods.simulate(
             drizzle.contracts.BoardHandler.options.address,

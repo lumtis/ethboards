@@ -75,7 +75,7 @@ class Footer extends Component {
     return (
       <div style={footerStyle}>
         <div style={{padding: '31px'}}>
-          <p>© 2020: ethboards | <button style={{backgroundColor: '#393e46', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button></p>
+          <p>© 2020: ethboards | <button style={{backgroundColor: '#393e46', border: '0px'}} onClick={this.termsOfUse}><a style={linkStyle}>Terms of use</a></button> | <a style={linkStyle} href="https://github.com/ltacker/ethboards">Github</a></p>
         </div>
       </div>
     );
