@@ -39,17 +39,24 @@ class HomePage extends Component {
             <h1>A simple platform to create games on Ethereum</h1>
           </div>
           <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-            <Link to="/lightpaper/"><button className="button" style={{
+          <Link to="/board/"><button className="button" style={{
               width: '240px',
               height: '60px',
               fontSize: '30px',
-            }}>Light Paper</button></Link>
+            }}>Join</button></Link>
+          </div>
+          <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+            <a href="https://github.com/ltacker/ethboards/blob/master/LightPaper.md"><button className="button" style={{
+              width: '240px',
+              height: '60px',
+              fontSize: '30px',
+            }}>Light Paper</button></a>
           </div>
         </div>
-        {/* <div style={{position:'absolute', marginTop:'100vh'}} >
+        <div style={{position:'absolute', marginTop:'100vh'}} >
           <Presentation />
           <Footer />
-        </div> */}
+        </div>
       </div>
     );
   }

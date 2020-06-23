@@ -35,7 +35,46 @@ The smart contract platform is composed of two smart contracts:
 
 <img src="public/assets/docs/SmartContracts1.png">
 
+### Game
+
+A game is a succession of **game states**. A game state is the representation of the game at a given time, where are placed the remaining pawns in the game. The game state is represented through an array of integers.
+
+Each of these transitions of game state is performed by a **move**. A move defines which pawn the player decides to move, which action of the pawn (determined by its smart contract) is selected and what are the coordinates where the action is performed. The move is represented by an array of integers as well.
+
+Currently, all games are played on an 8x8 boards where the maximum number of pawn is 40.
+
+The game state is represented through an array of 121 integers:
+
+- [0] represents the number of pawns present on the board
+- [1:41]: Represent what the type of the pawns in the game. 0 means the pawn has been eliminated.
+- [42:81]: Represent the coordinate x of the pawns in the game
+- [82:121]: Represent the coordinate y of the pawns in the game
+
+Let's say the board is Chess and the pawn type 2 represents a Black Knight. if gameState[1] == 2, gameState[41] == 5 and gameState[81] == 4, it will mean a Black Knight is currently positioned on coordinates [5,6].
+
+The library [StateController](https://github.com/ltacker/ethboards/blob/master/contracts/StateController.sol) gives utilitary functions to manipulate this state.
+
+A move is represented through an array of 4 integers:
+
+- [0] represents the selected pawn to perform the move
+- [1] represents the selected action of the pawn (a pawn smart contract can define several possible actions)
+- [2] represents the coordinate x to perform the action
+- [3] represents the coordinate y to perform the action
+
+Let's say we're playing chess and the pawn 0 is a Black Knight. It's blacks' turn. The move [0,0,5,5] will move this Black Knight to the coordinates [5,5] (assuming the current state of the game allows this move, this is the Black Knight's smart contract that must verify this condition).
+
+### State channels
+
+This representation of a game as transitions of states allows us to very easily develop a State Channel solution to play games without paying fees (except when entering and claiming victory). A server will store in a database the list of states, moves performed, and signatures of the moves from the players. These data are shared and used when a player wants to claim victory.
+
+[ethboards-statechannels](https://github.com/ltacker/ethboards-statechannels) is an implementation of such a server. It is developed in Go and uses MongoDB to store the State Channels. This server exposes a REST API to the players.
+
+<img src="public/assets/docs/StateChannel1.png">
+
+
 ### Custom smart contracts
+
+Boards are pawns are custom smart contracts that defines the rules of a specific game.
 
 #### Boards
 
@@ -58,41 +97,45 @@ struct Board {
 }
 ```
 
----
+The board contract is a smart contract that implements the following interface:
 
-### Game
+```
+interface Board {
+	 function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool);
+}
+```
 
-A game is a succession of **game states**. A game state is the representation of the game at a given time, where are placed the remaining pawns in the game. The game state is represented through an array of integers.
+The function *checkVictory* takes a player, 0 for player A, 1 for player B, and a state of the game and returns true is in this current state the given player is victorious in the game.
 
-Each of these transitions of game state is performed by a **move**. A move defines which pawn the player decides to move, which action of the pawn (determined by its smart contract) is selected and what are the coordinates where the action is performed. The move is represented by an array of integers as well.
+This function is called by the EthBoards contract when a player claims victory.
 
-Currently, all games are played on an 8x8 boards where the maximum number of pawn is 40.
+#### Pawns
 
-The game state is represented through an array of 121 integers:
+Pawns are the interactive pieces of a game. Actions are performed to them during a game and this is what provokes the transitions of state.
 
-- [0] represents the number of pawns present on the board
-- [1:41]: Represent what the type of the pawns in the game. 0 means the pawn has been eliminated.
-- [42:81]: Represent the coordinate x of the pawns in the game
-- [82:121]: Represent the coordinate y of the pawns in the game
+Pawns are implemented with smart contracts that implement this interface:
 
-Let's say the board is Chess and the pawn type 2 represents a Black Knight. if gameState[1] == 2, gameState[41] == 5 and gameState[81] == 4, it will mean a Black Knight is currently positioned on coordinates [5,6].
+```
+interface Pawn {
+	 function getMetadata() external view returns (string memory);
+	 function getMoveNumber() external pure returns(uint8);
+	 function performMove(
+	    uint8 player,
+	    uint8 pawn,
+	    uint8 moveType,
+	    uint8 x,
+	    uint8 y,
+	    uint8[121] calldata state
+	 ) external pure returns(uint8[121] memory);
+}
+```
+*getMetadata()* returns a link to the metadata resources of the pawns. For example, the name of the pawn or the image of the pawn. These data are too expensive to be stored on Ethereum. To keep a decentralized behavior, we can store these data on a distributed storage solution like IPFS for example.
 
-A move is represented through an array of 4 integers:
+*getMoveNumber()* returns the number of actions available for the pawn. In the Chess example, the only action available is to move a pawn but, in other games, a pawn could have different actions available like a soldier that could move or shoot enemies.
 
-- [0] represents the selected pawn to perform the move
-- [1] represents the selected action of the pawn (a pawn smart contract can define several possible actions)
-- [2] represents the coordinate x to perform the action
-- [3] represents the coordinate y to perform the action
+*performMove()* is the method that defines the state transaction that occurs from the selected pawn, input state, and the selected action. A move is always performed to specific coordinates (x,y). This function must revert if the move is impossible.
 
-Let's say we're playing chess and the pawn 0 is a Black Knight. It's blacks' turn. The move [0,0,5,5] will move this Black Knight to the coordinates [5,5] (assuming the current state of the game allows this move, this is the Black Knight's smart contract that must verify this condition).
-
-### State channels
-
-This representation of a game as transitions of states allows us to very easily develop a State Channel solution to play games without paying fees (except when entering and claiming victory). A server will store in a database the list of states, moves performed, and signatures of the moves from the players. These data are shared and used when a player wants to claim victory.
-
-[ethboards-statechannels](https://github.com/ltacker/ethboards-statechannels) is an implementation of such a server. It is developed in Go and uses MongoDB to store the State Channels. This server exposes a REST API to the players.
-
-<img src="public/assets/docs/StateChannel1.png">
+The method  *performMove()* is called by the *simulate()* method of the EthBoards contract.
 
 ---
 
