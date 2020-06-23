@@ -27,7 +27,7 @@ class Navbar extends Component {
                 <Link to="/createboard" style={{color: '#393e46', textAlign: 'center'}}>Create Board</Link>
               </li>
               <li className="navcell">
-                <Link to="/lightpaper" style={{color: '#393e46', textAlign: 'center'}}>Light Paper</Link>
+                <a href="https://github.com/ltacker/ethboards/blob/master/LightPaper.md" style={{color: '#393e46', textAlign: 'center'}}>Light Paper</a>
               </li>
             </ul>
             {/* <div className="addressStyle" style={{
