@@ -53,10 +53,6 @@ class HomePage extends Component {
             }}>Light Paper</button></a>
           </div>
         </div>
-        <div style={{position:'absolute', marginTop:'100vh'}} >
-          <Presentation />
-          <Footer />
-        </div>
       </div>
     );
   }
