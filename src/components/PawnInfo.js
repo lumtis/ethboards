@@ -36,10 +36,10 @@ class PawnInfo extends Component {
             })
     
             // Get the name
-            const self = this
-            ipfsGet(ipfsPath + '/name/default', (response) => {
-                self.setState({name: response.toString('utf8')})
-            })
+            const response = await ipfsGet(ipfsPath + '/name/default')
+            if (response) {
+                this.setState({name: response.toString('utf8')})
+            }
         }
     }
 

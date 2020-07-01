@@ -1,10 +1,13 @@
-export const ipfsGet = (aUrl, aCallback) => {
-    const anHttpRequest = new XMLHttpRequest();
-    anHttpRequest.onreadystatechange = function() {
-      if (anHttpRequest.readyState === 4 && anHttpRequest.status === 200)
-        aCallback(anHttpRequest.responseText);
+const axios = require('axios');
+
+export const ipfsGet = async (url) => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_IPFS_URL + url)
+      return response.data
+    } catch(error) {
+        console.log(error)
+        return null
     }
-    anHttpRequest.open( "GET", process.env.REACT_APP_IPFS_URL + aUrl, true );
-    anHttpRequest.send( null );
 }
-    
+
+

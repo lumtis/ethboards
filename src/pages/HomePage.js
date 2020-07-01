@@ -36,7 +36,7 @@ class HomePage extends Component {
               width: '40%',
           }}></img>
           <div style={{textAlign: 'center', marginTop: '200px', marginBottom: '50px'}}>
-            <h1>A simple platform to create games on Ethereum</h1>
+            <h1>A simple platform to create games on Ethereum ♟️</h1>
           </div>
           <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
           <Link to="/board/"><button className="button" style={{
