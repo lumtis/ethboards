@@ -39,7 +39,7 @@ contract WhitePawn is Pawn, ChessPawn {
                 require(presentPawn != -1, "No pawn present");
                 require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
-                outState = state.movePawn(pawn, x, y);
+                outState = outState.movePawn(pawn, x, y);
 
             } else if (x >= 0 && x == oldX - 1) {
                 // Attack left
@@ -47,7 +47,7 @@ contract WhitePawn is Pawn, ChessPawn {
                 require(presentPawn != -1, "No pawn present");
                 require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
                 outState = state.removePawn(uint8(presentPawn));
-                outState = state.movePawn(pawn, x, y);
+                outState = outState.movePawn(pawn, x, y);
 
             } else {
                 revert("Impossible move");
