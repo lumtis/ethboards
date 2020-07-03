@@ -139,7 +139,107 @@ The method  *performMove()* is called by the *simulate()* method of the EthBoard
 
 ---
 
-### Under development
+### Board example: Simplified Chess
+
+Chess is a perfect example of an implementable game through the platform. Each player must move one piece every turn, each piece has a limited number of possible moves.
+
+For simplification, **Simplified Chess** is a chess game where only the basic moves are authorized. There is no castling for example. Also, to win a game, a player must capture the opponent's king instead of checkmating it. This is because, in a smart contract point of view, it's simpler and cheaper to verify a piece has been captured instead of checking it is checkmated.
+
+Another reason, to implement Simplified rules is that Chess is a good example to show how a game can be implemented, however, it is a bad example for a game that would be played on Mainnet because the game is too vulnerable to CPU. Actual games, with money at stake, on Mainnet, should be computer-resistant, which could be possible to implement with more complex rules, larger boards and randomness features.
+
+#### Pawns
+
+The available pawns are the classic pieces from Chess. The implementations can be [found here](https://github.com/ltacker/ethboards/tree/master/contracts).
+The white and the black version of each piece needs a different implementation since it has different rules (a white piece can only be moved by player A, it can only capture black pieces)
+
+Here is the example of the implementation of the white king:
+
+```
+pragma solidity 0.5.16;
+
+import "./ChessPawn.sol";
+import "../Pawn.sol";
+import "../StateController.sol";
+
+contract WhiteKing is Pawn, ChessPawn {
+    using StateController for uint8[121];
+
+    function getMetadata() external view returns (string memory etadata) {
+        return '/ipfs/QmPzogdBcwRo5Lm81R65LW5gweonwFMaphBjYpQk6PxJWV';
+    }
+    function getMoveNumber() external pure returns(uint8) {
+        return 1;
+    }
+
+    function performMove(
+        uint8 player,
+        uint8 pawn,
+        uint8 moveType,
+        uint8 x,
+        uint8 y,
+        uint8[121] calldata state
+    ) external pure returns(uint8[121] memory outState) {
+        require(moveType == 0, "Pawn contains only one move");
+        require(!isFoe(state, player, pawn), "Player can't move a white pawn");
+        require(x<8 || y<8, "Move out of bound");
+
+        // Get old positions
+        (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
+        require(x!=oldX || y!=oldY, "Must be a different position");
+        require(
+            abs(int8(x)-int8(oldX)) < 2 && abs(int8(y)-int8(oldY)) < 2,
+            "Can only move to a next box"
+        );
+
+        // If a foe is present in the destination, kill it
+        int8 presentPawn = state.getPawnAt(x, y);
+        if (presentPawn != -1) {
+            require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
+            outState = state.removePawn(uint8(presentPawn));
+            outState = outState.movePawn(pawn, x, y);
+        } else {
+            outState = state.movePawn(pawn, x, y);
+        }
+
+        return outState;
+    }
+}
+```
+
+#### Board
+
+The board contract must implement the function that determines if a player won the game. For the Simplified Chess rules, this is fairly simple, we only have to check if the black king has been captured (player A) won or the white king has been captured (player B won).
+
+The implementation of the contract function is as follows:
+
+```
+
+pragma solidity 0.5.16;
+
+import "../Board.sol";
+import "../StateController.sol";
+
+contract ChessBoard is Board {
+    using StateController for uint8[121];
+
+    // This is no real chess, we check if the king has been killed to determine the victory
+    function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool) {
+        if (player == 0) {
+            // The player is A therefore the black king must be kill
+            return !state.isAlive(1);
+        } else {
+            // White king must be killed
+            return !state.isAlive(0);
+        }
+    }
+}
+```
+
+Every board that use the Simplified Chess contract must append the white king and the black king as first in the board (so that the white king has index 0 and the black king has index 1 when checking if captured)
+
+---
+
+### Further development
 
 - Time out capability when a player stop playing and block the game.
 - Randomness
