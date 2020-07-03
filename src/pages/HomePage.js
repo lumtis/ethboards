@@ -52,6 +52,9 @@ class HomePage extends Component {
               fontSize: '30px',
             }}>Light Paper</button></a>
           </div>
+          <div style={{textAlign: 'center', marginTop: '200px', marginBottom: '50px'}}>
+            <p style={{color: '#D82600'}}>⚠️ You must be connected to Rinkeby network</p>
+          </div>
         </div>
       </div>
     );
