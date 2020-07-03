@@ -9,7 +9,8 @@ class PawnInfo extends Component {
 
         this.state = {
             imageLink: "",
-            name: ""
+            name: "",
+            etherscanLink: "",
         }
     }
 
@@ -41,15 +42,34 @@ class PawnInfo extends Component {
                 this.setState({name: response.toString('utf8')})
             }
         }
+
+        // Get the etherscan link
+        const network = await web3.eth.net.getId()
+
+        if (network === 4) {
+            // Rinkeby
+            const etherscanLink = 'https://rinkeby.etherscan.io/address/' + pawnAddress
+            this.setState({etherscanLink})
+        } else if (network === 1) {
+            // Mainnet
+            const etherscanLink = 'https://etherscan.io/address/' + pawnAddress
+            this.setState({etherscanLink})
+        }
     }
 
     render() {
-        const {imageLink, name} = this.state
+        const {imageLink, name, etherscanLink} = this.state
         let image = null
         if (imageLink) {
             image = <img src={imageLink} alt="Pawn" style={{width: '50px'}}></img>
         }
         
+        let nameComp = null
+        if (etherscanLink) {
+            nameComp = <a href={etherscanLink}><h1>{name}</h1></a>
+        } else {
+            nameComp = <h1>{name}</h1>
+        }
 
         return (
             <div className="row" style={{padding: '10px'}}>
@@ -57,7 +77,7 @@ class PawnInfo extends Component {
                     {image}
                 </div>
                 <div className="col-md-8">
-                    <h1>{name}</h1>
+                    {nameComp}
                 </div>
             </div>
         )
