@@ -3,7 +3,7 @@ ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Credentials "[\"true\"]"
 ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods "[\"PUT\", \"POST\", \"GET\"]"
 
-#Add filesls
+#Add files
 
 sleep 5
 ipfs add -r chess/blackBishop
