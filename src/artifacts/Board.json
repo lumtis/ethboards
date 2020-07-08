@@ -1,0 +1,399 @@
+{
+  "contractName": "Board",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "player",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8[121]",
+          "name": "state",
+          "type": "uint8[121]"
+        }
+      ],
+      "name": "checkVictory",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":\"Board\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x95e96b41d7bbaf2ed2d5a298147d0f97e483caa3ca47c30243dd32a548983560\",\"urls\":[\"bzz-raw://d2fab231c4714b8c501b9dc9c22936105e0ce2af1f39ca841c40aed03f2e12b9\",\"dweb:/ipfs/QmULCAcWH3KDctMN9Ab4FPWvPBaJ7sKuj8e2JCxTgaJYgh\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.5.16;\n\ninterface Board {\n    function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool);\n}",
+  "sourcePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
+  "ast": {
+    "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
+    "exportedSymbols": {
+      "Board": [
+        13
+      ]
+    },
+    "id": 14,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 13,
+        "linearizedBaseContracts": [
+          13
+        ],
+        "name": "Board",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 12,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkVictory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3,
+                  "name": "player",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "69:12:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 2,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "69:5:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7,
+                  "name": "state",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "83:25:0",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint8_$121_calldata_ptr",
+                    "typeString": "uint8[121]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4,
+                      "name": "uint8",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "83:5:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "id": 6,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "313231",
+                      "id": 5,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "89:3:0",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_121_by_1",
+                        "typeString": "int_const 121"
+                      },
+                      "value": "121"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "83:10:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                      "typeString": "uint8[121]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "68:41:0"
+            },
+            "returnParameters": {
+              "id": 11,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "132:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 9,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "132:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "131:6:0"
+            },
+            "scope": 13,
+            "src": "47:91:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 14,
+        "src": "25:115:0"
+      }
+    ],
+    "src": "0:140:0"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
+    "exportedSymbols": {
+      "Board": [
+        13
+      ]
+    },
+    "id": 14,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".16"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:0"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 13,
+        "linearizedBaseContracts": [
+          13
+        ],
+        "name": "Board",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 12,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkVictory",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3,
+                  "name": "player",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "69:12:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 2,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "69:5:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7,
+                  "name": "state",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "83:25:0",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint8_$121_calldata_ptr",
+                    "typeString": "uint8[121]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 4,
+                      "name": "uint8",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "83:5:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "id": 6,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "313231",
+                      "id": 5,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "89:3:0",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_121_by_1",
+                        "typeString": "int_const 121"
+                      },
+                      "value": "121"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "83:10:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                      "typeString": "uint8[121]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "68:41:0"
+            },
+            "returnParameters": {
+              "id": 11,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12,
+                  "src": "132:4:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 9,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "132:4:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "131:6:0"
+            },
+            "scope": 13,
+            "src": "47:91:0",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 14,
+        "src": "25:115:0"
+      }
+    ],
+    "src": "0:140:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.2.0",
+  "updatedAt": "2020-07-02T09:40:58.185Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
