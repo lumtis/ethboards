@@ -1,10 +1,14 @@
-pragma solidity 0.5.16;
+pragma solidity 0.6.11;
 
 import "./Board.sol";
 import "./BoardHandler.sol";
 import "./Pawn.sol";
 import "./StateController.sol";
 
+/**
+ * @title EthBoards
+ * @notice The contract for the logical flow of games, simulate turns, check turns legitimacy and claim victory
+*/
 contract EthBoards {
     using StateController for uint8[121];
 
@@ -56,7 +60,7 @@ contract EthBoards {
       bytes32 r,
       bytes32 s,
       uint8 v
-      ) public pure returns (address recovered) {
+      ) public pure returns (address) {
 
         // Convert to uint for keccak256 function
         uint[121] memory inStateUint;
@@ -81,12 +85,12 @@ contract EthBoards {
      * @param boardHandlerAddress the address of the Board Handler contract
      * @param boardId the id of the board
      * @param gameId the id of the game
-     * @param the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param initialTurnNumber the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
      * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
      * @param r the two last r components of the signature
      * @param s the two last s components of the signature
      * @param v the two last v components of the signature
-     * @param state the input state where we start checking the legitimacy of the victorious state
+     * @param inputState the input state where we start checking the legitimacy of the victorious state
     */
     function claimVictory(
         address boardHandlerAddress,

@@ -1,4 +1,4 @@
-pragma solidity 0.5.16;
+pragma solidity 0.6.11;
 
 /**
  * @title Board Handler
@@ -356,7 +356,7 @@ contract BoardHandler {
     /**
      * @notice Get the initial state of a board
      * @param boardId id of the board
-     * @return the initial state of the board
+     * @return state the initial state of the board
     */
     function getInitialState(uint boardId) public view returns(uint8[121] memory state) {
         require(boardId < boardNumber, "The board doesn't exist");
@@ -392,7 +392,8 @@ contract BoardHandler {
     /**
      * @notice Check if a player is currently waiting to play a game on a board
      * @param boardId id of the board
-     * @return true if a player is currently waiting, address of this player
+     * @return isWaiting true if a player is currently waiting
+     * @return waitingPlayer address of this player
     */
     function isWaitingPlayer(uint boardId) public view returns(bool isWaiting, address waitingPlayer) {
         require(boardId < boardNumber, "The board doesn't exist");

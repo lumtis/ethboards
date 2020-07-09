@@ -1,4 +1,4 @@
-pragma solidity 0.5.16;
+pragma solidity 0.6.11;
 
 import "./ChessPawn.sol";
 import "../Pawn.sol";
@@ -7,10 +7,10 @@ import "../StateController.sol";
 contract WhitePawn is Pawn, ChessPawn {
     using StateController for uint8[121];
 
-    function getMetadata() external view returns (string memory etadata) {
+    function getMetadata() external override view returns (string memory etadata) {
         return '/ipfs/QmaWxfYRrwRdoNnyn9zdGgcE7hDZZsm1c4nYkjsv4EXqtE';
     }
-    function getMoveNumber() external pure returns(uint8) {
+    function getMoveNumber() external override pure returns(uint8) {
         return 1;
     }
 
@@ -21,7 +21,7 @@ contract WhitePawn is Pawn, ChessPawn {
         uint8 x,
         uint8 y,
         uint8[121] calldata state
-    ) external pure returns(uint8[121] memory outState) {
+    ) external override pure returns(uint8[121] memory outState) {
         require(moveType == 0, "Pawn contains only one move");
         require(!isFoe(state, player, pawn), "Player can't move a white pawn");
 
