@@ -1,5 +1,9 @@
 pragma solidity 0.5.16;
 
+/**
+ * @title Board Handler
+ * @notice The storage contract, store the informations about boards and games
+*/
 contract BoardHandler {
 
     ///////////////////////////////////////////////////////////////
@@ -105,7 +109,11 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Board administration
 
-    // Create a new board
+    /**
+     * @notice Create a new board
+     * @param name name of the board
+     * @param boardContract address of the smart contract that represents the board
+    */
     function createBoard(string memory name, address boardContract) public {
         // Create the board
         Board memory newBoard;
@@ -123,7 +131,12 @@ contract BoardHandler {
         boardNumber += 1;
     }
 
-    // TODO: Check contract contains the function signature
+    /**
+     * @notice Add a new pawn type for the board, pawn type represents the behavior of a pawn in the board, there can be several occurence of the smae pawn type on the game
+     * @param boardId id of the board
+     * @param pawnTypeAddress address of the smart contract that represents the pawn
+     // TODO: Check contract contains the function signature
+    */
     function addPawnTypeToBoard(uint boardId, address pawnTypeAddress) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
@@ -136,7 +149,14 @@ contract BoardHandler {
         emit PawnTypeAdded(boardId, pawnTypeAddress);
     }
 
-    // Add list of pawns to the board
+    /**
+     * @notice Add pawns onto the board, up to 10 pawns can be added
+     * @param boardId id of the board
+     * @param x array that represents the x coordinates where to add the pawns
+     * @param y array that represents the y coordinates where to add the pawns
+     * @param pawnType array that represents the pawn types of the pawns to add
+     * @param nbPawn number of pawn to add
+    */
     function addPawnsToBoard(
         uint boardId,
         uint8[10] memory x,
@@ -166,7 +186,10 @@ contract BoardHandler {
         boards[boardId].pawnNumber += nbPawn;
     }
 
-    // Remove all pawn for a board
+    /**
+     * @notice Remove all pawn for a board, this board must not be deployed yet
+     * @param boardId id of the board
+    */
     function resetBoard(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
@@ -175,8 +198,10 @@ contract BoardHandler {
         boards[boardId].pawnNumber = 0;
     }
 
-    // Deploy a board
-    // Once deployed, no pawn can be added to the board anymore and game can be started from the board
+    /**
+     * @notice Deploy a board, once deployed, no pawn can be added to the board anymore and game can be started from the board
+     * @param boardId id of the board
+    */
     function deployBoard(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(!boards[boardId].deployed, "The board is already deployed");
@@ -189,11 +214,10 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Game
 
-    // Join a new game on a board
-    // When a player joins a game, he's in the waiting room for the game
-    // If someone is present in the waiting room, the game is started against this player
-    // This current model will be changed in the future
-    // TODO: Join game callback
+    /**
+     * @notice Join a new game on a board. When a player joins a game, he's in the waiting room for the game, if someone is present in the waiting room, the game is started against this player
+     * @param boardId id of the board
+    */
     function joinGame(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
         require(boards[boardId].deployed, "The board is not deployed");
@@ -220,9 +244,12 @@ contract BoardHandler {
         }
     }
 
-    // Finish a game
-    // This function can only be called by the ethBoards contract, this contract ensure the winner is legit
-    // TODO: Add callback when win
+    /**
+     * @notice Finish a game, this function can only be called by the ethBoards contract, this contract ensure the winner is legit
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param winner player that won the game (0 or 1)
+    */
     function finishGame(uint boardId, uint gameId, uint8 winner) public fromEthBoards {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -249,29 +276,50 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Board information
 
-    // Number of board
+    /**
+     * @notice Get the number of boards
+     * @return number of boards
+    */
     function getBoardNumber() public view returns(uint) {
         return boardNumber;
     }
 
+    /**
+     * @notice Get the address of the smart contract of the board
+     * @param boardId id of the board
+     * @return address of the smart contract of the board
+    */
     function getBoardContractAddress(uint boardId) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].boardContract;
     }
 
-    // Check if a board is deployed
+    /**
+     * @notice Check if a board is deployed and games can be started on it
+     * @param boardId id of the board
+     * @return true if the board is deployed
+    */
     function isDeployed(uint boardId) public view returns(bool) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].deployed;
     }
 
-    // Get the number of pawn type in the board
+    /**
+     * @notice Get the number of pawn types on a board
+     * @param boardId id of the board
+     * @return number of pawn types on a board
+    */
     function getBoardPawnTypeNumber(uint boardId) public view returns(uint8) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].pawnTypeNumber;
     }
 
-    // Get the address of a pawn type
+    /**
+     * @notice Get pawn smart contract of a specific pawn type in a board
+     * @param boardId id of the board
+     * @param pawnType the index of the pawn type
+     * @return address of the pawn smart contract
+    */
     function getBoardPawnTypeContract(uint boardId, uint8 pawnType) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(pawnType < boards[boardId].pawnTypeNumber, "The pawn type doesn't exist");
@@ -279,14 +327,23 @@ contract BoardHandler {
         return boards[boardId].pawnTypeAddress[pawnType];
     }
 
-    // Get the number of pawn
+    /**
+     * @notice Get the number of pawns placed on a board
+     * @param boardId id of the board
+     * @return number of pawns placed on a board
+    */
     function getBoardPawnNumber(uint boardId) public view returns(uint8) {
         require(boardId < boardNumber, "The board doesn't exist");
 
         return boards[boardId].pawnNumber;
     }
 
-    // Get the contract of pawn
+    /**
+     * @notice Get pawn smart contract of a specific pawn placed on a board
+     * @param boardId id of the board
+     * @param pawnIndex the index of the pawn placed on the board
+     * @return address of the pawn smart contract
+    */
     function getBoardPawnTypeContractFromPawnIndex(uint boardId, uint8 pawnIndex) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(pawnIndex < boards[boardId].pawnNumber, "The pawn doesn't exist");
@@ -296,7 +353,11 @@ contract BoardHandler {
         return boards[boardId].pawnTypeAddress[pawnType];
     }
 
-    // Get the initial state of the board
+    /**
+     * @notice Get the initial state of a board
+     * @param boardId id of the board
+     * @return the initial state of the board
+    */
     function getInitialState(uint boardId) public view returns(uint8[121] memory state) {
         require(boardId < boardNumber, "The board doesn't exist");
 
@@ -318,11 +379,21 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Game information
 
+    /**
+     * @notice Get the number of game occurences of a board
+     * @param boardId id of the board
+     * @return the number of game occurences of the board
+    */
     function getGameNumber(uint boardId) public view returns(uint) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].gameCount;
     }
 
+    /**
+     * @notice Check if a player is currently waiting to play a game on a board
+     * @param boardId id of the board
+     * @return true if a player is currently waiting, address of this player
+    */
     function isWaitingPlayer(uint boardId) public view returns(bool isWaiting, address waitingPlayer) {
         require(boardId < boardNumber, "The board doesn't exist");
 
@@ -333,6 +404,12 @@ contract BoardHandler {
         return (isWaiting, boards[boardId].waitingPlayer);
     }
 
+    /**
+     * @notice Check if a specifc game of a board is finished
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @return true if the game has been finished, revert if the game doesn't exist
+    */
     function isGameOver(uint boardId, uint gameId) public view returns(bool) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -340,6 +417,13 @@ contract BoardHandler {
         return boards[boardId].games[gameId].over;
     }
 
+    /**
+     * @notice Get the address of a player in the game
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param turnNumber the number of the current turn in the game, even number means player A, odd number means player B
+     * @return addres of the player
+    */
     function getGamePlayerAddress(uint boardId, uint gameId, uint turnNumber) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -356,6 +440,13 @@ contract BoardHandler {
         return playerAddress;
     }
 
+    /**
+     * @notice Check from the player address, if it's player A or B
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param playerAddress address of the player
+     * @return 0 if it's player A, 1 if it's player B, -1 if this address is not part of the game
+    */
     function getGamePlayerIndex(uint boardId, uint gameId, address playerAddress) public view returns(int) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");

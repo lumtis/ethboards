@@ -8,7 +8,15 @@ import "./StateController.sol";
 contract EthBoards {
     using StateController for uint8[121];
 
-    // Simulate the turn from the board, user's move and input state
+    /**
+     * @notice Simulate the state transition when performing a move on the game
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param player that player that simulates the move (0 or 1)
+     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param state the state of the game
+     * @return the new state once the move has been performed, reverted if the move is not possible
+    */
     function simulate(
         address boardHandlerAddress,
         uint boardId,
@@ -31,7 +39,16 @@ contract EthBoards {
         return pawn.performMove(player, move[0], move[1], move[2], move[3], state);
     }
 
-    // Get from a turn set (nonce, move, input state) the address of the signer
+    /**
+     * @notice Get from a turn signature (nonce, move, input state) the address of the signer, allow to verify if the player performing a move has correctly signed it
+     * @param state the input state
+     * @param nonce triplet that uniquely identifies the turn (board id, game id, turn number)
+     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the r component of the signature
+     * @param s the s component of the signature
+     * @param v the v component of the signature
+     * @return the address of the signer
+    */
     function getTurnSignatureAddress(
       uint8[121] memory state,
       uint[3] memory nonce,
@@ -58,7 +75,19 @@ contract EthBoards {
         return ecrecover(message, v, r, s);
     }
 
-    // Test the victory of the board and call the terminate the game if victory
+    /**
+     * @notice Allow a player to claim victory if the state of the game is victorious for the player, if it's the case, the finishGame of the board handler contract is called
+     * @dev To check if the state is victorious, we give the two last turns to ensure the state is legitime (signed by the two players)
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+     * @param the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the two last r components of the signature
+     * @param s the two last s components of the signature
+     * @param v the two last v components of the signature
+     * @param state the input state where we start checking the legitimacy of the victorious state
+    */
     function claimVictory(
         address boardHandlerAddress,
         uint boardId,
