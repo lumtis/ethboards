@@ -1,7 +1,7 @@
+const { expect, use } = require('chai')
 const { Contract } = require('ethers')
 const { deployContract, MockProvider, solidity } = require('ethereum-waffle')
-const StateController = require('../../build/contracts/StateController.json')
-const { expect, use } = require('chai')
+const StateController = require('../../waffle/StateController.json')
 
 use(solidity)
 
@@ -24,6 +24,15 @@ describe('StateController', () => {
   })
 
   it('can get pawns number', async () => {
+    const state = getEmptyState()
+    expect(await stateController.getPawnNumber(state)).to.equal(0)
+
+    state[0] = 10
+
+    expect(await stateController.getPawnNumber(state)).to.equal(10)
+  })
+
+  it.skip('can get the position of pawns', async () => {
     const state = getEmptyState()
     expect(await stateController.getPawnNumber(state)).to.equal(0)
 
