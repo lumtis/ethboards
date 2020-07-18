@@ -28,30 +28,30 @@ class PawnBar extends Component {
         const {drizzle, initialized} = drizzleContext
         const {boardId} = this.state
 
-        if (initialized) {
-          const web3 = drizzle.web3
-          const boardHandlerInfo = drizzle.contracts.BoardHandler
-          const boardHandler = new web3.eth.Contract(boardHandlerInfo.abi, boardHandlerInfo.address)
+        // if (initialized) {
+        //   const web3 = drizzle.web3
+        //   const boardHandlerInfo = drizzle.contracts.BoardHandler
+        //   const boardHandler = new web3.eth.Contract(boardHandlerInfo.abi, boardHandlerInfo.address)
     
-          const events = await boardHandler.getPastEvents('PawnTypeAdded', {
-            fromBlock: 0,
-            toBlock: 'latest',
-            filter: {
-                boardId
-            }
-          })
+        //   const events = await boardHandler.getPastEvents('PawnTypeAdded', {
+        //     fromBlock: 0,
+        //     toBlock: 'latest',
+        //     filter: {
+        //         boardId
+        //     }
+        //   })
     
-          if (events.length) {
-            const pawnInfos = events.map(rawEvent => {
-              return <PawnInfo 
-                pawnAddress={rawEvent.returnValues.pawnTypeContract}
-                drizzleContext={drizzleContext}
-              />
-            })
+        //   if (events.length) {
+        //     const pawnInfos = events.map(rawEvent => {
+        //       return <PawnInfo 
+        //         pawnAddress={rawEvent.returnValues.pawnTypeContract}
+        //         drizzleContext={drizzleContext}
+        //       />
+        //     })
     
-            this.setState({pawnInfos})
-          }
-        }
+        //     this.setState({pawnInfos})
+        //   }
+        // }
       }
 
     render() {

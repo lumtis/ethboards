@@ -70,4 +70,3 @@ typings/
 # Contracts builds
 waffle/
 build/
-src/artifacts

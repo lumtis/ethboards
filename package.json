@@ -12,7 +12,7 @@
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",
     "serve": "^11.3.2",
-    "truffle": "^5.1.28",
+    "truffle": "^5.1.35",
     "truffle-contract": "^3.0.0",
     "truffle-solidity-loader": "0.0.8",
     "web3": "^1.2.9",
@@ -37,7 +37,8 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
-    "sha3": "^1.2.2"
+    "sha3": "^1.2.2",
+    "solidity-docgen": "^0.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -53,7 +54,8 @@
     "clean": "rm -rf build",
     "clean:artifact": "rm -rf src/artifacts",
     "clean:ganache": "rm -rf .ganache",
-    "import:truffle": "cp -r build/contracts src/artifacts"
+    "import:truffle": "cp -r build/contracts src/artifacts",
+    "docs": "solidity-docgen"
   },
   "jest": {
     "collectCoverageFrom": [
