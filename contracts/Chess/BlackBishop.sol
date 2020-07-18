@@ -7,7 +7,7 @@ import "../StateController.sol";
 contract BlackBishop is Pawn, ChessPawn {
     using StateController for uint8[121];
 
-    function getMetadata() external override view returns (string memory metadata) {
+    function getMetadata() external override view returns (string memory) {
         return '/ipfs/QmWYTsUX7xBzYx1ARTdqPj2Zwj4fQQd7hrhZyJrnAkNzyi';
     }
     function getMoveNumber() external override pure returns(uint8) {

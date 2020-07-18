@@ -7,7 +7,7 @@ import "../StateController.sol";
 contract WhiteQueen is Pawn, ChessPawn {
     using StateController for uint8[121];
 
-    function getMetadata() external override view returns (string memory etadata) {
+    function getMetadata() external override view returns (string memory) {
         return '/ipfs/QmZDGiNuY9ZVnCU6tZmCqjJ9Bawt3btSPKSiWyfskqJwdy';
     }
     function getMoveNumber() external override pure returns(uint8) {

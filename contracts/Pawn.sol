@@ -25,7 +25,7 @@ interface Pawn {
      * @param x x coordinate to perform the move into
      * @param y y coordinate to perform the move into
      * @param state the state of the game
-     * @return the new state once the move has been performed, reverted if the move is not possible
+     * @return outState the new state once the move has been performed, reverted if the move is not possible
     */
     function performMove(
         uint8 player,
@@ -34,5 +34,5 @@ interface Pawn {
         uint8 x,
         uint8 y,
         uint8[121] calldata state
-    ) external pure returns(uint8[121] memory);
+    ) external pure returns(uint8[121] memory outState);
 }

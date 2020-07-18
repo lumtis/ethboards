@@ -36,7 +36,7 @@ contract EthBoards {
 
         // Get the address of the pawn
         uint8 pawnType = state.getPawnType(move[0]);
-        address pawnAddress = boardHandler.getBoardPawnTypeContract(boardId, pawnType);
+        address pawnAddress = boardHandler.getBoardPawnContract(boardId, pawnType);
         Pawn pawn = Pawn(pawnAddress);
 
         // Perform the move of the pawn

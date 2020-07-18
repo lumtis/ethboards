@@ -23,8 +23,8 @@ contract PawnSetRegistry {
      * @param pawns addresses of the pawn to add
      * @param pawnNb number of the pawn added
     */
-    function createPawnSet(string memory name, address[255] pawns, uint8 pawnNb) public {
-        PawnSet pawnSet = new PawnSet(name, pawns, pawnNb);
+    function createPawnSet(string memory name, address[255] memory pawns, uint8 pawnNb) public {
+        PawnSet pawnSet = new PawnSet(pawns, pawnNb);
 
         emit PawnSetCreated(address(pawnSet), name);
     }

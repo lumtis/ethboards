@@ -26,6 +26,11 @@ module.exports = {
       // gasPrice: 2000000000
     }
   },
+  compilers: {
+    solc: {
+      version: "0.6.11",
+    },
+  },
   plugins: [
     "@chainsafe/truffle-plugin-abigen"
   ]

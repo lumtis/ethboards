@@ -5,11 +5,10 @@ pragma solidity 0.6.11;
  * @notice Register a list of pawns used by a board
 */
 contract PawnSet {
-    string name;
     address[] pawns;
     uint8 pawnNb;
 
-    constructor(string memory _name, address[255] _pawns, uint8 _pawnNb) public {
+    constructor(address[255] memory _pawns, uint8 _pawnNb) public {
         // At least one pawn
         require(_pawnNb > 0, "No pawn in the pawn set");
         // Maximum number of pawns in a pawn set
@@ -19,16 +18,7 @@ contract PawnSet {
             pawns.push(_pawns[i]);
         }
 
-        name = _name;
         pawnNb = _pawnNb;
-    }
-
-    /**
-     * @notice Get the name of the pawn set
-     * @return name of the pawn set
-    */
-    function getName() public view returns(string) {
-        return name;
     }
 
     /**

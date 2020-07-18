@@ -58,7 +58,7 @@ contract BoardHandler {
     /// Structures
 
     struct PawnPosition {
-        uint8 pawnType;
+        uint8 pawnIndex;
         uint8 x;
         uint8 y;
     }
@@ -108,7 +108,7 @@ contract BoardHandler {
      * @param x array that represents the x coordinates where to add the pawns
      * @param y array that represents the y coordinates where to add the pawns
      * @param pawnIndex array that represents the pawn index from the set of the pawns to add
-     * @param nbPawn number of pawn to add
+     * @param pawnNb number of pawn to add
     */
     function createBoard(
         string memory name,
@@ -129,6 +129,7 @@ contract BoardHandler {
         newBoard.pawnNumber = pawnNb;
         newBoard.gameCount = 0;
         newBoard.waitingPlayer = address(0);
+        boards.push(newBoard);
 
         // Get the pawn set to verify pawn indexes are correct
         PawnSet pawnSet = PawnSet(pawnSetAddress);
@@ -140,14 +141,13 @@ contract BoardHandler {
             require(pawnIndex[i] < pawnSetPawnNb, "The pawn doesn't exist");
 
             PawnPosition memory newPawn;
-            newPawn.pawnType = pawnType[i];
+            newPawn.pawnIndex = pawnIndex[i];
             newPawn.x = x[i];
             newPawn.y = y[i];
 
-            newBoard.pawnPosition[i] = newPawn;
+            boards[boardNumber].pawnPosition[i] = newPawn;
         }
 
-        boards.push(newBoard);
         emit BoardCreated(msg.sender, boardNumber, name);
         boardNumber += 1;
     }
@@ -255,7 +255,7 @@ contract BoardHandler {
         require(boardId < boardNumber, "The board doesn't exist");
 
         // Get the pawn set
-        PawnSet pawnSet = PawnSet(pawnSetAddress);
+        PawnSet pawnSet = PawnSet(boards[boardId].pawnSet);
 
         return pawnSet.getPawn(pawnIndex);
     }
@@ -273,7 +273,7 @@ contract BoardHandler {
 
         for(uint8 i = 0; i<boards[boardId].pawnNumber; i++) {
              // Pawn type
-            state[1+i] = boards[boardId].pawnPosition[i].pawnType+1;
+            state[1+i] = boards[boardId].pawnPosition[i].pawnIndex+1;
             // Pawn x position
             state[41+i] = boards[boardId].pawnPosition[i].x;
             // Pawn y position
