@@ -2,7 +2,6 @@
   "contractName": "Board",
   "abi": [
     {
-      "constant": true,
       "inputs": [
         {
           "internalType": "uint8",
@@ -23,71 +22,87 @@
           "type": "bool"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":\"Board\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x95e96b41d7bbaf2ed2d5a298147d0f97e483caa3ca47c30243dd32a548983560\",\"urls\":[\"bzz-raw://d2fab231c4714b8c501b9dc9c22936105e0ce2af1f39ca841c40aed03f2e12b9\",\"dweb:/ipfs/QmULCAcWH3KDctMN9Ab4FPWvPBaJ7sKuj8e2JCxTgaJYgh\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}}},\"title\":\"Board\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"}},\"notice\":\"The interface that must implement board's smart contract, contains one function to check victory TODO: Add function to retrieve metadata\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":\"Board\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x909afff925083ef0a945ced12a8b0a5e39ecd6bc8182b08e4a85781a2b0455e9\",\"urls\":[\"bzz-raw://df1358e3cda02bde1f93a3f8b7952cea65e6c3a691f52b15a54d49cb5f30b16c\",\"dweb:/ipfs/Qmf92UmEGsxVTEmfwC7M7kABopAMC7MQ9icDcVhGQkQKTU\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
+  "immutableReferences": {},
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity 0.5.16;\n\ninterface Board {\n    function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool);\n}",
+  "source": "pragma solidity 0.6.11;\n\n/**\n * @title Board\n * @notice The interface that must implement board's smart contract, contains one function to check victory\n * TODO: Add function to retrieve metadata\n*/\ninterface Board {\n    /**\n     * @notice Check if the state of a game of the board is victorious for a player\n     * @param player the player we want to check as victorious\n     * @param state the state of the game\n     * @return true if the player is victorious, false otherwise\n    */\n    function checkVictory(uint8 player, uint8[121] calldata state) external view returns(bool);\n}",
   "sourcePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
   "ast": {
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
     "exportedSymbols": {
       "Board": [
-        13
+        15
       ]
     },
-    "id": 14,
+    "id": 16,
+    "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 1,
         "literals": [
           "solidity",
-          "0.5",
-          ".16"
+          "0.6",
+          ".11"
         ],
         "nodeType": "PragmaDirective",
         "src": "0:23:0"
       },
       {
+        "abstract": false,
         "baseContracts": [],
         "contractDependencies": [],
         "contractKind": "interface",
-        "documentation": null,
+        "documentation": {
+          "id": 2,
+          "nodeType": "StructuredDocumentation",
+          "src": "25:173:0",
+          "text": " @title Board\n @notice The interface that must implement board's smart contract, contains one function to check victory\n TODO: Add function to retrieve metadata"
+        },
         "fullyImplemented": false,
-        "id": 13,
+        "id": 15,
         "linearizedBaseContracts": [
-          13
+          15
         ],
         "name": "Board",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": null,
-            "documentation": null,
-            "id": 12,
+            "documentation": {
+              "id": 3,
+              "nodeType": "StructuredDocumentation",
+              "src": "221:264:0",
+              "text": " @notice Check if the state of a game of the board is victorious for a player\n @param player the player we want to check as victorious\n @param state the state of the game\n @return true if the player is victorious, false otherwise"
+            },
+            "functionSelector": "110f2501",
+            "id": 14,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkVictory",
             "nodeType": "FunctionDefinition",
+            "overrides": null,
             "parameters": {
-              "id": 8,
+              "id": 10,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3,
+                  "id": 5,
+                  "mutability": "mutable",
                   "name": "player",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "69:12:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "512:12:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -95,10 +110,10 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 2,
+                    "id": 4,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
-                    "src": "69:5:0",
+                    "src": "512:5:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint8",
                       "typeString": "uint8"
@@ -109,11 +124,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 7,
+                  "id": 9,
+                  "mutability": "mutable",
                   "name": "state",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "83:25:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "526:25:0",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -122,27 +139,27 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4,
+                      "id": 6,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
-                      "src": "83:5:0",
+                      "src": "526:5:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint8",
                         "typeString": "uint8"
                       }
                     },
-                    "id": 6,
+                    "id": 8,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 5,
+                      "id": 7,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "89:3:0",
+                      "src": "532:3:0",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_121_by_1",
@@ -151,7 +168,7 @@
                       "value": "121"
                     },
                     "nodeType": "ArrayTypeName",
-                    "src": "83:10:0",
+                    "src": "526:10:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
                       "typeString": "uint8[121]"
@@ -161,19 +178,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "68:41:0"
+              "src": "511:41:0"
             },
             "returnParameters": {
-              "id": 11,
+              "id": 13,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 10,
+                  "id": 12,
+                  "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "132:4:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "575:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -181,10 +200,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9,
+                    "id": 11,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "132:4:0",
+                    "src": "575:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -194,74 +213,90 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "131:6:0"
+              "src": "574:6:0"
             },
-            "scope": 13,
-            "src": "47:91:0",
+            "scope": 15,
+            "src": "490:91:0",
             "stateMutability": "view",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 14,
-        "src": "25:115:0"
+        "scope": 16,
+        "src": "199:384:0"
       }
     ],
-    "src": "0:140:0"
+    "src": "0:583:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
     "exportedSymbols": {
       "Board": [
-        13
+        15
       ]
     },
-    "id": 14,
+    "id": 16,
+    "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 1,
         "literals": [
           "solidity",
-          "0.5",
-          ".16"
+          "0.6",
+          ".11"
         ],
         "nodeType": "PragmaDirective",
         "src": "0:23:0"
       },
       {
+        "abstract": false,
         "baseContracts": [],
         "contractDependencies": [],
         "contractKind": "interface",
-        "documentation": null,
+        "documentation": {
+          "id": 2,
+          "nodeType": "StructuredDocumentation",
+          "src": "25:173:0",
+          "text": " @title Board\n @notice The interface that must implement board's smart contract, contains one function to check victory\n TODO: Add function to retrieve metadata"
+        },
         "fullyImplemented": false,
-        "id": 13,
+        "id": 15,
         "linearizedBaseContracts": [
-          13
+          15
         ],
         "name": "Board",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": null,
-            "documentation": null,
-            "id": 12,
+            "documentation": {
+              "id": 3,
+              "nodeType": "StructuredDocumentation",
+              "src": "221:264:0",
+              "text": " @notice Check if the state of a game of the board is victorious for a player\n @param player the player we want to check as victorious\n @param state the state of the game\n @return true if the player is victorious, false otherwise"
+            },
+            "functionSelector": "110f2501",
+            "id": 14,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkVictory",
             "nodeType": "FunctionDefinition",
+            "overrides": null,
             "parameters": {
-              "id": 8,
+              "id": 10,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3,
+                  "id": 5,
+                  "mutability": "mutable",
                   "name": "player",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "69:12:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "512:12:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -269,10 +304,10 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 2,
+                    "id": 4,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
-                    "src": "69:5:0",
+                    "src": "512:5:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint8",
                       "typeString": "uint8"
@@ -283,11 +318,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 7,
+                  "id": 9,
+                  "mutability": "mutable",
                   "name": "state",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "83:25:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "526:25:0",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -296,27 +333,27 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4,
+                      "id": 6,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
-                      "src": "83:5:0",
+                      "src": "526:5:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint8",
                         "typeString": "uint8"
                       }
                     },
-                    "id": 6,
+                    "id": 8,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 5,
+                      "id": 7,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "89:3:0",
+                      "src": "532:3:0",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_121_by_1",
@@ -325,7 +362,7 @@
                       "value": "121"
                     },
                     "nodeType": "ArrayTypeName",
-                    "src": "83:10:0",
+                    "src": "526:10:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
                       "typeString": "uint8[121]"
@@ -335,19 +372,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "68:41:0"
+              "src": "511:41:0"
             },
             "returnParameters": {
-              "id": 11,
+              "id": 13,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 10,
+                  "id": 12,
+                  "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12,
-                  "src": "132:4:0",
+                  "overrides": null,
+                  "scope": 14,
+                  "src": "575:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -355,10 +394,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9,
+                    "id": 11,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "132:4:0",
+                    "src": "575:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -368,32 +407,52 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "131:6:0"
+              "src": "574:6:0"
             },
-            "scope": 13,
-            "src": "47:91:0",
+            "scope": 15,
+            "src": "490:91:0",
             "stateMutability": "view",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 14,
-        "src": "25:115:0"
+        "scope": 16,
+        "src": "199:384:0"
       }
     ],
-    "src": "0:140:0"
+    "src": "0:583:0"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+    "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.2.0",
-  "updatedAt": "2020-07-02T09:40:58.185Z",
+  "schemaVersion": "3.2.2",
+  "updatedAt": "2020-07-18T14:36:07.903Z",
   "devdoc": {
-    "methods": {}
+    "kind": "dev",
+    "methods": {
+      "checkVictory(uint8,uint8[121])": {
+        "params": {
+          "player": "the player we want to check as victorious",
+          "state": "the state of the game"
+        },
+        "returns": {
+          "_0": "true if the player is victorious, false otherwise"
+        }
+      }
+    },
+    "title": "Board",
+    "version": 1
   },
   "userdoc": {
-    "methods": {}
+    "kind": "user",
+    "methods": {
+      "checkVictory(uint8,uint8[121])": {
+        "notice": "Check if the state of a game of the board is victorious for a player"
+      }
+    },
+    "notice": "The interface that must implement board's smart contract, contains one function to check victory TODO: Add function to retrieve metadata",
+    "version": 1
   }
 }
