@@ -1,5 +1,8 @@
 pragma solidity 0.6.11;
 
+import "./PawnSet.sol";
+
+
 /**
  * @title Board Handler
  * @notice The storage contract, store the informations about boards and games
@@ -13,21 +16,12 @@ contract BoardHandler {
     * Emitted when a new board is created
     * @param creator The creator of the board
     * @param boardId The id of the board
+    * @param name Name of the board
     */
     event BoardCreated(
         address indexed creator,
         uint indexed boardId,
         string name
-    );
-
-    /**
-    * Emitted when a new pawn type is added to a board
-    * @param boardId The id of the board
-    * @param pawnTypeContract The address of the contract of the pawn type
-    */
-    event PawnTypeAdded(
-        uint indexed boardId,
-        address pawnTypeContract
     );
 
     /**
@@ -78,12 +72,9 @@ contract BoardHandler {
     struct Board {
         uint id;
         address boardContract;
-        address creator;
         string name;
-        bool deployed;
-        uint8 pawnTypeNumber;
+        address pawnSet;
         uint8 pawnNumber;
-        mapping (uint8 => address) pawnTypeAddress;
         mapping (uint8 => PawnPosition) pawnPosition;
         uint gameCount;
         mapping (uint => Game) games;
@@ -113,102 +104,52 @@ contract BoardHandler {
      * @notice Create a new board
      * @param name name of the board
      * @param boardContract address of the smart contract that represents the board
+     * @param pawnSetAddress the address of the set of pawn to use for the board
+     * @param x array that represents the x coordinates where to add the pawns
+     * @param y array that represents the y coordinates where to add the pawns
+     * @param pawnIndex array that represents the pawn index from the set of the pawns to add
+     * @param nbPawn number of pawn to add
     */
-    function createBoard(string memory name, address boardContract) public {
+    function createBoard(
+        string memory name,
+        address boardContract,
+        address pawnSetAddress,
+        uint8[40] memory x,
+        uint8[40] memory y,
+        uint8[40] memory pawnIndex,
+        uint8 pawnNb
+    ) public {
+        require(pawnNb <= 40 && pawnNb > 0, "You can place maximum 40 pawns on the board");
+
         // Create the board
         Board memory newBoard;
         newBoard.id = boardNumber;
         newBoard.boardContract = boardContract;
-        newBoard.creator = msg.sender;
-        newBoard.deployed = false;
-        newBoard.pawnTypeNumber = 0;
-        newBoard.pawnNumber = 0;
+        newBoard.pawnSet = pawnSetAddress;
+        newBoard.pawnNumber = pawnNb;
         newBoard.gameCount = 0;
         newBoard.waitingPlayer = address(0);
-        boards.push(newBoard);
 
-        emit BoardCreated(msg.sender, boardNumber, name);
-        boardNumber += 1;
-    }
+        // Get the pawn set to verify pawn indexes are correct
+        PawnSet pawnSet = PawnSet(pawnSetAddress);
+        uint8 pawnSetPawnNb = pawnSet.getPawnNb();
 
-    /**
-     * @notice Add a new pawn type for the board, pawn type represents the behavior of a pawn in the board, there can be several occurence of the smae pawn type on the game
-     * @param boardId id of the board
-     * @param pawnTypeAddress address of the smart contract that represents the pawn
-     // TODO: Check contract contains the function signature
-    */
-    function addPawnTypeToBoard(uint boardId, address pawnTypeAddress) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
-        require(boards[boardId].pawnTypeNumber < 250, "You can add maximum 250 pawn types in a board");
-
-        boards[boardId].pawnTypeAddress[boards[boardId].pawnTypeNumber] = pawnTypeAddress;
-        boards[boardId].pawnTypeNumber += 1;
-
-        emit PawnTypeAdded(boardId, pawnTypeAddress);
-    }
-
-    /**
-     * @notice Add pawns onto the board, up to 10 pawns can be added
-     * @param boardId id of the board
-     * @param x array that represents the x coordinates where to add the pawns
-     * @param y array that represents the y coordinates where to add the pawns
-     * @param pawnType array that represents the pawn types of the pawns to add
-     * @param nbPawn number of pawn to add
-    */
-    function addPawnsToBoard(
-        uint boardId,
-        uint8[10] memory x,
-        uint8[10] memory y,
-        uint8[10] memory pawnType,
-        uint8 nbPawn
-    ) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
-        require(nbPawn <= 10 && nbPawn > 0, "You can add maximum 10 pawns at a time");
-        require(boards[boardId].pawnNumber + nbPawn <= 40, "The maximum amount of pawn is reached");
-
-        // Add pawns
-        for (uint8 i = 0; i < nbPawn; i++) {
+        // Place pawns
+        for (uint8 i = 0; i < pawnNb; i++) {
             require(x[i] < 8 && y[i] < 8, "The pawn position is out of bound");
-            require(pawnType[i] < boards[boardId].pawnTypeNumber, "The pawn doesn't exist");
+            require(pawnIndex[i] < pawnSetPawnNb, "The pawn doesn't exist");
 
             PawnPosition memory newPawn;
             newPawn.pawnType = pawnType[i];
             newPawn.x = x[i];
             newPawn.y = y[i];
 
-            boards[boardId].pawnPosition[boards[boardId].pawnNumber + i] = newPawn;
+            newBoard.pawnPosition[i] = newPawn;
         }
 
-        boards[boardId].pawnNumber += nbPawn;
-    }
-
-    /**
-     * @notice Remove all pawn for a board, this board must not be deployed yet
-     * @param boardId id of the board
-    */
-    function resetBoard(uint boardId) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can reset");
-
-        boards[boardId].pawnNumber = 0;
-    }
-
-    /**
-     * @notice Deploy a board, once deployed, no pawn can be added to the board anymore and game can be started from the board
-     * @param boardId id of the board
-    */
-    function deployBoard(uint boardId) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can deploy board");
-        require(boards[boardId].pawnNumber >= 2, "At least 2 pawns must be on the board");
-
-        boards[boardId].deployed = true;
+        boards.push(newBoard);
+        emit BoardCreated(msg.sender, boardNumber, name);
+        boardNumber += 1;
     }
 
     ///////////////////////////////////////////////////////////////
@@ -220,7 +161,6 @@ contract BoardHandler {
     */
     function joinGame(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
-        require(boards[boardId].deployed, "The board is not deployed");
 
         // If there is no waiting player yet
         if (boards[boardId].waitingPlayer == address(0)) {
@@ -295,39 +235,6 @@ contract BoardHandler {
     }
 
     /**
-     * @notice Check if a board is deployed and games can be started on it
-     * @param boardId id of the board
-     * @return true if the board is deployed
-    */
-    function isDeployed(uint boardId) public view returns(bool) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        return boards[boardId].deployed;
-    }
-
-    /**
-     * @notice Get the number of pawn types on a board
-     * @param boardId id of the board
-     * @return number of pawn types on a board
-    */
-    function getBoardPawnTypeNumber(uint boardId) public view returns(uint8) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        return boards[boardId].pawnTypeNumber;
-    }
-
-    /**
-     * @notice Get pawn smart contract of a specific pawn type in a board
-     * @param boardId id of the board
-     * @param pawnType the index of the pawn type
-     * @return address of the pawn smart contract
-    */
-    function getBoardPawnTypeContract(uint boardId, uint8 pawnType) public view returns(address) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(pawnType < boards[boardId].pawnTypeNumber, "The pawn type doesn't exist");
-
-        return boards[boardId].pawnTypeAddress[pawnType];
-    }
-
-    /**
      * @notice Get the number of pawns placed on a board
      * @param boardId id of the board
      * @return number of pawns placed on a board
@@ -339,18 +246,18 @@ contract BoardHandler {
     }
 
     /**
-     * @notice Get pawn smart contract of a specific pawn placed on a board
+     * @notice Get pawn smart contract of a specific pawn in the pawn set of the board
      * @param boardId id of the board
-     * @param pawnIndex the index of the pawn placed on the board
+     * @param pawnIndex index of the pawn in the pawn set
      * @return address of the pawn smart contract
     */
-    function getBoardPawnTypeContractFromPawnIndex(uint boardId, uint8 pawnIndex) public view returns(address) {
+    function getBoardPawnContract(uint boardId, uint8 pawnIndex) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
-        require(pawnIndex < boards[boardId].pawnNumber, "The pawn doesn't exist");
 
-        uint8 pawnType = boards[boardId].pawnPosition[pawnIndex].pawnType;
+        // Get the pawn set
+        PawnSet pawnSet = PawnSet(pawnSetAddress);
 
-        return boards[boardId].pawnTypeAddress[pawnType];
+        return pawnSet.getPawn(pawnIndex);
     }
 
     /**

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import store from '../store'
 import {testSimulate} from '../utils/gameUtils'
+import {getPawnType} from '../utils/stateUtils'
 
 import Pawn from '../artifacts/Pawn.json'
 
@@ -21,15 +22,15 @@ class PawnSprite extends Component {
     }
 
     async componentDidMount() {
-        const {boardId} = this.state
+        const {boardState, boardId} = this.state
         const {pawn, drizzleContext} = this.props
         const {drizzle} = drizzleContext
         const {web3} = drizzle
 
         // Get the address of the pawn
-        const pawnAddress = await drizzle.contracts.BoardHandler.methods.getBoardPawnTypeContractFromPawnIndex(
+        const pawnAddress = await drizzle.contracts.BoardHandler.methods.getBoardPawnContract(
             boardId,
-            pawn
+            getPawnType(boardState, pawn)
         ).call()
 
         // Add the contract of the pawn
