@@ -16,16 +16,19 @@ contract PawnSetRegistry {
         address pawnSetAddress,
         string name
     );
-    
+
     /**
      * @notice Create a new pawn set
      * @param name name of the pawn set
      * @param pawns addresses of the pawn to add
      * @param pawnNb number of the pawn added
+     * @return address of the pawn set
     */
-    function createPawnSet(string memory name, address[255] memory pawns, uint8 pawnNb) public {
+    function createPawnSet(string memory name, address[255] memory pawns, uint8 pawnNb) public returns (address) {
         PawnSet pawnSet = new PawnSet(pawns, pawnNb);
 
         emit PawnSetCreated(address(pawnSet), name);
+
+        return address(pawnSet);
     }
 }
