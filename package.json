@@ -9,7 +9,7 @@
     "react-dev-utils": "^0.4.2",
     "react-scripts": "^3.4.1",
     "serve": "^11.3.2",
-    "truffle": "^5.1.28",
+    "truffle": "^5.1.35",
     "truffle-contract": "^3.0.0",
     "truffle-solidity-loader": "0.0.8"
   },
