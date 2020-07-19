@@ -1,7 +1,9 @@
 const EthBoards = artifacts.require("./EthBoards.sol");
 const BoardHandler = artifacts.require("./BoardHandler.sol");
-const StateController =  artifacts.require("./StateController.sol");
-const ChessBoard =  artifacts.require("./Board/ChessBoard.sol");
+const StateController = artifacts.require("./StateController.sol");
+const ChessBoard = artifacts.require("./Board/ChessBoard.sol");
+const PawnSetRegistry = artifacts.require("./PawnSetRegistry.sol");
+const PawnSet = artifacts.require("./PawnSet.sol");
 
 // Chess pawn
 const WhitePawn =  artifacts.require("./Board/WhitePawn.sol");
@@ -58,115 +60,80 @@ module.exports = async (deployer, network, accounts) => {
   await deployer.deploy(BlackQueen);
   await deployer.deploy(BlackKing);
 
-  // Deploy Boards
-  await deployChessBoard(boardHandler, accounts)
-  await deployLightBrigadeChessBoard(boardHandler, accounts)
-};
+  // Deploy pawn set register and create the Chess pawn set
+  const pawnSetRegistry = await deployer.deploy(PawnSetRegistry);
 
-const deployChessBoard = async (boardHandler, accounts) => {
-  // Create the chess board and pawns
-  await boardHandler.createBoard("Chess", ChessBoard.address);
-  await boardHandler.addPawnTypeToBoard(0, WhitePawn.address);
-  await boardHandler.addPawnTypeToBoard(0, WhiteRook.address);
-  await boardHandler.addPawnTypeToBoard(0, WhiteKnight.address);
-  await boardHandler.addPawnTypeToBoard(0, WhiteBishop.address);
-  await boardHandler.addPawnTypeToBoard(0, WhiteQueen.address);
-  await boardHandler.addPawnTypeToBoard(0, WhiteKing.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackPawn.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackRook.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackKnight.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackBishop.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackQueen.address);
-  await boardHandler.addPawnTypeToBoard(0, BlackKing.address);
+  const chessPawn = [
+    WhitePawn.address,
+    WhiteRook.address,
+    WhiteKnight.address,
+    WhiteBishop.address,
+    WhiteQueen.address,
+    WhiteKing.address,
+    BlackPawn.address,
+    BlackRook.address,
+    BlackKnight.address,
+    BlackBishop.address,
+    BlackQueen.address,
+    BlackKing.address
+  ]
 
-  // Place pawns on the chess board
-  await boardHandler.addPawnsToBoard(
-  0,
-  [3,3,0,1,2,3,4,5,6,7],
-  [0,7,1,1,1,1,1,1,1,1],
-  [5,11,0,0,0,0,0,0,0,0],
-  10
-  );
-  await boardHandler.addPawnsToBoard(
-  0,
-  [0,1,2,4,5,6,7,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [1,2,3,4,3,2,1,0,0,0],
-  7
-  );
-  await boardHandler.addPawnsToBoard(
-  0,
-  [0,1,2,3,4,5,6,7,0,0],
-  [6,6,6,6,6,6,6,6,0,0],
-  [6,6,6,6,6,6,6,6,0,0],
-  8
-  );
-  await boardHandler.addPawnsToBoard(
-  0,
-  [0,1,2,4,5,6,7,0,0,0],
-  [7,7,7,7,7,7,7,0,0,0],
-  [7,8,9,10,9,8,7,0,0,0],
-  7
-  );
+  // Fill the remaining spaces in the array
+  for(i=0; i<255-12; i++) {
+    chessPawn.push("0x0000000000000000000000000000000000000000")
+  }
 
-  // Deploy the board
-  await boardHandler.deployBoard(0);
+  const pawnSetAddress = await pawnSetRegistry.createPawnSet("Chess", chessPawn, 12)
+  
+  // Deploy simplified chess board
+  let xArray = [3,3,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7]
+  let yArray = [0,7,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7]
+  let indexArray = [5,11,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,6,6,6,6,6,6,6,6,7,8,9,10,9,8,7]
 
+  // Fill arrays
+  for(i=0; i<40-32; i++) {
+    xArray.push(0)
+    yArray.push(0)
+    indexArray.push(0)
+  }
+
+  await boardHandler.createBoard(
+    "Simplified Chess",
+    ChessBoard.address,
+    pawnSetAddress.logs[0].args.pawnSetAddress,
+    xArray,
+    yArray,
+    indexArray,
+    32
+  );
+  
   // Start the first game
   await boardHandler.joinGame(0, {from: accounts[0]})
   await boardHandler.joinGame(0, {from: accounts[1]})
-}
 
-const deployLightBrigadeChessBoard = async (boardHandler, accounts) => {
-  // Create the chess board and pawns
-  await boardHandler.createBoard("Light Brigade Chess", ChessBoard.address);
-  await boardHandler.addPawnTypeToBoard(1, WhitePawn.address);
-  await boardHandler.addPawnTypeToBoard(1, WhiteRook.address);
-  await boardHandler.addPawnTypeToBoard(1, WhiteKnight.address);
-  await boardHandler.addPawnTypeToBoard(1, WhiteBishop.address);
-  await boardHandler.addPawnTypeToBoard(1, WhiteQueen.address);
-  await boardHandler.addPawnTypeToBoard(1, WhiteKing.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackPawn.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackRook.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackKnight.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackBishop.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackQueen.address);
-  await boardHandler.addPawnTypeToBoard(1, BlackKing.address);
+  // Deploy Light Brigade Chess
+  xArray = [4,4,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,5,6,7,1,3,6]
+  yArray = [0,7,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,0,0,0]
+  indexArray = [5,11,0,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,8,8,8,8,8,8,8,4,4,4]
 
-  // Place pawns on the chess board
-  await boardHandler.addPawnsToBoard(
-    1,
-    [4,4,0,1,2,3,4,5,6,7],
-    [7,0,6,6,6,6,6,6,6,6],
-    [5,11,0,0,0,0,0,0,0,0],
-    10
-  );
-  await boardHandler.addPawnsToBoard(
-    1,
-    [0,1,2,3,4,5,6,7,0,0],
-    [1,1,1,1,1,1,1,1,0,0],
-    [6,6,6,6,6,6,6,6,0,0],
-    8
-  );
-  await boardHandler.addPawnsToBoard(
-    1,
-    [0,1,2,3,5,6,7,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0],
-    [8,8,8,8,8,8,8,0,0,0],
-    7
-  );
-  await boardHandler.addPawnsToBoard(
-    1,
-    [1,3,6,0,0,0,0,0,0,0],
-    [7,7,7,0,0,0,0,0,0,0],
-    [4,4,4,0,0,0,0,0,0,0],
-    3
-  );
+  // Fill arrays
+  for(i=0; i<40-28; i++) {
+    xArray.push(0)
+    yArray.push(0)
+    indexArray.push(0)
+  }
 
-  // Deploy the board
-  await boardHandler.deployBoard(1);
+  await boardHandler.createBoard(
+    "Light Brigade Chess",
+    ChessBoard.address,
+    pawnSetAddress.logs[0].args.pawnSetAddress,
+    xArray,
+    yArray,
+    indexArray,
+    28
+  );
 
   // Start the first game
   await boardHandler.joinGame(1, {from: accounts[0]})
   await boardHandler.joinGame(1, {from: accounts[1]})
-}
+};

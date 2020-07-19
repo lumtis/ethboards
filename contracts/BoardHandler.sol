@@ -1,5 +1,12 @@
-pragma solidity 0.5.16;
+pragma solidity 0.6.11;
 
+import "./PawnSet.sol";
+
+
+/**
+ * @title Board Handler
+ * @notice The storage contract, store the informations about boards and games
+*/
 contract BoardHandler {
 
     ///////////////////////////////////////////////////////////////
@@ -9,21 +16,12 @@ contract BoardHandler {
     * Emitted when a new board is created
     * @param creator The creator of the board
     * @param boardId The id of the board
+    * @param name Name of the board
     */
     event BoardCreated(
         address indexed creator,
         uint indexed boardId,
         string name
-    );
-
-    /**
-    * Emitted when a new pawn type is added to a board
-    * @param boardId The id of the board
-    * @param pawnTypeContract The address of the contract of the pawn type
-    */
-    event PawnTypeAdded(
-        uint indexed boardId,
-        address pawnTypeContract
     );
 
     /**
@@ -60,7 +58,7 @@ contract BoardHandler {
     /// Structures
 
     struct PawnPosition {
-        uint8 pawnType;
+        uint8 pawnIndex;
         uint8 x;
         uint8 y;
     }
@@ -74,12 +72,9 @@ contract BoardHandler {
     struct Board {
         uint id;
         address boardContract;
-        address creator;
         string name;
-        bool deployed;
-        uint8 pawnTypeNumber;
+        address pawnSet;
         uint8 pawnNumber;
-        mapping (uint8 => address) pawnTypeAddress;
         mapping (uint8 => PawnPosition) pawnPosition;
         uint gameCount;
         mapping (uint => Game) games;
@@ -105,98 +100,67 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Board administration
 
-    // Create a new board
-    function createBoard(string memory name, address boardContract) public {
+    /**
+     * @notice Create a new board
+     * @param name name of the board
+     * @param boardContract address of the smart contract that represents the board
+     * @param pawnSetAddress the address of the set of pawn to use for the board
+     * @param x array that represents the x coordinates where to add the pawns
+     * @param y array that represents the y coordinates where to add the pawns
+     * @param pawnIndex array that represents the pawn index from the set of the pawns to add
+     * @param pawnNb number of pawn to add
+    */
+    function createBoard(
+        string memory name,
+        address boardContract,
+        address pawnSetAddress,
+        uint8[40] memory x,
+        uint8[40] memory y,
+        uint8[40] memory pawnIndex,
+        uint8 pawnNb
+    ) public {
+        require(pawnNb <= 40 && pawnNb > 0, "You can place maximum 40 pawns on the board");
+
         // Create the board
         Board memory newBoard;
         newBoard.id = boardNumber;
         newBoard.boardContract = boardContract;
-        newBoard.creator = msg.sender;
-        newBoard.deployed = false;
-        newBoard.pawnTypeNumber = 0;
-        newBoard.pawnNumber = 0;
+        newBoard.pawnSet = pawnSetAddress;
+        newBoard.pawnNumber = pawnNb;
         newBoard.gameCount = 0;
         newBoard.waitingPlayer = address(0);
         boards.push(newBoard);
+
+        // Get the pawn set to verify pawn indexes are correct
+        PawnSet pawnSet = PawnSet(pawnSetAddress);
+        uint8 pawnSetPawnNb = pawnSet.getPawnNb();
+
+        // Place pawns
+        for (uint8 i = 0; i < pawnNb; i++) {
+            require(x[i] < 8 && y[i] < 8, "The pawn position is out of bound");
+            require(pawnIndex[i] < pawnSetPawnNb, "The pawn doesn't exist");
+
+            PawnPosition memory newPawn;
+            newPawn.pawnIndex = pawnIndex[i];
+            newPawn.x = x[i];
+            newPawn.y = y[i];
+
+            boards[boardNumber].pawnPosition[i] = newPawn;
+        }
 
         emit BoardCreated(msg.sender, boardNumber, name);
         boardNumber += 1;
     }
 
-    // TODO: Check contract contains the function signature
-    function addPawnTypeToBoard(uint boardId, address pawnTypeAddress) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
-        require(boards[boardId].pawnTypeNumber < 250, "You can add maximum 250 pawn types in a board");
-
-        boards[boardId].pawnTypeAddress[boards[boardId].pawnTypeNumber] = pawnTypeAddress;
-        boards[boardId].pawnTypeNumber += 1;
-
-        emit PawnTypeAdded(boardId, pawnTypeAddress);
-    }
-
-    // Add list of pawns to the board
-    function addPawnsToBoard(
-        uint boardId,
-        uint8[10] memory x,
-        uint8[10] memory y,
-        uint8[10] memory pawnType,
-        uint8 nbPawn
-    ) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can add pawns");
-        require(nbPawn <= 10 && nbPawn > 0, "You can add maximum 10 pawns at a time");
-        require(boards[boardId].pawnNumber + nbPawn <= 40, "The maximum amount of pawn is reached");
-
-        // Add pawns
-        for (uint8 i = 0; i < nbPawn; i++) {
-            require(x[i] < 8 && y[i] < 8, "The pawn position is out of bound");
-            require(pawnType[i] < boards[boardId].pawnTypeNumber, "The pawn doesn't exist");
-
-            PawnPosition memory newPawn;
-            newPawn.pawnType = pawnType[i];
-            newPawn.x = x[i];
-            newPawn.y = y[i];
-
-            boards[boardId].pawnPosition[boards[boardId].pawnNumber + i] = newPawn;
-        }
-
-        boards[boardId].pawnNumber += nbPawn;
-    }
-
-    // Remove all pawn for a board
-    function resetBoard(uint boardId) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can reset");
-
-        boards[boardId].pawnNumber = 0;
-    }
-
-    // Deploy a board
-    // Once deployed, no pawn can be added to the board anymore and game can be started from the board
-    function deployBoard(uint boardId) public {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(!boards[boardId].deployed, "The board is already deployed");
-        require(boards[boardId].creator == msg.sender, "Only board creator can deploy board");
-        require(boards[boardId].pawnNumber >= 2, "At least 2 pawns must be on the board");
-
-        boards[boardId].deployed = true;
-    }
-
     ///////////////////////////////////////////////////////////////
     /// Game
 
-    // Join a new game on a board
-    // When a player joins a game, he's in the waiting room for the game
-    // If someone is present in the waiting room, the game is started against this player
-    // This current model will be changed in the future
-    // TODO: Join game callback
+    /**
+     * @notice Join a new game on a board. When a player joins a game, he's in the waiting room for the game, if someone is present in the waiting room, the game is started against this player
+     * @param boardId id of the board
+    */
     function joinGame(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
-        require(boards[boardId].deployed, "The board is not deployed");
 
         // If there is no waiting player yet
         if (boards[boardId].waitingPlayer == address(0)) {
@@ -220,9 +184,12 @@ contract BoardHandler {
         }
     }
 
-    // Finish a game
-    // This function can only be called by the ethBoards contract, this contract ensure the winner is legit
-    // TODO: Add callback when win
+    /**
+     * @notice Finish a game, this function can only be called by the ethBoards contract, this contract ensure the winner is legit
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param winner player that won the game (0 or 1)
+    */
     function finishGame(uint boardId, uint gameId, uint8 winner) public fromEthBoards {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -249,54 +216,55 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Board information
 
-    // Number of board
+    /**
+     * @notice Get the number of boards
+     * @return number of boards
+    */
     function getBoardNumber() public view returns(uint) {
         return boardNumber;
     }
 
+    /**
+     * @notice Get the address of the smart contract of the board
+     * @param boardId id of the board
+     * @return address of the smart contract of the board
+    */
     function getBoardContractAddress(uint boardId) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].boardContract;
     }
 
-    // Check if a board is deployed
-    function isDeployed(uint boardId) public view returns(bool) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        return boards[boardId].deployed;
-    }
-
-    // Get the number of pawn type in the board
-    function getBoardPawnTypeNumber(uint boardId) public view returns(uint8) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        return boards[boardId].pawnTypeNumber;
-    }
-
-    // Get the address of a pawn type
-    function getBoardPawnTypeContract(uint boardId, uint8 pawnType) public view returns(address) {
-        require(boardId < boardNumber, "The board doesn't exist");
-        require(pawnType < boards[boardId].pawnTypeNumber, "The pawn type doesn't exist");
-
-        return boards[boardId].pawnTypeAddress[pawnType];
-    }
-
-    // Get the number of pawn
+    /**
+     * @notice Get the number of pawns placed on a board
+     * @param boardId id of the board
+     * @return number of pawns placed on a board
+    */
     function getBoardPawnNumber(uint boardId) public view returns(uint8) {
         require(boardId < boardNumber, "The board doesn't exist");
 
         return boards[boardId].pawnNumber;
     }
 
-    // Get the contract of pawn
-    function getBoardPawnTypeContractFromPawnIndex(uint boardId, uint8 pawnIndex) public view returns(address) {
+    /**
+     * @notice Get pawn smart contract of a specific pawn in the pawn set of the board
+     * @param boardId id of the board
+     * @param pawnIndex index of the pawn in the pawn set
+     * @return address of the pawn smart contract
+    */
+    function getBoardPawnContract(uint boardId, uint8 pawnIndex) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
-        require(pawnIndex < boards[boardId].pawnNumber, "The pawn doesn't exist");
 
-        uint8 pawnType = boards[boardId].pawnPosition[pawnIndex].pawnType;
+        // Get the pawn set
+        PawnSet pawnSet = PawnSet(boards[boardId].pawnSet);
 
-        return boards[boardId].pawnTypeAddress[pawnType];
+        return pawnSet.getPawn(pawnIndex);
     }
 
-    // Get the initial state of the board
+    /**
+     * @notice Get the initial state of a board
+     * @param boardId id of the board
+     * @return state the initial state of the board
+    */
     function getInitialState(uint boardId) public view returns(uint8[121] memory state) {
         require(boardId < boardNumber, "The board doesn't exist");
 
@@ -305,7 +273,7 @@ contract BoardHandler {
 
         for(uint8 i = 0; i<boards[boardId].pawnNumber; i++) {
              // Pawn type
-            state[1+i] = boards[boardId].pawnPosition[i].pawnType+1;
+            state[1+i] = boards[boardId].pawnPosition[i].pawnIndex+1;
             // Pawn x position
             state[41+i] = boards[boardId].pawnPosition[i].x;
             // Pawn y position
@@ -318,11 +286,22 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Game information
 
+    /**
+     * @notice Get the number of game occurences of a board
+     * @param boardId id of the board
+     * @return the number of game occurences of the board
+    */
     function getGameNumber(uint boardId) public view returns(uint) {
         require(boardId < boardNumber, "The board doesn't exist");
         return boards[boardId].gameCount;
     }
 
+    /**
+     * @notice Check if a player is currently waiting to play a game on a board
+     * @param boardId id of the board
+     * @return isWaiting true if a player is currently waiting
+     * @return waitingPlayer address of this player
+    */
     function isWaitingPlayer(uint boardId) public view returns(bool isWaiting, address waitingPlayer) {
         require(boardId < boardNumber, "The board doesn't exist");
 
@@ -333,6 +312,12 @@ contract BoardHandler {
         return (isWaiting, boards[boardId].waitingPlayer);
     }
 
+    /**
+     * @notice Check if a specifc game of a board is finished
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @return true if the game has been finished, revert if the game doesn't exist
+    */
     function isGameOver(uint boardId, uint gameId) public view returns(bool) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -340,6 +325,13 @@ contract BoardHandler {
         return boards[boardId].games[gameId].over;
     }
 
+    /**
+     * @notice Get the address of a player in the game
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param turnNumber the number of the current turn in the game, even number means player A, odd number means player B
+     * @return addres of the player
+    */
     function getGamePlayerAddress(uint boardId, uint gameId, uint turnNumber) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
@@ -356,6 +348,13 @@ contract BoardHandler {
         return playerAddress;
     }
 
+    /**
+     * @notice Check from the player address, if it's player A or B
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param playerAddress address of the player
+     * @return 0 if it's player A, 1 if it's player B, -1 if this address is not part of the game
+    */
     function getGamePlayerIndex(uint boardId, uint gameId, address playerAddress) public view returns(int) {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");

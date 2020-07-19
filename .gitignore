@@ -68,5 +68,5 @@ typings/
 .ganache
 
 # Contracts builds
+waffle/
 build/
-src/artifacts

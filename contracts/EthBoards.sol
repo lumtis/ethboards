@@ -1,10 +1,14 @@
-pragma solidity 0.5.16;
+pragma solidity 0.6.11;
 
 import "./Board.sol";
 import "./BoardHandler.sol";
 import "./Pawn.sol";
 import "./StateController.sol";
 
+/**
+ * @title EthBoards
+ * @notice The contract for the logical flow of games, simulate turns, check turns legitimacy and claim victory
+*/
 contract EthBoards {
     using StateController for uint8[121];
 
@@ -12,9 +16,9 @@ contract EthBoards {
 
     struct Turn {
         uint8[4] move;
-        bytes32 r,
-        bytes32 s,
-        uint8 v
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
     }
 
     // Store the current turn with a started timeout for the specific game
@@ -30,6 +34,15 @@ contract EthBoards {
 
 
     // Simulate the turn from the board, user's move and input state
+    /**
+     * @notice Simulate the state transition when performing a move on the game
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param player that player that simulates the move (0 or 1)
+     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param state the state of the game
+     * @return the new state once the move has been performed, reverted if the move is not possible
+    */
     function simulate(
         address boardHandlerAddress,
         uint boardId,
@@ -45,14 +58,23 @@ contract EthBoards {
 
         // Get the address of the pawn
         uint8 pawnType = state.getPawnType(move[0]);
-        address pawnAddress = boardHandler.getBoardPawnTypeContract(boardId, pawnType);
+        address pawnAddress = boardHandler.getBoardPawnContract(boardId, pawnType);
         Pawn pawn = Pawn(pawnAddress);
 
         // Perform the move of the pawn
         return pawn.performMove(player, move[0], move[1], move[2], move[3], state);
     }
 
-    // Get from a turn set (nonce, move, input state) the address of the signer
+    /**
+     * @notice Get from a turn signature (nonce, move, input state) the address of the signer, allow to verify if the player performing a move has correctly signed it
+     * @param state the input state
+     * @param nonce triplet that uniquely identifies the turn (board id, game id, turn number)
+     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the r component of the signature
+     * @param s the s component of the signature
+     * @param v the v component of the signature
+     * @return the address of the signer
+    */
     function getTurnSignatureAddress(
       uint8[121] memory state,
       uint[3] memory nonce,
@@ -60,7 +82,7 @@ contract EthBoards {
       bytes32 r,
       bytes32 s,
       uint8 v
-      ) public pure returns (address recovered) {
+      ) public pure returns (address) {
 
         // Convert to uint for keccak256 function
         uint[121] memory inStateUint;
@@ -79,7 +101,19 @@ contract EthBoards {
         return ecrecover(message, v, r, s);
     }
 
-    // Verify the two last turns and check if the current state of the game is legitimate
+    /**
+     * @notice Verify the two last turns and check if the current state of the game is legitimate
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+     * @param initialTurnNumber the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the two last r components of the signature
+     * @param s the two last s components of the signature
+     * @param v the two last v components of the signature
+     * @param inputState the input state where we start checking the legitimacy of the state
+     * @return the address of the signer
+    */
     function checkTurnsLegitimacy(
         address boardHandlerAddress,
         uint boardId,
@@ -143,7 +177,19 @@ contract EthBoards {
         return (currentState, latestTurn-1);
     }
 
-    // Test the victory of the board and call the terminate the game if victory
+    /**
+     * @notice Allow a player to claim victory if the state of the game is victorious for the player, if it's the case, the finishGame of the board handler contract is called
+     * @dev To check if the state is victorious, we give the two last turns to ensure the state is legitime (signed by the two players)
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+     * @param initialTurnNumber the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the two last r components of the signature
+     * @param s the two last s components of the signature
+     * @param v the two last v components of the signature
+     * @param inputState the input state where we start checking the legitimacy of the victorious state
+    */
     function claimVictory(
         address boardHandlerAddress,
         uint boardId,
@@ -179,7 +225,18 @@ contract EthBoards {
         boardHandler.finishGame(boardId, gameId, uint8(latestTurn%2));
     }
 
-    // Start a timeout
+    /**
+     * @notice Start a timeout, once started the opponent has to call the stop timeout function within 5 minutes
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+     * @param initialTurnNumber the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the two last r components of the signature
+     * @param s the two last s components of the signature
+     * @param v the two last v components of the signature
+     * @param inputState the input state where we start checking the legitimacy of the victorious state
+    */
     function startTimeout(
         address boardHandlerAddress,
         uint boardId,
@@ -221,7 +278,18 @@ contract EthBoards {
         timeoutTurn[boardId][gameId].v = v[1];
     }
 
-    // Stop the timeout
+    /**
+     * @notice Stop a started timeout
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+     * @param initialTurnNumber the number of the initial turn (currentTurn -2) where we start checking if the victorious state is legitime (two preceding turns have been signed)
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param r the two last r components of the signature
+     * @param s the two last s components of the signature
+     * @param v the two last v components of the signature
+     * @param inputState the input state where we start checking the legitimacy of the victorious state
+    */
     function stopTimeout(
         address boardHandlerAddress,
         uint boardId,
@@ -256,12 +324,17 @@ contract EthBoards {
         timeoutTimestamp[boardId][gameId] = 0;
     }
 
-    // Execute the timeout and kick the afk player
+    /**
+     * @notice Stop a started timeout
+     * @param boardHandlerAddress the address of the Board Handler contract
+     * @param boardId the id of the board
+     * @param gameId the id of the game
+    */
     function executeTimeout(
         address boardHandlerAddress,
         uint boardId,
-        uint gameId,
-    ) {
+        uint gameId
+    ) public {
         // Get the board
         BoardHandler boardHandler = BoardHandler(boardHandlerAddress);
         require(boardId < boardHandler.getBoardNumber(), "The board doesn't exist");
