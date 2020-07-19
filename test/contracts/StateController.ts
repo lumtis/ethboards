@@ -31,13 +31,4 @@ describe('StateController', () => {
 
     expect(await stateController.getPawnNumber(state)).to.equal(10)
   })
-
-  it.skip('can get the position of pawns', async () => {
-    const state = getEmptyState()
-    expect(await stateController.getPawnNumber(state)).to.equal(0)
-
-    state[0] = 10
-
-    expect(await stateController.getPawnNumber(state)).to.equal(10)
-  })
 })

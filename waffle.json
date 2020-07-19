@@ -1,6 +1,6 @@
 {
     "compilerType": "solcjs",
-    "compilerVersion": "0.5.16",
+    "compilerVersion": "0.6.11",
     "sourceDirectory": "./contracts",
     "outputDirectory": "./waffle"
   }
