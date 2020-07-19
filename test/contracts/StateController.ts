@@ -31,4 +31,6 @@ describe('StateController', () => {
 
     expect(await stateController.getPawnNumber(state)).to.equal(10)
   })
+
+  // TODO: Add more tests
 })
