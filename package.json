@@ -48,7 +48,7 @@
     "build:abi": "truffle run abigen BoardHandler EthBoards",
     "deploy:local": "truffle migrate",
     "deploy:rinkeby": "truffle migrate --network rinkeby",
-    "test": "waffle && mocha 'test/**/*.ts' --timeout 10000",
+    "test": "waffle && mocha 'test/**/*.ts' --timeout 20000",
     "clean": "rm -rf build",
     "clean:artifact": "rm -rf src/artifacts",
     "clean:ganache": "rm -rf .ganache",

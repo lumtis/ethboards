@@ -28,7 +28,30 @@ const BlackKing = require('../../waffle/BlackKing.json')
 
 use(solidity)
 
+// Mnemonic for test wallets
 const mnemonic = 'wait nephew visual song prevent ribbon much stick hour token account food'
+
+// Utility to advance time
+const advanceBlockAtTime = (web3,time) => {
+    return new Promise((resolve, reject) => {
+      web3.currentProvider.send(
+        {
+          jsonrpc: "2.0",
+          method: "evm_mine",
+          params: [time],
+          id: new Date().getTime(),
+        },
+        (err, _) => {
+          if (err) {
+            return reject(err);
+          }
+          const newBlockHash = web3.eth.getBlock("latest").hash;
+  
+          return resolve(newBlockHash);
+        },
+      );
+    });
+  };
 
 // Check in the single test the basic feature of the EthBoards contract:
 // - Simulating turns
@@ -138,9 +161,13 @@ describe('EthBoards', () => {
             32
         );
 
-        // // Start a game
+        // Start a game to test claim victory
         await boardHandler.joinGame(0)
         const boardHandlerOther = boardHandler.connect(other)
+        await boardHandlerOther.joinGame(0)
+
+        // Start a second game to test timeout
+        await boardHandler.joinGame(0)
         await boardHandlerOther.joinGame(0)
     })
 
@@ -201,6 +228,7 @@ describe('EthBoards', () => {
             {t: 'uint[]', v: move2},
             {t: 'uint[]', v: state1},
         ), other.address)
+
         const rsv2 = ethjs.fromRpcSig(sig)
 
         // The player 2 won the game
@@ -209,7 +237,7 @@ describe('EthBoards', () => {
             boardHandler.address,
             0,
             0,
-            0,
+            2,
             [move1, move2],
             [rsv1.r, rsv2.r],
             [rsv1.s, rsv2.s],
@@ -218,5 +246,101 @@ describe('EthBoards', () => {
         )
 
         expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,0,1]);
+    })
+
+    it('can execute timeouts', async () => {
+        // There is initially no pending timeout
+        let timeoutInfo = await ethBoards.getTimeoutInfo(boardHandler.address,0,1)
+        expect(timeoutInfo.isPending).to.be.false
+
+        const initialState = await boardHandler.getInitialState(0)
+        const junkSignature = ethjs.fromRpcSig("0x4d49b3e6b5b872d6f6eaaefb166ca96539299e26c74d6a832a25c46a871144bb408255c1531fb7b40e9b23be22e252ec222110e28c16c974162145c72d108a321c")
+
+        // Start at timestamp 0
+        await advanceBlockAtTime(web3, 0)
+
+        // Start a timeout from player 1
+        await ethBoards.startTimeout(
+            boardHandler.address,
+            0,
+            1,
+            0,
+            [[0,0,0,0],[0,0,0,0]],
+            [junkSignature.r,junkSignature.r],
+            [junkSignature.s,junkSignature.s],
+            [0,0],
+            initialState
+        )
+
+        // Check the timeout exists
+        timeoutInfo = await ethBoards.getTimeoutInfo(boardHandler.address,0,1)
+        expect(timeoutInfo.isPending).to.be.true
+
+        // Simulate the first turn
+        const move1 = [0,0,4,3]
+        const nonce1 = [0,1,0]
+        const state1 = await ethBoards.simulate(
+            boardHandler.address,
+            0,
+            0,
+            move1,
+            initialState
+        )
+
+        // Sign the first turn
+        let sig = await web3.eth.personal.sign(web3.utils.soliditySha3(
+            {t: 'uint[]', v: nonce1},
+            {t: 'uint[]', v: move1},
+            {t: 'uint[]', v: initialState},
+        ), wallet.address)
+        const rsv1 = ethjs.fromRpcSig(sig)
+
+        // Stop the timeout
+        await ethBoards.stopTimeout(
+            boardHandler.address,
+            0,
+            1,
+            1,
+            [move1,[0,0,0,0]],
+            [rsv1.r,junkSignature.r],
+            [rsv1.s,junkSignature.s],
+            [rsv1.v,0],
+            initialState
+        )
+
+        // Check the timeout has been cancelled
+        timeoutInfo = await ethBoards.getTimeoutInfo(boardHandler.address,0,1)
+        expect(timeoutInfo.isPending).to.be.false
+
+        // Start a timeout from player 0
+        await advanceBlockAtTime(web3, 5)
+        await ethBoards.startTimeout(
+            boardHandler.address,
+            0,
+            1,
+            1,
+            [move1,[0,0,0,0]],
+            [rsv1.r,junkSignature.r],
+            [rsv1.s,junkSignature.s],
+            [rsv1.v,0],
+            initialState
+        )
+
+        // Check the timeout exists
+        timeoutInfo = await ethBoards.getTimeoutInfo(boardHandler.address,0,1)
+        expect(timeoutInfo.isPending).to.be.true
+
+        console.log(timeoutInfo)
+
+        // Cannot execute the timeout yet
+        await expect(ethBoards.executeTimeout(boardHandler.address,0,1)).to.be.revertedWith("The timeout is not reached yet")
+    
+        // Advance time
+        await advanceBlockAtTime(web3, 3600)
+
+        // Execute timeout and check the player 0 won the game
+        await ethBoards.executeTimeout(boardHandler.address,0,1)
+
+        expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,1,0]);
     })
 })
