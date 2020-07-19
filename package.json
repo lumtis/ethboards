@@ -15,8 +15,7 @@
     "truffle": "^5.1.35",
     "truffle-contract": "^3.0.0",
     "truffle-solidity-loader": "0.0.8",
-    "web3": "^1.2.9",
-    "web3-hdwallet-provider": "^1.0.4-fix2"
+    "web3": "^1.2.9"
   },
   "dependencies": {
     "@drizzle/react-components": "^1.5.1",
@@ -49,8 +48,7 @@
     "build:abi": "truffle run abigen BoardHandler EthBoards",
     "deploy:local": "truffle migrate",
     "deploy:rinkeby": "truffle migrate --network rinkeby",
-    "waffle": "waffle",
-    "test": "mocha 'test/**/*.ts'",
+    "test": "waffle && mocha 'test/**/*.ts' --timeout 10000",
     "clean": "rm -rf build",
     "clean:artifact": "rm -rf src/artifacts",
     "clean:ganache": "rm -rf .ganache",
