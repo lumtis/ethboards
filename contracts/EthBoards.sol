@@ -280,7 +280,7 @@ contract EthBoards {
 
         // Set the timeout
         timeoutTurnNumber[boardId][gameId] = turnNumber;
-        timeoutTimestamp[boardId][gameId] = block.timestamp;
+        timeoutTimestamp[boardId][gameId] = block.timestamp + timeoutTime;
 
         // Store the last played turn to ensure it is shared to the players
         timeoutTurn[boardId][gameId].move = move[1];
@@ -361,7 +361,7 @@ contract EthBoards {
         require(timeoutTimestamp[boardId][gameId] > 0, "There is no pending timeout");
 
         // Check the timeout time has been reached
-        require(block.timestamp > timeoutTimestamp[boardId][gameId] + timeoutTime, "The timeout is not reached yet");
+        require(block.timestamp > timeoutTimestamp[boardId][gameId], "The timeout is not reached yet");
 
         // FInish the game with the latest player who played the turn as the winner
         boardHandler.finishGame(boardId, gameId, uint8((timeoutTurnNumber[boardId][gameId]+1)%2));
@@ -373,7 +373,7 @@ contract EthBoards {
      * @param boardId the id of the board
      * @param gameId the id of the game
      * @return isPending true if a timeout is pending
-     * @return timestamp the tiemstamp of the start of the timeout
+     * @return timestamp the timestamp when the timeout can be executed
      * @return turnNumber the number of the latest turn before the timeout
      * @return move the last turn played
      * @return r the r component of the signature of the last turn

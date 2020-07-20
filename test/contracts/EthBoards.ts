@@ -330,8 +330,6 @@ describe('EthBoards', () => {
         timeoutInfo = await ethBoards.getTimeoutInfo(boardHandler.address,0,1)
         expect(timeoutInfo.isPending).to.be.true
 
-        console.log(timeoutInfo)
-
         // Cannot execute the timeout yet
         await expect(ethBoards.executeTimeout(boardHandler.address,0,1)).to.be.revertedWith("The timeout is not reached yet")
     
