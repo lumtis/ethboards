@@ -449,7 +449,7 @@
         "id": 61,
         "nodeType": "ImportDirective",
         "scope": 948,
-        "sourceUnit": 4976,
+        "sourceUnit": 5535,
         "src": "25:23:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -2552,7 +2552,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$4975",
+                        "typeIdentifier": "t_contract$_PawnSet_$5534",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
@@ -2560,10 +2560,10 @@
                         "id": 248,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 4975,
+                        "referencedDeclaration": 5534,
                         "src": "3730:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -2600,10 +2600,10 @@
                       "name": "PawnSet",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4975,
+                      "referencedDeclaration": 5534,
                       "src": "3748:7:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$4975_$",
+                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$5534_$",
                         "typeString": "type(contract PawnSet)"
                       }
                     },
@@ -2618,7 +2618,7 @@
                     "src": "3748:23:2",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$4975",
+                      "typeIdentifier": "t_contract$_PawnSet_$5534",
                       "typeString": "contract PawnSet"
                     }
                   },
@@ -2674,7 +2674,7 @@
                         "referencedDeclaration": 249,
                         "src": "3803:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -2685,7 +2685,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnNb",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4954,
+                      "referencedDeclaration": 5513,
                       "src": "3803:17:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$__$returns$_t_uint8_$",
@@ -7727,7 +7727,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$4975",
+                        "typeIdentifier": "t_contract$_PawnSet_$5534",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
@@ -7735,10 +7735,10 @@
                         "id": 620,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 4975,
+                        "referencedDeclaration": 5534,
                         "src": "8173:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -7818,10 +7818,10 @@
                       "name": "PawnSet",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4975,
+                      "referencedDeclaration": 5534,
                       "src": "8191:7:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$4975_$",
+                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$5534_$",
                         "typeString": "type(contract PawnSet)"
                       }
                     },
@@ -7836,7 +7836,7 @@
                     "src": "8191:32:2",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$4975",
+                      "typeIdentifier": "t_contract$_PawnSet_$5534",
                       "typeString": "contract PawnSet"
                     }
                   },
@@ -7877,7 +7877,7 @@
                         "referencedDeclaration": 621,
                         "src": "8241:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -7888,7 +7888,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawn",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4974,
+                      "referencedDeclaration": 5533,
                       "src": "8241:15:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_uint8_$returns$_t_address_$",
@@ -12267,7 +12267,7 @@
         "id": 61,
         "nodeType": "ImportDirective",
         "scope": 948,
-        "sourceUnit": 4976,
+        "sourceUnit": 5535,
         "src": "25:23:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -14370,7 +14370,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$4975",
+                        "typeIdentifier": "t_contract$_PawnSet_$5534",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
@@ -14378,10 +14378,10 @@
                         "id": 248,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 4975,
+                        "referencedDeclaration": 5534,
                         "src": "3730:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -14418,10 +14418,10 @@
                       "name": "PawnSet",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4975,
+                      "referencedDeclaration": 5534,
                       "src": "3748:7:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$4975_$",
+                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$5534_$",
                         "typeString": "type(contract PawnSet)"
                       }
                     },
@@ -14436,7 +14436,7 @@
                     "src": "3748:23:2",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$4975",
+                      "typeIdentifier": "t_contract$_PawnSet_$5534",
                       "typeString": "contract PawnSet"
                     }
                   },
@@ -14492,7 +14492,7 @@
                         "referencedDeclaration": 249,
                         "src": "3803:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -14503,7 +14503,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnNb",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4954,
+                      "referencedDeclaration": 5513,
                       "src": "3803:17:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$__$returns$_t_uint8_$",
@@ -19545,7 +19545,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$4975",
+                        "typeIdentifier": "t_contract$_PawnSet_$5534",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
@@ -19553,10 +19553,10 @@
                         "id": 620,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 4975,
+                        "referencedDeclaration": 5534,
                         "src": "8173:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -19636,10 +19636,10 @@
                       "name": "PawnSet",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4975,
+                      "referencedDeclaration": 5534,
                       "src": "8191:7:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$4975_$",
+                        "typeIdentifier": "t_type$_t_contract$_PawnSet_$5534_$",
                         "typeString": "type(contract PawnSet)"
                       }
                     },
@@ -19654,7 +19654,7 @@
                     "src": "8191:32:2",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$4975",
+                      "typeIdentifier": "t_contract$_PawnSet_$5534",
                       "typeString": "contract PawnSet"
                     }
                   },
@@ -19695,7 +19695,7 @@
                         "referencedDeclaration": 621,
                         "src": "8241:7:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$4975",
+                          "typeIdentifier": "t_contract$_PawnSet_$5534",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -19706,7 +19706,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawn",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4974,
+                      "referencedDeclaration": 5533,
                       "src": "8241:15:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_uint8_$returns$_t_address_$",
@@ -24063,125 +24063,6 @@
     "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
   },
   "networks": {
-    "4": {
-      "events": {
-        "0xe820c892428a1b85fdf99f24e32fbe1165413ebb7119bde5dfa6cb72334f7580": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "creator",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            }
-          ],
-          "name": "BoardCreated",
-          "type": "event"
-        },
-        "0x0ffff200143c07c471e3d4bd1972a1b601d278491708eef4ec7cf9e921fda192": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerA",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerB",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "winner",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "gameId",
-              "type": "uint256"
-            }
-          ],
-          "name": "GameFinished",
-          "type": "event"
-        },
-        "0x89e651d0d1f877f5c444ff351a9449c3b36bbc92b470093d9fc085b1bbd1e3bc": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerA",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerB",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "gameId",
-              "type": "uint256"
-            }
-          ],
-          "name": "GameStarted",
-          "type": "event"
-        },
-        "0x7a341913bd407cbdd72b8c3f62dfc23385bcb7f37bb7cc42280c3b7d21d64ea6": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "pawnTypeContract",
-              "type": "address"
-            }
-          ],
-          "name": "PawnTypeAdded",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0x5523F902F6dE92835d3Aa20C265503DD9862925A",
-      "transactionHash": "0xcc702e32219812632eb57ffa5cd8464a6b0f4dc418131e1cf805fa2a5666c87b"
-    },
     "1234": {
       "events": {
         "0xe820c892428a1b85fdf99f24e32fbe1165413ebb7119bde5dfa6cb72334f7580": {
@@ -24284,7 +24165,7 @@
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-18T17:30:23.458Z",
+  "updatedAt": "2020-07-20T12:46:03.401Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

@@ -36,7 +36,7 @@
         "id": 2618,
         "nodeType": "ImportDirective",
         "scope": 2696,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "25:32:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -62,10 +62,10 @@
               "id": 2619,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "310:15:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -194,7 +194,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnType",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 5122,
+                      "referencedDeclaration": 5688,
                       "src": "498:17:9",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1059,7 +1059,7 @@
         "id": 2618,
         "nodeType": "ImportDirective",
         "scope": 2696,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "25:32:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1085,10 +1085,10 @@
               "id": 2619,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "310:15:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -1217,7 +1217,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnType",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 5122,
+                      "referencedDeclaration": 5688,
                       "src": "498:17:9",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -2061,7 +2061,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-18T14:36:07.957Z",
+  "updatedAt": "2020-07-20T11:51:57.436Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

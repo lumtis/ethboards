@@ -84,15 +84,15 @@
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Pawn.sol",
     "exportedSymbols": {
       "Pawn": [
-        4889
+        5448
       ]
     },
-    "id": 4890,
+    "id": 5449,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4853,
+        "id": 5412,
         "literals": [
           "solidity",
           "0.6",
@@ -107,15 +107,15 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "documentation": {
-          "id": 4854,
+          "id": 5413,
           "nodeType": "StructuredDocumentation",
           "src": "25:143:18",
           "text": " @title Pawn\n @notice The interface that must implement pawn's smart contract, the functions describe the pawn behavior and metadata"
         },
         "fullyImplemented": false,
-        "id": 4889,
+        "id": 5448,
         "linearizedBaseContracts": [
-          4889
+          5448
         ],
         "name": "Pawn",
         "nodeType": "ContractDefinition",
@@ -123,13 +123,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4855,
+              "id": 5414,
               "nodeType": "StructuredDocumentation",
               "src": "190:140:18",
               "text": " @notice Allow to retrieve the metadata of the pawn\n @return the string a allows to retrieve metadata (e.g IPFS hash)"
             },
             "functionSelector": "7a5b4f59",
-            "id": 4860,
+            "id": 5419,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -137,23 +137,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4856,
+              "id": 5415,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "355:2:18"
             },
             "returnParameters": {
-              "id": 4859,
+              "id": 5418,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4858,
+                  "id": 5417,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4860,
+                  "scope": 5419,
                   "src": "381:13:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -162,7 +162,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 4857,
+                    "id": 5416,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "381:6:18",
@@ -177,7 +177,7 @@
               ],
               "src": "380:15:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "335:61:18",
             "stateMutability": "view",
             "virtual": false,
@@ -186,13 +186,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4861,
+              "id": 5420,
               "nodeType": "StructuredDocumentation",
               "src": "402:123:18",
               "text": " @notice Retrieve the number of moves implemented by the pawn\n @return the number of available moves"
             },
             "functionSelector": "734fbab6",
-            "id": 4866,
+            "id": 5425,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -200,23 +200,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4862,
+              "id": 5421,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "552:2:18"
             },
             "returnParameters": {
-              "id": 4865,
+              "id": 5424,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4864,
+                  "id": 5423,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4866,
+                  "scope": 5425,
                   "src": "577:5:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -225,7 +225,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4863,
+                    "id": 5422,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "577:5:18",
@@ -240,7 +240,7 @@
               ],
               "src": "576:7:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "530:54:18",
             "stateMutability": "pure",
             "virtual": false,
@@ -249,13 +249,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4867,
+              "id": 5426,
               "nodeType": "StructuredDocumentation",
               "src": "590:548:18",
               "text": " @notice Perform the state transition when performing a move of the pawn\n @param player the player that perform the move (0 or 1)\n @param pawn the index of the pawn that perform the move\n @param moveType the specific move that the player wants to perform\n @param x x coordinate to perform the move into\n @param y y coordinate to perform the move into\n @param state the state of the game\n @return outState the new state once the move has been performed, reverted if the move is not possible"
             },
             "functionSelector": "374f2ea1",
-            "id": 4888,
+            "id": 5447,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -263,17 +263,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4882,
+              "id": 5441,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4869,
+                  "id": 5428,
                   "mutability": "mutable",
                   "name": "player",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1173:12:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -282,7 +282,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4868,
+                    "id": 5427,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1173:5:18",
@@ -296,12 +296,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4871,
+                  "id": 5430,
                   "mutability": "mutable",
                   "name": "pawn",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1195:10:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -310,7 +310,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4870,
+                    "id": 5429,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1195:5:18",
@@ -324,12 +324,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4873,
+                  "id": 5432,
                   "mutability": "mutable",
                   "name": "moveType",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1215:14:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -338,7 +338,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4872,
+                    "id": 5431,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1215:5:18",
@@ -352,12 +352,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4875,
+                  "id": 5434,
                   "mutability": "mutable",
                   "name": "x",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1239:7:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -366,7 +366,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4874,
+                    "id": 5433,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1239:5:18",
@@ -380,12 +380,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4877,
+                  "id": 5436,
                   "mutability": "mutable",
                   "name": "y",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1256:7:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -394,7 +394,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4876,
+                    "id": 5435,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1256:5:18",
@@ -408,12 +408,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4881,
+                  "id": 5440,
                   "mutability": "mutable",
                   "name": "state",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1273:25:18",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -423,7 +423,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4878,
+                      "id": 5437,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
                       "src": "1273:5:18",
@@ -432,11 +432,11 @@
                         "typeString": "uint8"
                       }
                     },
-                    "id": 4880,
+                    "id": 5439,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 4879,
+                      "id": 5438,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -465,17 +465,17 @@
               "src": "1163:141:18"
             },
             "returnParameters": {
-              "id": 4887,
+              "id": 5446,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4886,
+                  "id": 5445,
                   "mutability": "mutable",
                   "name": "outState",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1327:26:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -485,7 +485,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4883,
+                      "id": 5442,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
                       "src": "1327:5:18",
@@ -494,11 +494,11 @@
                         "typeString": "uint8"
                       }
                     },
-                    "id": 4885,
+                    "id": 5444,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 4884,
+                      "id": 5443,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -526,14 +526,14 @@
               ],
               "src": "1326:28:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "1143:212:18",
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 4890,
+        "scope": 5449,
         "src": "169:1188:18"
       }
     ],
@@ -543,15 +543,15 @@
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Pawn.sol",
     "exportedSymbols": {
       "Pawn": [
-        4889
+        5448
       ]
     },
-    "id": 4890,
+    "id": 5449,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4853,
+        "id": 5412,
         "literals": [
           "solidity",
           "0.6",
@@ -566,15 +566,15 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "documentation": {
-          "id": 4854,
+          "id": 5413,
           "nodeType": "StructuredDocumentation",
           "src": "25:143:18",
           "text": " @title Pawn\n @notice The interface that must implement pawn's smart contract, the functions describe the pawn behavior and metadata"
         },
         "fullyImplemented": false,
-        "id": 4889,
+        "id": 5448,
         "linearizedBaseContracts": [
-          4889
+          5448
         ],
         "name": "Pawn",
         "nodeType": "ContractDefinition",
@@ -582,13 +582,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4855,
+              "id": 5414,
               "nodeType": "StructuredDocumentation",
               "src": "190:140:18",
               "text": " @notice Allow to retrieve the metadata of the pawn\n @return the string a allows to retrieve metadata (e.g IPFS hash)"
             },
             "functionSelector": "7a5b4f59",
-            "id": 4860,
+            "id": 5419,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -596,23 +596,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4856,
+              "id": 5415,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "355:2:18"
             },
             "returnParameters": {
-              "id": 4859,
+              "id": 5418,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4858,
+                  "id": 5417,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4860,
+                  "scope": 5419,
                   "src": "381:13:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -621,7 +621,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 4857,
+                    "id": 5416,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "381:6:18",
@@ -636,7 +636,7 @@
               ],
               "src": "380:15:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "335:61:18",
             "stateMutability": "view",
             "virtual": false,
@@ -645,13 +645,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4861,
+              "id": 5420,
               "nodeType": "StructuredDocumentation",
               "src": "402:123:18",
               "text": " @notice Retrieve the number of moves implemented by the pawn\n @return the number of available moves"
             },
             "functionSelector": "734fbab6",
-            "id": 4866,
+            "id": 5425,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -659,23 +659,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4862,
+              "id": 5421,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "552:2:18"
             },
             "returnParameters": {
-              "id": 4865,
+              "id": 5424,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4864,
+                  "id": 5423,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4866,
+                  "scope": 5425,
                   "src": "577:5:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -684,7 +684,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4863,
+                    "id": 5422,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "577:5:18",
@@ -699,7 +699,7 @@
               ],
               "src": "576:7:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "530:54:18",
             "stateMutability": "pure",
             "virtual": false,
@@ -708,13 +708,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 4867,
+              "id": 5426,
               "nodeType": "StructuredDocumentation",
               "src": "590:548:18",
               "text": " @notice Perform the state transition when performing a move of the pawn\n @param player the player that perform the move (0 or 1)\n @param pawn the index of the pawn that perform the move\n @param moveType the specific move that the player wants to perform\n @param x x coordinate to perform the move into\n @param y y coordinate to perform the move into\n @param state the state of the game\n @return outState the new state once the move has been performed, reverted if the move is not possible"
             },
             "functionSelector": "374f2ea1",
-            "id": 4888,
+            "id": 5447,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -722,17 +722,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 4882,
+              "id": 5441,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4869,
+                  "id": 5428,
                   "mutability": "mutable",
                   "name": "player",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1173:12:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -741,7 +741,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4868,
+                    "id": 5427,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1173:5:18",
@@ -755,12 +755,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4871,
+                  "id": 5430,
                   "mutability": "mutable",
                   "name": "pawn",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1195:10:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -769,7 +769,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4870,
+                    "id": 5429,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1195:5:18",
@@ -783,12 +783,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4873,
+                  "id": 5432,
                   "mutability": "mutable",
                   "name": "moveType",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1215:14:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -797,7 +797,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4872,
+                    "id": 5431,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1215:5:18",
@@ -811,12 +811,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4875,
+                  "id": 5434,
                   "mutability": "mutable",
                   "name": "x",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1239:7:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -825,7 +825,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4874,
+                    "id": 5433,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1239:5:18",
@@ -839,12 +839,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4877,
+                  "id": 5436,
                   "mutability": "mutable",
                   "name": "y",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1256:7:18",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -853,7 +853,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 4876,
+                    "id": 5435,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "1256:5:18",
@@ -867,12 +867,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 4881,
+                  "id": 5440,
                   "mutability": "mutable",
                   "name": "state",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1273:25:18",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -882,7 +882,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4878,
+                      "id": 5437,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
                       "src": "1273:5:18",
@@ -891,11 +891,11 @@
                         "typeString": "uint8"
                       }
                     },
-                    "id": 4880,
+                    "id": 5439,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 4879,
+                      "id": 5438,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -924,17 +924,17 @@
               "src": "1163:141:18"
             },
             "returnParameters": {
-              "id": 4887,
+              "id": 5446,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4886,
+                  "id": 5445,
                   "mutability": "mutable",
                   "name": "outState",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 4888,
+                  "scope": 5447,
                   "src": "1327:26:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -944,7 +944,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4883,
+                      "id": 5442,
                       "name": "uint8",
                       "nodeType": "ElementaryTypeName",
                       "src": "1327:5:18",
@@ -953,11 +953,11 @@
                         "typeString": "uint8"
                       }
                     },
-                    "id": 4885,
+                    "id": 5444,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "313231",
-                      "id": 4884,
+                      "id": 5443,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -985,14 +985,14 @@
               ],
               "src": "1326:28:18"
             },
-            "scope": 4889,
+            "scope": 5448,
             "src": "1143:212:18",
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 4890,
+        "scope": 5449,
         "src": "169:1188:18"
       }
     ],
@@ -1004,7 +1004,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-18T14:36:07.997Z",
+  "updatedAt": "2020-07-20T11:51:57.467Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

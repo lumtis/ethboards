@@ -73,7 +73,7 @@
         "id": 19,
         "nodeType": "ImportDirective",
         "scope": 59,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "48:32:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -121,10 +121,10 @@
               "id": 22,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "123:15:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -294,7 +294,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5152,
+                              "referencedDeclaration": 5718,
                               "src": "566:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -397,7 +397,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5152,
+                              "referencedDeclaration": 5718,
                               "src": "470:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -624,7 +624,7 @@
         "id": 19,
         "nodeType": "ImportDirective",
         "scope": 59,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "48:32:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -672,10 +672,10 @@
               "id": 22,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "123:15:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -845,7 +845,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5152,
+                              "referencedDeclaration": 5718,
                               "src": "566:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -948,7 +948,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5152,
+                              "referencedDeclaration": 5718,
                               "src": "470:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1142,14 +1142,6 @@
     "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
   },
   "networks": {
-    "4": {
-      "events": {},
-      "links": {
-        "StateController": "0xC0e27d1f1a6111e6D9C88Be7528434501c570Ce6"
-      },
-      "address": "0x885ADD3F513F7086c530bA3C53d53a894dFE2Fd5",
-      "transactionHash": "0x3ce5a43da50dfac6cbd77f223af51a957024ca0d658f03e0cee70a8d3bd0a9b0"
-    },
     "1234": {
       "events": {},
       "links": {
@@ -1160,7 +1152,7 @@
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-18T17:30:23.474Z",
+  "updatedAt": "2020-07-20T12:46:03.416Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

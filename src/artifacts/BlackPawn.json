@@ -121,7 +121,7 @@
         "id": 1671,
         "nodeType": "ImportDirective",
         "scope": 1956,
-        "sourceUnit": 4890,
+        "sourceUnit": 5449,
         "src": "51:21:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -132,7 +132,7 @@
         "id": 1672,
         "nodeType": "ImportDirective",
         "scope": 1956,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "73:32:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -147,10 +147,10 @@
               "id": 1673,
               "name": "Pawn",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4889,
+              "referencedDeclaration": 5448,
               "src": "129:4:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Pawn_$4889",
+                "typeIdentifier": "t_contract$_Pawn_$5448",
                 "typeString": "contract Pawn"
               }
             },
@@ -179,7 +179,7 @@
         ],
         "contractDependencies": [
           2695,
-          4889
+          5448
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -188,7 +188,7 @@
         "linearizedBaseContracts": [
           1955,
           2695,
-          4889
+          5448
         ],
         "name": "BlackPawn",
         "nodeType": "ContractDefinition",
@@ -200,10 +200,10 @@
               "id": 1677,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "157:15:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -249,7 +249,7 @@
           },
           {
             "baseFunctions": [
-              4860
+              5419
             ],
             "body": {
               "id": 1689,
@@ -345,7 +345,7 @@
           },
           {
             "baseFunctions": [
-              4866
+              5425
             ],
             "body": {
               "id": 1698,
@@ -441,7 +441,7 @@
           },
           {
             "baseFunctions": [
-              4888
+              5447
             ],
             "body": {
               "id": 1953,
@@ -840,7 +840,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnPosition",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 5081,
+                      "referencedDeclaration": 5647,
                       "src": "843:21:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1376,7 +1376,7 @@
                                   "lValueRequested": false,
                                   "memberName": "noPawnAt",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 5242,
+                                  "referencedDeclaration": 5808,
                                   "src": "2145:14:6",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1563,7 +1563,7 @@
                                   "lValueRequested": false,
                                   "memberName": "noPawnAt",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 5242,
+                                  "referencedDeclaration": 5808,
                                   "src": "2217:14:6",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1749,7 +1749,7 @@
                                 "lValueRequested": false,
                                 "memberName": "movePawn",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5325,
+                                "referencedDeclaration": 5891,
                                 "src": "2290:14:6",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -2316,7 +2316,7 @@
                                       "lValueRequested": false,
                                       "memberName": "getPawnAt",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5218,
+                                      "referencedDeclaration": 5784,
                                       "src": "1646:15:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_int8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -2788,7 +2788,7 @@
                                         "lValueRequested": false,
                                         "memberName": "removePawn",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 5370,
+                                        "referencedDeclaration": 5936,
                                         "src": "1859:16:6",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -2921,7 +2921,7 @@
                                         "lValueRequested": false,
                                         "memberName": "movePawn",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 5325,
+                                        "referencedDeclaration": 5891,
                                         "src": "1924:17:6",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -3060,7 +3060,7 @@
                                     "lValueRequested": false,
                                     "memberName": "getPawnAt",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 5218,
+                                    "referencedDeclaration": 5784,
                                     "src": "1220:15:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_int8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -3532,7 +3532,7 @@
                                       "lValueRequested": false,
                                       "memberName": "removePawn",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5370,
+                                      "referencedDeclaration": 5936,
                                       "src": "1433:16:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -3665,7 +3665,7 @@
                                       "lValueRequested": false,
                                       "memberName": "movePawn",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5325,
+                                      "referencedDeclaration": 5891,
                                       "src": "1498:17:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -3773,7 +3773,7 @@
                                       "lValueRequested": false,
                                       "memberName": "noPawnAt",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5242,
+                                      "referencedDeclaration": 5808,
                                       "src": "996:14:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -3959,7 +3959,7 @@
                                     "lValueRequested": false,
                                     "memberName": "movePawn",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 5325,
+                                    "referencedDeclaration": 5891,
                                     "src": "1075:14:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -4347,7 +4347,7 @@
         "id": 1671,
         "nodeType": "ImportDirective",
         "scope": 1956,
-        "sourceUnit": 4890,
+        "sourceUnit": 5449,
         "src": "51:21:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -4358,7 +4358,7 @@
         "id": 1672,
         "nodeType": "ImportDirective",
         "scope": 1956,
-        "sourceUnit": 5467,
+        "sourceUnit": 6033,
         "src": "73:32:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -4373,10 +4373,10 @@
               "id": 1673,
               "name": "Pawn",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4889,
+              "referencedDeclaration": 5448,
               "src": "129:4:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Pawn_$4889",
+                "typeIdentifier": "t_contract$_Pawn_$5448",
                 "typeString": "contract Pawn"
               }
             },
@@ -4405,7 +4405,7 @@
         ],
         "contractDependencies": [
           2695,
-          4889
+          5448
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -4414,7 +4414,7 @@
         "linearizedBaseContracts": [
           1955,
           2695,
-          4889
+          5448
         ],
         "name": "BlackPawn",
         "nodeType": "ContractDefinition",
@@ -4426,10 +4426,10 @@
               "id": 1677,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 5466,
+              "referencedDeclaration": 6032,
               "src": "157:15:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$5466",
+                "typeIdentifier": "t_contract$_StateController_$6032",
                 "typeString": "library StateController"
               }
             },
@@ -4475,7 +4475,7 @@
           },
           {
             "baseFunctions": [
-              4860
+              5419
             ],
             "body": {
               "id": 1689,
@@ -4571,7 +4571,7 @@
           },
           {
             "baseFunctions": [
-              4866
+              5425
             ],
             "body": {
               "id": 1698,
@@ -4667,7 +4667,7 @@
           },
           {
             "baseFunctions": [
-              4888
+              5447
             ],
             "body": {
               "id": 1953,
@@ -5066,7 +5066,7 @@
                       "lValueRequested": false,
                       "memberName": "getPawnPosition",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 5081,
+                      "referencedDeclaration": 5647,
                       "src": "843:21:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -5602,7 +5602,7 @@
                                   "lValueRequested": false,
                                   "memberName": "noPawnAt",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 5242,
+                                  "referencedDeclaration": 5808,
                                   "src": "2145:14:6",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -5789,7 +5789,7 @@
                                   "lValueRequested": false,
                                   "memberName": "noPawnAt",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 5242,
+                                  "referencedDeclaration": 5808,
                                   "src": "2217:14:6",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -5975,7 +5975,7 @@
                                 "lValueRequested": false,
                                 "memberName": "movePawn",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5325,
+                                "referencedDeclaration": 5891,
                                 "src": "2290:14:6",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -6542,7 +6542,7 @@
                                       "lValueRequested": false,
                                       "memberName": "getPawnAt",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5218,
+                                      "referencedDeclaration": 5784,
                                       "src": "1646:15:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_int8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7014,7 +7014,7 @@
                                         "lValueRequested": false,
                                         "memberName": "removePawn",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 5370,
+                                        "referencedDeclaration": 5936,
                                         "src": "1859:16:6",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7147,7 +7147,7 @@
                                         "lValueRequested": false,
                                         "memberName": "movePawn",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 5325,
+                                        "referencedDeclaration": 5891,
                                         "src": "1924:17:6",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7286,7 +7286,7 @@
                                     "lValueRequested": false,
                                     "memberName": "getPawnAt",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 5218,
+                                    "referencedDeclaration": 5784,
                                     "src": "1220:15:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_int8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7758,7 +7758,7 @@
                                       "lValueRequested": false,
                                       "memberName": "removePawn",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5370,
+                                      "referencedDeclaration": 5936,
                                       "src": "1433:16:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7891,7 +7891,7 @@
                                       "lValueRequested": false,
                                       "memberName": "movePawn",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5325,
+                                      "referencedDeclaration": 5891,
                                       "src": "1498:17:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -7999,7 +7999,7 @@
                                       "lValueRequested": false,
                                       "memberName": "noPawnAt",
                                       "nodeType": "MemberAccess",
-                                      "referencedDeclaration": 5242,
+                                      "referencedDeclaration": 5808,
                                       "src": "996:14:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint256_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -8185,7 +8185,7 @@
                                     "lValueRequested": false,
                                     "memberName": "movePawn",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 5325,
+                                    "referencedDeclaration": 5891,
                                     "src": "1075:14:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$_t_uint8_$_t_uint8_$returns$_t_array$_t_uint8_$121_memory_ptr_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -8540,14 +8540,6 @@
     "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
   },
   "networks": {
-    "4": {
-      "events": {},
-      "links": {
-        "StateController": "0xC0e27d1f1a6111e6D9C88Be7528434501c570Ce6"
-      },
-      "address": "0x5335eCA14d9EFbF5f526406Ab5Bbad3b9b074747",
-      "transactionHash": "0x2d455b24aeda75a3530342fe45a3cde4dd0d1ad2e32f122796003d9e7c965f5a"
-    },
     "1234": {
       "events": {},
       "links": {
@@ -8558,7 +8550,7 @@
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-18T17:30:23.512Z",
+  "updatedAt": "2020-07-20T12:46:03.449Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
