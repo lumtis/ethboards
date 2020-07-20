@@ -6,7 +6,9 @@ import '../App.css'
 
 import Pawn from '../artifacts/Board.json'
 
-// Graphical representation of a board
+// Options for a game
+// Claiming victory
+// Requesting timeout for the opponent
 class GameOptions extends Component {
   constructor(props) {
     super(props)
@@ -20,6 +22,9 @@ class GameOptions extends Component {
         isVictorious: false,
         isOpponentVictorious: false,
         isFinished: false,
+        pendingTimeout: false,
+        timeoutRemainingTime: 0,
+        timeoutTurnNumber: 0,
     }
 
     store.subscribe(() => {
@@ -33,6 +38,10 @@ class GameOptions extends Component {
     })
 
     this.claimVictory = this.claimVictory.bind(this)
+    this.startTimeout = this.startTimeout.bind(this)
+    this.executeTimeout = this.executeTimeout.bind(this)
+    this.stopTimeout = this.stopTimeout.bind(this)
+    this.updateRemainingTime = this.updateRemainingTime.bind(this)
   }
 
   async componentDidMount() {
@@ -80,6 +89,33 @@ class GameOptions extends Component {
           ).call()
           if (isOpponentVictorious) {
             this.setState({isOpponentVictorious})
+          } else {
+            // Check if a timeout is pending
+            const timeoutInfo = await drizzle.contracts.EthBoards.methods.getTimeoutInfo(
+              drizzle.contracts.BoardHandler.options.address,
+              boardId,
+              gameId,
+            ).call()
+
+            // If a timeout is pending, get the remaining time before we can execute it
+            if (timeoutInfo.isPending) {
+              const timeoutTimestamp = parseInt(timeoutInfo.timestamp)
+              const currentTimestamp = Math.floor(Date.now()/1000)
+              let timeoutRemainingTime = timeoutTimestamp - currentTimestamp
+              if (timeoutRemainingTime < 0) {
+                timeoutRemainingTime = 0
+              }
+
+              // Set the timeout infos
+              this.setState({
+                pendingTimeout: true,
+                timeoutRemainingTime,
+                timeoutTurnNumber: timeoutInfo.turnNumber
+              })
+              setTimeout(this.updateRemainingTime, 1000)
+            } else {
+              this.setState({pendingTimeout: false})
+            }
           }
         }
       }
@@ -132,6 +168,33 @@ class GameOptions extends Component {
           ).call()
           if (isOpponentVictorious) {
             this.setState({isOpponentVictorious})
+          } else {
+            // Check if a timeout is pending
+            const timeoutInfo = await drizzle.contracts.EthBoards.methods.getTimeoutInfo(
+              drizzle.contracts.BoardHandler.options.address,
+              boardId,
+              gameId,
+            ).call()
+
+            // If a timeout is pending, get the remaining time before we can execute it
+            if (timeoutInfo.isPending) {
+              const timeoutTimestamp = parseInt(timeoutInfo.timestamp)
+              const currentTimestamp = Math.floor(Date.now()/1000)
+              let timeoutRemainingTime = timeoutTimestamp - currentTimestamp
+              if (timeoutRemainingTime < 0) {
+                timeoutRemainingTime = 0
+              }
+
+              // Set the timeout infos
+              this.setState({
+                pendingTimeout: true,
+                timeoutRemainingTime,
+                timeoutTurnNumber: timeoutInfo.turnNumber
+              })
+              setTimeout(this.updateRemainingTime, 1000)
+            } else {
+              this.setState({pendingTimeout: false})
+            }
           }
         }
       }
@@ -147,7 +210,7 @@ class GameOptions extends Component {
     // Get the state signature from the state channel server
     const latestSignatureState = await getLatestStateSignature(boardId, gameId)
 
-    // Send a claimVictory transation to the smart contract
+    // Send a claimVictory transaction to the smart contract
     drizzle.contracts.EthBoards.methods.claimVictory(
       drizzle.contracts.BoardHandler.options.address,
       boardId,
@@ -177,35 +240,208 @@ class GameOptions extends Component {
     })
   }
 
+  async startTimeout() {
+    const {boardId, gameId} = this.state
+    const {drizzleContext} = this.props
+    const {drizzle, drizzleState} = drizzleContext
+    const {web3} = drizzle
+
+    // Get the state signature from the state channel server
+    const latestSignatureState = await getLatestStateSignature(boardId, gameId)
+
+    // Send a startTimeout transaction to the smart contract
+    drizzle.contracts.EthBoards.methods.startTimeout(
+      drizzle.contracts.BoardHandler.options.address,
+      boardId,
+      gameId,
+      parseInt(latestSignatureState.turn),
+      latestSignatureState.move,
+      [
+        web3.utils.bytesToHex(latestSignatureState.r[0]),
+        web3.utils.bytesToHex(latestSignatureState.r[1]),
+      ],
+      [
+        web3.utils.bytesToHex(latestSignatureState.s[0]),
+        web3.utils.bytesToHex(latestSignatureState.s[1]),
+      ],
+      latestSignatureState.v,
+      latestSignatureState.state
+    ).send({
+      from: drizzleState.accounts[0]
+    }).on('error', (err) => {
+      console.log("Error starting timeout")
+      console.log(err)
+    }).on('transactionHash', (txHash) => {
+      console.log("Transaction hash:")
+      console.log(txHash)
+    }).then(() => {
+      this.forceUpdate()
+    })
+  }
+
+  async executeTimeout() {
+    const {boardId, gameId} = this.state
+    const {drizzleContext} = this.props
+    const {drizzle, drizzleState} = drizzleContext
+
+    // Call smart contract
+    drizzle.contracts.EthBoards.methods.executeTimeout(
+      drizzle.contracts.BoardHandler.options.address,
+      boardId,
+      gameId,
+    ).send({
+      from: drizzleState.accounts[0]
+    }).on('error', (err) => {
+      console.log("Error starting timeout")
+      console.log(err)
+    }).on('transactionHash', (txHash) => {
+      console.log("Transaction hash:")
+      console.log(txHash)
+    }).then(() => {
+      this.forceUpdate()
+    })
+  }
+
+  async stopTimeout() {
+    const {boardId, gameId} = this.state
+    const {drizzleContext} = this.props
+    const {drizzle, drizzleState} = drizzleContext
+    const {web3} = drizzle
+
+    // Get the state signature from the state channel server
+    const latestSignatureState = await getLatestStateSignature(boardId, gameId)
+
+    // Send a stopTimeout transaction to the smart contract
+    drizzle.contracts.EthBoards.methods.stopTimeout(
+      drizzle.contracts.BoardHandler.options.address,
+      boardId,
+      gameId,
+      parseInt(latestSignatureState.turn),
+      latestSignatureState.move,
+      [
+        web3.utils.bytesToHex(latestSignatureState.r[0]),
+        web3.utils.bytesToHex(latestSignatureState.r[1]),
+      ],
+      [
+        web3.utils.bytesToHex(latestSignatureState.s[0]),
+        web3.utils.bytesToHex(latestSignatureState.s[1]),
+      ],
+      latestSignatureState.v,
+      latestSignatureState.state
+    ).send({
+      from: drizzleState.accounts[0]
+    }).on('error', (err) => {
+      console.log("Error stoping timeout")
+      console.log(err)
+    }).on('transactionHash', (txHash) => {
+      console.log("Transaction hash:")
+      console.log(txHash)
+    }).then(() => {
+      this.forceUpdate()
+    })
+  }
+
+  // To have realtime left seconds for timeout
+  updateRemainingTime() {
+    const remainingTime = this.state.timeoutRemainingTime
+    if(remainingTime > 0) {
+      this.setState({timeoutRemainingTime: remainingTime-1})
+      setTimeout(this.updateRemainingTime, 1000)
+    }
+  }
+
   render() {
-    const {playerIndex, turn, isVictorious, isOpponentVictorious, isFinished} = this.state
+    // State
+    const {
+      playerIndex,
+      turn,
+      isVictorious,
+      isOpponentVictorious,
+      isFinished,
+      pendingTimeout,
+      timeoutRemainingTime,
+      timeoutTurnNumber
+    } = this.state
+
+    // Component for timeout
+    let timeoutBox = null
+    if (pendingTimeout) {
+      if (turn > timeoutTurnNumber) {
+        timeoutBox = <div>
+            <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+            <button onClick={this.stopTimeout} className="button" style={buttontyle}>Stop timeout</button>
+          </div>
+      }
+      else if (timeoutRemainingTime > 0) {
+        timeoutBox = <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+      } else {
+        timeoutBox = <div>
+          <h1>Time out!</h1>
+          <button onClick={this.executeTimeout} className="button" style={buttontyle}>Kick the player</button>
+        </div>
+      }
+    } else {
+      timeoutBox = <button onClick={this.startTimeout} className="button" style={buttontyle}>Start timeout</button>
+    }
+
+    // Component to stop timeout
+    let stopTimeoutBox = null
+    if (pendingTimeout) {
+
+      if (timeoutTurnNumber >= turn) {
+        stopTimeoutBox = <div>
+          <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+          <h1>Play your turn!</h1>
+        </div>
+      } else {
+        stopTimeoutBox = <div>
+          <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+          <button onClick={this.stopTimeout} className="button" style={buttontyle}>Stop timeout</button>
+        </div>
+      } 
+    }
+
+    // Components depending on the flow of the game
+    const gameFinishedOption = <div>
+      <h1>Game finished</h1>
+    </div>
+
+    const turnOption = <div>
+      <h1>Your turn</h1>
+      {stopTimeoutBox}
+    </div>
+
+    const opponentTurnOption = <div>
+      <h1>Opponent's turn</h1>
+      {timeoutBox}
+    </div>
+
+    const victoryOption = <div>
+      <h1>You won!</h1>
+      <button onClick={this.claimVictory} className="button" style={buttontyle}>Claim victory</button>
+    </div>
+
+    const defeatOption = <div>
+      <h1>You lost!</h1>
+      <button onClick={this.claimVictory} className="button" style={buttontyle}>Leave the game</button>
+    </div>
+    
+    // Select which option to display
     let content = null
     if (isFinished) {
-      content = <div>
-        <h1>Game finished</h1>
-      </div>
+      content = gameFinishedOption
     } else if (isVictorious === true) {
-      content = <div>
-          <h1>You won!</h1>
-          <button onClick={this.claimVictory} className="button" style={buttontyle}>Claim victory</button>
-        </div>
+      content = victoryOption
     } else if (isOpponentVictorious === true) {
-      content = <div>
-          <h1>You lost!</h1>
-          <button className="button" style={buttontyle}>Leave the game</button>
-        </div>
+      content = defeatOption
     } else {
       // Check whose turn is
       if (turn % 2 === playerIndex) {
         // Our turn
-        content = <div>
-          <h1>Your turn</h1>
-        </div>
+        content = turnOption
       } else {
         // Opponent turn
-        content = <div>
-          <h1>Opponent's turn</h1>
-        </div>
+        content = opponentTurnOption
       }
     }
 
