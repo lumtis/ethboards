@@ -461,7 +461,7 @@ const boxStyle = {
     backgroundColor: 'rgba(126, 126, 126, 0.5)',
 }
 
-  const buttontyle = {
+const buttontyle = {
     width: '200px',
     height: '60px',
     fontSize: '18px',

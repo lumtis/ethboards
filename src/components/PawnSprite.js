@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 import store from '../store'
-import {testSimulate} from '../utils/gameUtils'
 import {getPawnType} from '../utils/stateUtils'
 
 import Pawn from '../artifacts/Pawn.json'
@@ -17,8 +16,6 @@ class PawnSprite extends Component {
           playerIndex: store.getState().game.playerIndex,
           spriteLink: ""
         }
-
-        this.performSimulation = this.performSimulation.bind(this)
     }
 
     async componentDidMount() {
@@ -48,15 +45,15 @@ class PawnSprite extends Component {
     async componentDidUpdate(prevProps, prevState) {
         // Update only if there is a new pawn
         if (this.props.pawn !== prevProps.pawn) {
-            const {boardId} = this.state
+            const {boardState, boardId} = this.state
             const {pawn, drizzleContext} = this.props
             const {drizzle} = drizzleContext
             const {web3} = drizzle
     
             // Get the address of the pawn
-            const pawnAddress = await drizzle.contracts.BoardHandler.methods.getBoardPawnTypeContractFromPawnIndex(
+            const pawnAddress = await drizzle.contracts.BoardHandler.methods.getBoardPawnContract(
                 boardId,
-                pawn
+                getPawnType(boardState, pawn)
             ).call()
     
             // Add the contract of the pawn
@@ -72,72 +69,28 @@ class PawnSprite extends Component {
         }     
     }
 
-    async performSimulation() {
-        const {boardState, boardId, gameId, playerIndex} = this.state
-        const {pawn, drizzleContext} = this.props
-        const {drizzle} = drizzleContext
-
-        const simulations = []
-
-        store.dispatch({
-            type: 'RESET_CROSSES', 
-        })
-
-        // No simulation if not game
-        if (gameId > -1) {
-
-            const crossesToAdd = {}
-
-            // Simulate the move on every tile
-            for (let i=0; i<8; i++) {
-                for (let j=0; j<8; j++) {
-                    const move = [pawn, 0, i, j]
-
-                    const simulation = testSimulate(
-                        drizzle,
-                        boardId,
-                        playerIndex,
-                        move,
-                        boardState,
-                    ).then((coordinates) => {
-                        // If not null => the simulation passed
-                        if (coordinates) {
-                            crossesToAdd[coordinates[0]*8+coordinates[1]] = true
-                        }
-                    })
-
-                    simulations.push(simulation)
-                }
-            }
-
-            // Wait for all simulation to finish
-            await Promise.all(simulations)
-
-
-
-            // Send the crosses to add to the UI
-            // Send the new state to redux
-            store.dispatch({
-                type: 'DISPLAY_CROSSES', 
-                payload: {
-                    crosses: crossesToAdd,
-                    selectedPawn: pawn
-                }
-            })
-        }
-    }
-
     render() {
-        const {x, y} = this.props
+        const {pawn, x, y} = this.props
         const {spriteLink} = this.state
         if (spriteLink) {
             return (
-                <img onClick={this.performSimulation} src={spriteLink} alt="Pawn" style={{
+                <img onClick={() => {
+                    // Select the pawn to give information in the side bar
+                    store.dispatch({
+                        type: 'SELECT_PAWN', 
+                        payload: {
+                            selectedPawn: pawn,
+                        }
+                    })
+                    store.dispatch({
+                        type: 'RESET_CROSSES', 
+                    })
+                } } src={spriteLink} alt="Pawn" style={{
                     cursor: 'pointer',
-                    width: '32px',
+                    width: '40px',
                     position: 'absolute',
-                    top: y+16+'px',
-                    left: x+16+'px'
+                    top: y+12+'px',
+                    left: x+12+'px'
                 }}></img>
             )
         } else {

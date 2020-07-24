@@ -6,7 +6,6 @@ import store from '../store'
 import Board from '../components/Board'
 import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
-import PawnBar from '../components/PawnBar'
 import JoinBox from '../components/JoinBox'
 import CurrentGames from '../components/CurrentGames'
 
@@ -78,7 +77,6 @@ class BoardPageComp extends Component {
             </div>
           </div>
           <div className="col-md-4">
-            <PawnBar drizzleContext={drizzleContext} />
           </div>
         </div>
       </div>
