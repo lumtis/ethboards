@@ -20,6 +20,7 @@ class PawnInfo extends Component {
             name: "",
             etherscanLink: "",
             simulationsPending: false,
+            moveNames: []
         }
         this.performSimulation = this.performSimulation.bind(this)
     }
@@ -46,18 +47,30 @@ class PawnInfo extends Component {
             drizzle.addContract(contractConfig)
         }
 
-        // Get the image
+        // Get the ipfs metadata
         const ipfsPath = await drizzle.contracts[pawnAddress].methods.getMetadata().call()
         if (ipfsPath) {
+            // Get the image
             this.setState({
                 imageLink: process.env.REACT_APP_IPFS_URL + ipfsPath + '/image.png'
             })
     
             // Get the name
-            const response = await ipfsGet(ipfsPath + '/name/default')
+            let response = await ipfsGet(ipfsPath + '/name')
             if (response) {
                 this.setState({name: response.toString('utf8')})
             }
+
+            // Get the move names
+            const moveNumber = await drizzle.contracts[pawnAddress].methods.getMoveNumber().call()
+            const moveNames = []
+            for(let i=0; i<moveNumber; i++) {
+                response = await ipfsGet(ipfsPath + '/' + i.toString())
+                if (response) {
+                    moveNames.push(response.toString('utf8'))
+                }
+            }
+            this.setState({moveNames})
         }
 
         // Get the etherscan link
@@ -98,18 +111,30 @@ class PawnInfo extends Component {
                 drizzle.addContract(contractConfig)
             }
 
-            // Get the image
+            // Get the ipfs metadata
             const ipfsPath = await drizzle.contracts[pawnAddress].methods.getMetadata().call()
             if (ipfsPath) {
+                // Get the image
                 this.setState({
                     imageLink: process.env.REACT_APP_IPFS_URL + ipfsPath + '/image.png'
                 })
         
                 // Get the name
-                const response = await ipfsGet(ipfsPath + '/name/default')
+                let response = await ipfsGet(ipfsPath + '/name')
                 if (response) {
                     this.setState({name: response.toString('utf8')})
                 }
+
+                // Get the move names
+                const moveNumber = await drizzle.contracts[pawnAddress].methods.getMoveNumber().call()
+                const moveNames = []
+                for(let i=0; i<moveNumber; i++) {
+                    response = await ipfsGet(ipfsPath + '/' + i.toString())
+                    if (response) {
+                        moveNames.push(response.toString('utf8'))
+                    }
+                }
+                this.setState({moveNames})
             }
 
             // Get the etherscan link
@@ -183,7 +208,7 @@ class PawnInfo extends Component {
     }
 
     render() {
-        const {imageLink, name, etherscanLink, simulationsPending} = this.state
+        const {imageLink, name, etherscanLink, simulationsPending, moveNames} = this.state
         const {pawn} = this.props
 
         let image = null
@@ -205,10 +230,9 @@ class PawnInfo extends Component {
             </div>
         }
 
-        const moves = ['Move']
         let moveButtons = []
-        for (let i=0; i<moves.length; i++) {
-            moveButtons.push(<button onClick={() => this.performSimulation(i)} className="button" style={buttontyle}>{moves[i]}</button>)
+        for (let i=0; i<moveNames.length; i++) {
+            moveButtons.push(<button onClick={() => this.performSimulation(i)} className="button" style={buttontyle}>{moveNames[i]}</button>)
         }
 
         return (
