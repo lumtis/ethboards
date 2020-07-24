@@ -8,7 +8,7 @@ contract BlackBishop is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmWYTsUX7xBzYx1ARTdqPj2Zwj4fQQd7hrhZyJrnAkNzyi';
+        return '/ipfs/QmQ3pqqsuGPHJjihUGLqoaKCNHodFrdzMnsnoXRHPiPRSm';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

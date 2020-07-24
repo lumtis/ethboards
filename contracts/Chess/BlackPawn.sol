@@ -8,7 +8,7 @@ contract BlackPawn is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmWfWiNo2rPcz7Jikj2EBrqpJYYzYP2Pae9jsvUJcDa1CL';
+        return '/ipfs/Qmd56iiABueZKgFoKJAidfh6ag83d6o42FYuopngP6VPJr';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

@@ -7,7 +7,7 @@ contract RedBase is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmVP1XudhxtG6T4jhZyhD384KpgGBRifjkx2bT7JWkoA97';
+        return '/ipfs/QmbCVnLfT8oEnYTK6sJEKL8WAdvLFMiLGMoCkkdmhhrTHZ';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

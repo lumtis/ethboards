@@ -8,7 +8,7 @@ contract BlackQueen is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmQ6436wLqYgtX9fjtFE2EMZQSTNwCkKRu9mWeoNWvqg3s';
+        return '/ipfs/QmQHFjoBQVWmjy4mJzid58fNCD3xnXeDQgeLqXZTcxABjg';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

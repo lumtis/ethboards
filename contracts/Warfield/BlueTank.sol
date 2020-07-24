@@ -7,7 +7,7 @@ contract BlueTank is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmTd56qPSVuLkNRTDT25seofbRnxTMJDGP7MDHm6XeRGYp';
+        return '/ipfs/QmW8VQr1qeL2117Gh2UnoJtmqaXQLx9kWYv52CKVVaSw2U';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

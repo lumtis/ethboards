@@ -8,7 +8,7 @@ contract WhiteQueen is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmZDGiNuY9ZVnCU6tZmCqjJ9Bawt3btSPKSiWyfskqJwdy';
+        return '/ipfs/QmepsnMSShH5sknsX7A2Mvi8mDvp6Rgks9iLuezVJY88au';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

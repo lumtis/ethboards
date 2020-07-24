@@ -8,7 +8,7 @@ contract WhiteBishop is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmPtTLyaaMYzLrxKP13VNd7NAr3Fubktj29FP22JdxhxKi';
+        return '/ipfs/QmWJxS92Ktd5ypCaYtCbz5qfqMkjBUiFhzU5Cb5twt3i5L';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

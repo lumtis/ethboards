@@ -7,7 +7,7 @@ contract RedTank is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/Qme3EnReCRPBRxtBLVsTy5k13L3FuRdNLHnD925Spjmt2H';
+        return '/ipfs/QmT3v4LWxJoqmh7RRTVhMV7C1JNcN3258Zt9AgckZCk1tn';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

@@ -8,7 +8,7 @@ contract WhitePawn is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmaWxfYRrwRdoNnyn9zdGgcE7hDZZsm1c4nYkjsv4EXqtE';
+        return '/ipfs/QmSV1qPgk4e63YvqtwA5jvePsheaBrwnwWWiBcdCjeqLiG';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

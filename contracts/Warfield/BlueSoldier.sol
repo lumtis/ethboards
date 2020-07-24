@@ -7,7 +7,7 @@ contract BlueSoldier is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmUH1cRwuC9VCTW4CNCd6KVSNk5biJENFnRx4Q7jmM9VQU';
+        return '/ipfs/QmQYAJD1fSTKXb4wgqiYUc9X1kZABqZgFgsCiLvTKd7o2w';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

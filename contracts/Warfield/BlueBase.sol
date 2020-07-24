@@ -7,7 +7,7 @@ contract BlueBase is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmUXBTn5PJNTGoad8SRnLrdUbq4sbPWMVvXWgNUmcncssc';
+        return '/ipfs/QmcYw1yVbSYixPH6fBVxfEmJfYzoYgkVLuxPV9qawMjrzs';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

@@ -8,7 +8,7 @@ contract WhiteRook is Pawn, ChessPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmRC2S7k5tW2jmNahUjSiA5YJC6Gem7RBUkz2wJJPto7Y2';
+        return '/ipfs/QmQrQR5aR6Dmf9SBZAxQE6r8zYpHxctNBUz1XAKc3kasou';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;

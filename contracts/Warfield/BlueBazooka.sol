@@ -7,7 +7,7 @@ contract BlueBazooka is Pawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmR2AY13GXk4uSZzU8SFHskusuJWu2MYQP3yw3FuKycVQm';
+        return '/ipfs/QmcfPx26H6C89ad7Wana9c2cynUMnjyYJuvUe253gvt3py';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 1;
