@@ -1,0 +1,717 @@
+{
+  "contractName": "WarfieldBoard",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "player",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8[121]",
+          "name": "state",
+          "type": "uint8[121]"
+        }
+      ],
+      "name": "checkVictory",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":\"WarfieldBoard\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x909afff925083ef0a945ced12a8b0a5e39ecd6bc8182b08e4a85781a2b0455e9\",\"urls\":[\"bzz-raw://df1358e3cda02bde1f93a3f8b7952cea65e6c3a691f52b15a54d49cb5f30b16c\",\"dweb:/ipfs/Qmf92UmEGsxVTEmfwC7M7kABopAMC7MQ9icDcVhGQkQKTU\"]},\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":{\"keccak256\":\"0xcce6ef1f266a09e33be5386051afdf353c72c609d218338abccde802ab430a73\",\"urls\":[\"bzz-raw://066fe54a7e603d9fae99a31f4ac4b99844a1a977018e3635a9179db520de3837\",\"dweb:/ipfs/QmcNb9ZddkyqgWbiXnxCiG2FmTon3f9J6UeJFgTPr7AFVu\"]},\"/Users/lucas/Desktop/ethboards/contracts/StateController.sol\":{\"keccak256\":\"0x12990ec368464b9254b9da62bed82e3298acce8b87bb85714545a7f4293af244\",\"urls\":[\"bzz-raw://78209d2dce43b583862f35094e2ea9a673f34daccef051d5bd6a1dc24e72c8d0\",\"dweb:/ipfs/QmSDDgJeXadXLErnb1bFeSocS7FTUUJyM3TmqmGe27wmBS\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060c08061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063110f250114602d575b600080fd5b60656004803603610f40811015604257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050607f565b604051808215151515815260200191505060405180910390f35b60008090509291505056fea264697066735822122023a31707105136ef2572c39399e120aad81e6b353785792a1a39864df41d5de464736f6c634300060b0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063110f250114602d575b600080fd5b60656004803603610f40811015604257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050607f565b604051808215151515815260200191505060405180910390f35b60008090509291505056fea264697066735822122023a31707105136ef2572c39399e120aad81e6b353785792a1a39864df41d5de464736f6c634300060b0033",
+  "immutableReferences": {},
+  "sourceMap": "82:304:2:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "82:304:2:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;255:129;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;349:4;372:5;365:12;;255:129;;;;:::o",
+  "source": "pragma solidity 0.6.11;\n\nimport \"../Board.sol\";\nimport \"../StateController.sol\";\n\ncontract WarfieldBoard is Board {\n    using StateController for uint8[121];\n\n    // This is no real chess, we check if the king has been killed to determine the victory\n    function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {\n        return false;\n    }\n}",
+  "sourcePath": "/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol",
+  "ast": {
+    "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol",
+    "exportedSymbols": {
+      "WarfieldBoard": [
+        85
+      ]
+    },
+    "id": 86,
+    "license": null,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 60,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
+        "file": "../Board.sol",
+        "id": 61,
+        "nodeType": "ImportDirective",
+        "scope": 86,
+        "sourceUnit": 16,
+        "src": "25:22:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/StateController.sol",
+        "file": "../StateController.sol",
+        "id": 62,
+        "nodeType": "ImportDirective",
+        "scope": 86,
+        "sourceUnit": 6051,
+        "src": "48:32:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 63,
+              "name": "Board",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 15,
+              "src": "108:5:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Board_$15",
+                "typeString": "contract Board"
+              }
+            },
+            "id": 64,
+            "nodeType": "InheritanceSpecifier",
+            "src": "108:5:2"
+          }
+        ],
+        "contractDependencies": [
+          15
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 85,
+        "linearizedBaseContracts": [
+          85,
+          15
+        ],
+        "name": "WarfieldBoard",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 69,
+            "libraryName": {
+              "contractScope": null,
+              "id": 65,
+              "name": "StateController",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6050,
+              "src": "126:15:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_StateController_$6050",
+                "typeString": "library StateController"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "120:37:2",
+            "typeName": {
+              "baseType": {
+                "id": 66,
+                "name": "uint8",
+                "nodeType": "ElementaryTypeName",
+                "src": "146:5:2",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint8",
+                  "typeString": "uint8"
+                }
+              },
+              "id": 68,
+              "length": {
+                "argumentTypes": null,
+                "hexValue": "313231",
+                "id": 67,
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": true,
+                "kind": "number",
+                "lValueRequested": false,
+                "nodeType": "Literal",
+                "src": "152:3:2",
+                "subdenomination": null,
+                "typeDescriptions": {
+                  "typeIdentifier": "t_rational_121_by_1",
+                  "typeString": "int_const 121"
+                },
+                "value": "121"
+              },
+              "nodeType": "ArrayTypeName",
+              "src": "146:10:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                "typeString": "uint8[121]"
+              }
+            }
+          },
+          {
+            "baseFunctions": [
+              14
+            ],
+            "body": {
+              "id": 83,
+              "nodeType": "Block",
+              "src": "355:29:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "66616c7365",
+                    "id": 81,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "372:5:2",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "false"
+                  },
+                  "functionReturnParameters": 80,
+                  "id": 82,
+                  "nodeType": "Return",
+                  "src": "365:12:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "110f2501",
+            "id": 84,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkVictory",
+            "nodeType": "FunctionDefinition",
+            "overrides": {
+              "id": 77,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "327:8:2"
+            },
+            "parameters": {
+              "id": 76,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 71,
+                  "mutability": "mutable",
+                  "name": "player",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "277:12:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 70,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "277:5:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 75,
+                  "mutability": "mutable",
+                  "name": "state",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "291:25:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint8_$121_calldata_ptr",
+                    "typeString": "uint8[121]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 72,
+                      "name": "uint8",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "291:5:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "id": 74,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "313231",
+                      "id": 73,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "297:3:2",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_121_by_1",
+                        "typeString": "int_const 121"
+                      },
+                      "value": "121"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "291:10:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                      "typeString": "uint8[121]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "276:41:2"
+            },
+            "returnParameters": {
+              "id": 80,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 79,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "349:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 78,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "349:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "348:6:2"
+            },
+            "scope": 85,
+            "src": "255:129:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 86,
+        "src": "82:304:2"
+      }
+    ],
+    "src": "0:386:2"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol",
+    "exportedSymbols": {
+      "WarfieldBoard": [
+        85
+      ]
+    },
+    "id": 86,
+    "license": null,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 60,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board.sol",
+        "file": "../Board.sol",
+        "id": 61,
+        "nodeType": "ImportDirective",
+        "scope": 86,
+        "sourceUnit": 16,
+        "src": "25:22:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/StateController.sol",
+        "file": "../StateController.sol",
+        "id": 62,
+        "nodeType": "ImportDirective",
+        "scope": 86,
+        "sourceUnit": 6051,
+        "src": "48:32:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 63,
+              "name": "Board",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 15,
+              "src": "108:5:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Board_$15",
+                "typeString": "contract Board"
+              }
+            },
+            "id": 64,
+            "nodeType": "InheritanceSpecifier",
+            "src": "108:5:2"
+          }
+        ],
+        "contractDependencies": [
+          15
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 85,
+        "linearizedBaseContracts": [
+          85,
+          15
+        ],
+        "name": "WarfieldBoard",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 69,
+            "libraryName": {
+              "contractScope": null,
+              "id": 65,
+              "name": "StateController",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 6050,
+              "src": "126:15:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_StateController_$6050",
+                "typeString": "library StateController"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "120:37:2",
+            "typeName": {
+              "baseType": {
+                "id": 66,
+                "name": "uint8",
+                "nodeType": "ElementaryTypeName",
+                "src": "146:5:2",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint8",
+                  "typeString": "uint8"
+                }
+              },
+              "id": 68,
+              "length": {
+                "argumentTypes": null,
+                "hexValue": "313231",
+                "id": 67,
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": true,
+                "kind": "number",
+                "lValueRequested": false,
+                "nodeType": "Literal",
+                "src": "152:3:2",
+                "subdenomination": null,
+                "typeDescriptions": {
+                  "typeIdentifier": "t_rational_121_by_1",
+                  "typeString": "int_const 121"
+                },
+                "value": "121"
+              },
+              "nodeType": "ArrayTypeName",
+              "src": "146:10:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                "typeString": "uint8[121]"
+              }
+            }
+          },
+          {
+            "baseFunctions": [
+              14
+            ],
+            "body": {
+              "id": 83,
+              "nodeType": "Block",
+              "src": "355:29:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "66616c7365",
+                    "id": 81,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "372:5:2",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "false"
+                  },
+                  "functionReturnParameters": 80,
+                  "id": 82,
+                  "nodeType": "Return",
+                  "src": "365:12:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "110f2501",
+            "id": 84,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkVictory",
+            "nodeType": "FunctionDefinition",
+            "overrides": {
+              "id": 77,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "327:8:2"
+            },
+            "parameters": {
+              "id": 76,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 71,
+                  "mutability": "mutable",
+                  "name": "player",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "277:12:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 70,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "277:5:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 75,
+                  "mutability": "mutable",
+                  "name": "state",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "291:25:2",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint8_$121_calldata_ptr",
+                    "typeString": "uint8[121]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 72,
+                      "name": "uint8",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "291:5:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "id": 74,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "313231",
+                      "id": 73,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "297:3:2",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_121_by_1",
+                        "typeString": "int_const 121"
+                      },
+                      "value": "121"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "291:10:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint8_$121_storage_ptr",
+                      "typeString": "uint8[121]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "276:41:2"
+            },
+            "returnParameters": {
+              "id": 80,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 79,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 84,
+                  "src": "349:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 78,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "349:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "348:6:2"
+            },
+            "scope": 85,
+            "src": "255:129:2",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 86,
+        "src": "82:304:2"
+      }
+    ],
+    "src": "0:386:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
+  },
+  "networks": {
+    "1234": {
+      "events": {},
+      "links": {},
+      "address": "0xc76d32ce74D9739868A8EF236619D52E7e4323BD",
+      "transactionHash": "0xc7248dfa5f4d8186d2a7f1fe6d264737a0c95f44f76e88972f71a45d5039b91a"
+    }
+  },
+  "schemaVersion": "3.2.2",
+  "updatedAt": "2020-07-23T07:48:37.610Z",
+  "networkType": "ethereum",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "checkVictory(uint8,uint8[121])": {
+        "params": {
+          "player": "the player we want to check as victorious",
+          "state": "the state of the game"
+        },
+        "returns": {
+          "_0": "true if the player is victorious, false otherwise"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "checkVictory(uint8,uint8[121])": {
+        "notice": "Check if the state of a game of the board is victorious for a player"
+      }
+    },
+    "version": 1
+  }
+}
