@@ -188,18 +188,18 @@ module.exports = async (deployer, network, accounts) => {
     28
   );
 
-  ///////////////////////////////////////////////////////////
   // Start the first game
   await boardHandler.joinGame(1, {from: accounts[0]})
   await boardHandler.joinGame(1, {from: accounts[1]})
 
-  // Deploy Light Brigade Chess
-  xArray = [0,0,2,2,1,1,2,2,2,2,0,0,7,7,5,5,6,6,5,5,5,5,7,7]
-  yArray = [0,7,2,5,2,5,3,4,1,6,3,4,0,7,2,5,2,5,3,4,1,6,3,4]
-  indexArray = [4,4,4,4,5,5,5,5,6,6,7,7,0,0,0,0,1,1,1,1,2,2,3,3]
+  ///////////////////////////////////////////////////////////
+  // Deploy Waarfield
+  xArray = [0,0,2,2,1,1,2,2,2,2,0,7,7,5,5,6,6,5,5,5,5,7]
+  yArray = [0,7,2,5,2,5,3,4,1,6,3,0,7,2,5,2,5,3,4,1,6,4]
+  indexArray = [4,4,4,4,5,5,5,5,6,6,7,0,0,0,0,1,1,1,1,2,2,3]
 
   // Fill arrays
-  for(let i=0; i<40-24; i++) {
+  for(let i=0; i<40-22; i++) {
     xArray.push(0)
     yArray.push(0)
     indexArray.push(0)
@@ -212,6 +212,10 @@ module.exports = async (deployer, network, accounts) => {
     xArray,
     yArray,
     indexArray,
-    24
+    22
   );
+
+  // Start the first game
+  await boardHandler.joinGame(2, {from: accounts[0]})
+  await boardHandler.joinGame(2, {from: accounts[1]})
 };
