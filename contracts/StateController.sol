@@ -26,8 +26,6 @@ library StateController {
      * @return the coordinates (x,y) of the pawn
     */
     function getPawnPosition(uint8[121] memory state, uint8 pawn) public pure returns (uint8, uint8) {
-        // Require the pawn exist
-        require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
 
         return (state[41+pawn], state[81+pawn]);
@@ -40,8 +38,6 @@ library StateController {
      * @return the type of the pawn
     */
     function getPawnType(uint8[121] memory state, uint8 pawn) public pure returns (uint8) {
-        // Require the pawn exist
-        require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
 
         return state[1+pawn]-1;
@@ -54,8 +50,6 @@ library StateController {
      * @return true if the pawn is still alive
     */
     function isAlive(uint8[121] memory state, uint8 pawn) public pure returns (bool) {
-        // Require the pawn exist
-        require(pawn < state[0], "Pawn doesn't exist");
         return state[1+pawn] > 0;
     }
 
@@ -67,8 +61,7 @@ library StateController {
      * @return the pawn index if a pawn is present, -1 if no pawn is present on this location
     */
     function getPawnAt(uint8[121] memory state, uint8 x, uint y) public pure returns (int8) {
-        uint8 pawnNb = getPawnNumber(state);
-        for (uint8 i = 0; i < pawnNb; i++) {
+        for (uint8 i = 0; i < 40; i++) {
             if (state[1+i] > 0 && state[41+i] == x && state[81+i] == y) {
                 return int8(i);
             }
@@ -103,7 +96,6 @@ library StateController {
     function movePawn(uint8[121] memory state, uint8 pawn, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
-        require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
         require(getPawnAt(state, x, y) == -1, "A pawn is already present");
 
@@ -120,7 +112,6 @@ library StateController {
      * @return the new state once the pawn has been removed
     */
     function removePawn(uint8[121] memory state, uint8 pawn) public pure returns (uint8[121] memory) {
-        require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] > 0, "Pawn is dead");
 
         state[1+pawn] = 0;
@@ -140,13 +131,27 @@ library StateController {
     function respawnPawn(uint8[121] memory state, uint8 pawn, uint8 pawnType, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
-        require(pawn < state[0], "Pawn doesn't exist");
         require(state[1+pawn] == 0, "Pawn is still alive");
         require(getPawnAt(state, x, y) == -1, "A pawn is already present");
 
         state[1+pawn] = pawnType + 1;
         state[41+pawn] = x;
         state[81+pawn] = y;
+
+        return state;
+    }
+
+    /**
+     * @notice Perform the state transition when change the pawn type of a pawn in the game
+     * @param state the state of the game
+     * @param pawn index of the pawn
+     * @param pawnType the new type of the pawn to respawn
+     * @return the new state once the pawn has been respawned
+    */
+    function transformPawn(uint8[121] memory state, uint8 pawn, uint8 pawnType) public pure returns (uint8[121] memory) {
+        require(state[1+pawn] > 0, "Pawn is dead");
+
+        state[1+pawn] = pawnType + 1;
 
         return state;
     }

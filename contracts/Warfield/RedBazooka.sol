@@ -1,16 +1,17 @@
 pragma solidity 0.6.11;
 
+import "./WarfieldPawn.sol";
 import "../Pawn.sol";
 import "../StateController.sol";
 
-contract RedBazooka is Pawn {
+contract RedBazooka is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmRK5dW6ff4xJkJC7rcJZNK5e9qmf9vmYAPGruXchvxVTQ';
+        return '/ipfs/QmQKmfcESwkMbJHAB9K3KXejekgEvGNoH3oH6J1mr8AFxd';
     }
     function getMoveNumber() external override pure returns(uint8) {
-        return 1;
+        return 3;
     }
 
     function performMove(
@@ -21,6 +22,36 @@ contract RedBazooka is Pawn {
         uint8 y,
         uint8[121] calldata state
     ) external override pure returns(uint8[121] memory outState) {
-        revert("No move");
+        require(!isOpponent(state, player, pawn), "Player can't move a red pawn");
+        require(x<8 || y<8, "Move out of bound");
+
+        // Get old positions and distance
+        (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
+        uint8 distance = distance(x,y,oldX,oldY);
+
+        if (moveType == 0) {
+            // Move
+            require(distance == 1, "Can only move to the next box");
+            require(state.noPawnAt(x,y), "A pawn is already present");
+            outState = state.movePawn(pawn, x, y);
+        } else if (moveType == 1) {
+            // Shoot
+            require(distance == 1, "Can only shoot on the next box");
+            int8 presentPawn = state.getPawnAt(x, y);
+            require((presentPawn > -1) && isOpponent(state, player, uint8(presentPawn)), "No opponent");
+            require(!isBase(state, uint8(presentPawn)), "Cannot shoot a base");
+            outState = state.removePawn(uint8(presentPawn));
+        } else if (moveType == 2) {
+            // Capture
+            require(distance == 1, "Can only capture on the next box");
+            int8 presentPawn = state.getPawnAt(x, y);
+            require((presentPawn > -1) && isOpponent(state, player, uint8(presentPawn)), "No opponent");
+            require(isBase(state, uint8(presentPawn)), "Can only capture a base");
+            outState = state.transformPawn(uint8(presentPawn), 4);
+        } else {
+            revert("Unknown move");
+        }
+
+        return outState;
     }
 }

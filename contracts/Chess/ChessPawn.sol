@@ -4,7 +4,7 @@ import "../StateController.sol";
 
 // Contains utilitary function for chess pawn
 // Player A controls white pawns, pawn from 0 to 5
-// Player A controls white pawns, pawn from 6 to 11
+// Player B controls white pawns, pawn from 6 to 11
 // 0: King
 // 1: Queen
 // 2: Bishop
