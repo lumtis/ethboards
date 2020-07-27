@@ -21,6 +21,8 @@ const RedBase = require("../../waffle/RedBase.json");
 const RedSoldier = require("../../waffle/RedSoldier.json");
 const RedBazooka = require("../../waffle/RedBazooka.json");
 const RedTank = require("../../waffle/RedTank.json");
+const BlueHeadquarters = require("../../waffle/BlueHeadquarters.json");
+const RedHeadquarters = require("../../waffle/RedHeadquarters.json");
 
 use(solidity)
 
@@ -70,6 +72,8 @@ describe('Warfield', () => {
         link(RedSoldier, 'contracts/StateController.sol:StateController', stateController.address)
         link(RedBazooka, 'contracts/StateController.sol:StateController', stateController.address)
         link(RedTank, 'contracts/StateController.sol:StateController', stateController.address)
+        link(BlueHeadquarters, 'contracts/StateController.sol:StateController', stateController.address)
+        link(RedHeadquarters, 'contracts/StateController.sol:StateController', stateController.address)
 
         const warfieldBoard = await deployContract(wallet, WarfieldBoard)
         const blueBase = await deployContract(wallet, BlueBase)
@@ -80,6 +84,9 @@ describe('Warfield', () => {
         const redSoldier = await deployContract(wallet, RedSoldier)
         const redBazooka = await deployContract(wallet, RedBazooka)
         const redTank = await deployContract(wallet, RedTank)
+        const blueHeadquarters = await deployContract(wallet, BlueHeadquarters)
+        const redHeadquarters = await deployContract(wallet, RedHeadquarters)
+
 
         const warfieldPawns = [
             blueBase.address,
@@ -90,19 +97,21 @@ describe('Warfield', () => {
             redSoldier.address,
             redBazooka.address,
             redTank.address,
+            blueHeadquarters.address,
+            redHeadquarters.address,
         ]
     
         // Fill the remaining spaces in the array
-        for(let i=0; i<255-8; i++) {
+        for(let i=0; i<255-10; i++) {
             warfieldPawns.push("0x0000000000000000000000000000000000000000")
         }
 
-        const pawnSet = await deployContract(wallet, PawnSet, [warfieldPawns, 12])
+        const pawnSet = await deployContract(wallet, PawnSet, [warfieldPawns, 10])
 
         // Deploy a test board for chess with each pawn one to each other
-        const xArray = [0,0,2,2,1,1,2,2,2,2,0,7,7,5,5,6,6,5,5,5,5,7]
-        const yArray = [0,7,2,5,2,5,3,4,1,6,3,0,7,2,5,2,5,3,4,1,6,4]
-        const indexArray = [0,0,0,0,5,5,5,5,6,6,7,0,0,0,0,1,1,1,1,2,2,3]
+        const xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7]
+        const yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4]
+        const indexArray = [8,8,4,4,4,5,5,5,5,6,6,7,0,0,0,1,1,1,1,2,2,3]
       
         // Fill arrays
         for(let i=0; i<40-22; i++) {
@@ -123,6 +132,17 @@ describe('Warfield', () => {
 
         initialState = await boardHandler.getInitialState(0)
 
+        // Start a game to test claim victory
+        await boardHandler.joinGame(0)
+        const boardHandlerOther = boardHandler.connect(other)
+        await boardHandlerOther.joinGame(0)
+
+        // Start a second game to test timeout
+        await boardHandler.joinGame(0)
+        await boardHandlerOther.joinGame(0)
+    })
+
+    it('can claim victory when no ennemy base', async () => {
         const junkSignature = ethjs.fromRpcSig("0x4d49b3e6b5b872d6f6eaaefb166ca96539299e26c74d6a832a25c46a871144bb408255c1531fb7b40e9b23be22e252ec222110e28c16c974162145c72d108a321c")
 
         // There is no red base, player A already won

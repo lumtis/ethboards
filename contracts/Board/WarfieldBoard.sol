@@ -5,28 +5,16 @@ import "../StateController.sol";
 
 contract WarfieldBoard is Board {
     using StateController for uint8[121];
-
-    // This is no real chess, we check if the king has been killed to determine the victory
     function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {
         if (player == 0) {
-            // Player A win if all red bases are captured
-            for (uint8 i = 0; i < 40; i++) {
-                if (state.isAlive(i)) {
-                    // Pawn 4 should be a red base
-                    if (state.getPawnType(i) == 4) {
-                        return false;
-                    }
-                }
+            // Player A win if the red headquarter is captured
+            if (state.isAlive(1) && state.getPawnType(1) == 9) {
+                return false;
             }
         } else {
-            // Player B win if all blue bases are captured
-             for (uint8 i = 0; i < 40; i++) {
-                if (state.isAlive(i)) {
-                    // Pawn 0 should be a blue base
-                    if (state.getPawnType(i) == 0) {
-                        return false;
-                    }
-                }
+            // Player B win if the blue headquarter is captured
+            if (state.isAlive(0) && state.getPawnType(0) == 8) {
+                return false;
             }
         }
 

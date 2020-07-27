@@ -29,8 +29,8 @@ const RedBase =  artifacts.require("./Warfield/RedBase.sol");
 const RedSoldier =  artifacts.require("./Warfield/RedSoldier.sol");
 const RedBazooka =  artifacts.require("./Warfield/RedBazooka.sol");
 const RedTank =  artifacts.require("./Warfield/RedTank.sol");
-
-
+const BlueHeadquarters =  artifacts.require("./Warfield/BlueHeadquarters.sol");
+const RedHeadquarters =  artifacts.require("./Warfield/RedHeadquarters.sol");
 
 module.exports = async (deployer, network, accounts) => {
   // Deploy libraries
@@ -67,6 +67,8 @@ module.exports = async (deployer, network, accounts) => {
   deployer.link(StateController, RedSoldier);
   deployer.link(StateController, RedBazooka);
   deployer.link(StateController, RedTank);
+  deployer.link(StateController, BlueHeadquarters);
+  deployer.link(StateController, RedHeadquarters);
 
   ///////////////////////////////////////////////////////////
   // Deploy chess contracts and pawns
@@ -94,6 +96,8 @@ module.exports = async (deployer, network, accounts) => {
   await deployer.deploy(RedSoldier);
   await deployer.deploy(RedBazooka);
   await deployer.deploy(RedTank);
+  await deployer.deploy(BlueHeadquarters);
+  await deployer.deploy(RedHeadquarters);
 
   ///////////////////////////////////////////////////////////
   // Deploy pawn set register and create the Chess pawn set
@@ -131,12 +135,14 @@ module.exports = async (deployer, network, accounts) => {
     RedBase.address,
     RedSoldier.address,
     RedBazooka.address,
-    RedTank.address
+    RedTank.address,
+    BlueHeadquarters.address,
+    RedHeadquarters.address
   ]
-  for(let i=0; i<255-8; i++) {
+  for(let i=0; i<255-10; i++) {
     warfieldPawn.push("0x0000000000000000000000000000000000000000")
   }
-  const warfieldPawnSetAddress = await pawnSetRegistry.createPawnSet("Warfield", warfieldPawn, 8)
+  const warfieldPawnSetAddress = await pawnSetRegistry.createPawnSet("Warfield", warfieldPawn, 10)
 
   ///////////////////////////////////////////////////////////
   // Deploy simplified chess board
@@ -194,9 +200,9 @@ module.exports = async (deployer, network, accounts) => {
 
   ///////////////////////////////////////////////////////////
   // Deploy Waarfield
-  xArray = [0,0,2,2,1,1,2,2,2,2,0,7,7,5,5,6,6,5,5,5,5,7]
-  yArray = [0,7,2,5,2,5,3,4,1,6,3,0,7,2,5,2,5,3,4,1,6,4]
-  indexArray = [4,4,4,4,5,5,5,5,6,6,7,0,0,0,0,1,1,1,1,2,2,3]
+  xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7]
+  yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4]
+  indexArray = [8,9,4,4,4,5,5,5,5,6,6,7,0,0,0,1,1,1,1,2,2,3]
 
   // Fill arrays
   for(let i=0; i<40-22; i++) {

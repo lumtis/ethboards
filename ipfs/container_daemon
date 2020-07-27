@@ -77,6 +77,12 @@ else
   ipfs add -r /app/chess/whiteRook
 
   sleep 5
+  ipfs add -r /app/warfield/redHeadquarters
+  sleep 5
+  ipfs add -r /app/warfield/blueHeadquarters
+  sleep 5
+  ipfs add -r /app/warfield/blueBazooka
+  sleep 5
   ipfs add -r /app/warfield/blueBazooka
   sleep 5
   ipfs add -r /app/warfield/redBazooka
