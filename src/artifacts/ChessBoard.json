@@ -27,9 +27,9 @@
       "constant": true
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board/ChessBoard.sol\":\"ChessBoard\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x909afff925083ef0a945ced12a8b0a5e39ecd6bc8182b08e4a85781a2b0455e9\",\"urls\":[\"bzz-raw://df1358e3cda02bde1f93a3f8b7952cea65e6c3a691f52b15a54d49cb5f30b16c\",\"dweb:/ipfs/Qmf92UmEGsxVTEmfwC7M7kABopAMC7MQ9icDcVhGQkQKTU\"]},\"/Users/lucas/Desktop/ethboards/contracts/Board/ChessBoard.sol\":{\"keccak256\":\"0x8e298eb7162440ac804c9d9dea9ad5b3253446dc407f9963a50144771f0be619\",\"urls\":[\"bzz-raw://b1607a7c6d2d3c9441291de2dae525da94feddfbc86844e6f83982b9c6b7910d\",\"dweb:/ipfs/QmS3xorMwZyD5F7244QyUQ6PLRk6Fv83PRPVmmxybGeZQi\"]},\"/Users/lucas/Desktop/ethboards/contracts/StateController.sol\":{\"keccak256\":\"0x12990ec368464b9254b9da62bed82e3298acce8b87bb85714545a7f4293af244\",\"urls\":[\"bzz-raw://78209d2dce43b583862f35094e2ea9a673f34daccef051d5bd6a1dc24e72c8d0\",\"dweb:/ipfs/QmSDDgJeXadXLErnb1bFeSocS7FTUUJyM3TmqmGe27wmBS\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b506102c8806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063110f250114610030575b600080fd5b61006b6004803603610f4081101561004757600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610085565b604051808215151515815260200191505060405180910390f35b6000808360ff16141561019157816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610122578082015181840152602081019050610107565b505050509050018260ff1681526020019250505060206040518083038186803b15801561014e57600080fd5b505af4158015610162573d6000803e3d6000fd5b505050506040513d602081101561017857600080fd5b810190808051906020019092919050505015905061028c565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610221578082015181840152602081019050610206565b505050509050018260ff1681526020019250505060206040518083038186803b15801561024d57600080fd5b505af4158015610261573d6000803e3d6000fd5b505050506040513d602081101561027757600080fd5b81019080805190602001909291905050501590505b9291505056fea2646970667358221220e10df1dbdd233bb80549da7ed119b3fae18f8d08d6e87ff44e4f8c1550d1e25164736f6c634300060b0033",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063110f250114610030575b600080fd5b61006b6004803603610f4081101561004757600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610085565b604051808215151515815260200191505060405180910390f35b6000808360ff16141561019157816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610122578082015181840152602081019050610107565b505050509050018260ff1681526020019250505060206040518083038186803b15801561014e57600080fd5b505af4158015610162573d6000803e3d6000fd5b505050506040513d602081101561017857600080fd5b810190808051906020019092919050505015905061028c565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610221578082015181840152602081019050610206565b505050509050018260ff1681526020019250505060206040518083038186803b15801561024d57600080fd5b505af4158015610261573d6000803e3d6000fd5b505050506040513d602081101561027757600080fd5b81019080805190602001909291905050501590505b9291505056fea2646970667358221220e10df1dbdd233bb80549da7ed119b3fae18f8d08d6e87ff44e4f8c1550d1e25164736f6c634300060b0033",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board/ChessBoard.sol\":\"ChessBoard\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x909afff925083ef0a945ced12a8b0a5e39ecd6bc8182b08e4a85781a2b0455e9\",\"urls\":[\"bzz-raw://df1358e3cda02bde1f93a3f8b7952cea65e6c3a691f52b15a54d49cb5f30b16c\",\"dweb:/ipfs/Qmf92UmEGsxVTEmfwC7M7kABopAMC7MQ9icDcVhGQkQKTU\"]},\"/Users/lucas/Desktop/ethboards/contracts/Board/ChessBoard.sol\":{\"keccak256\":\"0x8e298eb7162440ac804c9d9dea9ad5b3253446dc407f9963a50144771f0be619\",\"urls\":[\"bzz-raw://b1607a7c6d2d3c9441291de2dae525da94feddfbc86844e6f83982b9c6b7910d\",\"dweb:/ipfs/QmS3xorMwZyD5F7244QyUQ6PLRk6Fv83PRPVmmxybGeZQi\"]},\"/Users/lucas/Desktop/ethboards/contracts/StateController.sol\":{\"keccak256\":\"0x5f0dcfa41a33a92ba4d06ae38bcadedfe7aebfae563f010db606139be26041e5\",\"urls\":[\"bzz-raw://82580c6ba3c438abca24e32a16048d0bca53ecb0b39e627ddbfe17384a421198\",\"dweb:/ipfs/QmTvwjH1RicgNtnKWH6ZmqFkn88oqkKyxYBCRqF7u5Y2cn\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506102c8806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063110f250114610030575b600080fd5b61006b6004803603610f4081101561004757600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610085565b604051808215151515815260200191505060405180910390f35b6000808360ff16141561019157816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610122578082015181840152602081019050610107565b505050509050018260ff1681526020019250505060206040518083038186803b15801561014e57600080fd5b505af4158015610162573d6000803e3d6000fd5b505050506040513d602081101561017857600080fd5b810190808051906020019092919050505015905061028c565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610221578082015181840152602081019050610206565b505050509050018260ff1681526020019250505060206040518083038186803b15801561024d57600080fd5b505af4158015610261573d6000803e3d6000fd5b505050506040513d602081101561027757600080fd5b81019080805190602001909291905050501590505b9291505056fea2646970667358221220054c4cc9cdf552055be4589a3ca18bcac7af80a91419651a062cb6b1f56fdc7964736f6c634300060b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063110f250114610030575b600080fd5b61006b6004803603610f4081101561004757600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610085565b604051808215151515815260200191505060405180910390f35b6000808360ff16141561019157816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610122578082015181840152602081019050610107565b505050509050018260ff1681526020019250505060206040518083038186803b15801561014e57600080fd5b505af4158015610162573d6000803e3d6000fd5b505050506040513d602081101561017857600080fd5b810190808051906020019092919050505015905061028c565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b83811015610221578082015181840152602081019050610206565b505050509050018260ff1681526020019250505060206040518083038186803b15801561024d57600080fd5b505af4158015610261573d6000803e3d6000fd5b505050506040513d602081101561027757600080fd5b81019080805190602001909291905050501590505b9291505056fea2646970667358221220054c4cc9cdf552055be4589a3ca18bcac7af80a91419651a062cb6b1f56fdc7964736f6c634300060b0033",
   "immutableReferences": {},
   "sourceMap": "82:519:1:-:0;;;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "82:519:1:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;252:347;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;346:4;376:1;366:6;:11;;;362:231;;;470:5;:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;484:1;470:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;469:17;462:24;;;;362:231;566:5;:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;580:1;566:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;565:17;558:24;;252:347;;;;;:::o",
@@ -73,7 +73,7 @@
         "id": 19,
         "nodeType": "ImportDirective",
         "scope": 59,
-        "sourceUnit": 6033,
+        "sourceUnit": 6031,
         "src": "48:32:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -121,10 +121,10 @@
               "id": 22,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6032,
+              "referencedDeclaration": 6030,
               "src": "123:15:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6032",
+                "typeIdentifier": "t_contract$_StateController_$6030",
                 "typeString": "library StateController"
               }
             },
@@ -294,7 +294,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5718,
+                              "referencedDeclaration": 5709,
                               "src": "566:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -397,7 +397,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5718,
+                              "referencedDeclaration": 5709,
                               "src": "470:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -624,7 +624,7 @@
         "id": 19,
         "nodeType": "ImportDirective",
         "scope": 59,
-        "sourceUnit": 6033,
+        "sourceUnit": 6031,
         "src": "48:32:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -672,10 +672,10 @@
               "id": 22,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6032,
+              "referencedDeclaration": 6030,
               "src": "123:15:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6032",
+                "typeIdentifier": "t_contract$_StateController_$6030",
                 "typeString": "library StateController"
               }
             },
@@ -845,7 +845,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5718,
+                              "referencedDeclaration": 5709,
                               "src": "566:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -948,7 +948,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5718,
+                              "referencedDeclaration": 5709,
                               "src": "470:13:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1148,11 +1148,11 @@
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
       "address": "0x3a28600148905dE447b6722006551e64D6aB6493",
-      "transactionHash": "0x088b077b694a9fc392f50e493544ce0ff2a69a87790caeb786ea8aa0fdc02617"
+      "transactionHash": "0x8fe2cc1aa15e687e4911f10f62b0705a2e0f58cef669953447058b354b923804"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-24T15:59:58.894Z",
+  "updatedAt": "2020-07-27T14:24:02.375Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
