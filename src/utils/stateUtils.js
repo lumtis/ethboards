@@ -23,8 +23,7 @@ export const isAlive = (state, pawn) => {
 
 // Get the pawn id in a position
 export const getPawnAt = (state, x, y) => {
-    const pawnNb = parseInt(state[0])
-    for (let i = 0; i < pawnNb; i++) {
+    for (let i = 0; i < 40; i++) {
         if (parseInt(state[1+i]) > 0 && parseInt(state[41+i]) === x && parseInt(state[81+i]) === y) {
             return i
         }

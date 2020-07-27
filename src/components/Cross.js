@@ -14,6 +14,7 @@ class Cross extends Component {
             gameId: store.getState().game.gameId,
             turn: store.getState().game.turn,
             selectedPawn: store.getState().game.selectedPawn,
+            selectedMove: store.getState().game.selectedMove,
         }
 
         this.sendMove = this.sendMove.bind(this)
@@ -23,14 +24,14 @@ class Cross extends Component {
     async sendMove() {
         const {x, y, drizzleContext} = this.props
         const pawn = this.state.selectedPawn
-        const {boardState, boardId, gameId, turn} = this.state
+        const {boardState, boardId, gameId, turn, selectedMove} = this.state
         const {drizzle, drizzleState} = drizzleContext
         const {web3} = drizzle
 
         if (pawn !== -1) {
             // Nonce is used to ensure the uniqueness of the signature
             const nonce = [boardId, gameId, turn]
-            const move = [pawn, 0, x, y]
+            const move = [pawn, selectedMove, x, y]
 
             // Sign the move
             const sig = await web3.eth.personal.sign(web3.utils.soliditySha3(

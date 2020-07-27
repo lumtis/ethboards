@@ -6,6 +6,7 @@ const initialState = {
     playerIndex: -1,
     crosses: {},
     selectedPawn: -1,
+    selectedMove: 0,
     turn: 0
 }
 
@@ -47,6 +48,13 @@ const gameReducer = (state = initialState, action) => {
 
     return Object.assign({}, state, {
       selectedPawn,
+    })
+  }
+  if (action.type === 'SELECT_MOVE') {
+    const selectedMove = action.payload.selectedMove
+
+    return Object.assign({}, state, {
+      selectedMove,
     })
   }
   if (action.type === 'DISPLAY_CROSSES') {

@@ -19,6 +19,7 @@ class PawnInfo extends Component {
             imageLink: "",
             name: "",
             etherscanLink: "",
+            description: "",
             simulationsPending: false,
             moveNames: []
         }
@@ -59,6 +60,12 @@ class PawnInfo extends Component {
             let response = await ipfsGet(ipfsPath + '/name')
             if (response) {
                 this.setState({name: response.toString('utf8')})
+            }
+
+            // Get the description
+            response = await ipfsGet(ipfsPath + '/description')
+            if (response) {
+                this.setState({description: response.toString('utf8')})
             }
 
             // Get the move names
@@ -125,6 +132,12 @@ class PawnInfo extends Component {
                     this.setState({name: response.toString('utf8')})
                 }
 
+                // Get the description
+                response = await ipfsGet(ipfsPath + '/description')
+                if (response) {
+                    this.setState({description: response.toString('utf8')})
+                }
+
                 // Get the move names
                 const moveNumber = await drizzle.contracts[pawnAddress].methods.getMoveNumber().call()
                 const moveNames = []
@@ -161,6 +174,12 @@ class PawnInfo extends Component {
                 
         store.dispatch({
             type: 'RESET_CROSSES', 
+        })
+        store.dispatch({
+            type: 'SELECT_MOVE', 
+            payload: {
+                selectedMove: moveId,
+            }
         })
 
         // No simulation if not game
@@ -208,7 +227,7 @@ class PawnInfo extends Component {
     }
 
     render() {
-        const {imageLink, name, etherscanLink, simulationsPending, moveNames} = this.state
+        const {imageLink, name, etherscanLink, description, simulationsPending, moveNames} = this.state
         const {pawn} = this.props
 
         let image = null
@@ -222,6 +241,8 @@ class PawnInfo extends Component {
         } else {
             nameComp = <h1>{name}</h1>
         }
+
+        const descriptionComp = <p>{description}</p>
 
         let loading = null
         if (simulationsPending) {
@@ -245,6 +266,7 @@ class PawnInfo extends Component {
                 </div>
                 <div className="col-md-8">
                     {nameComp}
+                    {descriptionComp}
                 </div>
                 <div className="col-md-12">  
                     <div style={{marginTop: '30px'}}>
@@ -261,6 +283,7 @@ const buttontyle = {
     width: '200px',
     height: '60px',
     fontSize: '18px',
+    margin: '5px'
 }
 
 export default PawnInfo
