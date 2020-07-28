@@ -1,5 +1,5 @@
 Warfield is a board strategy game.
-The goal is to capture all ennemy bases.
+The goal is to capture the ennemy headquarters.
 A base can be captured when an unit (soldier or bazooka) is next to it.
 A base can recruit units.
-Tanks are the most powerful unit but they can be created.
+Tanks are the most powerful unit but they can't be created.

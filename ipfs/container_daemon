@@ -99,6 +99,11 @@ else
   sleep 5
   ipfs add -r /app/warfield/redTank
 
+  sleep 5
+  ipfs add -r /app/chess/board
+  sleep 5
+  ipfs add -r /app/warfield/board
+
 fi
 
 exec ipfs "$@"
