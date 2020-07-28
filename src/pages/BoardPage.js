@@ -8,6 +8,7 @@ import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
 import JoinBox from '../components/JoinBox'
 import CurrentGames from '../components/CurrentGames'
+import BoardSidebar from '../components/BoardSidebar'
 
 import '../App.css'
 
@@ -50,7 +51,7 @@ class BoardPageComp extends Component {
 
   render() {
     const {initialized} = this.state
-    const {drizzleContext} = this.props
+    const {boardId, drizzleContext} = this.props
 
     if (!initialized) {
         return <Loading />
@@ -77,6 +78,7 @@ class BoardPageComp extends Component {
             </div>
           </div>
           <div className="col-md-4">
+            <BoardSidebar drizzleContext={drizzleContext} boardId={boardId} />
           </div>
         </div>
       </div>

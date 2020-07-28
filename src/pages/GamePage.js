@@ -7,7 +7,7 @@ import {getTurn, getState} from '../utils/stateChannelUtils'
 import Board from '../components/Board'
 import Loading from '../components/Loading'
 import Navbar from '../components/Navbar'
-import Sidebar from '../components/Sidebar'
+import GameSidebar from '../components/GameSidebar'
 import GameOptions from '../components/GameOptions'
 
 import '../App.css'
@@ -92,7 +92,7 @@ class GamePageComp extends Component {
             </div>
           </div>
           <div className="col-md-4">
-            <Sidebar drizzleContext={drizzleContext} />
+            <GameSidebar drizzleContext={drizzleContext} />
           </div>
         </div>
       </div>

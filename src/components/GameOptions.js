@@ -4,7 +4,7 @@ import store from '../store'
 import {getLatestStateSignature} from '../utils/stateChannelUtils'
 import '../App.css' 
 
-import Pawn from '../artifacts/Board.json'
+import Board from '../artifacts/Board.json'
 
 // Options for a game
 // Claiming victory
@@ -65,9 +65,9 @@ class GameOptions extends Component {
         this.setState({isFinished})
       } else {
         // Add the contract of the board
-          const contractConfig = {
+        const contractConfig = {
             contractName: boardAddress,
-            web3Contract: new web3.eth.Contract(Pawn.abi, boardAddress)
+            web3Contract: new web3.eth.Contract(Board.abi, boardAddress)
         }
         drizzle.addContract(contractConfig)
 
@@ -146,7 +146,7 @@ class GameOptions extends Component {
         // Add the contract of the board
         const contractConfig = {
             contractName: boardAddress,
-            web3Contract: new web3.eth.Contract(Pawn.abi, boardAddress)
+            web3Contract: new web3.eth.Contract(Board.abi, boardAddress)
         }
         drizzle.addContract(contractConfig)
 

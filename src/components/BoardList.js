@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 
+import BoardInfo from './BoardInfo'
 
 class BoardList extends Component {
   constructor(props) {
@@ -12,7 +13,8 @@ class BoardList extends Component {
   }
 
   async componentDidMount() {
-    const {drizzle, initialized} = this.props.drizzleContext
+    const {drizzleContext} = this.props
+    const {drizzle, initialized} = drizzleContext
     
     if (initialized) {
       const web3 = drizzle.web3
@@ -38,16 +40,23 @@ class BoardList extends Component {
   }
 
   render() {
+    const {drizzleContext} = this.props
     const {boards} = this.state
+
     const boardsUI = boards.map(board =>
         <div key={board.id} className="col-md-4">
             <Link to={'/board/' + board.id}>
-              <img src="/assets/general/logo1.png" alt="Board" style={{
+              {/* <img src="/assets/general/logo1.png" alt="Board" style={{
                 width: '50%',
                 display: 'block',
                 marginLeft: 'auto',
                 marginRight: 'auto'
-              }}></img>
+              }}></img> */}
+              <BoardInfo 
+                boardId={board.id}
+                drizzleContext={drizzleContext}
+                onlyImage={true}
+              />
               <h1 style={{
                 textAlign:'center',
                 marginTop: '40px'
@@ -58,7 +67,7 @@ class BoardList extends Component {
 
     return(
       <div>
-        <h1 style={{marginTop: '30px', marginLeft: '50px'}}>Available boards:</h1>
+        <h1 style={{marginTop: '30px', marginLeft: '50px'}}>Boards:</h1>
         <div className="row" style={{marginTop: '20px', padding: '50px'}}>
           {boardsUI}
         </div>

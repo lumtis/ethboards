@@ -4,7 +4,7 @@ import store from '../store'
 
 import PawnInfo from './PawnInfo'
 
-class Sidebar extends Component {
+class GameSidebar extends Component {
     constructor(props) {
       super(props)
 
@@ -45,4 +45,4 @@ class Sidebar extends Component {
     }
   }
 
-export default Sidebar
+export default GameSidebar
