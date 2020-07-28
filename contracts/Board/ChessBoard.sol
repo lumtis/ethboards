@@ -6,6 +6,10 @@ import "../StateController.sol";
 contract ChessBoard is Board {
     using StateController for uint8[121];
 
+    function getMetadata() external override view returns (string memory) {
+        return '/ipfs/QmYy4CGvJhouAgi4mceKAyecMz3tqimVhZUbU7tt43T8LX';
+    }
+
     // This is no real chess, we check if the king has been killed to determine the victory
     function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {
         if (player == 0) {

@@ -5,6 +5,11 @@ import "../StateController.sol";
 
 contract WarfieldBoard is Board {
     using StateController for uint8[121];
+
+    function getMetadata() external override view returns (string memory) {
+        return '/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5';
+    }
+
     function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {
         if (player == 0) {
             // Player A win if the red headquarter is captured
