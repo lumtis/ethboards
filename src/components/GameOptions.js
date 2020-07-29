@@ -42,6 +42,7 @@ class GameOptions extends Component {
     this.executeTimeout = this.executeTimeout.bind(this)
     this.stopTimeout = this.stopTimeout.bind(this)
     this.updateRemainingTime = this.updateRemainingTime.bind(this)
+    this.giveUp = this.giveUp.bind(this)
   }
 
   async componentDidMount() {
@@ -350,6 +351,28 @@ class GameOptions extends Component {
     }
   }
 
+  async giveUp() {
+    const {boardId, gameId} = this.state
+    const {drizzleContext} = this.props
+    const {drizzle, drizzleState} = drizzleContext
+
+    // Send a giveUp transaction to the smart contract
+    drizzle.contracts.BoardHandler.methods.giveUp(
+      boardId,
+      gameId,
+    ).send({
+      from: drizzleState.accounts[0]
+    }).on('error', (err) => {
+      console.log("Error giving up")
+      console.log(err)
+    }).on('transactionHash', (txHash) => {
+      console.log("Transaction hash:")
+      console.log(txHash)
+    }).then(() => {
+      this.forceUpdate()
+    })
+  }
+
   render() {
     // State
     const {
@@ -401,6 +424,9 @@ class GameOptions extends Component {
       } 
     }
 
+    // Give up button
+    let giveUpButton = <button onClick={this.giveUp} className="button" style={buttontyle}>Give up</button>
+
     // Components depending on the flow of the game
     const gameFinishedOption = <div>
       <h1>Game finished</h1>
@@ -409,11 +435,13 @@ class GameOptions extends Component {
     const turnOption = <div>
       <h1>Your turn</h1>
       {stopTimeoutBox}
+      {giveUpButton}
     </div>
 
     const opponentTurnOption = <div>
       <h1>Opponent's turn</h1>
       {timeoutBox}
+      {giveUpButton}
     </div>
 
     const victoryOption = <div>
@@ -462,6 +490,7 @@ const boxStyle = {
 }
 
 const buttontyle = {
+    margin: '10px',
     width: '200px',
     height: '60px',
     fontSize: '18px',
