@@ -31,7 +31,11 @@ module.exports = {
       version: "0.6.11",
     },
   },
+  api_keys: {
+    etherscan: 'MY_API_KEY'
+  },
   plugins: [
-    "@chainsafe/truffle-plugin-abigen"
+    "@chainsafe/truffle-plugin-abigen",
+    "truffle-plugin-verify"
   ]
 };
