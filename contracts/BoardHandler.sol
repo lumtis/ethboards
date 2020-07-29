@@ -1,7 +1,7 @@
 pragma solidity 0.6.11;
 
 import "./PawnSet.sol";
-
+import "./BoardEvents.sol";
 
 /**
  * @title Board Handler
@@ -71,9 +71,10 @@ contract BoardHandler {
 
     struct Board {
         uint id;
-        address boardContract;
         string name;
+        address boardContract;
         address pawnSet;
+        address boardEvents;
         uint8 pawnNumber;
         mapping (uint8 => PawnPosition) pawnPosition;
         uint gameCount;
@@ -114,6 +115,7 @@ contract BoardHandler {
         string memory name,
         address boardContract,
         address pawnSetAddress,
+        address boardEventsAddress,
         uint8[40] memory x,
         uint8[40] memory y,
         uint8[40] memory pawnIndex,
@@ -126,6 +128,7 @@ contract BoardHandler {
         newBoard.id = boardNumber;
         newBoard.boardContract = boardContract;
         newBoard.pawnSet = pawnSetAddress;
+        newBoard.boardEvents = boardEventsAddress;
         newBoard.pawnNumber = pawnNb;
         newBoard.gameCount = 0;
         newBoard.waitingPlayer = address(0);
@@ -162,6 +165,10 @@ contract BoardHandler {
     function joinGame(uint boardId) public {
         require(boardId < boardNumber, "The board doesn't exist");
 
+        // Get the board events contract to verify join conditions
+        BoardEvents boardEvents = BoardEvents(boards[boardId].boardEvents);
+        require(boardEvents.joinGame(boardId, boards[boardId].gameCount, msg.sender), "The player can't join the game");
+
         // If there is no waiting player yet
         if (boards[boardId].waitingPlayer == address(0)) {
             boards[boardId].waitingPlayer = msg.sender;
@@ -197,10 +204,13 @@ contract BoardHandler {
         require(winner < 2, "The winner doesn't exist");
 
         address winnerAddress;
+        address loserAddress;
         if (winner == 0) {
             winnerAddress = boards[boardId].games[gameId].playerA;
+            loserAddress = boards[boardId].games[gameId].playerB;
         } else {
             winnerAddress = boards[boardId].games[gameId].playerB;
+            loserAddress = boards[boardId].games[gameId].playerA;
         }
 
         emit GameFinished(
@@ -211,6 +221,10 @@ contract BoardHandler {
             gameId
         );
         boards[boardId].games[gameId].over = true;
+
+        // Call the event finished of the board
+        BoardEvents boardEvents = BoardEvents(boards[boardId].boardEvents);
+        boardEvents.gameFinished(boardId, gameId, winnerAddress, loserAddress);
     }
 
     ///////////////////////////////////////////////////////////////
