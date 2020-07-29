@@ -8,7 +8,7 @@ contract RedTank is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmZBch2atD9K8ELAptMcopyjS9aJSo8mEUU8Y1RSZJEFow';
+        return '/ipfs/QmefGNfRvPodVBfoSYVXfiQjDmij1ZWHL49BmNUUYnLatg';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

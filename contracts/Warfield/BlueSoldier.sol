@@ -8,7 +8,7 @@ contract BlueSoldier is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmZaoQQURWbaGLe8KvahMNGVpuYpw1tvN74NGTBxqFY2Jf';
+        return '/ipfs/QmQxT7HtdpTExtAKeUCK44VtYACkmE79qbJHaGvaSMVVB4';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

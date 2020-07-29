@@ -7,7 +7,7 @@ contract WarfieldBoard is Board {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5';
+        return '/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy';
     }
 
     function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {

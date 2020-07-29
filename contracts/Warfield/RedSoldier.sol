@@ -8,7 +8,7 @@ contract RedSoldier is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmUsTnPyMwVMjsBuwjX2sV9xnkwe2TH9TeUDmYN3yuM1Y2';
+        return '/ipfs/QmZbyT6qtJXaiNvovQCdBkfvczc2zz8j6pV5kcmo4FcM4T';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

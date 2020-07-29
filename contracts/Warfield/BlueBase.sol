@@ -8,7 +8,7 @@ contract BlueBase is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmR5NXYZ2j2kFvsts9eLaAeSa1tZjhQtizZYhUHeRmsE11';
+        return '/ipfs/QmQJaFWePch5tML9rM2EYVnSp5WDGk5ay6y16BvsZBa9nm';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

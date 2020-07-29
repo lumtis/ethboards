@@ -8,7 +8,7 @@ contract BlueBazooka is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmVMDaxqNxyJB1T8oRhFPem4cMTcJqViUMpQHVmzBybW5g';
+        return '/ipfs/QmPNLmxe5cdJsrbATYd96cmSR3HJd3jjeqvqW8Xcuz4pjn';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 3;

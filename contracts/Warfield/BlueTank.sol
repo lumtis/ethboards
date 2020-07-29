@@ -8,7 +8,7 @@ contract BlueTank is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmbVLXX8hB4Mhs76GxrJctqsCMFahudohP6UHu1kL78EXS';
+        return '/ipfs/QmT9Ew4pfHKZvjNTA6JvdHHyPaPQ188vADrMje6Yh2zqqc';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

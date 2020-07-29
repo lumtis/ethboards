@@ -41,13 +41,13 @@
       "constant": true
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetadata\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}},\"getMetadata()\":{\"returns\":{\"_0\":\"the string a allows to retrieve metadata (e.g IPFS hash)\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"},\"getMetadata()\":{\"notice\":\"Allow to retrieve the metadata of the board\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":\"WarfieldBoard\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x84a01fd174bfb64c8bbb83f99506bcd2bca1219fdad1d5a372a38ff485484bb1\",\"urls\":[\"bzz-raw://7b87f2e3b7089f6862690bb0b52706f43c57a7ca749895ff7967cd46944b4cf0\",\"dweb:/ipfs/Qmbmt2oodMDk4tb9aQEJmm6QTHeZf3xt1BPrzFN5WAcdvd\"]},\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":{\"keccak256\":\"0x46964732513deb892a4665591bd1b1adcff46f5555527b5f3f4bd208fd1b5baf\",\"urls\":[\"bzz-raw://84830d9f7d88c1de6c3c76d717184ec4c0ee5017b66fc74e689b2fb22f34ac6b\",\"dweb:/ipfs/QmdYKvMjn74GWQkPMFe8NV2bRu6ifvygPUN1jsFdaZ839x\"]},\"/Users/lucas/Desktop/ethboards/contracts/StateController.sol\":{\"keccak256\":\"0x5f0dcfa41a33a92ba4d06ae38bcadedfe7aebfae563f010db606139be26041e5\",\"urls\":[\"bzz-raw://82580c6ba3c438abca24e32a16048d0bca53ecb0b39e627ddbfe17384a421198\",\"dweb:/ipfs/QmTvwjH1RicgNtnKWH6ZmqFkn88oqkKyxYBCRqF7u5Y2cn\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b506105cf806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063110f25011461003b5780637a5b4f5914610090575b600080fd5b6100766004803603610f4081101561005257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610113565b604051808215151515815260200191505060405180910390f35b610098610545565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100d85780820151818401526020810190506100bd565b50505050905090810190601f1680156101055780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000808360ff16141561032f57816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156101b0578082015181840152602081019050610195565b505050509050018260ff1681526020019250505060206040518083038186803b1580156101dc57600080fd5b505af41580156101f0573d6000803e3d6000fd5b505050506040513d602081101561020657600080fd5b8101908080519060200190929190505050801561031c57506009826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156102b0578082015181840152602081019050610295565b505050509050018260ff1681526020019250505060206040518083038186803b1580156102dc57600080fd5b505af41580156102f0573d6000803e3d6000fd5b505050506040513d602081101561030657600080fd5b810190808051906020019092919050505060ff16145b1561032a576000905061053f565b61053a565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156103bf5780820151818401526020810190506103a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156103eb57600080fd5b505af41580156103ff573d6000803e3d6000fd5b505050506040513d602081101561041557600080fd5b8101908080519060200190929190505050801561052b57506008826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156104bf5780820151818401526020810190506104a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156104eb57600080fd5b505af41580156104ff573d6000803e3d6000fd5b505050506040513d602081101561051557600080fd5b810190808051906020019092919050505060ff16145b15610539576000905061053f565b5b600190505b92915050565b60606040518060600160405280603481526020016105666034913990509056fe2f697066732f516d656d416a7a76626d4a7976437866315a506f4347616d52555955726a7a477a396a646b7a77656e4737667835a2646970667358221220b6e96f8d261350aca48417856b10f6f0f2c259353598fad1554906136b289ca264736f6c634300060b0033",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c8063110f25011461003b5780637a5b4f5914610090575b600080fd5b6100766004803603610f4081101561005257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610113565b604051808215151515815260200191505060405180910390f35b610098610545565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100d85780820151818401526020810190506100bd565b50505050905090810190601f1680156101055780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000808360ff16141561032f57816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156101b0578082015181840152602081019050610195565b505050509050018260ff1681526020019250505060206040518083038186803b1580156101dc57600080fd5b505af41580156101f0573d6000803e3d6000fd5b505050506040513d602081101561020657600080fd5b8101908080519060200190929190505050801561031c57506009826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156102b0578082015181840152602081019050610295565b505050509050018260ff1681526020019250505060206040518083038186803b1580156102dc57600080fd5b505af41580156102f0573d6000803e3d6000fd5b505050506040513d602081101561030657600080fd5b810190808051906020019092919050505060ff16145b1561032a576000905061053f565b61053a565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156103bf5780820151818401526020810190506103a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156103eb57600080fd5b505af41580156103ff573d6000803e3d6000fd5b505050506040513d602081101561041557600080fd5b8101908080519060200190929190505050801561052b57506008826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156104bf5780820151818401526020810190506104a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156104eb57600080fd5b505af41580156104ff573d6000803e3d6000fd5b505050506040513d602081101561051557600080fd5b810190808051906020019092919050505060ff16145b15610539576000905061053f565b5b600190505b92915050565b60606040518060600160405280603481526020016105666034913990509056fe2f697066732f516d656d416a7a76626d4a7976437866315a506f4347616d52555955726a7a477a396a646b7a77656e4737667835a2646970667358221220b6e96f8d261350aca48417856b10f6f0f2c259353598fad1554906136b289ca264736f6c634300060b0033",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.11+commit.5ef660b1\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"player\",\"type\":\"uint8\"},{\"internalType\":\"uint8[121]\",\"name\":\"state\",\"type\":\"uint8[121]\"}],\"name\":\"checkVictory\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMetadata\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"params\":{\"player\":\"the player we want to check as victorious\",\"state\":\"the state of the game\"},\"returns\":{\"_0\":\"true if the player is victorious, false otherwise\"}},\"getMetadata()\":{\"returns\":{\"_0\":\"the string a allows to retrieve metadata (e.g IPFS hash)\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkVictory(uint8,uint8[121])\":{\"notice\":\"Check if the state of a game of the board is victorious for a player\"},\"getMetadata()\":{\"notice\":\"Allow to retrieve the metadata of the board\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":\"WarfieldBoard\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/lucas/Desktop/ethboards/contracts/Board.sol\":{\"keccak256\":\"0x84a01fd174bfb64c8bbb83f99506bcd2bca1219fdad1d5a372a38ff485484bb1\",\"urls\":[\"bzz-raw://7b87f2e3b7089f6862690bb0b52706f43c57a7ca749895ff7967cd46944b4cf0\",\"dweb:/ipfs/Qmbmt2oodMDk4tb9aQEJmm6QTHeZf3xt1BPrzFN5WAcdvd\"]},\"/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol\":{\"keccak256\":\"0xffc6e4450aeb04398e91723c4b19cc371b2f6a1b8ee37662050c33d3c179ca5b\",\"urls\":[\"bzz-raw://0ff350bfff5e62e6e8e6bf4cb2bc0a3ee3dac38ed025772639b92472d3c01f90\",\"dweb:/ipfs/QmPitqCyndQ5PVRACM44SzSfhV8g7GLXAjGFXUKiBZ3C8q\"]},\"/Users/lucas/Desktop/ethboards/contracts/StateController.sol\":{\"keccak256\":\"0x5f0dcfa41a33a92ba4d06ae38bcadedfe7aebfae563f010db606139be26041e5\",\"urls\":[\"bzz-raw://82580c6ba3c438abca24e32a16048d0bca53ecb0b39e627ddbfe17384a421198\",\"dweb:/ipfs/QmTvwjH1RicgNtnKWH6ZmqFkn88oqkKyxYBCRqF7u5Y2cn\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506105cf806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063110f25011461003b5780637a5b4f5914610090575b600080fd5b6100766004803603610f4081101561005257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610113565b604051808215151515815260200191505060405180910390f35b610098610545565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100d85780820151818401526020810190506100bd565b50505050905090810190601f1680156101055780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000808360ff16141561032f57816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156101b0578082015181840152602081019050610195565b505050509050018260ff1681526020019250505060206040518083038186803b1580156101dc57600080fd5b505af41580156101f0573d6000803e3d6000fd5b505050506040513d602081101561020657600080fd5b8101908080519060200190929190505050801561031c57506009826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156102b0578082015181840152602081019050610295565b505050509050018260ff1681526020019250505060206040518083038186803b1580156102dc57600080fd5b505af41580156102f0573d6000803e3d6000fd5b505050506040513d602081101561030657600080fd5b810190808051906020019092919050505060ff16145b1561032a576000905061053f565b61053a565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156103bf5780820151818401526020810190506103a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156103eb57600080fd5b505af41580156103ff573d6000803e3d6000fd5b505050506040513d602081101561041557600080fd5b8101908080519060200190929190505050801561052b57506008826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156104bf5780820151818401526020810190506104a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156104eb57600080fd5b505af41580156104ff573d6000803e3d6000fd5b505050506040513d602081101561051557600080fd5b810190808051906020019092919050505060ff16145b15610539576000905061053f565b5b600190505b92915050565b60606040518060600160405280603481526020016105666034913990509056fe2f697066732f516d4e5545475678703466724d396f476d53585144336a5a6957796f42726e5a3859417935386865375a4b775379a26469706673582212209ff81f3738a3582afb56943df1b2fb14c09bc21bb7c8c4e8fe2c7371315d2bd364736f6c634300060b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c8063110f25011461003b5780637a5b4f5914610090575b600080fd5b6100766004803603610f4081101561005257600080fd5b81019080803560ff16906020019092919080610f2001909192919290505050610113565b604051808215151515815260200191505060405180910390f35b610098610545565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100d85780820151818401526020810190506100bd565b50505050905090810190601f1680156101055780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000808360ff16141561032f57816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156101b0578082015181840152602081019050610195565b505050509050018260ff1681526020019250505060206040518083038186803b1580156101dc57600080fd5b505af41580156101f0573d6000803e3d6000fd5b505050506040513d602081101561020657600080fd5b8101908080519060200190929190505050801561031c57506009826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160016040518363ffffffff1660e01b81526004018083607960200280838360005b838110156102b0578082015181840152602081019050610295565b505050509050018260ff1681526020019250505060206040518083038186803b1580156102dc57600080fd5b505af41580156102f0573d6000803e3d6000fd5b505050506040513d602081101561030657600080fd5b810190808051906020019092919050505060ff16145b1561032a576000905061053f565b61053a565b816079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63ad17c489909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156103bf5780820151818401526020810190506103a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156103eb57600080fd5b505af41580156103ff573d6000803e3d6000fd5b505050506040513d602081101561041557600080fd5b8101908080519060200190929190505050801561052b57506008826079806020026040519081016040528092919082607960200280828437600081840152601f19601f82011690508083019250505050505073__StateController_______________________63d7b600b4909160006040518363ffffffff1660e01b81526004018083607960200280838360005b838110156104bf5780820151818401526020810190506104a4565b505050509050018260ff1681526020019250505060206040518083038186803b1580156104eb57600080fd5b505af41580156104ff573d6000803e3d6000fd5b505050506040513d602081101561051557600080fd5b810190808051906020019092919050505060ff16145b15610539576000905061053f565b5b600190505b92915050565b60606040518060600160405280603481526020016105666034913990509056fe2f697066732f516d4e5545475678703466724d396f476d53585144336a5a6957796f42726e5a3859417935386865375a4b775379a26469706673582212209ff81f3738a3582afb56943df1b2fb14c09bc21bb7c8c4e8fe2c7371315d2bd364736f6c634300060b0033",
   "immutableReferences": {},
   "sourceMap": "82:765:2:-:0;;;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "82:765:2:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;317:528;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;163:148;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;317:528;411:4;441:1;431:6;:11;;;427:390;;;525:5;:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;539:1;525:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:45;;;;;569:1;545:5;:17;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;563:1;545:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:25;;;525:45;521:96;;;597:5;590:12;;;;521:96;427:390;;;715:5;:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;729:1;715:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:45;;;;;759:1;735:5;:17;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;753:1;735:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:25;;;715:45;711:96;;;787:5;780:12;;;;711:96;427:390;834:4;827:11;;317:528;;;;;:::o;163:148::-;218:13;243:61;;;;;;;;;;;;;;;;;;;163:148;:::o",
-  "source": "pragma solidity 0.6.11;\n\nimport \"../Board.sol\";\nimport \"../StateController.sol\";\n\ncontract WarfieldBoard is Board {\n    using StateController for uint8[121];\n\n    function getMetadata() external override view returns (string memory) {\n        return '/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5';\n    }\n\n    function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {\n        if (player == 0) {\n            // Player A win if the red headquarter is captured\n            if (state.isAlive(1) && state.getPawnType(1) == 9) {\n                return false;\n            }\n        } else {\n            // Player B win if the blue headquarter is captured\n            if (state.isAlive(0) && state.getPawnType(0) == 8) {\n                return false;\n            }\n        }\n\n        return true;\n    }\n}",
+  "source": "pragma solidity 0.6.11;\n\nimport \"../Board.sol\";\nimport \"../StateController.sol\";\n\ncontract WarfieldBoard is Board {\n    using StateController for uint8[121];\n\n    function getMetadata() external override view returns (string memory) {\n        return '/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy';\n    }\n\n    function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {\n        if (player == 0) {\n            // Player A win if the red headquarter is captured\n            if (state.isAlive(1) && state.getPawnType(1) == 9) {\n                return false;\n            }\n        } else {\n            // Player B win if the blue headquarter is captured\n            if (state.isAlive(0) && state.getPawnType(0) == 8) {\n                return false;\n            }\n        }\n\n        return true;\n    }\n}",
   "sourcePath": "/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol",
   "ast": {
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/Board/WarfieldBoard.sol",
@@ -87,7 +87,7 @@
         "id": 77,
         "nodeType": "ImportDirective",
         "scope": 146,
-        "sourceUnit": 6146,
+        "sourceUnit": 6307,
         "src": "48:32:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -135,10 +135,10 @@
               "id": 80,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6145,
+              "referencedDeclaration": 6306,
               "src": "126:15:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6145",
+                "typeIdentifier": "t_contract$_StateController_$6306",
                 "typeString": "library StateController"
               }
             },
@@ -194,7 +194,7 @@
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "hexValue": "2f697066732f516d656d416a7a76626d4a7976437866315a506f4347616d52555955726a7a477a396a646b7a77656e4737667835",
+                    "hexValue": "2f697066732f516d4e5545475678703466724d396f476d53585144336a5a6957796f42726e5a3859417935386865375a4b775379",
                     "id": 90,
                     "isConstant": false,
                     "isLValue": false,
@@ -205,10 +205,10 @@
                     "src": "250:54:2",
                     "subdenomination": null,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_stringliteral_7c210766bed8deec0dc3d3e492497a61658270152a9dca9457531ea7ccb91a70",
-                      "typeString": "literal_string \"/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5\""
+                      "typeIdentifier": "t_stringliteral_549a4938771003b3deaa44044b67f74a4339a4d2b5a92167ed89b21d80b7439a",
+                      "typeString": "literal_string \"/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy\""
                     },
-                    "value": "/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5"
+                    "value": "/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy"
                   },
                   "functionReturnParameters": 89,
                   "id": 91,
@@ -404,7 +404,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5824,
+                              "referencedDeclaration": 5985,
                               "src": "715:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -488,7 +488,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5803,
+                                "referencedDeclaration": 5964,
                                 "src": "735:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -649,7 +649,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5824,
+                              "referencedDeclaration": 5985,
                               "src": "525:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -733,7 +733,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5803,
+                                "referencedDeclaration": 5964,
                                 "src": "545:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1042,7 +1042,7 @@
         "id": 77,
         "nodeType": "ImportDirective",
         "scope": 146,
-        "sourceUnit": 6146,
+        "sourceUnit": 6307,
         "src": "48:32:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1090,10 +1090,10 @@
               "id": 80,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6145,
+              "referencedDeclaration": 6306,
               "src": "126:15:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6145",
+                "typeIdentifier": "t_contract$_StateController_$6306",
                 "typeString": "library StateController"
               }
             },
@@ -1149,7 +1149,7 @@
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "hexValue": "2f697066732f516d656d416a7a76626d4a7976437866315a506f4347616d52555955726a7a477a396a646b7a77656e4737667835",
+                    "hexValue": "2f697066732f516d4e5545475678703466724d396f476d53585144336a5a6957796f42726e5a3859417935386865375a4b775379",
                     "id": 90,
                     "isConstant": false,
                     "isLValue": false,
@@ -1160,10 +1160,10 @@
                     "src": "250:54:2",
                     "subdenomination": null,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_stringliteral_7c210766bed8deec0dc3d3e492497a61658270152a9dca9457531ea7ccb91a70",
-                      "typeString": "literal_string \"/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5\""
+                      "typeIdentifier": "t_stringliteral_549a4938771003b3deaa44044b67f74a4339a4d2b5a92167ed89b21d80b7439a",
+                      "typeString": "literal_string \"/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy\""
                     },
-                    "value": "/ipfs/QmemAjzvbmJyvCxf1ZPoCGamRUYUrjzGz9jdkzwenG7fx5"
+                    "value": "/ipfs/QmNUEGVxp4frM9oGmSXQD3jZiWyoBrnZ8YAy58he7ZKwSy"
                   },
                   "functionReturnParameters": 89,
                   "id": 91,
@@ -1359,7 +1359,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5824,
+                              "referencedDeclaration": 5985,
                               "src": "715:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1443,7 +1443,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5803,
+                                "referencedDeclaration": 5964,
                                 "src": "735:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1604,7 +1604,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5824,
+                              "referencedDeclaration": 5985,
                               "src": "525:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1688,7 +1688,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5803,
+                                "referencedDeclaration": 5964,
                                 "src": "545:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1970,11 +1970,11 @@
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
       "address": "0xDD1Eb5CCe0f18e0288b73fb4adcbF83aD48267BE",
-      "transactionHash": "0x820c16df3f92c6c22f7f856cb06883d2eac833044728dbe755d5c916e0032499"
+      "transactionHash": "0x6df37343108daa9b24e476204bb5e6ffd8ab14aaa8576711409f85ca0b97f294"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-29T11:58:11.284Z",
+  "updatedAt": "2020-07-29T19:27:01.381Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

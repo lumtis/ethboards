@@ -8,7 +8,7 @@ contract RedBase is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmPa1B4HAjfiq5nqrPeXbUP8bCqj2GPPcS9ayFoQ533XeD';
+        return '/ipfs/QmbkCDdMeTucay82sqvoLgi9xRLzZzDdSfGDRHsqHxt6mv';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

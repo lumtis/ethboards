@@ -1,1 +1,5 @@
-Move diagonally
+Move and kill ennemy to two squares
+Shoot on a next square
+Can only be destroyed by a bazooka or another tank
+Can't capture buildings
+Can't be recruited/created

@@ -8,7 +8,7 @@ contract RedHeadquarters is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/QmWbYuGvcbZr2hvTU1fqcugCGT5F8U1aQmimcZxqNRfT4G';
+        return '/ipfs/QmQQUuKixN4Wm5UVubVzg1Wp7g6NBtqtLFQLsCQ29asHyd';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;

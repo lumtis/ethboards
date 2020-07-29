@@ -8,7 +8,7 @@ contract BlueHeadquarters is Pawn, WarfieldPawn {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
-        return '/ipfs/Qmf8wzizU37zzC6cpr9CJh5AhAg4BR4XYXajeQmLHocFfU';
+        return '/ipfs/QmPndfDw3pVzUECMJhMCmKgo23Nj31mDQjsGHTTViJA4EU';
     }
     function getMoveNumber() external override pure returns(uint8) {
         return 2;
