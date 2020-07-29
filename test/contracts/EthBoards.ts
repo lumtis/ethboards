@@ -78,6 +78,7 @@ describe('EthBoards', () => {
     let ethBoards
     let noEvents
     let boardHandler
+    let boardHandlerOther
 
     before(async () => {
         // Create the library
@@ -169,10 +170,14 @@ describe('EthBoards', () => {
 
         // Start a game to test claim victory
         await boardHandler.joinGame(0)
-        const boardHandlerOther = boardHandler.connect(other)
+        boardHandlerOther = boardHandler.connect(other)
         await boardHandlerOther.joinGame(0)
 
         // Start a second game to test timeout
+        await boardHandler.joinGame(0)
+        await boardHandlerOther.joinGame(0)
+
+        // Start a third game to test give up
         await boardHandler.joinGame(0)
         await boardHandlerOther.joinGame(0)
     })
@@ -347,11 +352,17 @@ describe('EthBoards', () => {
         await ethBoards.executeTimeout(boardHandler.address,0,1)
 
         await expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,1,0]);
-        await expect('gameFinished').to.be.calledOnContractWith(noEvents, [0,1,wallet.address,other.address]); 
+        await expect('gameFinished').to.be.calledOnContractWith(noEvents, [0,1,wallet.address,other.address]);
+    })
+    
+    it('can give up a game', async () => {
+        // Execute timeout and check the player 0 won the game
+        await boardHandlerOther.giveUp(0,2)
+        await expect('gameFinished').to.be.calledOnContractWith(noEvents, [0,2,wallet.address,other.address]);
     })
 
     it('can trigger joinGame events of board events contract', async () => {
         await boardHandler.joinGame(0)
-        await expect('joinGame').to.be.calledOnContractWith(noEvents, [0,2,wallet.address]);
+        await expect('joinGame').to.be.calledOnContractWith(noEvents, [0,3,wallet.address]);
     })
 })
