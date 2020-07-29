@@ -12,6 +12,7 @@ const BoardHandler = require('../../waffle/BoardHandler.json')
 const ChessBoard = require('../../waffle/ChessBoard.json')
 
 const PawnSet = require('../../waffle/PawnSet.json')
+const NoEvents = require('../../waffle/NoEvents.json')
 
 const WhitePawn = require("../../waffle/WhitePawn.json");
 const WhiteRook = require("../../waffle/WhiteRook.json");
@@ -50,6 +51,7 @@ describe('Chess board', () => {
 
     let stateController
     let ethBoards
+    let noEvents
     let boardHandler
     let initialState
 
@@ -64,6 +66,9 @@ describe('Chess board', () => {
         // Create BoardHandler with EthBoards
         boardHandler = await deployContract(wallet, BoardHandler, [ethBoards.address])
 
+        // Contract to have no events during games
+        noEvents = await deployContract(wallet, NoEvents)
+        
         // Create a chess board with two kings side by side
         link(ChessBoard, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhitePawn, 'contracts/StateController.sol:StateController', stateController.address)
@@ -131,6 +136,7 @@ describe('Chess board', () => {
             "Test Chess",
             chessBoard.address,
             pawnSet.address,
+            noEvents.address,
             xArray,
             yArray,
             indexArray,

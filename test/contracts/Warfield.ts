@@ -12,6 +12,7 @@ const BoardHandler = require('../../waffle/BoardHandler.json')
 const WarfieldBoard = require('../../waffle/WarfieldBoard.json')
 
 const PawnSet = require('../../waffle/PawnSet.json')
+const NoEvents = require('../../waffle/NoEvents.json')
 
 const BlueBase = require("../../waffle/BlueBase.json");
 const BlueSoldier = require("../../waffle/BlueSoldier.json");
@@ -48,6 +49,7 @@ describe('Warfield', () => {
 
     let stateController
     let ethBoards
+    let noEvents
     let boardHandler
     let initialState
 
@@ -58,6 +60,9 @@ describe('Warfield', () => {
         // Create EthBoards
         link(EthBoards, 'contracts/StateController.sol:StateController', stateController.address)
         ethBoards = await deployContract(wallet, EthBoards)
+
+        // Contract to have no events during games
+        noEvents = await deployContract(wallet, NoEvents)
 
         // Create BoardHandler with EthBoards
         boardHandler = await deployContract(wallet, BoardHandler, [ethBoards.address])
@@ -124,6 +129,7 @@ describe('Warfield', () => {
           "Warfield",
           warfieldBoard.address,
           pawnSet.address,
+          noEvents.address,
           xArray,
           yArray,
           indexArray,

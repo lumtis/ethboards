@@ -12,6 +12,7 @@ const BoardHandler = require('../../waffle/BoardHandler.json')
 const ChessBoard = require('../../waffle/ChessBoard.json')
 
 const PawnSet = require('../../waffle/PawnSet.json')
+const NoEvents = require('../../waffle/NoEvents.json')
 
 const WhitePawn = require("../../waffle/WhitePawn.json");
 const WhiteRook = require("../../waffle/WhiteRook.json");
@@ -75,6 +76,7 @@ describe('EthBoards', () => {
 
     let stateController
     let ethBoards
+    let noEvents
     let boardHandler
 
     before(async () => {
@@ -84,6 +86,9 @@ describe('EthBoards', () => {
         // Create EthBoards
         link(EthBoards, 'contracts/StateController.sol:StateController', stateController.address)
         ethBoards = await deployContract(wallet, EthBoards)
+
+        // Contract to have no events during games
+        noEvents = await deployContract(wallet, NoEvents)
 
         // Create BoardHandler with EthBoards
         boardHandler = await deployContract(wallet, BoardHandler, [ethBoards.address])
@@ -155,6 +160,7 @@ describe('EthBoards', () => {
             "Test Chess",
             chessBoard.address,
             pawnSet.address,
+            noEvents.address,
             xArray,
             yArray,
             indexArray,
@@ -245,7 +251,8 @@ describe('EthBoards', () => {
             initialState
         )
 
-        expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,0,1]);
+        await expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,0,1]);
+        await expect('gameFinished').to.be.calledOnContractWith(noEvents, [0,0,other.address,wallet.address]); 
     })
 
     it('can execute timeouts', async () => {
@@ -339,6 +346,12 @@ describe('EthBoards', () => {
         // Execute timeout and check the player 0 won the game
         await ethBoards.executeTimeout(boardHandler.address,0,1)
 
-        expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,1,0]);
+        await expect('finishGame').to.be.calledOnContractWith(boardHandler, [0,1,0]);
+        await expect('gameFinished').to.be.calledOnContractWith(noEvents, [0,1,wallet.address,other.address]); 
+    })
+
+    it('can trigger joinGame events of board events contract', async () => {
+        await boardHandler.joinGame(0)
+        await expect('joinGame').to.be.calledOnContractWith(noEvents, [0,2,wallet.address]);
     })
 })
