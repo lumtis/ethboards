@@ -88,11 +88,6 @@ contract BoardHandler {
 
     ///////////////////////////////////////////////////////////////
 
-    modifier fromEthBoards {
-        require(msg.sender == ethBoards, "The function must be called by the ethboards contract");
-        _;
-    }
-
     constructor(address ethBoardsAddress) public {
         boardNumber = 0;
         ethBoards = ethBoardsAddress;
@@ -192,12 +187,12 @@ contract BoardHandler {
     }
 
     /**
-     * @notice Finish a game, this function can only be called by the ethBoards contract, this contract ensure the winner is legit
+     * @notice Finish a game, internal
      * @param boardId id of the board
      * @param gameId id of the game
      * @param winner player that won the game (0 or 1)
     */
-    function finishGame(uint boardId, uint gameId, uint8 winner) public fromEthBoards {
+    function _finishGame(uint boardId, uint gameId, uint8 winner) internal {
         require(boardId < boardNumber, "The board doesn't exist");
         require(gameId < boards[boardId].gameCount, "The game doesn't exist");
         require(!boards[boardId].games[gameId].over, "The game is already over");
@@ -225,6 +220,37 @@ contract BoardHandler {
         // Call the event finished of the board
         BoardEvents boardEvents = BoardEvents(boards[boardId].boardEvents);
         boardEvents.gameFinished(boardId, gameId, winnerAddress, loserAddress);
+    }
+
+    /**
+     * @notice Finish a game, this function can only be called by the ethBoards contract, this contract ensure the winner is legit
+     * @param boardId id of the board
+     * @param gameId id of the game
+     * @param winner player that won the game (0 or 1)
+    */
+    function finishGame(uint boardId, uint gameId, uint8 winner) public {
+        require(msg.sender == ethBoards, "The function must be called by the ethboards contract");
+        _finishGame(boardId, gameId, winner);
+    }
+
+    /**
+     * @notice Give up a game, can be called anytime by one of the player of the game
+     * @param boardId id of the board
+     * @param gameId id of the game
+    */
+    function giveUp(uint boardId, uint gameId) public {
+        require(boardId < boardNumber, "The board doesn't exist");
+        require(gameId < boards[boardId].gameCount, "The game doesn't exist");
+
+        if (msg.sender == boards[boardId].games[gameId].playerA) {
+            // The player A gave up, player B wins
+            _finishGame(boardId, gameId, 1);
+        } else if (msg.sender == boards[boardId].games[gameId].playerB) {
+            // The player B gave up, player A wins
+            _finishGame(boardId, gameId, 0);
+        } else {
+            revert("Only a player of the game can give up");
+        }
     }
 
     ///////////////////////////////////////////////////////////////
