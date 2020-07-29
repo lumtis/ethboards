@@ -8545,12 +8545,12 @@
       "links": {
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
-      "address": "0x3879B1915f6D673EbaD15139271e07A4Cb9Be984",
-      "transactionHash": "0x753a28d53da7baf7eebf5688d914f993a7c4f674e05ef0a63b4cc3ff0f4c34d4"
+      "address": "0x954c27A8ec8422604c816f8270B7ca04dF304F5B",
+      "transactionHash": "0x86824d28c3b1fe1dd11b01cfc70f6734911bd248a791f16a19dd2c9852fe84f8"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-28T19:28:35.302Z",
+  "updatedAt": "2020-07-29T09:22:10.799Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

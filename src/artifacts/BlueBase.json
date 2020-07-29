@@ -6055,12 +6055,12 @@
       "links": {
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
-      "address": "0xDD1Eb5CCe0f18e0288b73fb4adcbF83aD48267BE",
-      "transactionHash": "0xe72143060fd3f2b60c3103a62857fd5e1b4aebd0b8de45671b70b589f063d937"
+      "address": "0x958cCB690e106CcE474Ec6ABCb64DB9fd747C5eA",
+      "transactionHash": "0x1e13577ae479cebaf50e48b11165fef5a78fcd8348abfa290682cac32ef50099"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-28T19:28:35.358Z",
+  "updatedAt": "2020-07-29T09:22:10.878Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

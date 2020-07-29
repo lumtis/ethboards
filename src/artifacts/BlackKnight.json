@@ -7889,12 +7889,12 @@
       "links": {
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
-      "address": "0x9440C063946757fa69E3Bd8DD6709d68df31fDc3",
-      "transactionHash": "0x5ce3ee68b9b0458f835b21c7f627ac73b7c83f91031b002b18bc01a26fbdb5b9"
+      "address": "0xb4776eF7228703699A4B5B2f04f91000c0DA2021",
+      "transactionHash": "0x8d9b77291637ecbe90c8e7ba614f073e400d8c244e09365da848492be75f7b80"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-28T19:28:35.340Z",
+  "updatedAt": "2020-07-29T09:22:10.850Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

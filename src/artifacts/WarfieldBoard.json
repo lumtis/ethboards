@@ -87,7 +87,7 @@
         "id": 77,
         "nodeType": "ImportDirective",
         "scope": 146,
-        "sourceUnit": 6091,
+        "sourceUnit": 6146,
         "src": "48:32:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -135,10 +135,10 @@
               "id": 80,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6090,
+              "referencedDeclaration": 6145,
               "src": "126:15:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6090",
+                "typeIdentifier": "t_contract$_StateController_$6145",
                 "typeString": "library StateController"
               }
             },
@@ -404,7 +404,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5769,
+                              "referencedDeclaration": 5824,
                               "src": "715:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -488,7 +488,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5748,
+                                "referencedDeclaration": 5803,
                                 "src": "735:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -649,7 +649,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5769,
+                              "referencedDeclaration": 5824,
                               "src": "525:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -733,7 +733,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5748,
+                                "referencedDeclaration": 5803,
                                 "src": "545:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1042,7 +1042,7 @@
         "id": 77,
         "nodeType": "ImportDirective",
         "scope": 146,
-        "sourceUnit": 6091,
+        "sourceUnit": 6146,
         "src": "48:32:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1090,10 +1090,10 @@
               "id": 80,
               "name": "StateController",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 6090,
+              "referencedDeclaration": 6145,
               "src": "126:15:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StateController_$6090",
+                "typeIdentifier": "t_contract$_StateController_$6145",
                 "typeString": "library StateController"
               }
             },
@@ -1359,7 +1359,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5769,
+                              "referencedDeclaration": 5824,
                               "src": "715:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1443,7 +1443,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5748,
+                                "referencedDeclaration": 5803,
                                 "src": "735:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1604,7 +1604,7 @@
                               "lValueRequested": false,
                               "memberName": "isAlive",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 5769,
+                              "referencedDeclaration": 5824,
                               "src": "525:13:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_bool_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1688,7 +1688,7 @@
                                 "lValueRequested": false,
                                 "memberName": "getPawnType",
                                 "nodeType": "MemberAccess",
-                                "referencedDeclaration": 5748,
+                                "referencedDeclaration": 5803,
                                 "src": "545:17:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_function_delegatecall_pure$_t_array$_t_uint8_$121_memory_ptr_$_t_uint8_$returns$_t_uint8_$bound_to$_t_array$_t_uint8_$121_memory_ptr_$",
@@ -1969,12 +1969,12 @@
       "links": {
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
-      "address": "0xc76d32ce74D9739868A8EF236619D52E7e4323BD",
-      "transactionHash": "0x0780b5648f8687ad951af5bca660d1ebc2b3a58e3bafb654b1e8403894e53448"
+      "address": "0xDD1Eb5CCe0f18e0288b73fb4adcbF83aD48267BE",
+      "transactionHash": "0x820c16df3f92c6c22f7f856cb06883d2eac833044728dbe755d5c916e0032499"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-28T19:28:35.296Z",
+  "updatedAt": "2020-07-29T09:22:10.791Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

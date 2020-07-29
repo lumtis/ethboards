@@ -5,6 +5,7 @@ const ChessBoard = artifacts.require("./Board/ChessBoard.sol");
 const WarfieldBoard = artifacts.require("./Board/WarfieldBoard.sol");
 const PawnSetRegistry = artifacts.require("./PawnSetRegistry.sol");
 const PawnSet = artifacts.require("./PawnSet.sol");
+const NoEvents = artifacts.require('../BoardEvents/NoEvents.sol')
 
 // Chess pawn
 const WhitePawn =  artifacts.require("./Chess/WhitePawn.sol");
@@ -42,6 +43,7 @@ module.exports = async (deployer, network, accounts) => {
   // Deploy contracts
   const ethBoards = await deployer.deploy(EthBoards);
   const boardHandler = await deployer.deploy(BoardHandler, ethBoards.address);
+  const noEvents = await deployer.deploy(NoEvents);
 
   ///////////////////////////////////////////////////////////
   // Link library to pawn
@@ -161,6 +163,7 @@ module.exports = async (deployer, network, accounts) => {
     "Simplified Chess",
     ChessBoard.address,
     chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
     xArray,
     yArray,
     indexArray,
@@ -188,6 +191,7 @@ module.exports = async (deployer, network, accounts) => {
     "Light Brigade Chess",
     ChessBoard.address,
     chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
     xArray,
     yArray,
     indexArray,
@@ -215,6 +219,7 @@ module.exports = async (deployer, network, accounts) => {
     "Warfield",
     WarfieldBoard.address,
     warfieldPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
     xArray,
     yArray,
     indexArray,

@@ -7829,12 +7829,12 @@
       "links": {
         "StateController": "0x66e749c7c7a838Fa66020210C6067ADb0029b588"
       },
-      "address": "0x264aB98C7C8d72c21CBCeD133B6C185dA9f97b66",
-      "transactionHash": "0x0948e251aa2c50d80f6052dd44df4d63a2852fafe1d7f1477c1bf48f1dae0fb5"
+      "address": "0x9440C063946757fa69E3Bd8DD6709d68df31fDc3",
+      "transactionHash": "0xd085822010229385003265060f1a243ac910bfdf55c347825bfac13ef1621d71"
     }
   },
   "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-28T19:28:35.336Z",
+  "updatedAt": "2020-07-29T09:22:10.845Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
