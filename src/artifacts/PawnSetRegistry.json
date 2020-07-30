@@ -1321,6 +1321,32 @@
     "version": "0.6.11+commit.5ef660b1.Emscripten.clang"
   },
   "networks": {
+    "4": {
+      "events": {
+        "0x05e797d542144afc7e9bd6125d0c73cd015ef7a29b2d671ac798ac56073d82fb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "pawnSetAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            }
+          ],
+          "name": "PawnSetCreated",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xa16F1c563D71774DB8D89F0833a176C4391Db348",
+      "transactionHash": "0xfd0abeba8eb6b0d4e817a5f7271c85bacb93abee98b075faf14d4d943b8dc4ca"
+    },
     "1234": {
       "events": {
         "0x05e797d542144afc7e9bd6125d0c73cd015ef7a29b2d671ac798ac56073d82fb": {
@@ -1348,8 +1374,8 @@
       "transactionHash": "0xa786234262191a217c9df6bf55228126af145226db35f32675b06da0c6113e18"
     }
   },
-  "schemaVersion": "3.2.2",
-  "updatedAt": "2020-07-29T19:27:01.382Z",
+  "schemaVersion": "3.1.0",
+  "updatedAt": "2020-07-30T18:40:43.987Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {
