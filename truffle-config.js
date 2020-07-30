@@ -1,8 +1,6 @@
-require('dotenv').config()
-
-const HDWalletProvider = require("@truffle/hdwallet-provider");
-const rinkebyMnemonic = process.env.RINKEBY_HOTWALLET;
-const infuraUrl = "https://rinkeby.infura.io/v3/" + process.env.INFURA_KEY;
+const HDWalletProvider = require("@truffle/hdwallet-provider")
+const rinkebyMnemonic = process.env.RINKEBY_HOTWALLET
+const infuraUrl = "https://rinkeby.infura.io/v3/" + process.env.INFURA_KEY
 
 module.exports = {
   networks: {
@@ -32,7 +30,7 @@ module.exports = {
     },
   },
   api_keys: {
-    etherscan: 'MY_API_KEY'
+    etherscan: process.env.ETHERSCAN_KEY
   },
   plugins: [
     "@chainsafe/truffle-plugin-abigen",
