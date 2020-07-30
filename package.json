@@ -55,7 +55,7 @@
     "clean:ganache": "rm -rf .ganache",
     "import:truffle": "cp -r build/contracts src/artifacts",
     "docs": "solidity-docgen",
-    "verify:rinkeby": "truffle run verify --network rinkeby"
+    "verify:rinkeby": "truffle run verify EthBoards BoardHandler BlackBishop BlackKing BlackKnight BlackPawn BlackQueen BlackRook WhiteBishop WhiteKing WhiteKnight WhitePawn WhiteQueen WhiteRook BlueBase BlueBazooka BlueHeadquarters BlueSoldier BlueTank RedBase RedBazooka RedHeadquarters RedSoldier RedTank ChessBoard WarfieldBoard NoEvents --network rinkeby"
   },
   "jest": {
     "collectCoverageFrom": [
