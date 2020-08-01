@@ -98,11 +98,11 @@ describe('Warfield', () => {
             blueSoldier.address,
             blueBazooka.address,
             blueTank.address,
+            blueHeadquarters.address,
             redBase.address,
             redSoldier.address,
             redBazooka.address,
             redTank.address,
-            blueHeadquarters.address,
             redHeadquarters.address,
         ]
     
@@ -114,16 +114,9 @@ describe('Warfield', () => {
         const pawnSet = await deployContract(wallet, PawnSet, [warfieldPawns, 10])
 
         // Deploy a test board for chess with each pawn one to each other
-        const xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7]
-        const yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4]
-        const indexArray = [8,8,4,4,4,5,5,5,5,6,6,7,0,0,0,1,1,1,1,2,2,3]
-      
-        // Fill arrays
-        for(let i=0; i<40-22; i++) {
-          xArray.push(0)
-          yArray.push(0)
-          indexArray.push(0)
-        }
+        const xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        const yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        const indexArray = [4,0,5,5,5,6,6,6,6,7,7,8,0,0,0,1,1,1,1,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
       
         await boardHandler.createBoard(
           "Warfield",

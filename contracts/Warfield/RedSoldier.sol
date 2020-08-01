@@ -49,7 +49,7 @@ contract RedSoldier is Pawn, WarfieldPawn {
             int8 presentPawn = state.getPawnAt(x, y);
             require((presentPawn > -1) && isOpponent(state, player, uint8(presentPawn)), "No opponent");
             require(isBase(state, uint8(presentPawn)), "Can only capture a base");
-            outState = state.transformPawn(uint8(presentPawn), 4);
+            outState = state.transformPawn(uint8(presentPawn), 5);
         } else {
             revert("Unknown move");
         }

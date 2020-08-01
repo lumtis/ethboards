@@ -18,7 +18,7 @@ contract WarfieldBoard is Board {
             }
         } else {
             // Player B win if the blue headquarter is captured
-            if (state.isAlive(0) && state.getPawnType(0) == 8) {
+            if (state.isAlive(0) && state.getPawnType(0) == 4) {
                 return false;
             }
         }

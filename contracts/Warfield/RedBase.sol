@@ -49,10 +49,10 @@ contract RedBase is Pawn, WarfieldPawn {
                 if(!state.isAlive(i)) {
                     if (moveType == 0) {
                         // Recruit soldier
-                        return state.respawnPawn(i, 5, x, y);
+                        return state.respawnPawn(i, 6, x, y);
                     } else {
                         // Recruit bazooka
-                        return state.respawnPawn(i, 6, x, y);
+                        return state.respawnPawn(i, 7, x, y);
                     }
                 }
             }

@@ -134,99 +134,77 @@ module.exports = async (deployer, network, accounts) => {
     BlueSoldier.address,
     BlueBazooka.address,
     BlueTank.address,
+    BlueHeadquarters.address,
     RedBase.address,
     RedSoldier.address,
     RedBazooka.address,
     RedTank.address,
-    BlueHeadquarters.address,
     RedHeadquarters.address
   ]
   for(let i=0; i<255-10; i++) {
     warfieldPawn.push("0x0000000000000000000000000000000000000000")
   }
   const warfieldPawnSetAddress = await pawnSetRegistry.createPawnSet("Warfield", warfieldPawn, 10)
-};
-//   ///////////////////////////////////////////////////////////
-//   // Deploy simplified chess board
-//   let xArray = [3,3,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7]
-//   let yArray = [0,7,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7]
-//   let indexArray = [5,11,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,6,6,6,6,6,6,6,6,7,8,9,10,9,8,7]
-
-//   // Fill arrays
-//   for(i=0; i<40-32; i++) {
-//     xArray.push(0)
-//     yArray.push(0)
-//     indexArray.push(0)
-//   }
-
-//   await boardHandler.createBoard(
-//     "Simplified Chess",
-//     ChessBoard.address,
-//     chessPawnSetAddress.logs[0].args.pawnSetAddress,
-//     NoEvents.address,
-//     xArray,
-//     yArray,
-//     indexArray,
-//     32
-//   );
-  
-//   // Start the first game
-//   await boardHandler.joinGame(0, {from: accounts[0]})
-//   await boardHandler.joinGame(0, {from: accounts[1]})
-
-//   ///////////////////////////////////////////////////////////
-//   // Deploy Light Brigade Chess
-//   xArray = [4,4,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,5,6,7,1,3,6]
-//   yArray = [0,7,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,0,0,0]
-//   indexArray = [5,11,0,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,8,8,8,8,8,8,8,4,4,4]
-
-//   // Fill arrays
-//   for(i=0; i<40-28; i++) {
-//     xArray.push(0)
-//     yArray.push(0)
-//     indexArray.push(0)
-//   }
-
-//   await boardHandler.createBoard(
-//     "Light Brigade Chess",
-//     ChessBoard.address,
-//     chessPawnSetAddress.logs[0].args.pawnSetAddress,
-//     NoEvents.address,
-//     xArray,
-//     yArray,
-//     indexArray,
-//     28
-//   );
-
-//   // Start the first game
-//   await boardHandler.joinGame(1, {from: accounts[0]})
-//   await boardHandler.joinGame(1, {from: accounts[1]})
-
-//   ///////////////////////////////////////////////////////////
-//   // Deploy Waarfield
-//   xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7]
-//   yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4]
-//   indexArray = [8,9,4,4,4,5,5,5,5,6,6,7,0,0,0,1,1,1,1,2,2,3]
-
-//   // Fill arrays
-//   for(let i=0; i<40-22; i++) {
-//     xArray.push(0)
-//     yArray.push(0)
-//     indexArray.push(0)
-//   }
-
-//   await boardHandler.createBoard(
-//     "Warfield test",
-//     WarfieldBoard.address,
-//     warfieldPawnSetAddress.logs[0].args.pawnSetAddress,
-//     NoEvents.address,
-//     xArray,
-//     yArray,
-//     indexArray,
-//     22
-//   );
-
-//   // Start the first game
-//   await boardHandler.joinGame(2, {from: accounts[0]})
-//   await boardHandler.joinGame(2, {from: accounts[1]})
 // };
+//   ///////////////////////////////////////////////////////////
+  // Deploy simplified chess board
+  let xArray = [3,3,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7,0,0,0,0,0,0,0,0]
+  let yArray = [0,7,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,0,0,0,0,0,0,0,0]
+  let indexArray = [5,11,0,0,0,0,0,0,0,0,1,2,3,4,3,2,1,6,6,6,6,6,6,6,6,7,8,9,10,9,8,7,0,0,0,0,0,0,0,0]
+  await boardHandler.createBoard(
+    "Simplified Chess",
+    ChessBoard.address,
+    chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
+    xArray,
+    yArray,
+    indexArray,
+    32
+  );
+  
+  // Start the first game
+  await boardHandler.joinGame(0, {from: accounts[0]})
+  await boardHandler.joinGame(0, {from: accounts[1]})
+
+  ///////////////////////////////////////////////////////////
+  // Deploy Light Brigade Chess
+  xArray = [4,4,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,5,6,7,1,3,6,0,0,0,0,0,0,0,0,0,0,0,0]
+  yArray = [0,7,1,1,1,1,1,1,1,1,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  indexArray = [5,11,0,0,0,0,0,0,0,0,6,6,6,6,6,6,6,6,8,8,8,8,8,8,8,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0]
+
+  await boardHandler.createBoard(
+    "Light Brigade Chess",
+    ChessBoard.address,
+    chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
+    xArray,
+    yArray,
+    indexArray,
+    28
+  );
+
+  // Start the first game
+  await boardHandler.joinGame(1, {from: accounts[0]})
+  await boardHandler.joinGame(1, {from: accounts[1]})
+
+  ///////////////////////////////////////////////////////////
+  // Deploy Warfield
+  xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  indexArray = [4,9,5,5,5,6,6,6,6,7,7,8,0,0,0,1,1,1,1,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+  await boardHandler.createBoard(
+    "Warfield test",
+    WarfieldBoard.address,
+    warfieldPawnSetAddress.logs[0].args.pawnSetAddress,
+    NoEvents.address,
+    xArray,
+    yArray,
+    indexArray,
+    22
+  );
+
+  // Start the first game
+  await boardHandler.joinGame(2, {from: accounts[0]})
+  await boardHandler.joinGame(2, {from: accounts[1]})
+};
