@@ -28491,112 +28491,12 @@
         }
       },
       "links": {},
-      "address": "0x85127533B8644a37798763864bE73a4E123710F8",
-      "transactionHash": "0xd6994e5b4ff0ddbfcbdff5ae49459e3ff5e7f9209d713d962ab8daf9766001c5"
-    },
-    "1234": {
-      "events": {
-        "0xe820c892428a1b85fdf99f24e32fbe1165413ebb7119bde5dfa6cb72334f7580": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "creator",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            }
-          ],
-          "name": "BoardCreated",
-          "type": "event"
-        },
-        "0x0ffff200143c07c471e3d4bd1972a1b601d278491708eef4ec7cf9e921fda192": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerA",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerB",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "winner",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "gameId",
-              "type": "uint256"
-            }
-          ],
-          "name": "GameFinished",
-          "type": "event"
-        },
-        "0x89e651d0d1f877f5c444ff351a9449c3b36bbc92b470093d9fc085b1bbd1e3bc": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerA",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "playerB",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "uint256",
-              "name": "boardId",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "gameId",
-              "type": "uint256"
-            }
-          ],
-          "name": "GameStarted",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0xf036e42b361f1B23E6aCe6Edbc6247339857f328",
-      "transactionHash": "0x27cc68ab354c984ff59da48214c4f512bdcd247708efaa3f82038beb011bb961"
+      "address": "0x8e527c273e9C5784C233A132B1ccF5aC2E93a8A3",
+      "transactionHash": "0xc319f89a4d0281e8451b4572fa07f2a2ff49200f89c47c112a1a271b27fda2e1"
     }
   },
-  "schemaVersion": "3.1.0",
-  "updatedAt": "2020-07-30T18:40:43.965Z",
+  "schemaVersion": "3.2.2",
+  "updatedAt": "2020-08-01T13:32:00.819Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {

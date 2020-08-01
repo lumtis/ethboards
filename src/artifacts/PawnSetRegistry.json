@@ -54,39 +54,39 @@
   "bytecode": "0x608060405234801561001057600080fd5b506106f0806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c80635b3355d714610030575b600080fd5b610139600480360361202081101561004757600080fd5b810190808035906020019064010000000081111561006457600080fd5b82018360208201111561007657600080fd5b8035906020019184600183028401116401000000008311171561009857600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f82011690508083019250505050505050919291929080611fe0019060ff80602002604051908101604052809291908260ff60200280828437600081840152601f19601f8201169050808301925050505050509192919290803560ff16906020019092919050505061017b565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b600080838360405161018c906102c5565b808360ff60200280838360005b838110156101b4578082015181840152602081019050610199565b505050509050018260ff1660ff16815260200192505050604051809103906000f0801580156101e7573d6000803e3d6000fd5b5090507f05e797d542144afc7e9bd6125d0c73cd015ef7a29b2d671ac798ac56073d82fb8186604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200180602001828103825283818151815260200191508051906020019080838360005b8381101561027f578082015181840152602081019050610264565b50505050905090810190601f1680156102ac5780820380516001836020036101000a031916815260200191505b50935050505060405180910390a1809150509392505050565b6103e8806102d38339019056fe608060405234801561001057600080fd5b506040516103e83803806103e8833981810160405261200081101561003457600080fd5b81019080919082611fe0018051906020019092919050505060008160ff16116100c5576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260178152602001807f4e6f207061776e20696e20746865207061776e2073657400000000000000000081525060200191505060405180910390fd5b60ff8160ff16111561013f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601d8152602001807f4d6178696d756d206e756d626572206f66207061776e2069732032353500000081525060200191505060405180910390fd5b60008090505b8160ff168110156101d0576000838260ff811061015e57fe5b60200201519080600181540180825580915050600190039060005260206000200160009091909190916101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508080600101915050610145565b5080600160006101000a81548160ff021916908360ff16021790555050506101eb806101fd6000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806368b1cc991461003b578063ed5558231461005f575b600080fd5b6100436100d0565b604051808260ff1660ff16815260200191505060405180910390f35b61008e6004803603602081101561007557600080fd5b81019080803560ff1690602001909291905050506100e7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000600160009054906101000a900460ff16905090565b6000600160009054906101000a900460ff1660ff168260ff1610610173576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f546865207061776e20646f65736e27742065786973740000000000000000000081525060200191505060405180910390fd5b60008260ff168154811061018357fe5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905091905056fea26469706673582212204d7751b7fc25f92b8d5bd5fdae59360131c3d7f6b271e8af197e824c8f606ceb64736f6c634300060b0033a2646970667358221220ae4a3404f581bf2a73c060a8368c1a08c3e0fb790580e5025b02fb382f0ca05464736f6c634300060b0033",
   "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c80635b3355d714610030575b600080fd5b610139600480360361202081101561004757600080fd5b810190808035906020019064010000000081111561006457600080fd5b82018360208201111561007657600080fd5b8035906020019184600183028401116401000000008311171561009857600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f82011690508083019250505050505050919291929080611fe0019060ff80602002604051908101604052809291908260ff60200280828437600081840152601f19601f8201169050808301925050505050509192919290803560ff16906020019092919050505061017b565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b600080838360405161018c906102c5565b808360ff60200280838360005b838110156101b4578082015181840152602081019050610199565b505050509050018260ff1660ff16815260200192505050604051809103906000f0801580156101e7573d6000803e3d6000fd5b5090507f05e797d542144afc7e9bd6125d0c73cd015ef7a29b2d671ac798ac56073d82fb8186604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200180602001828103825283818151815260200191508051906020019080838360005b8381101561027f578082015181840152602081019050610264565b50505050905090810190601f1680156102ac5780820380516001836020036101000a031916815260200191505b50935050505060405180910390a1809150509392505050565b6103e8806102d38339019056fe608060405234801561001057600080fd5b506040516103e83803806103e8833981810160405261200081101561003457600080fd5b81019080919082611fe0018051906020019092919050505060008160ff16116100c5576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260178152602001807f4e6f207061776e20696e20746865207061776e2073657400000000000000000081525060200191505060405180910390fd5b60ff8160ff16111561013f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601d8152602001807f4d6178696d756d206e756d626572206f66207061776e2069732032353500000081525060200191505060405180910390fd5b60008090505b8160ff168110156101d0576000838260ff811061015e57fe5b60200201519080600181540180825580915050600190039060005260206000200160009091909190916101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508080600101915050610145565b5080600160006101000a81548160ff021916908360ff16021790555050506101eb806101fd6000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806368b1cc991461003b578063ed5558231461005f575b600080fd5b6100436100d0565b604051808260ff1660ff16815260200191505060405180910390f35b61008e6004803603602081101561007557600080fd5b81019080803560ff1690602001909291905050506100e7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000600160009054906101000a900460ff16905090565b6000600160009054906101000a900460ff1660ff168260ff1610610173576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f546865207061776e20646f65736e27742065786973740000000000000000000081525060200191505060405180910390fd5b60008260ff168154811061018357fe5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905091905056fea26469706673582212204d7751b7fc25f92b8d5bd5fdae59360131c3d7f6b271e8af197e824c8f606ceb64736f6c634300060b0033a2646970667358221220ae4a3404f581bf2a73c060a8368c1a08c3e0fb790580e5025b02fb382f0ca05464736f6c634300060b0033",
   "immutableReferences": {},
-  "sourceMap": "138:758:20:-:0;;;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "138:758:20:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;636:258;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;736:7;755:15;785:5;792:6;773:26;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;755:44;;815:38;838:7;848:4;815:38;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;879:7;864:23;;;636:258;;;;;:::o;-1:-1:-1:-;;;;;;;;:::o",
+  "sourceMap": "138:758:23:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "138:758:23:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;636:258;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;736:7;755:15;785:5;792:6;773:26;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;755:44;;815:38;838:7;848:4;815:38;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;879:7;864:23;;;636:258;;;;;:::o;-1:-1:-1:-;;;;;;;;:::o",
   "source": "pragma solidity 0.6.11;\n\nimport \"./PawnSet.sol\";\n\n/**\n * @title Pawn set registry\n * @notice List the created pawn sets through events\n*/\ncontract PawnSetRegistry {\n    /**\n    * Emitted when a new pawn set is created\n    * @param pawnSetAddress Address of the pawn set\n    * @param name The name of the pawn set\n    */\n    event PawnSetCreated(\n        address pawnSetAddress,\n        string name\n    );\n\n    /**\n     * @notice Create a new pawn set\n     * @param name name of the pawn set\n     * @param pawns addresses of the pawn to add\n     * @param pawnNb number of the pawn added\n     * @return address of the pawn set\n    */\n    function createPawnSet(string memory name, address[255] memory pawns, uint8 pawnNb) public returns (address) {\n        PawnSet pawnSet = new PawnSet(pawns, pawnNb);\n\n        emit PawnSetCreated(address(pawnSet), name);\n\n        return address(pawnSet);\n    }\n}",
   "sourcePath": "/Users/lucas/Desktop/ethboards/contracts/PawnSetRegistry.sol",
   "ast": {
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/PawnSetRegistry.sol",
     "exportedSymbols": {
       "PawnSetRegistry": [
-        5582
+        5876
       ]
     },
-    "id": 5583,
+    "id": 5877,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5536,
+        "id": 5830,
         "literals": [
           "solidity",
           "0.6",
           ".11"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:23:20"
+        "src": "0:23:23"
       },
       {
         "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/PawnSet.sol",
         "file": "./PawnSet.sol",
-        "id": 5537,
+        "id": 5831,
         "nodeType": "ImportDirective",
-        "scope": 5583,
-        "sourceUnit": 5535,
-        "src": "25:23:20",
+        "scope": 5877,
+        "sourceUnit": 5829,
+        "src": "25:23:23",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -94,19 +94,19 @@
         "abstract": false,
         "baseContracts": [],
         "contractDependencies": [
-          5534
+          5828
         ],
         "contractKind": "contract",
         "documentation": {
-          "id": 5538,
+          "id": 5832,
           "nodeType": "StructuredDocumentation",
-          "src": "50:87:20",
+          "src": "50:87:23",
           "text": " @title Pawn set registry\n @notice List the created pawn sets through events"
         },
         "fullyImplemented": true,
-        "id": 5582,
+        "id": 5876,
         "linearizedBaseContracts": [
-          5582
+          5876
         ],
         "name": "PawnSetRegistry",
         "nodeType": "ContractDefinition",
@@ -114,28 +114,28 @@
           {
             "anonymous": false,
             "documentation": {
-              "id": 5539,
+              "id": 5833,
               "nodeType": "StructuredDocumentation",
-              "src": "169:150:20",
+              "src": "169:150:23",
               "text": " Emitted when a new pawn set is created\n @param pawnSetAddress Address of the pawn set\n @param name The name of the pawn set"
             },
-            "id": 5545,
+            "id": 5839,
             "name": "PawnSetCreated",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 5544,
+              "id": 5838,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5541,
+                  "id": 5835,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "pawnSetAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5545,
-                  "src": "354:22:20",
+                  "scope": 5839,
+                  "src": "354:22:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -143,10 +143,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5540,
+                    "id": 5834,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "354:7:20",
+                    "src": "354:7:23",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -158,14 +158,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 5543,
+                  "id": 5837,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "name",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5545,
-                  "src": "386:11:20",
+                  "scope": 5839,
+                  "src": "386:11:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -173,10 +173,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 5542,
+                    "id": 5836,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "386:6:20",
+                    "src": "386:6:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -186,45 +186,45 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "344:59:20"
+              "src": "344:59:23"
             },
-            "src": "324:80:20"
+            "src": "324:80:23"
           },
           {
             "body": {
-              "id": 5580,
+              "id": 5874,
               "nodeType": "Block",
-              "src": "745:149:20",
+              "src": "745:149:23",
               "statements": [
                 {
                   "assignments": [
-                    5560
+                    5854
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 5560,
+                      "id": 5854,
                       "mutability": "mutable",
                       "name": "pawnSet",
                       "nodeType": "VariableDeclaration",
                       "overrides": null,
-                      "scope": 5580,
-                      "src": "755:15:20",
+                      "scope": 5874,
+                      "src": "755:15:23",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$5534",
+                        "typeIdentifier": "t_contract$_PawnSet_$5828",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 5559,
+                        "id": 5853,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 5534,
-                        "src": "755:7:20",
+                        "referencedDeclaration": 5828,
+                        "src": "755:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -232,18 +232,18 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 5566,
+                  "id": 5860,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5563,
+                        "id": 5857,
                         "name": "pawns",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5552,
-                        "src": "785:5:20",
+                        "referencedDeclaration": 5846,
+                        "src": "785:5:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$255_memory_ptr",
                           "typeString": "address[255] memory"
@@ -251,12 +251,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5564,
+                        "id": 5858,
                         "name": "pawnNb",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5554,
-                        "src": "792:6:20",
+                        "referencedDeclaration": 5848,
+                        "src": "792:6:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint8",
                           "typeString": "uint8"
@@ -274,31 +274,31 @@
                           "typeString": "uint8"
                         }
                       ],
-                      "id": 5562,
+                      "id": 5856,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "nodeType": "NewExpression",
-                      "src": "773:11:20",
+                      "src": "773:11:23",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_creation_nonpayable$_t_array$_t_address_$255_memory_ptr_$_t_uint8_$returns$_t_contract$_PawnSet_$5534_$",
+                        "typeIdentifier": "t_function_creation_nonpayable$_t_array$_t_address_$255_memory_ptr_$_t_uint8_$returns$_t_contract$_PawnSet_$5828_$",
                         "typeString": "function (address[255] memory,uint8) returns (contract PawnSet)"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 5561,
+                        "id": 5855,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 5534,
-                        "src": "777:7:20",
+                        "referencedDeclaration": 5828,
+                        "src": "777:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       }
                     },
-                    "id": 5565,
+                    "id": 5859,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -306,15 +306,15 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "773:26:20",
+                    "src": "773:26:23",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$5534",
+                      "typeIdentifier": "t_contract$_PawnSet_$5828",
                       "typeString": "contract PawnSet"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "755:44:20"
+                  "src": "755:44:23"
                 },
                 {
                   "eventCall": {
@@ -325,14 +325,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 5570,
+                            "id": 5864,
                             "name": "pawnSet",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5560,
-                            "src": "838:7:20",
+                            "referencedDeclaration": 5854,
+                            "src": "838:7:23",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_PawnSet_$5534",
+                              "typeIdentifier": "t_contract$_PawnSet_$5828",
                               "typeString": "contract PawnSet"
                             }
                           }
@@ -340,33 +340,33 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_PawnSet_$5534",
+                              "typeIdentifier": "t_contract$_PawnSet_$5828",
                               "typeString": "contract PawnSet"
                             }
                           ],
-                          "id": 5569,
+                          "id": 5863,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "nodeType": "ElementaryTypeNameExpression",
-                          "src": "830:7:20",
+                          "src": "830:7:23",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_address_$",
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 5568,
+                            "id": 5862,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
-                            "src": "830:7:20",
+                            "src": "830:7:23",
                             "typeDescriptions": {
                               "typeIdentifier": null,
                               "typeString": null
                             }
                           }
                         },
-                        "id": 5571,
+                        "id": 5865,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -374,7 +374,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "830:16:20",
+                        "src": "830:16:23",
                         "tryCall": false,
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -383,12 +383,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5572,
+                        "id": 5866,
                         "name": "name",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5548,
-                        "src": "848:4:20",
+                        "referencedDeclaration": 5842,
+                        "src": "848:4:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_memory_ptr",
                           "typeString": "string memory"
@@ -406,18 +406,18 @@
                           "typeString": "string memory"
                         }
                       ],
-                      "id": 5567,
+                      "id": 5861,
                       "name": "PawnSetCreated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5545,
-                      "src": "815:14:20",
+                      "referencedDeclaration": 5839,
+                      "src": "815:14:23",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (address,string memory)"
                       }
                     },
-                    "id": 5573,
+                    "id": 5867,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -425,16 +425,16 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "815:38:20",
+                    "src": "815:38:23",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 5574,
+                  "id": 5868,
                   "nodeType": "EmitStatement",
-                  "src": "810:43:20"
+                  "src": "810:43:23"
                 },
                 {
                   "expression": {
@@ -442,14 +442,14 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5577,
+                        "id": 5871,
                         "name": "pawnSet",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5560,
-                        "src": "879:7:20",
+                        "referencedDeclaration": 5854,
+                        "src": "879:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       }
@@ -457,33 +457,33 @@
                     "expression": {
                       "argumentTypes": [
                         {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       ],
-                      "id": 5576,
+                      "id": 5870,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "ElementaryTypeNameExpression",
-                      "src": "871:7:20",
+                      "src": "871:7:23",
                       "typeDescriptions": {
                         "typeIdentifier": "t_type$_t_address_$",
                         "typeString": "type(address)"
                       },
                       "typeName": {
-                        "id": 5575,
+                        "id": 5869,
                         "name": "address",
                         "nodeType": "ElementaryTypeName",
-                        "src": "871:7:20",
+                        "src": "871:7:23",
                         "typeDescriptions": {
                           "typeIdentifier": null,
                           "typeString": null
                         }
                       }
                     },
-                    "id": 5578,
+                    "id": 5872,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -491,28 +491,28 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "871:16:20",
+                    "src": "871:16:23",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "functionReturnParameters": 5558,
-                  "id": 5579,
+                  "functionReturnParameters": 5852,
+                  "id": 5873,
                   "nodeType": "Return",
-                  "src": "864:23:20"
+                  "src": "864:23:23"
                 }
               ]
             },
             "documentation": {
-              "id": 5546,
+              "id": 5840,
               "nodeType": "StructuredDocumentation",
-              "src": "410:221:20",
+              "src": "410:221:23",
               "text": " @notice Create a new pawn set\n @param name name of the pawn set\n @param pawns addresses of the pawn to add\n @param pawnNb number of the pawn added\n @return address of the pawn set"
             },
             "functionSelector": "5b3355d7",
-            "id": 5581,
+            "id": 5875,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -520,18 +520,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 5555,
+              "id": 5849,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5548,
+                  "id": 5842,
                   "mutability": "mutable",
                   "name": "name",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "659:18:20",
+                  "scope": 5875,
+                  "src": "659:18:23",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -539,10 +539,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 5547,
+                    "id": 5841,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "659:6:20",
+                    "src": "659:6:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -553,13 +553,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 5552,
+                  "id": 5846,
                   "mutability": "mutable",
                   "name": "pawns",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "679:25:20",
+                  "scope": 5875,
+                  "src": "679:25:23",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -568,28 +568,28 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 5549,
+                      "id": 5843,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "679:7:20",
+                      "src": "679:7:23",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 5551,
+                    "id": 5845,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "323535",
-                      "id": 5550,
+                      "id": 5844,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "687:3:20",
+                      "src": "687:3:23",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_255_by_1",
@@ -598,7 +598,7 @@
                       "value": "255"
                     },
                     "nodeType": "ArrayTypeName",
-                    "src": "679:12:20",
+                    "src": "679:12:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$255_storage_ptr",
                       "typeString": "address[255]"
@@ -609,13 +609,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 5554,
+                  "id": 5848,
                   "mutability": "mutable",
                   "name": "pawnNb",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "706:12:20",
+                  "scope": 5875,
+                  "src": "706:12:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -623,10 +623,10 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 5553,
+                    "id": 5847,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
-                    "src": "706:5:20",
+                    "src": "706:5:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint8",
                       "typeString": "uint8"
@@ -636,21 +636,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "658:61:20"
+              "src": "658:61:23"
             },
             "returnParameters": {
-              "id": 5558,
+              "id": 5852,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5557,
+                  "id": 5851,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "736:7:20",
+                  "scope": 5875,
+                  "src": "736:7:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -658,10 +658,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5556,
+                    "id": 5850,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "736:7:20",
+                    "src": "736:7:23",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -672,50 +672,50 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "735:9:20"
+              "src": "735:9:23"
             },
-            "scope": 5582,
-            "src": "636:258:20",
+            "scope": 5876,
+            "src": "636:258:23",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 5583,
-        "src": "138:758:20"
+        "scope": 5877,
+        "src": "138:758:23"
       }
     ],
-    "src": "0:896:20"
+    "src": "0:896:23"
   },
   "legacyAST": {
     "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/PawnSetRegistry.sol",
     "exportedSymbols": {
       "PawnSetRegistry": [
-        5582
+        5876
       ]
     },
-    "id": 5583,
+    "id": 5877,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5536,
+        "id": 5830,
         "literals": [
           "solidity",
           "0.6",
           ".11"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:23:20"
+        "src": "0:23:23"
       },
       {
         "absolutePath": "/Users/lucas/Desktop/ethboards/contracts/PawnSet.sol",
         "file": "./PawnSet.sol",
-        "id": 5537,
+        "id": 5831,
         "nodeType": "ImportDirective",
-        "scope": 5583,
-        "sourceUnit": 5535,
-        "src": "25:23:20",
+        "scope": 5877,
+        "sourceUnit": 5829,
+        "src": "25:23:23",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -723,19 +723,19 @@
         "abstract": false,
         "baseContracts": [],
         "contractDependencies": [
-          5534
+          5828
         ],
         "contractKind": "contract",
         "documentation": {
-          "id": 5538,
+          "id": 5832,
           "nodeType": "StructuredDocumentation",
-          "src": "50:87:20",
+          "src": "50:87:23",
           "text": " @title Pawn set registry\n @notice List the created pawn sets through events"
         },
         "fullyImplemented": true,
-        "id": 5582,
+        "id": 5876,
         "linearizedBaseContracts": [
-          5582
+          5876
         ],
         "name": "PawnSetRegistry",
         "nodeType": "ContractDefinition",
@@ -743,28 +743,28 @@
           {
             "anonymous": false,
             "documentation": {
-              "id": 5539,
+              "id": 5833,
               "nodeType": "StructuredDocumentation",
-              "src": "169:150:20",
+              "src": "169:150:23",
               "text": " Emitted when a new pawn set is created\n @param pawnSetAddress Address of the pawn set\n @param name The name of the pawn set"
             },
-            "id": 5545,
+            "id": 5839,
             "name": "PawnSetCreated",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 5544,
+              "id": 5838,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5541,
+                  "id": 5835,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "pawnSetAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5545,
-                  "src": "354:22:20",
+                  "scope": 5839,
+                  "src": "354:22:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -772,10 +772,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5540,
+                    "id": 5834,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "354:7:20",
+                    "src": "354:7:23",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -787,14 +787,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 5543,
+                  "id": 5837,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "name",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5545,
-                  "src": "386:11:20",
+                  "scope": 5839,
+                  "src": "386:11:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -802,10 +802,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 5542,
+                    "id": 5836,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "386:6:20",
+                    "src": "386:6:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -815,45 +815,45 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "344:59:20"
+              "src": "344:59:23"
             },
-            "src": "324:80:20"
+            "src": "324:80:23"
           },
           {
             "body": {
-              "id": 5580,
+              "id": 5874,
               "nodeType": "Block",
-              "src": "745:149:20",
+              "src": "745:149:23",
               "statements": [
                 {
                   "assignments": [
-                    5560
+                    5854
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 5560,
+                      "id": 5854,
                       "mutability": "mutable",
                       "name": "pawnSet",
                       "nodeType": "VariableDeclaration",
                       "overrides": null,
-                      "scope": 5580,
-                      "src": "755:15:20",
+                      "scope": 5874,
+                      "src": "755:15:23",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_PawnSet_$5534",
+                        "typeIdentifier": "t_contract$_PawnSet_$5828",
                         "typeString": "contract PawnSet"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 5559,
+                        "id": 5853,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 5534,
-                        "src": "755:7:20",
+                        "referencedDeclaration": 5828,
+                        "src": "755:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       },
@@ -861,18 +861,18 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 5566,
+                  "id": 5860,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5563,
+                        "id": 5857,
                         "name": "pawns",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5552,
-                        "src": "785:5:20",
+                        "referencedDeclaration": 5846,
+                        "src": "785:5:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$255_memory_ptr",
                           "typeString": "address[255] memory"
@@ -880,12 +880,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5564,
+                        "id": 5858,
                         "name": "pawnNb",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5554,
-                        "src": "792:6:20",
+                        "referencedDeclaration": 5848,
+                        "src": "792:6:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint8",
                           "typeString": "uint8"
@@ -903,31 +903,31 @@
                           "typeString": "uint8"
                         }
                       ],
-                      "id": 5562,
+                      "id": 5856,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "nodeType": "NewExpression",
-                      "src": "773:11:20",
+                      "src": "773:11:23",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_creation_nonpayable$_t_array$_t_address_$255_memory_ptr_$_t_uint8_$returns$_t_contract$_PawnSet_$5534_$",
+                        "typeIdentifier": "t_function_creation_nonpayable$_t_array$_t_address_$255_memory_ptr_$_t_uint8_$returns$_t_contract$_PawnSet_$5828_$",
                         "typeString": "function (address[255] memory,uint8) returns (contract PawnSet)"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 5561,
+                        "id": 5855,
                         "name": "PawnSet",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 5534,
-                        "src": "777:7:20",
+                        "referencedDeclaration": 5828,
+                        "src": "777:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       }
                     },
-                    "id": 5565,
+                    "id": 5859,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -935,15 +935,15 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "773:26:20",
+                    "src": "773:26:23",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_PawnSet_$5534",
+                      "typeIdentifier": "t_contract$_PawnSet_$5828",
                       "typeString": "contract PawnSet"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "755:44:20"
+                  "src": "755:44:23"
                 },
                 {
                   "eventCall": {
@@ -954,14 +954,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 5570,
+                            "id": 5864,
                             "name": "pawnSet",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5560,
-                            "src": "838:7:20",
+                            "referencedDeclaration": 5854,
+                            "src": "838:7:23",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_PawnSet_$5534",
+                              "typeIdentifier": "t_contract$_PawnSet_$5828",
                               "typeString": "contract PawnSet"
                             }
                           }
@@ -969,33 +969,33 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_PawnSet_$5534",
+                              "typeIdentifier": "t_contract$_PawnSet_$5828",
                               "typeString": "contract PawnSet"
                             }
                           ],
-                          "id": 5569,
+                          "id": 5863,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "lValueRequested": false,
                           "nodeType": "ElementaryTypeNameExpression",
-                          "src": "830:7:20",
+                          "src": "830:7:23",
                           "typeDescriptions": {
                             "typeIdentifier": "t_type$_t_address_$",
                             "typeString": "type(address)"
                           },
                           "typeName": {
-                            "id": 5568,
+                            "id": 5862,
                             "name": "address",
                             "nodeType": "ElementaryTypeName",
-                            "src": "830:7:20",
+                            "src": "830:7:23",
                             "typeDescriptions": {
                               "typeIdentifier": null,
                               "typeString": null
                             }
                           }
                         },
-                        "id": 5571,
+                        "id": 5865,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1003,7 +1003,7 @@
                         "lValueRequested": false,
                         "names": [],
                         "nodeType": "FunctionCall",
-                        "src": "830:16:20",
+                        "src": "830:16:23",
                         "tryCall": false,
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1012,12 +1012,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5572,
+                        "id": 5866,
                         "name": "name",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5548,
-                        "src": "848:4:20",
+                        "referencedDeclaration": 5842,
+                        "src": "848:4:23",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_memory_ptr",
                           "typeString": "string memory"
@@ -1035,18 +1035,18 @@
                           "typeString": "string memory"
                         }
                       ],
-                      "id": 5567,
+                      "id": 5861,
                       "name": "PawnSetCreated",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 5545,
-                      "src": "815:14:20",
+                      "referencedDeclaration": 5839,
+                      "src": "815:14:23",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (address,string memory)"
                       }
                     },
-                    "id": 5573,
+                    "id": 5867,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1054,16 +1054,16 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "815:38:20",
+                    "src": "815:38:23",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 5574,
+                  "id": 5868,
                   "nodeType": "EmitStatement",
-                  "src": "810:43:20"
+                  "src": "810:43:23"
                 },
                 {
                   "expression": {
@@ -1071,14 +1071,14 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5577,
+                        "id": 5871,
                         "name": "pawnSet",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5560,
-                        "src": "879:7:20",
+                        "referencedDeclaration": 5854,
+                        "src": "879:7:23",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       }
@@ -1086,33 +1086,33 @@
                     "expression": {
                       "argumentTypes": [
                         {
-                          "typeIdentifier": "t_contract$_PawnSet_$5534",
+                          "typeIdentifier": "t_contract$_PawnSet_$5828",
                           "typeString": "contract PawnSet"
                         }
                       ],
-                      "id": 5576,
+                      "id": 5870,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "ElementaryTypeNameExpression",
-                      "src": "871:7:20",
+                      "src": "871:7:23",
                       "typeDescriptions": {
                         "typeIdentifier": "t_type$_t_address_$",
                         "typeString": "type(address)"
                       },
                       "typeName": {
-                        "id": 5575,
+                        "id": 5869,
                         "name": "address",
                         "nodeType": "ElementaryTypeName",
-                        "src": "871:7:20",
+                        "src": "871:7:23",
                         "typeDescriptions": {
                           "typeIdentifier": null,
                           "typeString": null
                         }
                       }
                     },
-                    "id": 5578,
+                    "id": 5872,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1120,28 +1120,28 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "871:16:20",
+                    "src": "871:16:23",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "functionReturnParameters": 5558,
-                  "id": 5579,
+                  "functionReturnParameters": 5852,
+                  "id": 5873,
                   "nodeType": "Return",
-                  "src": "864:23:20"
+                  "src": "864:23:23"
                 }
               ]
             },
             "documentation": {
-              "id": 5546,
+              "id": 5840,
               "nodeType": "StructuredDocumentation",
-              "src": "410:221:20",
+              "src": "410:221:23",
               "text": " @notice Create a new pawn set\n @param name name of the pawn set\n @param pawns addresses of the pawn to add\n @param pawnNb number of the pawn added\n @return address of the pawn set"
             },
             "functionSelector": "5b3355d7",
-            "id": 5581,
+            "id": 5875,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -1149,18 +1149,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 5555,
+              "id": 5849,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5548,
+                  "id": 5842,
                   "mutability": "mutable",
                   "name": "name",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "659:18:20",
+                  "scope": 5875,
+                  "src": "659:18:23",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1168,10 +1168,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 5547,
+                    "id": 5841,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "659:6:20",
+                    "src": "659:6:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1182,13 +1182,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 5552,
+                  "id": 5846,
                   "mutability": "mutable",
                   "name": "pawns",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "679:25:20",
+                  "scope": 5875,
+                  "src": "679:25:23",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1197,28 +1197,28 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 5549,
+                      "id": 5843,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "679:7:20",
+                      "src": "679:7:23",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 5551,
+                    "id": 5845,
                     "length": {
                       "argumentTypes": null,
                       "hexValue": "323535",
-                      "id": 5550,
+                      "id": 5844,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "687:3:20",
+                      "src": "687:3:23",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_255_by_1",
@@ -1227,7 +1227,7 @@
                       "value": "255"
                     },
                     "nodeType": "ArrayTypeName",
-                    "src": "679:12:20",
+                    "src": "679:12:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$255_storage_ptr",
                       "typeString": "address[255]"
@@ -1238,13 +1238,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 5554,
+                  "id": 5848,
                   "mutability": "mutable",
                   "name": "pawnNb",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "706:12:20",
+                  "scope": 5875,
+                  "src": "706:12:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1252,10 +1252,10 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 5553,
+                    "id": 5847,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
-                    "src": "706:5:20",
+                    "src": "706:5:23",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint8",
                       "typeString": "uint8"
@@ -1265,21 +1265,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "658:61:20"
+              "src": "658:61:23"
             },
             "returnParameters": {
-              "id": 5558,
+              "id": 5852,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5557,
+                  "id": 5851,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 5581,
-                  "src": "736:7:20",
+                  "scope": 5875,
+                  "src": "736:7:23",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1287,10 +1287,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 5556,
+                    "id": 5850,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "736:7:20",
+                    "src": "736:7:23",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1301,20 +1301,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "735:9:20"
+              "src": "735:9:23"
             },
-            "scope": 5582,
-            "src": "636:258:20",
+            "scope": 5876,
+            "src": "636:258:23",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 5583,
-        "src": "138:758:20"
+        "scope": 5877,
+        "src": "138:758:23"
       }
     ],
-    "src": "0:896:20"
+    "src": "0:896:23"
   },
   "compiler": {
     "name": "solc",
@@ -1344,38 +1344,12 @@
         }
       },
       "links": {},
-      "address": "0xa16F1c563D71774DB8D89F0833a176C4391Db348",
-      "transactionHash": "0xfd0abeba8eb6b0d4e817a5f7271c85bacb93abee98b075faf14d4d943b8dc4ca"
-    },
-    "1234": {
-      "events": {
-        "0x05e797d542144afc7e9bd6125d0c73cd015ef7a29b2d671ac798ac56073d82fb": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "pawnSetAddress",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            }
-          ],
-          "name": "PawnSetCreated",
-          "type": "event"
-        }
-      },
-      "links": {},
-      "address": "0x40d3D9a5e9eE85A80574298045f4a0fA21e7731b",
-      "transactionHash": "0xa786234262191a217c9df6bf55228126af145226db35f32675b06da0c6113e18"
+      "address": "0xCc54f87F09b83177254b847c1f5739271AD043F3",
+      "transactionHash": "0xa79b469012714fe3043bc81a5a8aff14b4a3085554fb864bd405c28c776e651b"
     }
   },
-  "schemaVersion": "3.1.0",
-  "updatedAt": "2020-07-30T18:40:43.987Z",
+  "schemaVersion": "3.2.2",
+  "updatedAt": "2020-08-01T13:32:00.836Z",
   "networkType": "ethereum",
   "devdoc": {
     "events": {
