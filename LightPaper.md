@@ -16,7 +16,7 @@ The rules that can be created are:
 - What is the condition to enter a game
 - What actions happen when a player win or lose a game
 
-The vision of this project is to create an ecosystem where people can create games with creative game rules and logics but also creative rules to participates in the game. For example, two players would must lock tokens or a specific asset to participate and the winner wins the locked assets.
+The vision of this project is to create an ecosystem where people can create games with creative game rules and logics but also creative rules to participate in the game. For example, two players would must lock tokens or a specific asset to participate and the winner wins the locked assets.
 
 Kind of a DeFied boardgames platform!
 
