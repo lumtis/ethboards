@@ -13,13 +13,10 @@ The rules that can be created are:
 
 - What are the possible actions of the pawn in the game
 - How can we determine a player won a game
-
-Next versions will include:
-
 - What is the condition to enter a game
 - What actions happen when a player win or lose a game
 
-The vision of this project is to create an ecosystem where people can create games with creative pawns but also creative rules to participates in the game. For example, two players would must lock tokens or a specific asset to participate and the winner wins the locked assets.
+The vision of this project is to create an ecosystem where people can create games with creative game rules and logics but also creative rules to participates in the game. For example, two players would must lock tokens or a specific asset to participate and the winner wins the locked assets.
 
 Kind of a DeFied boardgames platform!
 
@@ -27,11 +24,20 @@ Kind of a DeFied boardgames platform!
 
 ### Smart contract platform
 
-The smart contract platform is composed of two smart contracts:
+**The smart contract platform is composed of two smart contracts:**
 
 - [EthBoards](https://github.com/ltacker/ethboards/blob/master/contracts/EthBoards.sol): Game Logic contract. Provide the generic methods to simulate a turn in a game and methods for a user to claim victory
 
 - [BoardHandler](https://github.com/ltacker/ethboards/blob/master/contracts/BoardHandler.sol): Boards Content contract. Store all the information about the boards. For example: what are the different pawns used for a specific board.
+
+**The interfaces of the customizable smart contracts are:**
+
+- [Boards](https://github.com/ltacker/ethboards/blob/master/contracts/Board.sol): The board's smart contract contains a function to check victory in the game and get metadata.
+
+- [Pawns](https://github.com/ltacker/ethboards/blob/master/contracts/Pawn.sol): The pawn's smart contract contains the functions describe the pawn behavior and metadata.
+
+- [BoardEvents](https://github.com/ltacker/ethboards/blob/master/contracts/BoardEvents.sol): The board events contract contains actions that are called when a player win or lose a game and condition to join a game.
+
 
 <img src="public/assets/docs/SmartContracts1.png">
 
@@ -71,6 +77,19 @@ This representation of a game as transitions of states allows us to very easily 
 
 <img src="public/assets/docs/StateChannel1.png">
 
+### Timeout
+
+A player mays decide to stop playing his turn, turning the game in a blocked state.
+To remedy this problem, *EthBoards* contract provides methods to start, stop, and execute timeouts.
+At any turn, the opposite player can start a timeout. The number of the turn and the current timestamp will be registered on-chain. The turn's player will have to prove s.he played the turn to call the *stopTimeout* function. If *stopTimeout* function is not called and the current timestamp is superior to *timeoutTimestamp*+*timeoutThreshold* then the opposite player can call the *executeTimeout* function that will instantly finish the game and put the opposite player as the winner.
+
+*startTimeout* and *stopTimeout* can only be called if the user sends the two latest signed turn to prove that the current state is legitimate (same as for *claimVictory* function).
+
+#### Not shared turn attack
+
+There is a potential attack that could be made with this timeout system: player A will play his latest turn and then s.he will start a timeout without sharing to the state channel server the latest turn he played.
+In this case, a timeout will be triggered but player B will not be able to stop this timeout because s.he can't play above the not shared turn.
+To remedy this flaw. The *startTimeout* function will register the latest turn (move+signature) on-chain, so that, the player B can access the turn even if it is not available in the state channel server.
 
 ### Custom smart contracts
 
@@ -136,6 +155,36 @@ interface Pawn {
 *performMove()* is the method that defines the state transaction that occurs from the selected pawn, input state, and the selected action. A move is always performed to specific coordinates (x,y). This function must revert if the move is impossible.
 
 The method  *performMove()* is called by the *simulate()* method of the EthBoards contract.
+
+#### Board Events
+
+Board events are the events that happen when a player wins or loses a game. The contract also implements the function to verify if a player can join a game, this function is defined here because it's related to the event that happens when the game is finished.
+
+For example, if the rules of the board are that you must lock an asset and then the winner wins all the locked asset. Then the join condition function will verify that this asset is locked inside a smart contract and the finished game event function will tell to unlock the assets for the winner of the game.
+
+Interface:
+
+```
+interface BoardEvents {
+    function gameFinished(
+        uint boardId,
+        uint gameId,
+        address winner,
+        address loser
+    ) external;
+
+    function joinGame(
+        uint boardId,
+        uint gameId,
+        address joiner
+    ) external returns(bool);
+}
+```
+
+*performMove()* is called by *BoardHandler* contract when the game is finished. This function should manually verify that the function is called by this contract.
+
+*performMove()* is called by *BoardHandler* when a player wants to join a game. The player joins the game if this function returns true otherwise the *joinGame* function will revert.
+
 
 ---
 
@@ -237,9 +286,53 @@ contract ChessBoard is Board {
 
 Every board that use the Simplified Chess contract must append the white king and the black king as first in the board (so that the white king has index 0 and the black king has index 1 when checking if captured)
 
+#### Board Events
+
+We want this example to be as simple as possible. Therefore, the Board Events contract has no condition to join a game and nothing happens when a game is finished
+
+```
+contract NoEvents is BoardEvents {
+    function gameFinished(uint boardId, uint gameId, address winner, address loser) external override {
+        // No event occurs on finished games
+        return;
+    }
+
+    function joinGame(uint boardId, uint gameId, address joiner) external override returns(bool) {
+        // Player can always join a game
+        return true;
+    }
+}
+```
+
+#### Creating the board
+
+We need first to be able to use chess pawns. For better management, pawns are grouped into a *PawnSet*. Once every pawn's smart contract is deployed, the following function must be called for the *PawnSetRegistry* contract:
+
+```
+chessPawnSet = await pawnSetRegistry.createPawnSet(
+    "Chess",
+    <array of the pawn contract's addresses>,
+    <number of pawns>
+)
+```
+
+Then, we can deploy the board with the following function for *BoardHandler* contract:
+
+```
+await boardHandler.createBoard(
+	"Chess",
+	<address of the board smart contract>,
+	<address of the pawn set>,
+	<address of the board events contract>,
+	<array of the x coordinates of the pawns in the game>,
+	<array of the y coordinates of the pawns in the game>,
+	<array of the pawn's index in the game (index from the pawn set)>,
+	32
+);
+```
+
+The board is created and games can be started by calling the *joinGame* function.
+
 ---
 
-### Further development
-
-- Time out capability when a player stop playing and block the game.
-- Randomness
+### TO BE CONTINUED
