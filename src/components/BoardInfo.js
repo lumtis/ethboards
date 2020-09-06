@@ -90,16 +90,15 @@ class BoardInfo extends Component {
 
         if (onlyImage) {
             image = <img src={imageLink} alt="Pawn" style={{
-                height: '100px',
+                maxWidth: '100px',
+                maxHeight: '100px',
                 display: 'block',
                 marginLeft: 'auto',
                 marginRight: 'auto',
             }}></img>
             return (
-                <div className="row" style={{padding: '10px'}}>
-                    <div className="col-md-12">
-                        {image}
-                    </div>
+                <div className="row" style={{padding: '10px', height: '100px'}}>
+                    {image}
                 </div>
             )
         } else {

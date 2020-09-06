@@ -26,35 +26,31 @@ class HomePage extends Component {
   render() {
     return (
       <div>
-        <div className="backgroundWrapper" style={{
-            position:'absolute'
-        }} >
-          <img src="/assets/general/title.png" alt="ethboards" style={{
-              display: 'block',
-              marginLeft: '60px',
-              marginTop: '60px',
-              width: '40%',
-          }}></img>
-          <div style={{textAlign: 'center', marginTop: '200px', marginBottom: '50px'}}>
-            <h1>A simple platform to create games on Ethereum ♟️</h1>
-          </div>
-          <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-          <Link to="/board/"><button className="button" style={{
-              width: '240px',
-              height: '60px',
-              fontSize: '30px',
-            }}>Join</button></Link>
-          </div>
-          <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
-            <a href="https://github.com/ltacker/ethboards/blob/master/LightPaper.md"><button className="button" style={{
-              width: '240px',
-              height: '60px',
-              fontSize: '30px',
-            }}>Light Paper</button></a>
-          </div>
-          <div style={{textAlign: 'center', marginTop: '200px', marginBottom: '50px'}}>
-            <p style={{color: '#D82600'}}>⚠️ You must be connected to Rinkeby network</p>
-          </div>
+        <img src="/assets/general/title.png" alt="ethboards" style={{
+            display: 'block',
+            marginLeft: '60px',
+            marginTop: '60px',
+            width: '200px',
+        }}></img>
+        <div style={{textAlign: 'center', marginTop: '20vh', marginBottom: '50px'}}>
+          <h1>A simple platform to create games on Ethereum ♟️</h1>
+        </div>
+        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+        <Link to="/board/"><button className="button" style={{
+            width: '240px',
+            height: '60px',
+            fontSize: '30px',
+          }}>Join</button></Link>
+        </div>
+        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+          <a href="https://github.com/ltacker/ethboards/blob/master/LightPaper.md"><button className="button" style={{
+            width: '240px',
+            height: '60px',
+            fontSize: '30px',
+          }}>Light Paper</button></a>
+        </div>
+        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+          <p style={{color: '#D82600'}}>⚠️ You must be connected to Rinkeby network</p>
         </div>
       </div>
     );

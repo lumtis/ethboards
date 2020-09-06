@@ -24,12 +24,13 @@ class Board extends Component {
     }
 
     return(
-      <div style={{marginLeft: '60px'}}>
+      <div>
         <h1>{this.state.mapName}</h1>
         <div style={{
-          marginLeft: '50px',
-          height: '522px',
-          width: '522px',
+          height: '95vw',
+          width: '95vw',
+          maxWidth: '524px',
+          maxHeight: '524px',
           position: 'absolute',
           borderStyle: 'solid',
           borderWidth: '5px',

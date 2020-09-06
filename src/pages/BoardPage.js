@@ -66,8 +66,8 @@ class BoardPageComp extends Component {
           <div className="col-md-8">
 
             <div className="container-fluid" style={{overflowY: 'scroll', height: '100vh', paddingLeft:0, paddingRight:0}}>
-              <div className="row" style={{padding: '30px'}}>
-                <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
+              <div className="row" style={{padding: '10px'}}>
+                <div className="col-md-12" style={{width:'100%'}}>
                   <Board />
                 </div>
                 <div className="col-md-12" style={{width:'100%', top:'570px', marginBottom: '100px'}}>

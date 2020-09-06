@@ -44,23 +44,18 @@ class BoardList extends Component {
     const {boards} = this.state
 
     const boardsUI = boards.map(board =>
-        <div key={board.id} className="col-md-4">
+        <div key={board.id} className="col-md-3 col-xs-6">
             <Link to={'/board/' + board.id}>
-              {/* <img src="/assets/general/logo1.png" alt="Board" style={{
-                width: '50%',
-                display: 'block',
-                marginLeft: 'auto',
-                marginRight: 'auto'
-              }}></img> */}
               <BoardInfo 
                 boardId={board.id}
                 drizzleContext={drizzleContext}
                 onlyImage={true}
               />
-              <h1 style={{
+              <p style={{
                 textAlign:'center',
-                marginTop: '40px'
-              }}>{board.name}</h1>
+                marginTop: '20px',
+                color: 'black'
+              }}>{board.name}</p>
             </Link>
         </div>
     )
@@ -68,7 +63,7 @@ class BoardList extends Component {
     return(
       <div>
         <h1 style={{marginTop: '30px', marginLeft: '50px'}}>Boards:</h1>
-        <div className="row" style={{marginTop: '20px', padding: '50px'}}>
+        <div className="row" style={{padding: '50px'}}>
           {boardsUI}
         </div>
       </div>
