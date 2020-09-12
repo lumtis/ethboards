@@ -6,7 +6,7 @@ import '../css/navbar.css'
 class Navbar extends Component {
   render() {
     return (
-      <div>
+      <div style={{width: '100vw'}}>
         <nav className="navbar navbar-expand-lg" style={{backgroundColor: 'rgba(200, 200, 200, 0.5)', position: 'relative', width: '100%', zIndex: 1}}>
           <Link to="/">
             <img src="/assets/general/title.png" alt="ethboards" style={{

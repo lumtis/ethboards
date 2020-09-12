@@ -52,14 +52,37 @@ class CurrentGames extends Component {
 
         const events = eventsPlayerA.concat(eventsPlayerB)
 
+        // Get etherscan link prefix
+        let etherscanPrefix = ''
+        const networkId = await web3.eth.net.getId()
+        if (networkId === 1) {
+          etherscanPrefix = 'https://etherscan.io/address/'
+        } else if (networkId === 4) {
+          etherscanPrefix = 'https://rinkeby.etherscan.io/address/'
+        }
+
+        // Create a link to join for each games the player is part of
         if (events.length) {
+          let playerA
+          let playerB
           const games = events.map(rawEvent => {
             const link = '/board/' + rawEvent.returnValues.boardId + '/game/' + rawEvent.returnValues.gameId
+            const AAddress = rawEvent.returnValues.playerA
+            const BAddress = rawEvent.returnValues.playerB
+
+            // Format the component
+            if (AAddress === drizzleState.accounts[0]) {
+              playerA = 'you'
+              playerB = <a href={etherscanPrefix+BAddress}>{BAddress.slice(0, 7) + '...'}</a>
+            } else {
+              playerA = <a href={etherscanPrefix+AAddress}>{AAddress.slice(0, 7) + '...'}</a>
+              playerB = 'you'
+            }
 
             return <tr>
                 <td><Link to={link}>{rawEvent.returnValues.gameId}</Link></td>
-                <td style={{fontSize:'10px'}}>{rawEvent.returnValues.playerA}</td>
-                <td style={{fontSize:'10px'}}>{rawEvent.returnValues.playerB}</td>
+                <td style={{fontSize:'10px'}}>{playerA}</td>
+                <td style={{fontSize:'10px'}}>{playerB}</td>
             </tr>
           })
   
@@ -73,7 +96,7 @@ class CurrentGames extends Component {
 
     return(
       <div style={boxStyle}>
-        <h1>Your games:</h1>
+        <h3>Your games:</h3>
         <table style={{width:'100%', borderSpacing: '40px'}}>
             <tr>
                 <th>Game ID</th>

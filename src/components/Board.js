@@ -31,7 +31,7 @@ class Board extends Component {
           width: '95vw',
           maxWidth: '524px',
           maxHeight: '524px',
-          position: 'absolute',
+          position: 'relative',
           borderStyle: 'solid',
           borderWidth: '5px',
           borderColor: '#222831'

@@ -19,8 +19,7 @@ h1, h2 {
 h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
   color: #393e46;
-  margin-top: 50px;
-  margin-bottom: 30px;
+  font-size: 18px;
 }
 
 .button {
