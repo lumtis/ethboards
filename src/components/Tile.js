@@ -42,7 +42,7 @@ class Tile extends Component {
     if (crosses[x*8+y]) {
       cross = <DrizzleContext.Consumer>
         { drizzleContext => {
-            return <Cross x={x} y={y} drizzleContext={drizzleContext}/>
+            return <Cross x={offsetX} y={offsetY} drizzleContext={drizzleContext}/>
         }}
       </DrizzleContext.Consumer>
     }    
