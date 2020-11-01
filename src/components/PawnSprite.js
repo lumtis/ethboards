@@ -87,10 +87,11 @@ class PawnSprite extends Component {
                     })
                 } } src={spriteLink} alt="Pawn" style={{
                     cursor: 'pointer',
-                    width: '40px',
+                    width: '10%',
+                    height: '10%',
                     position: 'absolute',
-                    top: y+12+'px',
-                    left: x+12+'px'
+                    top: y+1+'%',
+                    left: x+1+'%'
                 }}></img>
             )
         } else {

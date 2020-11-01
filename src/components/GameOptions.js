@@ -391,15 +391,15 @@ class GameOptions extends Component {
     if (pendingTimeout) {
       if (turn > timeoutTurnNumber) {
         timeoutBox = <div>
-            <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+            <h3>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h3>
             <button onClick={this.stopTimeout} className="button" style={buttontyle}>Stop timeout</button>
           </div>
       }
       else if (timeoutRemainingTime > 0) {
-        timeoutBox = <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+        timeoutBox = <h3>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h3>
       } else {
         timeoutBox = <div>
-          <h1>Time out!</h1>
+          <h3>Time out!</h3>
           <button onClick={this.executeTimeout} className="button" style={buttontyle}>Kick the player</button>
         </div>
       }
@@ -413,12 +413,12 @@ class GameOptions extends Component {
 
       if (timeoutTurnNumber >= turn) {
         stopTimeoutBox = <div>
-          <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
-          <h1>Play your turn!</h1>
+          <h3>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h3>
+          <h3>Play your turn!</h3>
         </div>
       } else {
         stopTimeoutBox = <div>
-          <h1>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h1>
+          <h3>A timeout counter has been triggered: {timeoutRemainingTime} seconds left</h3>
           <button onClick={this.stopTimeout} className="button" style={buttontyle}>Stop timeout</button>
         </div>
       } 
@@ -429,28 +429,28 @@ class GameOptions extends Component {
 
     // Components depending on the flow of the game
     const gameFinishedOption = <div>
-      <h1>Game finished</h1>
+      <h3>Game finished</h3>
     </div>
 
     const turnOption = <div>
-      <h1>Your turn</h1>
+      <h3>Your turn</h3>
       {stopTimeoutBox}
       {giveUpButton}
     </div>
 
     const opponentTurnOption = <div>
-      <h1>Opponent's turn</h1>
+      <h3>Opponent's turn</h3>
       {timeoutBox}
       {giveUpButton}
     </div>
 
     const victoryOption = <div>
-      <h1>You won!</h1>
+      <h3>You won!</h3>
       <button onClick={this.claimVictory} className="button" style={buttontyle}>Claim victory</button>
     </div>
 
     const defeatOption = <div>
-      <h1>You lost!</h1>
+      <h3>You lost!</h3>
       <button onClick={this.claimVictory} className="button" style={buttontyle}>Leave the game</button>
     </div>
     

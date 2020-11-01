@@ -17,7 +17,7 @@ class BoardSidebar extends Component {
           height: '100vh',
           overflowY: 'scroll',
         }}>
-          <div style={{marginTop: '20px', marginBottom: '40px', padding: '20px'}}>
+          <div style={{padding: '20px'}}>
               {boardInfo}
           </div>
         </div>

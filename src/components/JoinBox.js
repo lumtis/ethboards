@@ -73,19 +73,19 @@ class JoinBox extends Component {
         <p>{joinError}</p>
       </div>
     } else if (joinPending) {
-      content = <h1>Joining the game....</h1>
+      content = <h3>Joining the game....</h3>
     } else if (waitingAddress) {
       if (waitingAddress === drizzleState.accounts[0]) {
         // If this is the same address you can't join the same game
         content = <div>
-          <h1>Waiting for another player to join the game</h1>
+          <h3>Waiting for another player to join the game</h3>
         </div>
       } else {
         // If no players are waiting we can join and wait
         content = <div>
-          <h1>Someone is waiting to start a game</h1>
+          <h3>Someone is waiting to start a game</h3>
           <p>Address: {waitingAddress}</p>
-          <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+          <div style={{textAlign: 'center', marginTop: '10px', marginBottom: '10px'}}>
             <button className="button" style={buttontyle} onClick={this.join}>Start a game</button>
           </div>
         </div>
@@ -93,8 +93,8 @@ class JoinBox extends Component {
     } else {
       // If a player is already waiting, we can start the game
       content = <div>
-        <h1>Join a game and wait for an opponent</h1>
-        <div style={{textAlign: 'center', marginTop: '50px', marginBottom: '50px'}}>
+        <h3>Join a game and wait for an opponent</h3>
+        <div style={{textAlign: 'center', marginTop: '10px', marginBottom: '10px'}}>
           <button className="button" style={buttontyle} onClick={this.join}>Join a game</button>
         </div>
       </div>

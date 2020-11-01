@@ -76,30 +76,29 @@ class BoardInfo extends Component {
 
         let image = null
         if (imageLink) {
-            image = <img src={imageLink} alt="Pawn" style={{width: '100%'}}></img>
+            image = <img src={imageLink} alt="Pawn" style={{width: '100%', maxWidth: '100px'}}></img>
         }
         
         let nameComp = null
         if (etherscanLink) {
-            nameComp = <a href={etherscanLink}><h1>{name}</h1></a>
+            nameComp = <a href={etherscanLink}><h3>{name}</h3></a>
         } else {
-            nameComp = <h1>{name}</h1>
+            nameComp = <h3>{name}</h3>
         }
 
         const descriptionComp = <p>{description}</p>
 
         if (onlyImage) {
             image = <img src={imageLink} alt="Pawn" style={{
-                height: '100px',
+                maxWidth: '100px',
+                maxHeight: '100px',
                 display: 'block',
                 marginLeft: 'auto',
                 marginRight: 'auto',
             }}></img>
             return (
-                <div className="row" style={{padding: '10px'}}>
-                    <div className="col-md-12">
-                        {image}
-                    </div>
+                <div className="row" style={{padding: '10px', height: '100px'}}>
+                    {image}
                 </div>
             )
         } else {

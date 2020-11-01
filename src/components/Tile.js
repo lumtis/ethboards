@@ -34,15 +34,15 @@ class Tile extends Component {
   render() {
     const {x, y} = this.props
     const {boardState, crosses} = this.state
-    const offsetX = x*64
-    const offsetY = y*64
+    const offsetX = x*12.5
+    const offsetY = y*12.5
 
     // Determine if a cross must be drawn
     let cross = null
     if (crosses[x*8+y]) {
       cross = <DrizzleContext.Consumer>
         { drizzleContext => {
-            return <Cross x={x} y={y} drizzleContext={drizzleContext}/>
+            return <Cross x={offsetX} y={offsetY} drizzleContext={drizzleContext}/>
         }}
       </DrizzleContext.Consumer>
     }    
@@ -66,10 +66,11 @@ class Tile extends Component {
     }
 
     const cell = <img src={imageFile} alt="Cell" style={{
-      width: '64px',
+      width: '12.5%',
+      height: '12.5%',
       position: 'absolute',
-      top: offsetY+'px',
-      left: offsetX+'px'
+      top: offsetY+'%',
+      left: offsetX+'%'
     }}></img>
 
     return (

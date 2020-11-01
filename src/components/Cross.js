@@ -60,15 +60,14 @@ class Cross extends Component {
 
     render() {
         const {x, y} = this.props
-        const offsetX = x*64
-        const offsetY = y*64
 
         return <img onClick={this.sendMove} src="/assets/game/bluecross.png" alt="Cross" style={{
             cursor: 'pointer',
-            width: '32px',
             position: 'absolute',
-            top: offsetY+16+'px',
-            left: offsetX+16+'px'
+            top: y+1+'%',
+            left: x+1+'%',
+            width: '10%',
+            height: '10%'
         }}></img>
     }
 }

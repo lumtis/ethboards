@@ -34,10 +34,8 @@ class GameSidebar extends Component {
       return (
         <div style={{
           backgroundColor: 'rgba(126, 126, 126, 0.5)',
-          height: '100vh',
-          overflowY: 'scroll',
         }}>
-          <div style={{marginTop: '20px', marginBottom: '40px', padding: '20px'}}>
+          <div style={{padding: '20px'}}>
               {pawnInfo}
           </div>
         </div>

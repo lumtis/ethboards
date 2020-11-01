@@ -73,25 +73,21 @@ class GamePageComp extends Component {
     }
 
     return(
-      <div className="backgroundWrapper" style={{
-        position:'fixed'
-      }} >
+      <div>
         <Navbar />
         <div className="row">
-          <div className="col-md-8">
+          <div className="col-md-8 col-xs-12">
 
-            <div className="container-fluid" style={{overflowY: 'scroll', height: '100vh', paddingLeft:0, paddingRight:0}}>
-              <div className="row" style={{padding: '30px'}}>
-                <div className="col-md-12" style={{width:'100%', paddingLeft:'30px'}}>
+              <div className="row" style={{padding: '10px'}}>
+                <div className="col-md-12 col-sx-12" style={{width:'100%'}}>
                   <Board />
                 </div>
-                <div className="col-md-12" style={{width:'100%', top:'570px', marginBottom: '100px'}}>
+                <div className="col-md-12 col-sx-12" style={{width:'100%', marginBottom: '100px'}}>
                   <GameOptions drizzleContext={drizzleContext} />
                 </div>
               </div>
-            </div>
           </div>
-          <div className="col-md-4">
+          <div className="col-md-4 col-xs-12" style={{padding:'30px'}}>
             <GameSidebar drizzleContext={drizzleContext} />
           </div>
         </div>

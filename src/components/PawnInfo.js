@@ -237,9 +237,9 @@ class PawnInfo extends Component {
         
         let nameComp = null
         if (etherscanLink) {
-            nameComp = <a href={etherscanLink}><h1>{name}</h1></a>
+            nameComp = <a href={etherscanLink}><h3>{name}</h3></a>
         } else {
-            nameComp = <h1>{name}</h1>
+            nameComp = <h3>{name}</h3>
         }
 
         const descriptionComp = <p>{description}</p>
@@ -259,7 +259,7 @@ class PawnInfo extends Component {
         return (
             <div className="row" style={{padding: '10px'}}>
                 <div className="col-md-12">
-                    <h1>Pawn {pawn}</h1>
+                    <h3>Pawn {pawn}</h3>
                 </div>
                 <div className="col-md-4">
                     {image}
