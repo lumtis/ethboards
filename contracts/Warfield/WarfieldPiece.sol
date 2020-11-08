@@ -2,27 +2,27 @@ pragma solidity 0.6.11;
 
 import "../StateController.sol";
 
-// Contains utilitary function for warfield pawn
-// Player A controls white pawns, pawn from 0 to 4
-// Player B controls white pawns, pawn from 5 to 9
-contract WarfieldPawn {
+// Contains utilitary function for warfield piece
+// Player A controls white pieces, piece from 0 to 4
+// Player B controls white pieces, piece from 5 to 9
+contract WarfieldPiece {
     using StateController for uint8[121];
 
     function isOpponent(
         uint8[121] memory state,
         uint8 player,
-        uint8 pawn
+        uint8 piece
     ) internal pure returns(bool) {
-        uint8 pawnType = state.getPawnType(pawn);
+        uint8 pieceType = state.getPieceType(piece);
 
         if (player == 0) {
-            if (pawnType > 4) {
+            if (pieceType > 4) {
                 return true;
             } else {
                 return false;
             }
         } else {
-            if (pawnType < 5) {
+            if (pieceType < 5) {
                 return true;
             } else {
                 return false;
@@ -32,29 +32,29 @@ contract WarfieldPawn {
 
     function isSoldierOrBazooka(
         uint8[121] memory state,
-        uint8 pawn
+        uint8 piece
     ) internal pure returns(bool) {
-        uint8 pawnType = state.getPawnType(pawn);
+        uint8 pieceType = state.getPieceType(piece);
 
-        return (pawnType == 1 || pawnType == 2 || pawnType == 6 || pawnType == 7);
+        return (pieceType == 1 || pieceType == 2 || pieceType == 6 || pieceType == 7);
     }
 
     function isTank(
         uint8[121] memory state,
-        uint8 pawn
+        uint8 piece
     ) internal pure returns(bool) {
-        uint8 pawnType = state.getPawnType(pawn);
+        uint8 pieceType = state.getPieceType(piece);
 
-        return (pawnType == 3 || pawnType == 8);
+        return (pieceType == 3 || pieceType == 8);
     }
 
     function isBase(
         uint8[121] memory state,
-        uint8 pawn
+        uint8 piece
     ) internal pure returns(bool) {
-        uint8 pawnType = state.getPawnType(pawn);
+        uint8 pieceType = state.getPieceType(piece);
 
-        return (pawnType == 0 || pawnType == 4 || pawnType == 5 || pawnType == 9);
+        return (pieceType == 0 || pieceType == 4 || pieceType == 5 || pieceType == 9);
     }
 
     function abs(int8 a) internal pure returns (uint8) {

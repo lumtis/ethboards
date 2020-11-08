@@ -13,7 +13,6 @@
     "truffle-plugin-verify": "^0.3.11",
     "ethereumjs-util": "^5.2.0",
     "web3": "^1.2.9"
-
   },
   "scripts": {
     "start:ganache": "./scripts/ganache.sh",
@@ -21,7 +20,7 @@
     "build:abi": "truffle run abigen BoardHandler EthBoards",
     "deploy:local": "truffle migrate",
     "deploy:rinkeby": "node --max-old-space-size=8192 ./node_modules/.bin/truffle migrate --network rinkeby",
-    "test": "waffle && mocha 'test/../.ts' --timeout 20000",
+    "test": "waffle && mocha 'test/contracts/EthBoards.ts' --timeout 20000",
     "clean:ganache": "rm -rf .ganache",
     "docs": "solidity-docgen",
     "verify:rinkeby": "truffle run verify EthBoards BoardHandler BlackBishop BlackKing BlackKnight BlackPawn BlackQueen BlackRook WhiteBishop WhiteKing WhiteKnight WhitePawn WhiteQueen WhiteRook BlueBase BlueBazooka BlueHeadquarters BlueSoldier BlueTank RedBase RedBazooka RedHeadquarters RedSoldier RedTank ChessBoard WarfieldBoard NoEvents --network rinkeby"

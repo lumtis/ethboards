@@ -11,7 +11,7 @@ const EthBoards = require('../../waffle/EthBoards.json')
 const BoardHandler = require('../../waffle/BoardHandler.json')
 const ChessBoard = require('../../waffle/ChessBoard.json')
 
-const PawnSet = require('../../waffle/PawnSet.json')
+const PieceSet = require('../../waffle/PieceSet.json')
 const NoEvents = require('../../waffle/NoEvents.json')
 
 const WhitePawn = require("../../waffle/WhitePawn.json");
@@ -31,8 +31,8 @@ use(solidity)
 
 const mnemonic = 'wait nephew visual song prevent ribbon much stick hour token account food'
 
-// Test chess pawn moves
-// These tess are not exhaustive, we only test for each pawn a invalid move and a valid move
+// Test chess piece moves
+// These tess are not exhaustive, we only test for each piece a invalid move and a valid move
 describe('Chess board', () => {
     const mockProvider = new MockProvider({
         ganacheOptions: {
@@ -70,15 +70,15 @@ describe('Chess board', () => {
         noEvents = await deployContract(wallet, NoEvents)
         
         // Create a chess board with two kings side by side
+        link(BlackRook, 'contracts/StateController.sol:StateController', stateController.address)
         link(ChessBoard, 'contracts/StateController.sol:StateController', stateController.address)
-        link(WhitePawn, 'contracts/StateController.sol:StateController', stateController.address)
+        link(BlackPawn, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhiteRook, 'contracts/StateController.sol:StateController', stateController.address)
+        link(WhitePawn, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhiteKnight, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhiteBishop, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhiteQueen, 'contracts/StateController.sol:StateController', stateController.address)
         link(WhiteKing, 'contracts/StateController.sol:StateController', stateController.address)
-        link(BlackPawn, 'contracts/StateController.sol:StateController', stateController.address)
-        link(BlackRook, 'contracts/StateController.sol:StateController', stateController.address)
         link(BlackKnight, 'contracts/StateController.sol:StateController', stateController.address)
         link(BlackBishop, 'contracts/StateController.sol:StateController', stateController.address)
         link(BlackQueen, 'contracts/StateController.sol:StateController', stateController.address)
@@ -98,7 +98,7 @@ describe('Chess board', () => {
         const blackQueen = await deployContract(wallet, BlackQueen)
         const blackKing = await deployContract(wallet, BlackKing)
 
-        const chessPawns = [
+        const chessPieces = [
             whitePawn.address,
             whiteRook.address,
             whiteKnight.address,
@@ -115,18 +115,18 @@ describe('Chess board', () => {
     
         // Fill the remaining spaces in the array
         for(let i=0; i<255-12; i++) {
-            chessPawns.push("0x0000000000000000000000000000000000000000")
+            chessPieces.push("0x0000000000000000000000000000000000000000")
         }
 
-        const pawnSet = await deployContract(wallet, PawnSet, [chessPawns, 12])
+        const pieceSet = await deployContract(wallet, PieceSet, [chessPieces, 12])
 
-        // Deploy a test board for chess with each pawn one to each other
+        // Deploy a test board for chess with each piece one to each other
         let xArray = [0,0,1,1,2,2,3,3,4,4,5,5]
         let yArray = [0,7,0,7,0,7,0,7,0,7,0,7]
         let indexArray = [5,11,4,10,3,9,2,8,1,7,0,6]
 
         // Fill arrays
-        for(i=0; i<40-12; i++) {
+        for(let i=0; i<40-12; i++) {
             xArray.push(0)
             yArray.push(0)
             indexArray.push(0)
@@ -135,7 +135,7 @@ describe('Chess board', () => {
         await boardHandler.createBoard(
             "Test Chess",
             chessBoard.address,
-            pawnSet.address,
+            pieceSet.address,
             noEvents.address,
             xArray,
             yArray,
@@ -146,101 +146,101 @@ describe('Chess board', () => {
         initialState = await boardHandler.getInitialState(0)
     })
 
-    it('Prevent the player 1 from moving a white pawn', async () => {
-        // Test each white pawns
+    it('Prevent the player 1 from moving a white piece', async () => {
+        // Test each white pieces
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [0,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [2,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [4,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [6,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [8,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             1,
             [10,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a white pawn")
+        )).to.be.revertedWith("Player can't move a white piece")
     })
 
-    it('Prevent the player 0 from moving a black pawn', async () => {
-        // Test each black pawns
+    it('Prevent the player 0 from moving a black piece', async () => {
+        // Test each black pieces
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [1,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [3,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [5,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [7,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [9,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
         await expect(ethBoards.simulate(
             boardHandler.address,
             0,
             0,
             [11,0,0,0],
             initialState
-        )).to.be.revertedWith("Player can't move a black pawn")
+        )).to.be.revertedWith("Player can't move a black piece")
     })
 
     it('can move white king correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 0)
-        expect(pawnPosition).to.deep.equals([0,0])
+        let piecePosition = await stateController.getPiecePosition(initialState, 0)
+        expect(piecePosition).to.deep.equals([0,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -260,13 +260,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 0)
-        expect(pawnPosition).to.deep.equals([1,1])
+        piecePosition = await stateController.getPiecePosition(newState, 0)
+        expect(piecePosition).to.deep.equals([1,1])
     })
 
     it('can move black king correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 1)
-        expect(pawnPosition).to.deep.equals([0,7])
+        let piecePosition = await stateController.getPiecePosition(initialState, 1)
+        expect(piecePosition).to.deep.equals([0,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -286,13 +286,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 1)
-        expect(pawnPosition).to.deep.equals([0,6])
+        piecePosition = await stateController.getPiecePosition(newState, 1)
+        expect(piecePosition).to.deep.equals([0,6])
     })
 
     it('can move white queen correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 2)
-        expect(pawnPosition).to.deep.equals([1,0])
+        let piecePosition = await stateController.getPiecePosition(initialState, 2)
+        expect(piecePosition).to.deep.equals([1,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -312,13 +312,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 2)
-        expect(pawnPosition).to.deep.equals([4,3])
+        piecePosition = await stateController.getPiecePosition(newState, 2)
+        expect(piecePosition).to.deep.equals([4,3])
     })
 
     it('can move black queen correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 3)
-        expect(pawnPosition).to.deep.equals([1,7])
+        let piecePosition = await stateController.getPiecePosition(initialState, 3)
+        expect(piecePosition).to.deep.equals([1,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -338,13 +338,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 3)
-        expect(pawnPosition).to.deep.equals([4,4])
+        piecePosition = await stateController.getPiecePosition(newState, 3)
+        expect(piecePosition).to.deep.equals([4,4])
     })
 
     it('can move white bishop correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 4)
-        expect(pawnPosition).to.deep.equals([2,0])
+        let piecePosition = await stateController.getPiecePosition(initialState, 4)
+        expect(piecePosition).to.deep.equals([2,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -364,13 +364,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 4)
-        expect(pawnPosition).to.deep.equals([5,3])
+        piecePosition = await stateController.getPiecePosition(newState, 4)
+        expect(piecePosition).to.deep.equals([5,3])
     })
 
     it('can move black bishop correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 5)
-        expect(pawnPosition).to.deep.equals([2,7])
+        let piecePosition = await stateController.getPiecePosition(initialState, 5)
+        expect(piecePosition).to.deep.equals([2,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -390,13 +390,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 5)
-        expect(pawnPosition).to.deep.equals([5,4])
+        piecePosition = await stateController.getPiecePosition(newState, 5)
+        expect(piecePosition).to.deep.equals([5,4])
     })
 
     it('can move white knight correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 6)
-        expect(pawnPosition).to.deep.equals([3,0])
+        let piecePosition = await stateController.getPiecePosition(initialState, 6)
+        expect(piecePosition).to.deep.equals([3,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -416,13 +416,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 6)
-        expect(pawnPosition).to.deep.equals([4,2])
+        piecePosition = await stateController.getPiecePosition(newState, 6)
+        expect(piecePosition).to.deep.equals([4,2])
     })
 
     it('can move black knight correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 7)
-        expect(pawnPosition).to.deep.equals([3,7])
+        let piecePosition = await stateController.getPiecePosition(initialState, 7)
+        expect(piecePosition).to.deep.equals([3,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -442,13 +442,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 7)
-        expect(pawnPosition).to.deep.equals([4,5])
+        piecePosition = await stateController.getPiecePosition(newState, 7)
+        expect(piecePosition).to.deep.equals([4,5])
     })
 
     it('can move white rook correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 8)
-        expect(pawnPosition).to.deep.equals([4,0])
+        let piecePosition = await stateController.getPiecePosition(initialState, 8)
+        expect(piecePosition).to.deep.equals([4,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -468,13 +468,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 8)
-        expect(pawnPosition).to.deep.equals([4,5])
+        piecePosition = await stateController.getPiecePosition(newState, 8)
+        expect(piecePosition).to.deep.equals([4,5])
     })
 
     it('can move black rook correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 9)
-        expect(pawnPosition).to.deep.equals([4,7])
+        let piecePosition = await stateController.getPiecePosition(initialState, 9)
+        expect(piecePosition).to.deep.equals([4,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -494,13 +494,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 9)
-        expect(pawnPosition).to.deep.equals([4,1])
+        piecePosition = await stateController.getPiecePosition(newState, 9)
+        expect(piecePosition).to.deep.equals([4,1])
     })
 
-    it('can move white pawn correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 10)
-        expect(pawnPosition).to.deep.equals([5,0])
+    it('can move white piece correctly', async () => {
+        let piecePosition = await stateController.getPiecePosition(initialState, 10)
+        expect(piecePosition).to.deep.equals([5,0])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -520,13 +520,13 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 10)
-        expect(pawnPosition).to.deep.equals([5,1])
+        piecePosition = await stateController.getPiecePosition(newState, 10)
+        expect(piecePosition).to.deep.equals([5,1])
     })
 
-    it('can move black pawn correctly', async () => {
-        let pawnPosition = await stateController.getPawnPosition(initialState, 11)
-        expect(pawnPosition).to.deep.equals([5,7])
+    it('can move black piece correctly', async () => {
+        let piecePosition = await stateController.getPiecePosition(initialState, 11)
+        expect(piecePosition).to.deep.equals([5,7])
 
         // Invalid move
         await expect(ethBoards.simulate(
@@ -546,7 +546,7 @@ describe('Chess board', () => {
             initialState
         )
 
-        pawnPosition = await stateController.getPawnPosition(newState, 11)
-        expect(pawnPosition).to.deep.equals([5,6])
+        piecePosition = await stateController.getPiecePosition(newState, 11)
+        expect(piecePosition).to.deep.equals([5,6])
     })
 })

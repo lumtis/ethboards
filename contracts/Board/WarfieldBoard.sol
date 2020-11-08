@@ -13,12 +13,12 @@ contract WarfieldBoard is Board {
     function checkVictory(uint8 player, uint8[121] calldata state) external override view returns(bool) {
         if (player == 0) {
             // Player A win if the red headquarter is captured
-            if (state.isAlive(1) && state.getPawnType(1) == 9) {
+            if (state.isAlive(1) && state.getPieceType(1) == 9) {
                 return false;
             }
         } else {
             // Player B win if the blue headquarter is captured
-            if (state.isAlive(0) && state.getPawnType(0) == 4) {
+            if (state.isAlive(0) && state.getPieceType(0) == 4) {
                 return false;
             }
         }

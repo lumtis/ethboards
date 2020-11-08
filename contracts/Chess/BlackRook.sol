@@ -1,10 +1,10 @@
 pragma solidity 0.6.11;
 
-import "./ChessPawn.sol";
-import "../Pawn.sol";
+import "./ChessPiece.sol";
+import "../Piece.sol";
 import "../StateController.sol";
 
-contract BlackRook is Pawn, ChessPawn {
+contract BlackRook is Piece, ChessPiece {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
@@ -16,21 +16,21 @@ contract BlackRook is Pawn, ChessPawn {
 
     function performMove(
         uint8 player,
-        uint8 pawn,
+        uint8 piece,
         uint8 moveType,
         uint8 x,
         uint8 y,
         uint8[121] calldata state
     ) external override pure returns(uint8[121] memory outState) {
-        require(moveType == 0, "Pawn contains only one move");
-        require(!isFoe(state, player, pawn), "Player can't move a black pawn");
+        require(moveType == 0, "Piece contains only one move");
+        require(!isFoe(state, player, piece), "Player can't move a black piece");
         require(x<8 || y<8, "Move out of bound");
 
         // Get old positions
-        (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
+        (uint8 oldX, uint8 oldY) = state.getPiecePosition(piece);
         require(x!=oldX || y!=oldY, "Must be a different position");
 
-        // Iteration to verify no pawn on the road
+        // Iteration to verify no piece on the road
         // Iterate differently based on the direction
         if (x==oldX) {
             // Iteration when vertical direction
@@ -39,7 +39,7 @@ contract BlackRook is Pawn, ChessPawn {
             oldY < y ? incrementY = 1 : incrementY = -1;
             i += incrementY;
             while (uint8(i)!=y) {
-                require(state.noPawnAt(x, uint8(i)), "Pawn on the road");
+                require(state.noPieceAt(x, uint8(i)), "Piece on the road");
                 i += incrementY;
             }
         } else if (y==oldY) {
@@ -49,7 +49,7 @@ contract BlackRook is Pawn, ChessPawn {
             oldX < x ? incrementX = 1 : incrementX = -1;
             i += incrementX;
             while (uint8(i)!=x) {
-                require(state.noPawnAt(uint8(i), y), "Pawn on the road");
+                require(state.noPieceAt(uint8(i), y), "Piece on the road");
                 i += incrementX;
             }
         } else {
@@ -58,13 +58,13 @@ contract BlackRook is Pawn, ChessPawn {
         }
 
         // If a foe is present in the destination, kill it
-        int8 presentPawn = state.getPawnAt(x, y);
-        if (presentPawn != -1) {
-            require(isFoe(state, player, uint8(presentPawn)), "The pawn present is not a foe");
-            outState = state.removePawn(uint8(presentPawn));
-            outState = outState.movePawn(pawn, x, y);
+        int8 presentPiece = state.getPieceAt(x, y);
+        if (presentPiece != -1) {
+            require(isFoe(state, player, uint8(presentPiece)), "The piece present is not a foe");
+            outState = state.removePiece(uint8(presentPiece));
+            outState = outState.movePiece(piece, x, y);
         } else {
-            outState = state.movePawn(pawn, x, y);
+            outState = state.movePiece(piece, x, y);
         }
 
         return outState;

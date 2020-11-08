@@ -1,10 +1,10 @@
 pragma solidity 0.6.11;
 
-import "./WarfieldPawn.sol";
-import "../Pawn.sol";
+import "./WarfieldPiece.sol";
+import "../Piece.sol";
 import "../StateController.sol";
 
-contract BlueHeadquarters is Pawn, WarfieldPawn {
+contract BlueHeadquarters is Piece, WarfieldPiece {
     using StateController for uint8[121];
 
     function getMetadata() external override view returns (string memory) {
@@ -16,47 +16,47 @@ contract BlueHeadquarters is Pawn, WarfieldPawn {
 
     function performMove(
         uint8 player,
-        uint8 pawn,
+        uint8 piece,
         uint8 moveType,
         uint8 x,
         uint8 y,
         uint8[121] calldata state
     ) external override pure returns(uint8[121] memory outState) {
-        require(!isOpponent(state, player, pawn), "Impossible move");
+        require(!isOpponent(state, player, piece), "Impossible move");
         if (moveType < 2) {
             // Recruit
 
-            (uint8 oldX, uint8 oldY) = state.getPawnPosition(pawn);
+            (uint8 oldX, uint8 oldY) = state.getPiecePosition(piece);
             uint8 distance = distance(x,y,oldX,oldY);
             require(distance == 1, "Can only recruit on the next box");
 
-            // Check no pawn is around
+            // Check no piece is around
             if (oldX > 0) {
-                require(state.noPawnAt(oldX-1, oldY), "Can only recruit if no pawn around");
+                require(state.noPieceAt(oldX-1, oldY), "Can only recruit if no piece around");
             }
             if (oldY > 0) {
-                require(state.noPawnAt(oldX, oldY-1), "Can only recruit if no pawn around");
+                require(state.noPieceAt(oldX, oldY-1), "Can only recruit if no piece around");
             }
             if (oldX < 7) {
-                require(state.noPawnAt(oldX+1, oldY), "Can only recruit if no pawn around");
+                require(state.noPieceAt(oldX+1, oldY), "Can only recruit if no piece around");
             }
             if (oldY < 7) {
-                require(state.noPawnAt(oldX, oldY+1), "Can only recruit if no pawn around");
+                require(state.noPieceAt(oldX, oldY+1), "Can only recruit if no piece around");
             }
 
-            // Search for an empty slot in the game state to create a new pawn
+            // Search for an empty slot in the game state to create a new piece
             for(uint8 i = 0; i < 40; i++) {
                 if(!state.isAlive(i)) {
                     if (moveType == 0) {
                         // Recruit soldier
-                        return state.respawnPawn(i, 1, x, y);
+                        return state.respawnPiece(i, 1, x, y);
                     } else {
                         // Recruit bazooka
-                        return state.respawnPawn(i, 2, x, y);
+                        return state.respawnPiece(i, 2, x, y);
                     }
                 }
             }
-            revert("Cannot create a new pawn");
+            revert("Cannot create a new piece");
         } else {
             revert("Unknown move");
         }

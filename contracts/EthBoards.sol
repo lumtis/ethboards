@@ -2,7 +2,7 @@ pragma solidity 0.6.11;
 
 import "./Board.sol";
 import "./BoardHandler.sol";
-import "./Pawn.sol";
+import "./Piece.sol";
 import "./StateController.sol";
 
 /**
@@ -39,7 +39,7 @@ contract EthBoards {
      * @param boardHandlerAddress the address of the Board Handler contract
      * @param boardId the id of the board
      * @param player that player that simulates the move (0 or 1)
-     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move an array containing necessary information to perform the move [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param state the state of the game
      * @return the new state once the move has been performed, reverted if the move is not possible
     */
@@ -56,20 +56,20 @@ contract EthBoards {
         BoardHandler boardHandler = BoardHandler(boardHandlerAddress);
         require(boardId < boardHandler.getBoardNumber(), "The board doesn't exist");
 
-        // Get the address of the pawn
-        uint8 pawnType = state.getPawnType(move[0]);
-        address pawnAddress = boardHandler.getBoardPawnContract(boardId, pawnType);
-        Pawn pawn = Pawn(pawnAddress);
+        // Get the address of the piece
+        uint8 pieceType = state.getPieceType(move[0]);
+        address pieceAddress = boardHandler.getBoardPieceContract(boardId, pieceType);
+        Piece piece = Piece(pieceAddress);
 
-        // Perform the move of the pawn
-        return pawn.performMove(player, move[0], move[1], move[2], move[3], state);
+        // Perform the move of the piece
+        return piece.performMove(player, move[0], move[1], move[2], move[3], state);
     }
 
     /**
      * @notice Get from a turn signature (nonce, move, input state) the address of the signer, allow to verify if the player performing a move has correctly signed it
      * @param state the input state
      * @param nonce triplet that uniquely identifies the turn (board id, game id, turn number)
-     * @param move an array containing necessary information to perform the move [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move an array containing necessary information to perform the move [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param r the r component of the signature
      * @param s the s component of the signature
      * @param v the v component of the signature
@@ -107,7 +107,7 @@ contract EthBoards {
      * @param boardId the id of the board
      * @param gameId the id of the game
      * @param turnNumber the number of the latest turn
-     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param r the two last r components of the signature
      * @param s the two last s components of the signature
      * @param v the two last v components of the signature
@@ -190,7 +190,7 @@ contract EthBoards {
      * @param boardId the id of the board
      * @param gameId the id of the game
      * @param turnNumber the number of the latest turn
-     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param r the two last r components of the signature
      * @param s the two last s components of the signature
      * @param v the two last v components of the signature
@@ -239,7 +239,7 @@ contract EthBoards {
      * @param boardId the id of the board
      * @param gameId the id of the game
      * @param turnNumber the number of the latest turn
-     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param r the two last r components of the signature
      * @param s the two last s components of the signature
      * @param v the two last v components of the signature
@@ -295,7 +295,7 @@ contract EthBoards {
      * @param boardId the id of the board
      * @param gameId the id of the game
      * @param turnNumber the number of the latest turn
-     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected pawn, type of the move, x coordinate, y coordinate]
+     * @param move two arrays that contain the necessary information to perform the two last moves [index of the selected piece, type of the move, x coordinate, y coordinate]
      * @param r the two last r components of the signature
      * @param s the two last s components of the signature
      * @param v the two last v components of the signature

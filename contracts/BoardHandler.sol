@@ -1,6 +1,6 @@
 pragma solidity 0.6.11;
 
-import "./PawnSet.sol";
+import "./PieceSet.sol";
 import "./BoardEvents.sol";
 
 /**
@@ -57,8 +57,8 @@ contract BoardHandler {
     ///////////////////////////////////////////////////////////////
     /// Structures
 
-    struct PawnPosition {
-        uint8 pawnIndex;
+    struct PiecePosition {
+        uint8 pieceIndex;
         uint8 x;
         uint8 y;
     }
@@ -73,10 +73,10 @@ contract BoardHandler {
         uint id;
         string name;
         address boardContract;
-        address pawnSet;
+        address pieceSet;
         address boardEvents;
-        uint8 pawnNumber;
-        mapping (uint8 => PawnPosition) pawnPosition;
+        uint8 pieceNumber;
+        mapping (uint8 => PiecePosition) piecePosition;
         uint gameCount;
         mapping (uint => Game) games;
         address waitingPlayer;
@@ -100,50 +100,50 @@ contract BoardHandler {
      * @notice Create a new board
      * @param name name of the board
      * @param boardContract address of the smart contract that represents the board
-     * @param pawnSetAddress the address of the set of pawn to use for the board
-     * @param x array that represents the x coordinates where to add the pawns
-     * @param y array that represents the y coordinates where to add the pawns
-     * @param pawnIndex array that represents the pawn index from the set of the pawns to add
-     * @param pawnNb number of pawn to add
+     * @param pieceSetAddress the address of the set of pieces to use for the board
+     * @param x array that represents the x coordinates where to add the pieces
+     * @param y array that represents the y coordinates where to add the pieces
+     * @param pieceIndex array that represents the piece index from the set of the pieces to add
+     * @param pieceNb number of piece to add
     */
     function createBoard(
         string memory name,
         address boardContract,
-        address pawnSetAddress,
+        address pieceSetAddress,
         address boardEventsAddress,
         uint8[40] memory x,
         uint8[40] memory y,
-        uint8[40] memory pawnIndex,
-        uint8 pawnNb
+        uint8[40] memory pieceIndex,
+        uint8 pieceNb
     ) public {
-        require(pawnNb <= 40 && pawnNb > 0, "You can place maximum 40 pawns on the board");
+        require(pieceNb <= 40 && pieceNb > 0, "You can place maximum 40 pieces on the board");
 
         // Create the board
         Board memory newBoard;
         newBoard.id = boardNumber;
         newBoard.boardContract = boardContract;
-        newBoard.pawnSet = pawnSetAddress;
+        newBoard.pieceSet = pieceSetAddress;
         newBoard.boardEvents = boardEventsAddress;
-        newBoard.pawnNumber = pawnNb;
+        newBoard.pieceNumber = pieceNb;
         newBoard.gameCount = 0;
         newBoard.waitingPlayer = address(0);
         boards.push(newBoard);
 
-        // Get the pawn set to verify pawn indexes are correct
-        PawnSet pawnSet = PawnSet(pawnSetAddress);
-        uint8 pawnSetPawnNb = pawnSet.getPawnNb();
+        // Get the piece set to verify piece indexes are correct
+        PieceSet pieceSet = PieceSet(pieceSetAddress);
+        uint8 pieceSetPieceNb = pieceSet.getPieceNb();
 
-        // Place pawns
-        for (uint8 i = 0; i < pawnNb; i++) {
-            require(x[i] < 8 && y[i] < 8, "The pawn position is out of bound");
-            require(pawnIndex[i] < pawnSetPawnNb, "The pawn doesn't exist");
+        // Place pieces
+        for (uint8 i = 0; i < pieceNb; i++) {
+            require(x[i] < 8 && y[i] < 8, "The piece position is out of bound");
+            require(pieceIndex[i] < pieceSetPieceNb, "The piece doesn't exist");
 
-            PawnPosition memory newPawn;
-            newPawn.pawnIndex = pawnIndex[i];
-            newPawn.x = x[i];
-            newPawn.y = y[i];
+            PiecePosition memory newPiece;
+            newPiece.pieceIndex = pieceIndex[i];
+            newPiece.x = x[i];
+            newPiece.y = y[i];
 
-            boards[boardNumber].pawnPosition[i] = newPawn;
+            boards[boardNumber].piecePosition[i] = newPiece;
         }
 
         emit BoardCreated(msg.sender, boardNumber, name);
@@ -275,29 +275,29 @@ contract BoardHandler {
     }
 
     /**
-     * @notice Get the number of pawns placed on a board
+     * @notice Get the number of pieces placed on a board
      * @param boardId id of the board
-     * @return number of pawns placed on a board
+     * @return number of pieces placed on a board
     */
-    function getBoardPawnNumber(uint boardId) public view returns(uint8) {
+    function getBoardPieceNumber(uint boardId) public view returns(uint8) {
         require(boardId < boardNumber, "The board doesn't exist");
 
-        return boards[boardId].pawnNumber;
+        return boards[boardId].pieceNumber;
     }
 
     /**
-     * @notice Get pawn smart contract of a specific pawn in the pawn set of the board
+     * @notice Get piece smart contract of a specific piece in the piece set of the board
      * @param boardId id of the board
-     * @param pawnIndex index of the pawn in the pawn set
-     * @return address of the pawn smart contract
+     * @param pieceIndex index of the piece in the piece set
+     * @return address of the piece smart contract
     */
-    function getBoardPawnContract(uint boardId, uint8 pawnIndex) public view returns(address) {
+    function getBoardPieceContract(uint boardId, uint8 pieceIndex) public view returns(address) {
         require(boardId < boardNumber, "The board doesn't exist");
 
-        // Get the pawn set
-        PawnSet pawnSet = PawnSet(boards[boardId].pawnSet);
+        // Get the piece set
+        PieceSet pieceSet = PieceSet(boards[boardId].pieceSet);
 
-        return pawnSet.getPawn(pawnIndex);
+        return pieceSet.getPiece(pieceIndex);
     }
 
     /**
@@ -308,16 +308,16 @@ contract BoardHandler {
     function getInitialState(uint boardId) public view returns(uint8[121] memory state) {
         require(boardId < boardNumber, "The board doesn't exist");
 
-        // Pawn number
-        state[0] = boards[boardId].pawnNumber;
+        // Piece number
+        state[0] = boards[boardId].pieceNumber;
 
-        for(uint8 i = 0; i<boards[boardId].pawnNumber; i++) {
-             // Pawn type
-            state[1+i] = boards[boardId].pawnPosition[i].pawnIndex+1;
-            // Pawn x position
-            state[41+i] = boards[boardId].pawnPosition[i].x;
-            // Pawn y position
-            state[81+i] = boards[boardId].pawnPosition[i].y;
+        for(uint8 i = 0; i<boards[boardId].pieceNumber; i++) {
+             // Piece type
+            state[1+i] = boards[boardId].piecePosition[i].pieceIndex+1;
+            // Piece x position
+            state[41+i] = boards[boardId].piecePosition[i].x;
+            // Piece y position
+            state[81+i] = boards[boardId].piecePosition[i].y;
         }
 
         return state;

@@ -1,26 +1,26 @@
 pragma solidity 0.6.11;
 
 /**
- * @title Pawn
- * @notice The interface that must implement pawn's smart contract, the functions describe the pawn behavior and metadata
+ * @title Piece
+ * @notice The interface that must implement piece's smart contract, the functions describe the piece behavior and metadata
 */
-interface Pawn {
+interface Piece {
     /**
-     * @notice Allow to retrieve the metadata of the pawn
+     * @notice Allow to retrieve the metadata of the piece
      * @return the string a allows to retrieve metadata (e.g IPFS hash)
     */
     function getMetadata() external view returns (string memory);
 
     /**
-     * @notice Retrieve the number of moves implemented by the pawn
+     * @notice Retrieve the number of moves implemented by the piece
      * @return the number of available moves
     */
     function getMoveNumber() external pure returns(uint8);
 
     /**
-     * @notice Perform the state transition when performing a move of the pawn
+     * @notice Perform the state transition when performing a move of the piece
      * @param player the player that perform the move (0 or 1)
-     * @param pawn the index of the pawn that perform the move
+     * @param piece the index of the piece that perform the move
      * @param moveType the specific move that the player wants to perform
      * @param x x coordinate to perform the move into
      * @param y y coordinate to perform the move into
@@ -29,7 +29,7 @@ interface Pawn {
     */
     function performMove(
         uint8 player,
-        uint8 pawn,
+        uint8 piece,
         uint8 moveType,
         uint8 x,
         uint8 y,

@@ -11,7 +11,7 @@ const EthBoards = require('../../waffle/EthBoards.json')
 const BoardHandler = require('../../waffle/BoardHandler.json')
 const ChessBoard = require('../../waffle/ChessBoard.json')
 
-const PawnSet = require('../../waffle/PawnSet.json')
+const PieceSet = require('../../waffle/PieceSet.json')
 const NoEvents = require('../../waffle/NoEvents.json')
 
 const WhitePawn = require("../../waffle/WhitePawn.json");
@@ -123,7 +123,7 @@ describe('EthBoards', () => {
         const blackQueen = await deployContract(wallet, BlackQueen)
         const blackKing = await deployContract(wallet, BlackKing)
 
-        const chessPawns = [
+        const chessPieces = [
             whitePawn.address,
             whiteRook.address,
             whiteKnight.address,
@@ -140,10 +140,10 @@ describe('EthBoards', () => {
     
         // Fill the remaining spaces in the array
         for(let i=0; i<255-12; i++) {
-            chessPawns.push("0x0000000000000000000000000000000000000000")
+            chessPieces.push("0x0000000000000000000000000000000000000000")
         }
 
-        const pawnSet = await deployContract(wallet, PawnSet, [chessPawns, 12])
+        const pieceSet = await deployContract(wallet, PieceSet, [chessPieces, 12])
 
         // Deploy simplified chess board
         let xArray = [3,3,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,4,5,6,7]
@@ -160,7 +160,7 @@ describe('EthBoards', () => {
         await boardHandler.createBoard(
             "Test Chess",
             chessBoard.address,
-            pawnSet.address,
+            pieceSet.address,
             noEvents.address,
             xArray,
             yArray,
@@ -186,8 +186,8 @@ describe('EthBoards', () => {
         // Get the initial state and verify it is correct
         const initialState = await boardHandler.getInitialState(0)
         
-        let whiteKingPosition = await stateController.getPawnPosition(initialState, 0)
-        let blackKingPosition = await stateController.getPawnPosition(initialState, 1)
+        let whiteKingPosition = await stateController.getPiecePosition(initialState, 0)
+        let blackKingPosition = await stateController.getPiecePosition(initialState, 1)
         expect(whiteKingPosition).to.deep.equals([3,3])
         expect(blackKingPosition).to.deep.equals([3,4])
 
@@ -203,8 +203,8 @@ describe('EthBoards', () => {
         )
 
         // Verify first turn output
-        whiteKingPosition = await stateController.getPawnPosition(state1, 0)
-        blackKingPosition = await stateController.getPawnPosition(state1, 1)
+        whiteKingPosition = await stateController.getPiecePosition(state1, 0)
+        blackKingPosition = await stateController.getPiecePosition(state1, 1)
         expect(whiteKingPosition).to.deep.equals([4,3])
         expect(blackKingPosition).to.deep.equals([3,4])
 
@@ -228,7 +228,7 @@ describe('EthBoards', () => {
         )
 
         // Verify second turn output
-        blackKingPosition = await stateController.getPawnPosition(state2, 1)
+        blackKingPosition = await stateController.getPiecePosition(state2, 1)
         expect(blackKingPosition).to.deep.equals([4,3])
         const isWhiteKingAlive = await stateController.isAlive(state2, 0)
         expect(isWhiteKingAlive).to.be.false

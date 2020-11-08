@@ -3,11 +3,11 @@ const BoardHandler = artifacts.require("./BoardHandler.sol");
 const StateController = artifacts.require("./StateController.sol");
 const ChessBoard = artifacts.require("./Board/ChessBoard.sol");
 const WarfieldBoard = artifacts.require("./Board/WarfieldBoard.sol");
-const PawnSetRegistry = artifacts.require("./PawnSetRegistry.sol");
-const PawnSet = artifacts.require("./PawnSet.sol");
+const PieceSetRegistry = artifacts.require("./PieceSetRegistry.sol");
+const PieceSet = artifacts.require("./PieceSet.sol");
 const NoEvents = artifacts.require('../BoardEvents/NoEvents.sol')
 
-// Chess pawn
+// Chess piece
 const WhitePawn =  artifacts.require("./Chess/WhitePawn.sol");
 const WhiteRook =  artifacts.require("./Chess/WhiteRook.sol");
 const WhiteKnight =  artifacts.require("./Chess/WhiteKnight.sol");
@@ -21,7 +21,7 @@ const BlackBishop =  artifacts.require("./Chess/BlackBishop.sol");
 const BlackQueen =  artifacts.require("./Chess/BlackQueen.sol");
 const BlackKing =  artifacts.require("./Chess/BlackKing.sol");
 
-// Warfield pawn
+// Warfield piece
 const BlueBase =  artifacts.require("./Warfield/BlueBase.sol");
 const BlueSoldier =  artifacts.require("./Warfield/BlueSoldier.sol");
 const BlueBazooka =  artifacts.require("./Warfield/BlueBazooka.sol");
@@ -46,7 +46,7 @@ module.exports = async (deployer, network, accounts) => {
   const noEvents = await deployer.deploy(NoEvents);
 
   ///////////////////////////////////////////////////////////
-  // Link library to pawn
+  // Link library to piece
   deployer.link(StateController, WhitePawn);
   deployer.link(StateController, WhiteRook);
   deployer.link(StateController, WhiteKnight);
@@ -60,7 +60,7 @@ module.exports = async (deployer, network, accounts) => {
   deployer.link(StateController, BlackQueen);
   deployer.link(StateController, BlackKing);
 
-  // Link library to warflied pawn
+  // Link library to warflied piece
   deployer.link(StateController, BlueBase);
   deployer.link(StateController, BlueSoldier);
   deployer.link(StateController, BlueBazooka);
@@ -73,7 +73,7 @@ module.exports = async (deployer, network, accounts) => {
   deployer.link(StateController, RedHeadquarters);
 
   ///////////////////////////////////////////////////////////
-  // Deploy chess contracts and pawns
+  // Deploy chess contracts and pieces
   await deployer.deploy(ChessBoard);
   await deployer.deploy(WhitePawn);
   await deployer.deploy(WhiteRook);
@@ -102,10 +102,10 @@ module.exports = async (deployer, network, accounts) => {
   await deployer.deploy(RedHeadquarters);
 
   ///////////////////////////////////////////////////////////
-  // Deploy pawn set register and create the Chess pawn set
-  const pawnSetRegistry = await deployer.deploy(PawnSetRegistry);
+  // Deploy piece set register and create the Chess piece set
+  const pieceSetRegistry = await deployer.deploy(PieceSetRegistry);
 
-  const chessPawn = [
+  const chessPiece = [
     WhitePawn.address,
     WhiteRook.address,
     WhiteKnight.address,
@@ -122,14 +122,14 @@ module.exports = async (deployer, network, accounts) => {
 
   // Fill the remaining spaces in the array
   for(let i=0; i<255-12; i++) {
-    chessPawn.push("0x0000000000000000000000000000000000000000")
+    chessPiece.push("0x0000000000000000000000000000000000000000")
   }
 
-  const chessPawnSetAddress = await pawnSetRegistry.createPawnSet("Chess", chessPawn, 12)
+  const chessPieceSetAddress = await pieceSetRegistry.createPieceSet("Chess", chessPiece, 12)
   
   ///////////////////////////////////////////////////////////
-  // Create the pawn set for Warfield
-  const warfieldPawn = [
+  // Create the piece set for Warfield
+  const warfieldPiece = [
     BlueBase.address,
     BlueSoldier.address,
     BlueBazooka.address,
@@ -142,9 +142,9 @@ module.exports = async (deployer, network, accounts) => {
     RedHeadquarters.address
   ]
   for(let i=0; i<255-10; i++) {
-    warfieldPawn.push("0x0000000000000000000000000000000000000000")
+    warfieldPiece.push("0x0000000000000000000000000000000000000000")
   }
-  const warfieldPawnSetAddress = await pawnSetRegistry.createPawnSet("Warfield", warfieldPawn, 10)
+  const warfieldPieceSetAddress = await pieceSetRegistry.createPieceSet("Warfield", warfieldPiece, 10)
 // };
   ///////////////////////////////////////////////////////////
   // Deploy simplified chess board
@@ -154,7 +154,7 @@ module.exports = async (deployer, network, accounts) => {
   await boardHandler.createBoard(
     "Simplified Chess",
     ChessBoard.address,
-    chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    chessPieceSetAddress.logs[0].args.pieceSetAddress,
     NoEvents.address,
     xArray,
     yArray,
@@ -175,7 +175,7 @@ module.exports = async (deployer, network, accounts) => {
   await boardHandler.createBoard(
     "Light Brigade Chess",
     ChessBoard.address,
-    chessPawnSetAddress.logs[0].args.pawnSetAddress,
+    chessPieceSetAddress.logs[0].args.pieceSetAddress,
     NoEvents.address,
     xArray,
     yArray,
@@ -196,7 +196,7 @@ module.exports = async (deployer, network, accounts) => {
   await boardHandler.createBoard(
     "Warfield test",
     WarfieldBoard.address,
-    warfieldPawnSetAddress.logs[0].args.pawnSetAddress,
+    warfieldPieceSetAddress.logs[0].args.pieceSetAddress,
     NoEvents.address,
     xArray,
     yArray,

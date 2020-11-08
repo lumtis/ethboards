@@ -23,13 +23,13 @@ describe('StateController', () => {
     stateController = await deployContract(wallet, StateController)
   })
 
-  it('can get pawns number', async () => {
+  it('can get pieces number', async () => {
     const state = getEmptyState()
-    expect(await stateController.getPawnNumber(state)).to.equal(0)
+    expect(await stateController.getPieceNumber(state)).to.equal(0)
 
     state[0] = 10
 
-    expect(await stateController.getPawnNumber(state)).to.equal(10)
+    expect(await stateController.getPieceNumber(state)).to.equal(10)
   })
 
   // TODO: Add more tests

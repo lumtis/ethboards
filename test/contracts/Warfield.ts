@@ -11,7 +11,7 @@ const EthBoards = require('../../waffle/EthBoards.json')
 const BoardHandler = require('../../waffle/BoardHandler.json')
 const WarfieldBoard = require('../../waffle/WarfieldBoard.json')
 
-const PawnSet = require('../../waffle/PawnSet.json')
+const PieceSet = require('../../waffle/PieceSet.json')
 const NoEvents = require('../../waffle/NoEvents.json')
 
 const BlueBase = require("../../waffle/BlueBase.json");
@@ -29,8 +29,8 @@ use(solidity)
 
 const mnemonic = 'wait nephew visual song prevent ribbon much stick hour token account food'
 
-// Test chess pawn moves
-// These tess are not exhaustive, we only test for each pawn a invalid move and a valid move
+// Test chess piece moves
+// These tess are not exhaustive, we only test for each piece a invalid move and a valid move
 describe('Warfield', () => {
     const mockProvider = new MockProvider({
         ganacheOptions: {
@@ -93,7 +93,7 @@ describe('Warfield', () => {
         const redHeadquarters = await deployContract(wallet, RedHeadquarters)
 
 
-        const warfieldPawns = [
+        const warfieldPieces = [
             blueBase.address,
             blueSoldier.address,
             blueBazooka.address,
@@ -108,12 +108,12 @@ describe('Warfield', () => {
     
         // Fill the remaining spaces in the array
         for(let i=0; i<255-10; i++) {
-            warfieldPawns.push("0x0000000000000000000000000000000000000000")
+            warfieldPieces.push("0x0000000000000000000000000000000000000000")
         }
 
-        const pawnSet = await deployContract(wallet, PawnSet, [warfieldPawns, 10])
+        const pieceSet = await deployContract(wallet, PieceSet, [warfieldPieces, 10])
 
-        // Deploy a test board for chess with each pawn one to each other
+        // Deploy a test board for chess with each piece one to each other
         const xArray = [5,2,0,0,2,1,1,2,2,2,2,0,7,7,5,6,6,5,5,5,5,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         const yArray = [5,2,0,7,5,2,5,3,4,1,6,3,0,7,2,2,5,3,4,1,6,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         const indexArray = [4,0,5,5,5,6,6,6,6,7,7,8,0,0,0,1,1,1,1,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -121,7 +121,7 @@ describe('Warfield', () => {
         await boardHandler.createBoard(
           "Warfield",
           warfieldBoard.address,
-          pawnSet.address,
+          pieceSet.address,
           noEvents.address,
           xArray,
           yArray,

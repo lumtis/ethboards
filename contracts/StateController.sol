@@ -7,60 +7,65 @@ pragma solidity 0.6.11;
 library StateController {
 
     /**
+    * Index constant
+    */
+ 
+
+    /**
     * State observation utilitary function
     */
 
     /**
-     * @notice Get the number of pawns in the game
+     * @notice Get the number of pieces in the game
      * @param state the state of the game
-     * @return the number of pawn
+     * @return the number of piece
     */
-    function getPawnNumber(uint8[121] memory state) public pure returns (uint8) {
+    function getPieceNumber(uint8[121] memory state) public pure returns (uint8) {
         return state[0];
     }
 
     /**
-     * @notice Get the position of a specific pawn in the game
+     * @notice Get the position of a specific piece in the game
      * @param state the state of the game
-     * @param pawn the index of the pawn
-     * @return the coordinates (x,y) of the pawn
+     * @param piece the index of the piece
+     * @return the coordinates (x,y) of the piece
     */
-    function getPawnPosition(uint8[121] memory state, uint8 pawn) public pure returns (uint8, uint8) {
-        require(state[1+pawn] > 0, "Pawn is dead");
+    function getPiecePosition(uint8[121] memory state, uint8 piece) public pure returns (uint8, uint8) {
+        require(state[1+piece] > 0, "Piece is dead");
 
-        return (state[41+pawn], state[81+pawn]);
+        return (state[41+piece], state[81+piece]);
     }
 
     /**
-     * @notice Get the type of a specific pawn in the game, the type is what defines the pawn (e.g allows to get the specific smart contract of the pawn)
+     * @notice Get the type of a specific piece in the game, the type is what defines the piece (e.g allows to get the specific smart contract of the piece)
      * @param state the state of the game
-     * @param pawn the index of the pawn
-     * @return the type of the pawn
+     * @param piece the index of the piece
+     * @return the type of the piece
     */
-    function getPawnType(uint8[121] memory state, uint8 pawn) public pure returns (uint8) {
-        require(state[1+pawn] > 0, "Pawn is dead");
+    function getPieceType(uint8[121] memory state, uint8 piece) public pure returns (uint8) {
+        require(state[1+piece] > 0, "Piece is dead");
 
-        return state[1+pawn]-1;
+        return state[1+piece]-1;
     }
 
     /**
-     * @notice Determine if a specific pawn in the game is still alive
+     * @notice Determine if a specific piece in the game is still alive
      * @param state the state of the game
-     * @param pawn the index of the pawn
-     * @return true if the pawn is still alive
+     * @param piece the index of the piece
+     * @return true if the piece is still alive
     */
-    function isAlive(uint8[121] memory state, uint8 pawn) public pure returns (bool) {
-        return state[1+pawn] > 0;
+    function isAlive(uint8[121] memory state, uint8 piece) public pure returns (bool) {
+        return state[1+piece] > 0;
     }
 
     /**
-     * @notice Get the pawn present in a specific location in the map
+     * @notice Get the piece present in a specific location in the map
      * @param state the state of the game
      * @param x x coordinate
      * @param y y coordinate
-     * @return the pawn index if a pawn is present, -1 if no pawn is present on this location
+     * @return the piece index if a piece is present, -1 if no piece is present on this location
     */
-    function getPawnAt(uint8[121] memory state, uint8 x, uint y) public pure returns (int8) {
+    function getPieceAt(uint8[121] memory state, uint8 x, uint y) public pure returns (int8) {
         for (uint8 i = 0; i < 40; i++) {
             if (state[1+i] > 0 && state[41+i] == x && state[81+i] == y) {
                 return int8(i);
@@ -71,14 +76,14 @@ library StateController {
     }
 
     /**
-     * @notice Check if a pawn is present on a specific location
+     * @notice Check if a piece is present on a specific location
      * @param state the state of the game
      * @param x x coordinate
      * @param y y coordinate
-     * @return true if NO pawn is present, false otherwise
+     * @return true if NO piece is present, false otherwise
     */
-    function noPawnAt(uint8[121] memory state, uint8 x, uint y)  public pure returns (bool) {
-        return getPawnAt(state, x, y) == -1;
+    function noPieceAt(uint8[121] memory state, uint8 x, uint y)  public pure returns (bool) {
+        return getPieceAt(state, x, y) == -1;
     }
 
     /**
@@ -86,72 +91,72 @@ library StateController {
     */
 
     /**
-     * @notice Perform the state transition when moving a pawn on the map
+     * @notice Perform the state transition when moving a piece on the map
      * @param state the state of the game
-     * @param pawn index of the pawn
-     * @param x x coordinate where to move the pawn
-     * @param y y coordinate where to move the pawn
-     * @return the new state once the pawn has been moved
+     * @param piece index of the piece
+     * @param x x coordinate where to move the piece
+     * @param y y coordinate where to move the piece
+     * @return the new state once the piece has been moved
     */
-    function movePawn(uint8[121] memory state, uint8 pawn, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
+    function movePiece(uint8[121] memory state, uint8 piece, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
-        require(state[1+pawn] > 0, "Pawn is dead");
-        require(getPawnAt(state, x, y) == -1, "A pawn is already present");
+        require(state[1+piece] > 0, "Piece is dead");
+        require(getPieceAt(state, x, y) == -1, "A piece is already present");
 
-        state[41+pawn] = x;
-        state[81+pawn] = y;
-
-        return state;
-    }
-
-    /**
-     * @notice Perform the state transition when removing a pawn from the game
-     * @param state the state of the game
-     * @param pawn index of the pawn
-     * @return the new state once the pawn has been removed
-    */
-    function removePawn(uint8[121] memory state, uint8 pawn) public pure returns (uint8[121] memory) {
-        require(state[1+pawn] > 0, "Pawn is dead");
-
-        state[1+pawn] = 0;
+        state[41+piece] = x;
+        state[81+piece] = y;
 
         return state;
     }
 
     /**
-     * @notice Perform the state transition when change the pawn type or revive a pawn in the game
+     * @notice Perform the state transition when removing a piece from the game
      * @param state the state of the game
-     * @param pawn index of the pawn
-     * @param pawnType the type of the pawn to respawn
-     * @param x x coordinate to respawn the pawn
-     * @param y y coordinate to respawn the pawn
-     * @return the new state once the pawn has been respawned
+     * @param piece index of the piece
+     * @return the new state once the piece has been removed
     */
-    function respawnPawn(uint8[121] memory state, uint8 pawn, uint8 pawnType, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
+    function removePiece(uint8[121] memory state, uint8 piece) public pure returns (uint8[121] memory) {
+        require(state[1+piece] > 0, "Piece is dead");
+
+        state[1+piece] = 0;
+
+        return state;
+    }
+
+    /**
+     * @notice Perform the state transition when change the piece type or revive a piece in the game
+     * @param state the state of the game
+     * @param piece index of the piece
+     * @param pieceType the type of the piece to respawn
+     * @param x x coordinate to respawn the piece
+     * @param y y coordinate to respawn the piece
+     * @return the new state once the piece has been respawned
+    */
+    function respawnPiece(uint8[121] memory state, uint8 piece, uint8 pieceType, uint8 x, uint8 y) public pure returns (uint8[121] memory) {
         require(x < 8, "x out of bound");
         require(y < 8, "y out of bound");
-        require(state[1+pawn] == 0, "Pawn is still alive");
-        require(getPawnAt(state, x, y) == -1, "A pawn is already present");
+        require(state[1+piece] == 0, "Piece is still alive");
+        require(getPieceAt(state, x, y) == -1, "A piece is already present");
 
-        state[1+pawn] = pawnType + 1;
-        state[41+pawn] = x;
-        state[81+pawn] = y;
+        state[1+piece] = pieceType + 1;
+        state[41+piece] = x;
+        state[81+piece] = y;
 
         return state;
     }
 
     /**
-     * @notice Perform the state transition when change the pawn type of a pawn in the game
+     * @notice Perform the state transition when change the piece type of a piece in the game
      * @param state the state of the game
-     * @param pawn index of the pawn
-     * @param pawnType the new type of the pawn to respawn
-     * @return the new state once the pawn has been respawned
+     * @param piece index of the piece
+     * @param pieceType the new type of the piece to transform
+     * @return the new state once the piece has been transformed
     */
-    function transformPawn(uint8[121] memory state, uint8 pawn, uint8 pawnType) public pure returns (uint8[121] memory) {
-        require(state[1+pawn] > 0, "Pawn is dead");
+    function transformPiece(uint8[121] memory state, uint8 piece, uint8 pieceType) public pure returns (uint8[121] memory) {
+        require(state[1+piece] > 0, "Piece is dead");
 
-        state[1+pawn] = pawnType + 1;
+        state[1+piece] = pieceType + 1;
 
         return state;
     }
